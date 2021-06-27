@@ -1,4 +1,4 @@
-# A Simple Online Voting System1
+# A Simple Online Voting System
     For Computer Science Thesis 1
 
 Link for preview https://voting-system-jayke.herokuapp.com/
