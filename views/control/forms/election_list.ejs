@@ -1,0 +1,25 @@
+<% if(elections.length == 0) { %> 
+    <div class="text-xl font-medium text-gray-200">Nothing to fetch</div>
+<% } else { 
+    for(var i = 0; i < elections.length; i++) { %>
+        <div class="wmsu_box dash_card animate__animated animate__zoomIn shadow-lg bg-gray-900 <%= elections[i]._id %>">
+            <div class="card">
+                <img class="icon_e_name" alt="election_ic">
+                <div class="other">
+                    <p class="other_e_name pt-2 mb-7"><%= elections[i].election_title %></p>
+                    <p class="other_t_voters ex font-normal text-lg">Total of voters: <span class="cnt_e cnt_total_v font-light text-base"><%= elections[i].voters.length%></span></p>
+                    <p class="other_e_active_v ex font-normal text-lg">Active voters: <span class="cnt_e cnt_total_ac font-light text-base" data-id="<%= elections[i]._id %>">Checking. . .</span></p>
+                    <p class="other_e_status ex font-normal text-lg">Election Status: <span class="cnt_e e_stts font-light text-base"><%= elections[i].status %></span></p>
+                    <p class="other_e_create ex font-normal text-lg">Election Created : <span class="cnt_e e_created font-light text-base time" date-time="<%= elections[i].created %>">Calculating...</span></p>
+                </div>
+            </div>
+            <div class="card_e_actions">
+                <a class="wmsu_btn e_settings"><i class="fa fa-cogs"></i></a>
+                <a class="wmsu_btn e_start">Start</a>
+                <a class="wmsu_btn e_stop">Stop</a>
+                <a class="wmsu_btn e_view_e_room">Election Rooms</a>
+                <a class="wmsu_btn e_ac">Active Voters</a>
+            </div>
+        </div>
+    <% } %> 
+<% } %>

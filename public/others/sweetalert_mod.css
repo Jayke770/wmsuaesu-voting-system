@@ -1,0 +1,12 @@
+.swal2-popup.swal2-toast, .swal2-popup.swal2-toast{
+    box-shadow: none !important;
+}
+.swal2-popup{
+    background: #242425 !important;
+}
+.swal2-container.swal2-backdrop-show{
+    background: rgb(25 25 26 / 0%) !important;
+}
+.swal2-title{
+    color: #f2f2f2 !important;
+}

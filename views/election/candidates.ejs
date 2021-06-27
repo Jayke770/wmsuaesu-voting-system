@@ -1,0 +1,47 @@
+<div class="e_c">
+    <% data[0].partylist.push("Independent") %>
+        <% for(let i = 0; i < data[0].partylist.length; i++) { %>
+            <div class="e_c_data">
+                <div class="e_data_t"><%- data[0].partylist[i] %></div>
+                <div class="e_position">
+                    <% for(let ps in data[0].positions){  %>
+                        <div class="e_position_t"><%- data[0].positions[ps].name %></div>
+                        <div class="e_data_person ">
+                            <% for(var ca in data[0].candidates){ %> 
+                                <% if(data[0].candidates[ca].candidate.partylist == data[0].partylist[i] && data[0].candidates[ca].candidate.position == data[0].positions[ps].name){ %>
+                                        <div class="wmsu_box">
+                                            <div class="img">
+                                                <img src="/assets/static.png" class="img_ca" alt="Candidate">
+                                            </div>
+                                            <div class="person_basic_data">
+                                                <p class="name" id='<%- data[0].candidates[ca].candidate.userid %>'>Please Wait</p>
+                                                <div class="e_more">
+                                                    <fieldset>
+                                                        <legend>Platform</legend>
+                                                        <div class="platform"><%- data[0].candidates[ca].candidate.platform %></div>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="more">
+                                                    <a class="more_info wmsu_btn" href="home/profile/?id=<%- data[0].candidates[ca].candidate.userid %>">More Info</a>
+                                                </div>
+                                                <div class="actions">
+                                                    <a class="ac" href="#">
+                                                        <i class="heart_ac fa fa-heart"></i>
+                                                        <span class="cnt hearts_cnt">0</span>
+                                                    </a>
+                                                    <a class="ac" href="#">
+                                                        <i class="cmt_ac fa fa-comment"></i>
+                                                        <span class="cnt cmt_cnt">0</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    <% } %>
+            </div>
+        </div>
+        <% } %>
+</div>
+<script src="/js/election/js/candidates.js"></script>

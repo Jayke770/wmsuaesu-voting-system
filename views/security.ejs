@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" class="font-sans antialiased">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <%- include('cdn/_auth') %>
+  <!-- <%- include('local_cdn/_auth') %> -->
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <script src="/js/jslib-html5-camera-photo.min.js"></script>
+    <script>
+      document.onreadystatechange = function () {
+        $(".bg-main").removeClass("hidden")
+        $(".loading").remove()
+        start()
+      }
+    </script>
+    <script defer src="/js/face-api.min.js"></script>
+  <script defer src="/js/script.js"></script>
+    <title>Face Recognition</title>
+    <style>
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+</head>
+
+<body class="m-0 p-0 bg-gray-400">
+  <div class="loading flex justify-center w-full h-screen items-center bg-gray-300 dark:bg-gray-900">
+    <%- include('lazy/loading') %>
+  </div>
+  <div class="bg-main w-full h-screen relative hidden">
+    <div class="other animate-pulse  h-52 w-52 rounded-3xl bg-purple-500 absolute left-1/3 top-16 md:left-1"></div>
+    <div class="other animate-pulse h-52 w-52 rounded-3xl bg-pink-500 absolute right-1/3 bottom-16 md:right-1"></div>
+    <div class="rec md:w-11/12 bg-gray-300 h-4/6 rounded-xl p-2 shadow-2xl w-96 fixed left-2/4 top-2/4"
+      style="transform: translate(-50%, -50%);">
+      <p class="p-2 mt-1 w-full text-xl border-l-4 border-red-500">Verify Your Face</p>
+      <div class="vid p-2">
+        <video class="w-full mt-2" id="video" autoplay="true" muted playsInline></video>
+        <input type="hidden" id="image">
+      </div>
+    </div>
+  </div>
+  <script>
+    var FACING_MODES = JslibHtml5CameraPhoto.FACING_MODES
+    var IMAGE_TYPES = JslibHtml5CameraPhoto.IMAGE_TYPES
+    var videoElement = document.getElementById('video')
+    var cameraPhoto = new JslibHtml5CameraPhoto.default(videoElement)
+    async function start() {
+      var facingMode = 'user'
+      await cameraPhoto.startCamera(FACING_MODES[facingMode]).then(() => {
+        console.log("Camera Started")
+      }).catch((error) => {
+        console.error('Camera not started!', error)
+      })
+    }
+  </script>
+</body>
+
+</html>

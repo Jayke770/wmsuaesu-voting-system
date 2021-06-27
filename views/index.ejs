@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" class="font-sans antialiased">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#121212">
+    <title>OVS Dashboard</title>
+    <meta name="description" content="New and upgraded version of voting system">
+    <meta property="og:title" content="Online Voting System">
+    <meta property="og:description" content="New and upgraded version of voting system">
+    <meta property="og:image" content="/assets/logo.png">
+    <meta property="og:image:alt" content="Logo">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:url" content="https://voting-system-jayke.herokuapp.com/">
+    <%- include('cdn/_index.ejs') %>
+    <!-- <%- include('local_cdn/_index.ejs') %> -->
+    <!--  -->
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <link rel="stylesheet" type="text/css" href="/others/sweetalert_mod.css">
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
+    <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900">
+    <div class="conn">Connecting to server <span class="dot"></span></div>
+    <!-- custom popup start -->
+    <div class="my_popup"></div>
+    <!-- end of custom popup -->
+    <div class="nav">
+        <i class="cls_nav fa fa-times-circle"></i>
+        <div class="logo_img">
+            <img class="img" alt="logo" src="/assets/logo.png">
+        </div>
+        <div class="nav_btn">
+            <a class="wmsu_btn btn_nav" href="../../">Home</a>
+            <a class="wmsu_btn btn_nav" href="../home/profile/?id=<%- data._id %>">Profile</a>
+            <% if (!join_election) { %>
+                <a class="wmsu_btn btn_nav join_elec">Join Election</a>
+            <% } %>
+            <% if (join_election) { %>
+                <a class="wmsu_btn btn_nav e_btn" data="file_candidacy" href="#file_candidacy">File for Candidacy</a>
+                <a class="wmsu_btn btn_nav e_btn" data="candidates" href="#candidates">Candidates</a>
+                <a class="wmsu_btn btn_nav leave_elec">Leave Election</a>
+            <% } %>
+            <a class="wmsu_btn btn_nav" href="#">Settings</a>
+        </div>
+    </div>
+    <div class="main">
+        <div class="main_nav bg-red-800">
+            <button class="wmsu_btn main_btn_nav fa fa-bars open_nav"></button>
+            <a class="wmsu_btn main_btn_nav fa fa-sign-out-alt right" href="../logout"></a>
+            <div class="nav_actions right">
+                <div class="nty_nav">
+                    <i class="nty_nav_btn text-xl text-gray-50 p-2 mr-2 cursor-pointer fa fa-bell"><span class="nav_nty_cnt"></span></i>
+                </div>
+            </div>
+            <div class="nav_actions right">
+                <div class="msg_nav">
+                    <i class="msg_ic text-xl text-gray-50 p-2 mr-2 cursor-pointer fa fa-comment"><span class="nav_msg_cnt"></span></i>
+                </div>
+            </div>
+        </div>
+        <!--popups-->
+        <div class="nty_main xsm:w-11/12 border-b-8 border-red-800 fixed bg-gray-300 ring-red-600 shadow-2xl h-screen w-96 right-0 hidden animate__animated animate__slideInRight transition-all">
+            <div class="nty_t container">
+                <i class="close_nty_ fa fa-arrow-circle-right float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3"></i>
+                <p class="t_nty text-3xl p-4 m-0 text-red-800 font-bold">Notifications</p>
+            </div>
+            <div class="nty flex flex-col p-4 overflow-auto h-my-h">
+                <div class="container mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl border-none transition-all cursor-pointer">
+                    <a class="" href="#">
+                        <div class="flex container flex-row p-4">
+                            <i class="text-3xl text-green-700 fa fa-comment-dots"></i>
+                            <div class="break-words px-3 text-sm">
+                                Jake Peregrino Velasco commented on your profile
+                            </div>
+                            <div class="time text-sm p-2">19hrs</div>
+                        </div>
+                    </a>
+                </div>
+                <!-- <%- include('notification/_nty', {nty: data.notifications}) %> -->
+            </div>
+        </div>
+        <div class="msgs hidden xsm:w-11/12 border-b-8 border-red-800 fixed bg-gray-300 ring-red-600 shadow-2xl h-screen w-96 right-0 animate__animated animate__slideInRight transition-all">
+            <div class="t_msg">
+                <div class="m">
+                    <div class="container">
+                        <div class="float-right p-3 pt-5 pb-1"> 
+                            <i class="close_msg_ fa fa-arrow-circle-right text-red-700 text-2xl cursor-pointer"></i>
+                        </div>
+                        <p class="t_m text-3xl p-4 m-0 text-red-800 font-bold">Messages</p>
+                    </div>
+                    <div class="p-2 w-full px-4">
+                        <input type="text" autocomplete="off" placeholder="Search. . ." class="search_user placeholder-gray-600 shadow-md bg-gray-200 border-2 transition border-gray-200 rounded-lg w-full p-3 text-gray-700 leading-tight focus:outline-none focus:bg-gray-100 focus:border-blue-500" name="search_use">
+                    </div>
+                </div>
+            </div>
+            <div class="data_msg h-my-h-80% overflow-x-auto">
+                <div class="user_msg_search p-4 w-full text-center hidden">
+                    <div class="msg msg_s_loading text-gray-900" text="Searching . . ."></div>
+                </div>
+                <div class="w-full hidden flex-col p-4 ">
+                    <a class="chat_user mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl border-none transition-all cursor-pointer">
+                        <div class="container flex flex-row p-2">
+                            <img class="img_user w-14 h-14 object-cover rounded-full" alt="img_user" src="/assets/static.png">
+                            <p class="user_nm container break-words p-2 text-gray-900 px-3 text-lg text-left mt-1">Jake Peregrino Velasco</p>
+                            <div class="bg-green-600 h-6 w-8 rounded-full mt-4 mr-2"></div>
+                        </div>
+                    </a>
+                </div>
+                <div class="msg_main flex flex-col p-4">
+                    <a class="chat_user mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl border-none transition-all cursor-pointer">
+                        <div class="container flex flex-row p-2">
+                            <img class="img_user w-14 h-14 object-cover rounded-full" alt="img_user" src="/assets/static.png">
+                            <div class="container p-2 pt-1">
+                                <span class="text-base ml-1 text-gray-900">Jake Peregrino Velasco</span>
+                                <br>
+                                <span class="text-sm ml-2 mt-5 text-gray-700">Chat with Election Bot</span>
+                            </div>
+                        </div>
+                    </a>
+                    <!-- <%- include('messages/_list_messages', {msg: data.messages, userid: data._id}) %> -->
+                </div>
+            </div>
+        </div>
+        <!--end of popups-->
+        <div class="elections">
+            <% if (join_election) { %>
+                <div class="e_data">
+                    <div class="e_tab_main">
+                        <div class="e_t" style="display: none;">
+                            <div class="e_title">
+                                <%- election_data.e_title %>
+                            </div>
+                            <div class="e_status">Status :  <%- election_data.e_status %></div>
+                        </div>
+                        <div class="e_main">
+
+                        </div>
+                    </div>
+                </div>
+                <% } else { %>
+                    <%- include('main/_e_not_joined', {fname: data.firstname}) %>
+                <% } %>
+        </div>
+    </div>
+    <div class="msg_msg">
+        <% if(chat){ %>
+            <%- include('messages/_float_messenger', {msg}) %>
+            <div class="pre">
+                <script>
+                    setTimeout( () => {
+                        //get chats 
+                        $.post('/chats', (res) => {
+                            if(!res.ischat){
+                                $(".float_messenger").css("height", "52px")
+                                $(".float_messenger").show()
+                                setTimeout(() => {
+                                    $(".chats").html("")
+                                    $(".chats").html(res)
+                                    $(".pre").remove()
+                                }, 500);
+                            }
+                        })
+                    }, 500)
+                </script>
+            </div>
+        <% } %>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/index.js"></script>
+    <script src="/js/audio.js"></script>
+    <script src="/js/toast.js"></script>
+    <script src="/js/audio_file.js"></script>
+    <script src="/js/scroll_div.js"></script>
+    <script src="/js/avatar.js"></script>
+    <script src="/js/time.js"></script>
+</body>
+
+</html>

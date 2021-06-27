@@ -1,0 +1,61 @@
+<div class="profile_main">
+    <div class="card wmsu_box">
+        <div class="card_cover">
+            <img class="cover" src="/assets/image.jpg">
+        </div>
+        <div class="about">
+            <p class="name">
+                <%= data[0].firstname + ' ' + data[0].middlename + ' ' + data[0].lastname%>
+            </p>
+            <div class="bio_text">
+                <% if (data[0].bio != "" ) { %>
+                    <%- data[0].bio %>
+                        <% } else { %>
+                            User not provide a bio
+                            <% } %>
+            </div>
+            <div class="other">
+                <p class="crs"><a>
+                        <%= data[0].course %>
+                    </a></p>
+            </div>
+            <div class="other">
+                <p class="v">Visitors</p>
+                <div class="visits">
+                    <% for( let index=0; index < data[0].visitors.length; index++ ) { %>
+                        <a href="../profile/?id=<%= data[0].visitors[index] %>">
+                            <img class="v_img" src="/assets/logo.png">
+                        </a>
+                        <% } %>
+                </div>
+            </div>
+            <div class="react_cmt">
+                <a class="r heart" href="?heart=<%= data[0]._id %>"><i class="ic hrt fa fa-heart"></i>
+                    <span class="cnt_hrt" count="<%-data[0].hearts.length %>">
+                        <%-data[0].hearts.length %>
+                    </span>
+                </a>
+                <a class="r cmt"><i class="ic cmt fa fa-comment"></i>
+                    <span class="cnt_cmt" count="<%= data[0].comments.length %>">
+                        <%- data[0].comments.length %>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="comments">
+    <p class="v_cmt">Profile Comments</p>
+    <div class="cmts" profile="false">
+        <%- include('comment', {comments: data[0].comments}) %>
+    </div>
+    <div class="create_cmt">
+        <div class="wmsu_inpt">
+            <textarea class="cmt_msg_" placeholder="Thoughts, Comments, etc"></textarea>
+            <button class="wmsu_btn send_cmt"><i class="fa fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+<div class="edits">
+
+</div>

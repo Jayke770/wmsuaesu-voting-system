@@ -1,0 +1,52 @@
+<div class="float_messenger animate__animated animate__slideInRight" data-id=<%-msg.my_ka_chatid%>>
+    <div class="messenger_header">
+        <table width="100%">
+            <tr> 
+                <td width="10px">
+                    <img class="user_img_msg" src="/assets/logo.png" alt="user_img">
+                </td>
+                <td>
+                    <p class="user_name_msg">
+                        <%= msg.name %>
+                    </p>    
+                </td>
+                <td width="10px">
+                    <div class="badge mb-2"></div>
+                </td>
+                <td width="10px">
+                    <i class="cls_f_msg fa fa-times-circle float-right text-red-700 text-xl mr-1 ml-2 mb-2"></i>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="main_messaging">
+        <div class="chats">
+            <div class="loading_chats">
+                <i class="fa fa-cog fa-spin ld_chats"></i>
+            </div>
+        </div>
+        <div class="create_msg">
+            <div class="tw" style="display: none;"></div>
+            <script>
+                const typing_tw = new Typewriter(".tw", {
+                    loop: true,
+                });
+                typing_tw.typeString('. . .')
+                    .pauseFor(400)
+                    .deleteAll()
+                    .typeString("Typing")
+                    .changeCursor('*')
+                    .pauseFor(2000)
+                    .deleteAll()
+                    .start();
+             </script>
+            <div class="crt_msg_data">
+                <div class="create_ wmsu_inpt">
+                    <a class="create_menu fa fa-bars"></a>
+                    <textarea class="chat_msg_data" autocomplete="off" name="chat_msg_data"></textarea>
+                    <button  class="wmsu_btn fa fa-paper-plane send_chat_msg"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

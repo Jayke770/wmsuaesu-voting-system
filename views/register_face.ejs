@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" class="font-sans antialiased">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Your Face</title>
+    <%- include('cdn/_auth') %>
+    <!-- <%- include('local_cdn/_auth') %> -->
+        <!--  -->
+        <link rel="stylesheet" href="/css/tailwindcss/style.css">
+        <script src="/js/jslib-html5-camera-photo.min.js"></script>
+        <script src="/js/face-reg.js"></script>
+        <script>
+            document.onreadystatechange = function () {
+                start()
+            }
+        </script>
+</head>
+
+<body class="bg-gray-400 m-0 p-0">
+    <div class="flex justify-center items-center w-full h-screen p-2 transition-all">
+        <div class="camera bg-gray-200 rounded-lg shadow-2xl w-96 h-auto p-3">
+            <form class="face">
+                <p class="w-full text-xl text-center p-2 mb-3 title">Face Registration</p>
+                <div class="hint border-l-4 border-purple-800 mb-3 px-4 py-2 bg-purple-200">
+                    <p class="font-normal">
+                        Make sure your face is clearly visible during registration.Don't wear a mask, sunglasses, or a
+                        hat that covers your face.
+                    </p>
+                </div>
+                <video class="w-full" id="video" autoplay="true" muted playsInline></video>
+                <img id="pic" class="w-full">
+                <input type="text" name="image" class="hidden image_file" required>
+                <div class="container flex justify-center items-center mt-3 gap-3">
+                    <button type="button"
+                        class="capture transition-all inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Capture</button>
+                    <button type="submit"
+                        class="transition-all inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        var FACING_MODES = JslibHtml5CameraPhoto.FACING_MODES
+        var IMAGE_TYPES = JslibHtml5CameraPhoto.IMAGE_TYPES
+
+        // get video and image elements
+        var videoElement = document.getElementById('video')
+
+        // instantiate JslibHtml5CameraPhoto with the videoElement
+        var cameraPhoto = new JslibHtml5CameraPhoto.default(videoElement)
+        async function start() {
+            var facingMode = 'user'
+            await cameraPhoto.startCamera(FACING_MODES[facingMode]).then(() => {
+                console.log("Camera Started")
+            }).catch((error) => {
+                console.error('Camera not started!', error)
+            })
+        }
+        async function stopCamera() {
+            await cameraPhoto.stopCamera()
+                .then(() => {
+                    console.log('Camera stoped!');
+                })
+                .catch((error) => {
+                    console.log('No camera to stop!:', error);
+                });
+        }
+        $(".capture").click(function () {
+            var button = $(this)
+            if ($(this).attr("capture") == "true") {
+                $("#video").show()
+                $("#pic").attr("src", "")
+                button.attr("capture", "false")
+                button.html("Capture")
+                start()
+            }
+            else {
+                var timer = new Timer({
+                    tick: 1,
+                    ontick: function (sec) {
+                        $(".title").html(`Capturing in ${sec / 1000}`)
+                    },
+                    onstart: function () {
+                        $(".title").addClass("animate-pulse")
+                        $(".title").attr("text", $(".title").html())
+                    }
+                });
+                timer.on('end', function () {
+                    $(".title").removeClass("animate-pulse")
+                    $(".title").html($(".title").attr("text"))
+                    var sizeFactor = 1
+                    var imageType = IMAGE_TYPES.JPG
+                    var imageCompression = 1
+
+                    var config = {
+                        sizeFactor,
+                        imageType,
+                        imageCompression
+                    }
+                    var dataUri = cameraPhoto.getDataUri(config)
+                    $("#video").hide()
+                    $("#pic").attr("src", dataUri)
+                    button.attr("capture", "true")
+                    $(".image_file").val(dataUri)
+                    button.html("Retake")
+                    stopCamera()
+                })
+                timer.start(5);
+            }
+        })
+    </script>
+    <script src="/js/toast.js"></script>
+    <script src="/js/timer.min.js"></script>
+</body>
+
+</html>

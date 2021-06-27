@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" class="font-sans antialiased dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#121212">
+    <title>Admin Dashboard</title>
+    <%- include('cdn/_home') %>
+    <!-- <%- include('../local_cdn/_home') %> -->
+    <!-- -->
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <link rel="stylesheet" type="text/css" href="/others/sweetalert_mod.css">
+    <link rel="stylesheet" type="text/css" href="/control/css/home.css">
+    <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
+</head>
+
+<body>
+    <!-- loading -->
+    <div class="loading">
+        <div class="loading_main pt"></div>
+    </div>
+    <!-- end of loading -->
+    <!-- custom popup start -->
+    <div class="my_popup"></div>
+    <!-- end of custom popup -->
+    <!-- main -->
+    <div class="main">
+        <div class="body">
+            <div class="nav animate__animated">
+                <div class="logo_any">
+                    <i class="fa fa-times-circle close_nav"></i>
+                    <img src="/assets/logo.png" alt="logo" class="logo">
+                </div>
+                <div class="btn">
+                    <div class="group_btn mb-5">
+                        <a class="wmsu_btn g_btn ignore" href="../control/">Home</a>
+                    </div>
+                    <div class="group_btn mb-5">
+                        <button class="wmsu_btn g_btn">Voter Settings</button>
+                        <div class="g_btn_list">
+                            <button class="wmsu_btn list_btn">Voter Settings</button>
+                            <button class="wmsu_btn list_btn" data="list_voter">List of Voters</button>
+                            <button class="wmsu_btn list_btn" data="voter-id">Voter ID Settings</button>
+                        </div>
+                    </div>
+                    <div class="group_btn mb-5">
+                        <button class="wmsu_btn g_btn">Election Settings</button>
+                        <div class="g_btn_list">
+                            <button class="wmsu_btn list_btn" data="create_election">Create Election</button>
+                        </div>
+                    </div>
+                    <div class="group_btn mb-5">
+                        <button class="wmsu_btn g_btn">Other Settings</button>
+                        <div class="g_btn_list">
+                            <button class="wmsu_btn list_btn">Maintenance Mode</button>
+                            <button class="wmsu_btn list_btn">Terminate User</button>
+                            <a class="wmsu_btn list_btn" data="logs">Server Logs</a>
+                        </div>
+                    </div>
+                    <div class="group_btn mb-5">
+                        <button class="wmsu_btn g_btn ignore logout"><a href="../../logout">Logout</a></button>
+                    </div>
+                </div>
+            </div>
+            <div class="main_body">
+                <div class="navigation">
+                    <i class="open_nav fa fa-bars"></i>
+                    <p class="navigation_title">Election Dashboard</p>
+                    <div class="div msg">
+                        <i class="ic msg_open fa fa-comment"></i>
+                        <div class="msg_main wmsu_box wmsu_box_dark-2"></div>
+                    </div>
+                    <div class="div nty">
+                        <i class="ic nty_open fa fa-bell"></i>
+                        <div class="nty_main wmsu_box wmsu_box_dark-2 shadow-2xl"></div>
+                    </div>
+                </div>
+                <div class="forms">
+                    <%- 
+                        //get all the data from the server 
+                        include('forms/main', {elections: elections, users: users}) 
+                    %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end main -->
+    <script src="/control/js/home.js"></script>
+    <script src="/js/scroll_div.js"></script>
+    <script src="/js/time.js"></script>
+    <script src="/js/avatar.js"></script>
+</body>
+
+</html>

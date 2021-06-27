@@ -1,0 +1,36 @@
+<div class="not_main animate__animated">
+    <div class="top_main_t flex justify-center flex-col h-my-h-80">
+        <p class="title_main t_m_1 animate__animated animate__slideInUp text-red-900 w-full text-center m-0 p-3 font-medium text-6xl" text="Hi <%-fname%>"></p>
+        <p class="title_main t_m_2 animate__animated animate__slideInUp text-red-600 w-full text-center m-0 p-3 font-normal" text='To join the election ask a <a data-id="admin" href="?chat=admin" class="passcode chat_user underline text-blue-600 font-bold cursor-pointer">passcode</a> to your administrator'></p>
+    </div>
+</div>
+<div class="preloaded">
+    <script>
+        document.onreadystatechange = function () {    
+            const tw2 = new Typewriter(".t_m_1", {
+                loop: false,
+                delay: 30
+            })
+            const tw = new Typewriter(".t_m_2", {
+                loop: false,
+                delay: 25 
+            })
+            tw2.typeString('. . .')
+                .pauseFor(100)
+                .deleteAll() 
+                .changeCursor(' ')
+                .typeString($(".t_m_1").attr("text"))
+                .start();
+            tw.typeString($(".t_m_2").attr("text"))
+                .changeCursor(' ')
+                .start();
+            $(".not_main").show()
+            setTimeout( () => {
+                $(".not_main").find(".animate__animated").removeClass("animate__animated")
+                $(".preloaded").remove()
+                $("body").removeAttr("onload")
+                $(".title_main").removeAttr("text")
+            }, 1000)
+        }
+    </script>
+</div>

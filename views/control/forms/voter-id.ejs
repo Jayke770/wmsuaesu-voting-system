@@ -1,0 +1,133 @@
+<div class="st_id">
+    <div class="all_student_id">
+        <div class="actions">
+            <i class="search_id_ic fas fa-search"></i>
+            <i class="search_id_ic_back fas fa-arrow-circle-left" style="  display: none;"></i>
+            <input type="text" name="search_id" class="search_id wmsu_inpt wmsu_inpt_focus" placeholder="Search Student ID">
+            <div class="selection">
+                <select name="actions" class="wmsu_inpt sort_id">
+                    <option value="df">Default</option>
+                    <option value="BSCS">BSCS</option>
+                    <option value="BEED">BEED</option>
+                    <option value="GEN ED">GEN ED</option>
+                </select>
+            </div>
+            <div class="actions_menu">
+                <button class="wmsu_btn menu_ac fas fa-caret-down"></button>
+            </div>
+        </div>
+        <div style="overflow-y: auto; height: 85vh;">
+            <table>
+                <thead>
+                    <th>Student ID</th>
+                    <th>Course</th>
+                    <th>Year</th>
+                    <th>Enabled</th>
+                </thead>
+                <tbody class="st_ids"></tbody>
+            </table>
+        </div>
+    </div>
+    <!-- div popup -->
+    <div class="valid_id  wmsu_box animate__animated">
+        <div class="st_id_actions">
+            <div class="click">
+                <i class="cl_val fa far fa-times-circle"></i>
+            </div>
+            <p class="ac_t">Student Settings</p>
+            <div class="wmsu_inpt_main">
+                <button class="wmsu_btn mb-5 st" type="button" data-open="update">Update Student ID</button>
+                <button class="wmsu_btn mb-5 st" type="button" data-open="delete">Delete Student ID</button>
+                <button class="wmsu_btn st" type="button" data-open="add">Add Student ID</button>
+            </div>
+        </div>
+        <!-- update -->
+        <form class="update" style="display: none;">
+            <button type="reset" class="reset" style="display: none;"></button>
+            <div>
+                <i class="cl_val fa far fa-times-circle"></i>
+                <i class="back fas fa-arrow-circle-left" data-open="update"></i>
+            </div>
+            <p class="ac_t" style="text-align: center; font-size: 20px;">Update Student ID</p>
+            <div class="wmsu_inpt_main">
+                <input type="text" name="id" class="wmsu_inpt wmsu_inpt_focus" placeholder="Student ID">
+            </div>
+            <table width="100%">
+                <tr>
+                    <td>
+                        <input list="crs" name="course" class="wmsu_inpt wmsu_inpt_focus" placeholder="Course" required>
+                        <datalist id="crs">
+                            <option value="BSCS">
+                            <option value="BSED">
+                            <option value="GEN ED">
+                        </datalist>
+                    </td>
+                    <td>
+                        <input list="yr" name="yr" class="wmsu_inpt wmsu_inpt_focus" placeholder="Year" required>
+                        <datalist id="yr">
+                            <option value="1">
+                            <option value="2">
+                            <option value="3">
+                            <option value="4">
+                        </datalist>
+                    </td>
+                </tr>
+            </table>
+            <div class="wmsu_inpt_main">
+                <button type="submit" class="wmsu_btn">Update</button>
+            </div>
+        </form>
+        <!-- add -->
+        <form class="add_id add" style="display: none;">
+            <button type="reset" class="reset" style="display: none;"></button>
+            <div class="add_click">
+                <i class="cl_val fa far fa-times-circle"></i>
+                <i class="back fas fa-arrow-circle-left" data-open="add"></i>
+            </div>
+            <p class="ac_t" style="text-align: center; font-size: 20px;">Add Student ID</p>
+            <div class="wmsu_inpt_main">
+                <input type="text" name="id" class="wmsu_inpt wmsu_inpt_focus" placeholder="Student ID">
+            </div>
+            <table width="100%">
+                <tr>
+                    <td>
+                        <input list="crs" name="course" class="wmsu_inpt wmsu_inpt_focus" placeholder="Course" required>
+                        <datalist id="crs">
+                            <option value="BSCS">
+                            <option value="BEED">
+                            <option value="GEN ED">
+                        </datalist>
+                    </td>
+                    <td>
+                        <input list="yr" name="yr" class="wmsu_inpt wmsu_inpt_focus" placeholder="Year" required>
+                        <datalist id="yr">
+                            <option value="1">
+                            <option value="2">
+                            <option value="3">
+                            <option value="4">
+                        </datalist>
+                    </td>
+                </tr>
+            </table>
+            <div class="wmsu_inpt_main">
+                <button type="submit" class="wmsu_btn">Add</button>
+            </div>
+        </form>
+        <!-- delete -->
+        <form class="delete" style="display: none;">
+            <div>
+                <i class="cl_val fa far fa-times-circle"></i>
+                <i class="back fas fa-arrow-circle-left" data-open="delete"></i>
+            </div>
+            <p class="ac_t" style="text-align: center; font-size: 20px;">Delete Student ID</p>
+            <div class="wmsu_inpt_main">
+                <input type="text" name="id" class="wmsu_inpt wmsu_inpt_focus" placeholder="Student ID">
+            </div>
+            <div class="wmsu_inpt_main">
+                <button type="submit" class="wmsu_btn">Delete</button>
+            </div>
+            <button type="reset" class="reset" style="display: none;"></button>
+        </form>
+    </div>
+</div>
+<script src="/control/js/student-id.js"></script>

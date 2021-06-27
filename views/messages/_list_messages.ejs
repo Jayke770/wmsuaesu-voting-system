@@ -1,0 +1,41 @@
+<% if(msg.length != 0) { 
+    for(var i = 0; i < msg.length; i++) { %>
+        <a class="chat_user" style="text-decoration: none;" data-id="<%-msg[i].id %>" href="?chat=<%-msg[i].id %>">
+            <div class="msg">
+                <table width="100%">
+                    <tr>
+                        <td width="10px">
+                            <img class="msg_img" src="/assets/logo.png" alt="msg_img">
+                        </td>
+                        <td>
+                            <div class="data_msg_data">
+                                <p class="data_msg_name">
+                                    <%= msg[i].fname + ' ' + msg[i].mname + ' ' + msg[i].lname %>
+                                </p>
+                                <div class="data_data">
+                                    <p class="data_last_msg">
+                                       <% if(msg[i].chats.length == 0) { %> 
+                                            <%- 'Chat with ' + msg[i].fname + ' now!' %>
+                                        <% } else { %>
+                                            <% var chats = msg[i].chats.pop() %>
+                                            <% if(chats.id.toString() == userid.toString()) { %> 
+                                                <%= 'You : ' + chats.msg.toString() %>
+                                            <% } 
+                                             else { %> 
+                                                <%= msg[i].fname + ' : ' + chats.msg.toString() %>
+                                            <% } %>
+                                        <% } %>
+                                    </p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="-badge"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </a>
+        
+    <% } %>
+<% } %>

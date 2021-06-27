@@ -1,0 +1,108 @@
+* {
+	box-sizing: border-box;
+}
+:root{
+	--white: rgb(206, 202, 202); 
+	--black: rgb(33, 33, 33);
+	--s_white: rgb(249, 249, 249);
+	--active_btn: rgb(41, 130, 41);
+	--active_black: rgb(41, 40, 40);
+	--blue: rgb(0, 41, 79);
+	--l_blue: rgb(3, 169, 244);
+	--red: rgb(210, 48, 48);
+	--blue_b: rgb(40, 45, 76); 
+	--radius: 10px;
+	--l_dark: rgb(29, 29, 29); 
+	--l_dark2: rgb(25, 25, 25);
+	--dark: rgb(18, 18, 18);
+	--l_txt_clr: rgb(242, 242, 242); 
+	--txt_clr: rgb(238, 238, 238);
+	--unset: unset;
+	--dark_border: 1px solid rgb(69, 69, 70);
+	--txt_dark: rgb(191, 187, 187);
+}
+html{
+	line-height: normal !important;
+}
+body {
+	margin: 0; 
+	padding: 0; 
+	background-color: var(--dark);
+	
+}
+/*popup styles*/
+.popup{
+	background-color: var(--l_dark);
+}
+/*end*/
+.top .logo .wmsu_logo{
+	height: 70px; 
+	width: 70px; 
+}
+/*main*/
+.main .rightt .login{
+	padding: 15px;
+	border-radius: 15px;
+	--animation-duration: 100ms;
+}
+.main .rightt .login .login_ic{
+	width: 100%;
+	text-align: center;
+	padding: 25px 10px;
+}
+.main .rightt .login .login_ic i{
+	font-size: 9rem;
+}
+.main .rightt .form_login{
+	padding: 5px;
+}
+.main .rightt .form_login .auth_login .wmsu_inpt_main{
+	margin-bottom: 15px;
+}
+.main .rightt .form_login .auth_login .wmsu_inpt_main .wmsu_inpt{
+	border-radius: 10px;
+	display: flex;
+}
+.main .rightt .form_login .auth_login .wmsu_inpt_main .wmsu_inpt .inpt_ic{
+	margin-top: 2px;
+}
+.main .rightt .form_login .auth_login .wmsu_inpt_main .wmsu_inpt input{
+	outline: none; 
+	border: none;
+	font-size: 12.5pt; 
+	font-weight: 550; 
+	background: unset;
+ 	padding-left: 10px;
+	width: 100%;
+}
+.main .rightt .form_login .auth_login .wmsu_inpt_main:nth-child(3) .wmsu_btn:active{
+	transform: translateY(3px);
+}
+.main .rightt .form_login .auth_login .wmsu_inpt_main:nth-child(5) {
+	margin-top: 21px;
+}
+.main .rightt .form_login .auth_login .wmsu_inpt_main .wmsu_inpt .ic{
+	margin-top: 2px; 
+	margin-left: 5px;
+	cursor: pointer;
+}
+.main .rightt .form_login .auth_login .wmsu_inpt_main:nth-child(5) .forgot{
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	text-decoration: none; 
+	color: var(--red);
+	font-weight: 700;
+	font-size: 15px;
+}
+.main .rightt .form_login .auth_login .reg .register{
+	background-color: var(--unset);
+	color: #52bf34;
+	transition: 0.17s ease;
+}
+.button_next{
+	transition: 1s ease;
+}
+.button_next:hover{
+	padding-left: 3rem;
+}

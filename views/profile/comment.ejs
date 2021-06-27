@@ -1,0 +1,18 @@
+<% for( let index=0; index < comments.length; index++ ) { %>
+    <div class="data_cmt">
+        <div class="data_c">
+            <img class="cmt_img" src="/assets/logo.png">
+            <div class="msg_cmt">
+                <span class="name">
+                    <%= comments[index].name %>
+                </span>
+                <div class="cmt_msg">
+                    <%= comments[index].comment%>
+                </div>
+            </div>
+        </div>
+        <div class="o">
+            <span class="time" date-time="<%= comments[index].time %>"></span>
+        </div>
+    </div>
+<% } %>

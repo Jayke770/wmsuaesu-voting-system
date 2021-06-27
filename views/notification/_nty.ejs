@@ -1,0 +1,75 @@
+<% var data_nty = nty.sort().reverse()
+ for( var i=0; i < data_nty.length; i++) { 
+    var link, cls, bgn_cls
+    //check if notification is read 
+    if(nty[i].read == 1){
+        bgn_cls = 'read'
+    }
+    //if notification is for election
+    if(nty[i].election){ 
+        cls ='view_candidate'
+        link = '/home/profile/?id='+nty[i].userid+'&notification_id='+nty[i].nty_id+'&read='+nty[i].read
+    }
+    //if notification type is comment 
+    if(nty[i].type == 'comment'){
+        cls ='view_cmt'
+        link = '?view_comment='+nty[i].nty_id+'&read='+nty[i].read
+    }
+    //if notofication type is user left the election 
+    if(nty[i].type == "e-left" ) { 
+        link = '/home/profile/?id='+nty[i].userid+'&notification_id='+nty[i].nty_id+'&read='+nty[i].read
+    }%>
+    <a class="<%-cls%>" style="text-decoration: none;" href="<%-link%>">
+        <div class="nty_data <%-bgn_cls%>">
+            <table>
+                <tr>
+                    <td width="10px" class="ic">
+                        <% if (nty[i].type == "comment" ) { %>
+                            <i class="n_ic n_cmt fa fa-comment-dots"></i>
+                        <% } 
+
+                        else if(nty[i].type == "heart" ){ %>
+                            <i class="n_ic n_hrt fa fa-heart"></i>
+                        <% }
+
+                        else if(nty[i].type == "plus-circle" ){ %>
+                            <i class="n_ic n_plus-circle fa fa-plus-circle"></i>
+                        <% } 
+
+                        else if(nty[i].type == "e-left" ){ %>
+                            <i class="n_ic n_sign-out-alt fa fa-sign-out-alt"></i>
+                        <% } 
+
+                        else { %>
+                            <i class="n_ic n_info fa fa-info"></i>
+                        <% } %>
+                    </td>
+                    <td class="nty_cnt">
+                        <% if (nty[i].type == "comment" ) { %>
+                            <%- nty[i].name + ' Commented on your profile' %>
+                        <% } 
+
+                        else if(nty[i].type == "heart" ){ %>
+                            <%- nty[i].name + ' Heart your profile' %>
+                        <% }
+
+                        else if(nty[i].type == "plus-circle" ){ %>
+                            <%- nty[i].name + ', ' + nty[i].data %>
+                        <% } 
+                        
+                        else if(nty[i].type == "e-left" ){ %>
+                            <%- nty[i].name + ', ' + nty[i].data %>
+                        <% } 
+
+                        else{ %>
+                            <%- nty[i].data + ', ' +nty[i].name%>
+                        <% } %>
+                    </td>
+                    <td>
+                        <p class="time" date-time="<%- nty[i].time%>"></p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </a>
+<% } %>

@@ -1,0 +1,197 @@
+/*custom styles*/
+:root {
+    --white: rgb(206, 202, 202);
+    --black: rgb(32, 32, 32);
+    --s_white: rgb(249, 249, 249);
+    --active_btn: rgb(41, 130, 41);
+    --active-btn-2:rgb(27, 101, 30);
+    --active_black: rgb(41, 40, 40);
+    --blue: rgb(0, 41, 79);
+    --l_blue: rgb(3, 169, 244);
+    --red: rgb(210, 48, 48);
+    --dkred: rgba(162, 33, 33, 0.678);
+    --blue_b: rgb(40, 45, 76);
+    --radius: 10px;
+    --l_dark: rgb(29, 29, 29);
+    --l_dark2: rgb(25, 25, 25);
+    --dark: rgb(18, 18, 18);
+    --l_txt_clr: rgb(242, 242, 242);
+    --txt_clr: rgb(238, 238, 238);
+    --unset: unset;
+    --dark_border: 1px solid rgb(69, 69, 70);
+    --light_border: 1px solid rgb(0, 120, 215);
+    --active_border: 1px solid var(--active_btn);
+    --txt_dark: rgb(191, 187, 187);
+    --purple: rgba(104, 57, 187, 0.58);
+}
+.red{
+    color: var(--red);
+}
+.right{
+    float: right;
+}
+.pointer{
+    cursor: pointer;
+}
+.wmsu_inpt_main {
+    width: 100%;
+    margin-bottom: 4px;
+}
+.normal{
+    font-weight: 500 !important;
+}
+.d_err {
+    border: 1px solid rgba(210, 48, 48, 0.748) !important;
+}
+.back {
+    cursor: pointer;
+    color: var(--txt_clr);
+    font-size: 18px;
+    padding: 10px;
+    padding-left: 0;
+}
+.wmsu_inpt {
+    width: 100%;
+    border: 1px solid #dddfe2;
+    border-radius: 5px;
+    font-size: 13pt;
+    padding: 10px;
+    font-weight: 700;
+    outline: none;
+    resize: none;
+    margin-bottom: 5px;
+    transition: 1s ease;
+}
+
+.wmsu_inpt_focus:focus {
+    border-color: rgba(120, 193, 233, 0.8);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(120, 193, 233, 0.8);
+    outline: 0 none;
+}
+.b-none{
+    border: none;
+}
+.wmsu_box {
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+.wmsu_box_dark{
+    background-color: #242425;
+}
+.wmsu_box_dark-2{
+    background-color: #242425;
+}
+.badge{
+    padding: 10px;
+    background-color: var(--active_btn);
+    float: right;
+    border-radius: 50%;
+    margin-right: 5px;
+    transition: 1s ease;
+}
+.badge_offline{
+    background-color: #0c0c0c !important;
+}
+.badge_wait{
+    animation: wait 1s linear infinite;
+}
+@keyframes wait{
+    from{
+        background-color: green;
+    }
+    to{
+        background-color: white;
+    }
+}
+.blur{
+    background-color: rgba(0, 0, 0, 0.796);
+    transition: 1s ease;
+}
+.wmsu_btn {
+    padding: 9px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #f2f2f2;
+    outline: none;
+    border: none;
+    background-color: rgb(0 120 215 / 66%);
+    font-size: 13pt;
+    border-radius: 5px;
+    width: 100%;
+    font-weight: normal;
+}
+
+.selected {
+    border: var(--brdr);
+}
+
+.disabled {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.error {
+    background: var(--red) !important;
+}
+
+.hidden {
+    display: none;
+}
+
+.err {
+    color: #721c24;
+    padding: 8px 10px;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 12.5pt;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    margin-bottom: 10px;
+    display: none;
+}
+
+.active {
+    color: #eae9e6;
+}
+
+.fs-25px {
+    font-size: 25px;
+}
+
+.focus {
+    border-color: rgba(120, 193, 233, 0.8);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(120, 193, 233, 0.8);
+    outline: 0 none;
+}
+
+.err_focus {
+    border-color: rgba(210, 48, 48, 0.748);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(210, 48, 48, 0.748);
+    outline: 0 none;
+}
+
+.wmsu_err {
+    background-color: rgba(210, 48, 48, 0.748) !important;
+}
+
+.wmsu_active {
+    background-color: #298229;
+}
+
+.shake_right {
+    animation: shake 0.20s linear infinite;
+}
+
+@keyframes shake {
+    from {
+        margin-right: 10px;
+    }
+    to {
+        margin-right: 0;
+    }
+}
+
+.mb-5 {
+    margin-bottom: 5px;
+}

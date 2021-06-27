@@ -1,0 +1,29 @@
+<% if(users.length == 0 ) { %> 
+    <div class="text-xl font-medium text-gray-200">Nothing to fetch</div>
+<% } else { 
+    for(var i = 0; i < users.length; i++){ %>
+        <div class="wmsu_box dash_u_card animate__animated animate__zoomIn <%= users[i]._id %>">
+            <div class="main_dash_u">
+                <table width="100%">
+                    <tr>
+                        <td width="10px"><img class="user_img" alt="user_image" src="/assets/logo.png"></td>
+                        <td>
+                            <span class="u_name">
+                                <%= users[i].firstname + ' ' + users[i].middlename + ' ' + users[i].lastname  %>
+                            </span>
+                        </td>
+                        <td>
+                            <% if(users[i].socket_id == "Offline") { %> 
+                                <div class="badge badge_offline"></div>
+                            <% } else if(users[i].socket_id != "Offline") { %>
+                                <div class="badge"></div>
+                            <% } else { %>
+                                <div class="badge badge_wait"></div>
+                            <% } %>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    <% } %>
+<% } %>

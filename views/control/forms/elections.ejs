@@ -1,0 +1,22 @@
+<% if(elections.length !=0){ 
+    for(var i=0; i < elections.length; i++){ %>
+        <div class="wmsu_box dash_card animate__animated animate__zoomIn">
+            <div class="card">
+                <img class="icon_e_name" alt="election_ic">
+                <div class="other">
+                    <p class="other_e_name pt-2"><%= elections[i].election_title %></p>
+                    <p class="other_t_voters ex">Total of voters: <span class="cnt_e cnt_total_v"><%= elections[i].voters.length %></span></p>
+                    <p class="other_e_active_v ex">Active voters: <span class="cnt_e cnt_total_ac">0</span></p>
+                    <p class="other_e_status ex">Election Status: <span class="cnt_e e_stts"><%= elections[i].status %></span></p>
+                    <p class="other_e_create ex ">Election Created : <span class="cnt_e e_created created" datetime="<%= elections[i].created %>">1</span></p>
+                </div>
+            </div>
+            <div class="card_e_actions">
+                <a class="wmsu_btn e_settings">More Info</a>
+            </div>
+        </div>
+    <% } %>
+<% } %>
+<div class="e_menu blur hidden">
+    <%- include('election_menu') %> 
+</div>
