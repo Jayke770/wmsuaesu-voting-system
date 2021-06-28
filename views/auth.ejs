@@ -29,8 +29,7 @@
         }
     </script>
 </head>
-
-<body class="bg-gray-300 dark:bg-gray-900">
+<body class="bg-gray-300 dark:bg-[#212121]">
     <div class="loading flex justify-center w-screen h-screen items-center">
         <%- include('lazy/loading') %>
     </div>
@@ -51,10 +50,10 @@
                             <!-- input -->
                             <input type="checkbox" id="toggleB" class="dark_mode sr-only">
                             <!-- line -->
-                            <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+                            <div class="block dark:bg-[#313131] bg-gray-100 ring-1 dark:ring-[#892CDC] w-14 h-8 rounded-full"></div>
                             <!-- dot -->
                             <div class="dot absolute left-1 top-1 w-6 h-6 rounded-full transition">
-                                <i class="fa fa-moon pt-1 pl-1 text-gray-100 dark:text-gray-100"></i>
+                                <i class="fa fa-moon pt-1 pl-1 text-[#313131] dark:text-gray-100"></i>
                             </div>
                         </div>
                     </label>
@@ -64,7 +63,7 @@
         <div class="main w-full p-3">
             <div class="rightt mt-12 grid place-items-center">
                 <!---login start-->
-                <div class="login wmsu_box animate__animated animate__bounceIn w-[350px] bg-gray-100 border-none dark:bg-gray-800 shadow-xl md:w-full">
+                <div class="login wmsu_box animate__animated animate__bounceIn w-[350px] bg-gray-100 border-none dark:bg-[#313131] shadow-xl md:w-full">
                     <div class="login_ic">
                         <i class="fa fa-user-circle text-gray-800 dark:text-gray-200"></i>
                     </div>
@@ -72,24 +71,15 @@
                         <form class="auth_login sm:p-3" action="/login" method="POST">
                             <div class="wmsu_inpt_main">
                                 <label for="auth_usr"></label>
-                                <div class="wmsu_inpt dark:border-gray-500">
-                                    <i class="inpt_ic fa fa-user dark:text-gray-200"></i>
-                                    <input type="text" name="auth_usr" class="auth_usr dark:text-gray-100"
-                                        placeholder="Username" required>
-                                </div>
+                                <input type="text" name="auth_usr" class="auth_usr w-full p-3  bg-gray-200 rounded-lg appearance-none leading-tight border-0 focus:outline-none focus:ring-2 focus:ring-indigo-600/50 dark:bg-transparent dark:border dark:border-gray-500 dark:focus:border-0 transition-colors dark:text-gray-100" autocomplete="off" placeholder="Username" required>
                             </div>
                             <div class="wmsu_inpt_main">
                                 <label for="auth_usr"></label>
-                                <div class="wmsu_inpt dark:border-gray-500">
-                                    <i class="inpt_ic fa fa-key dark:text-gray-200"></i>
-                                    <input type="password" name="auth_pass" class="auth_pass dark:text-gray-100"
-                                        placeholder="Password" required>
-                                    <i class="ic lgn_show_pass fa dark:text-gray-100"></i>
-                                </div>
+                                <input type="password" name="auth_pass" class="auth_pass w-full p-3  bg-gray-200 rounded-lg appearance-none leading-tight border-0 focus:outline-none focus:ring-2 focus:ring-indigo-600/50 dark:bg-transparent dark:border dark:border-gray-500 dark:focus:border-0 transition-colors dark:text-gray-100" autocomplete="off" placeholder="Password" required>
                             </div>
                             <div class="wmsu_inpt_main">
                                 <button
-                                    class="transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                    class="transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500"
                                     type="submit">Login</button>
                             </div>
                             <div class="wmsu_inpt_main reg text-center mt-8">
@@ -104,7 +94,7 @@
                 <!--login end-->
 
                 <!--register start-->
-                <div class="box_reg w-[350px] sm:w-full shadow-xl bg-gray-50 dark:bg-gray-800 p-3 rounded-xl hidden">
+                <div class="box_reg w-[350px] sm:w-full shadow-xl bg-gray-50 dark:bg-[#313131] p-3 rounded-xl hidden">
                     <div class="verify">
                         <div class="flex justify-end">
                             <i class="close_reg_box fa fa-times-circle cursor-pointer text-red-600 float-right text-xl"></i>

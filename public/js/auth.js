@@ -15,13 +15,6 @@ $(document).ready(function () {
             localStorage.removeItem('theme')
         }
     })
-    $(".enable").click( () => {
-        Swal.fire({
-            icon: 'info',
-            title: 'Oops...',
-            text: 'Enabling Dark Mode is not yet advisable',
-        })
-    })
     /*left*/
     // const tw = new Typewriter(".txt1", {
     //     loop: false,
