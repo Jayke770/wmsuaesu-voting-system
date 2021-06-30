@@ -75,23 +75,25 @@ $(document).ready(function () {
     });
     //effects
     $(".auth_pass").on("keyup keydown", function () {
-        if ($(this).val() != "") {
-            $(this).next().addClass("fa-eye")
+        if ($(this).val() !== "") {
+             $(".show_pass").removeClass("hidden")
         }
         else {
-            $(this).next().removeClass("fa-eye")
+            $(".show_pass").addClass("hidden")
         }
     })
     //show pass
-    $(".lgn_show_pass").click(function () {
-        if ($(this).hasClass("visible")) {
-            $(this).removeClass("visible fa-eye-slash");
-            $(this).addClass("fa-eye")
-            $(this).prev().attr("type", "password");
-        } else {
-            $(this).removeClass("fa-eye");
-            $(this).addClass("visible fa-eye-slash");
-            $(this).prev().attr("type", "text");
+    $(".show_pass").click(function () {
+        var input = $('input[show-pass=true]')
+        if(input.attr("type") == "password"){
+            input.attr("type", "text")
+            $(".show_pass").removeClass("fa-eye")
+            $(".show_pass").addClass("fa-eye-slash")
+        }
+        else{
+            input.attr("type", "password")
+            $(".show_pass").addClass("fa-eye")
+            $(".show_pass").removeClass("fa-eye-slash")
         }
     })
     $(".auth_usr, .auth_pass").focusin(function () {

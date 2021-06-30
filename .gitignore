@@ -1,12 +1,3 @@
-public/css/fontawesome/*
-public/sweetalert/*
-public/css/custom/animate.css
-public/js/jquery/*
-public/js/timeago.js/*
-public/js/typewriterjs/*
-public/js/alertify/*
-public/js/howler/*
-public/views/local_cdn/*
 node_modules/*
 tailwind/*
 log/logs.log
@@ -17,3 +8,4 @@ face-api/*
 face.js
 yarn-error.log
 public/package/*
+views/local_cdn/*
