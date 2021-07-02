@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="font-sans antialiased">
+<html lang="en" class="font-sans antialiased dark">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#121212">
+    <meta name="theme-color" content="#090c10">
     <title>OVS Dashboard</title>
     <meta name="description" content="New and upgraded version of voting system">
     <meta property="og:title" content="Online Voting System">
@@ -17,22 +17,21 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:url" content="https://voting-system-jayke.herokuapp.com/">
     <%- include('cdn/_index.ejs') %>
-    <!-- <%- include('local_cdn/_index.ejs') %> -->
     <!--  -->
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
     <link rel="stylesheet" type="text/css" href="/css/index.css">
     <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900">
+<body class="bg-gray-50 dark:bg-[#090c10]">
     <div class="conn">Connecting to server <span class="dot"></span></div>
     <!-- custom popup start -->
     <div class="my_popup"></div>
     <!-- end of custom popup -->
     <div class="main">
-        <div class="main_nav bg-red-800 p-[10px] w-full">
-            <i class="wmsu_btn main_btn_nav fa fa-bars open_nav"></i>
-            <a class="wmsu_btn main_btn_nav fa fa-sign-out-alt right" href="../logout"></a>
+        <div class="main_nav bg-red-800 dark:bg-[#161b22] w-full p-[10px]">
+            <i class="font-black p-[10px] pt-[8px] mt-[-2px] text-gray-50 cursor-pointer text-xl fa fa-bars open_nav"></i>
+            <a class="rounded text-gray-50 main_btn_nav bg-[#d23030] dark:bg-red-900/50 dark:hover:bg-red-600/80 transition-all fa fa-sign-out-alt right " href="../logout"></a>
             <div class="nav_actions right">
                 <div class="nty_nav">
                     <i class="nty_nav_btn text-xl text-gray-50 p-2 mr-2 cursor-pointer fa fa-bell"><span class="nav_nty_cnt"></span></i>
@@ -44,57 +43,58 @@
                 </div>
             </div>
         </div>
-        <div class="nav w-[350px] h-screen fixed bg-gray-300 transition-all shadow-2xl">
-            <i class="cls_nav fa fa-times-circle text-red-700 text-2xl pr-2 float-right cursor-pointer mt-3 mr-3"></i>
+        <div class="nav hidden animate__animated animate__slideInLeft w-[350px] xsm:w-[98%] h-screen fixed bg-gray-300 dark:bg-[#0d1117] transition-all shadow-2xl border-b-8 border-red-800 dark:border-indigo-900">
+            <i class="cls_nav fa fa-times-circle text-red-700 dark:text-gray-200 text-2xl pr-2 float-right cursor-pointer mt-3 mr-3"></i>
             <div class="logo_img p-3">
                 <img class="mt-6 mb-5 w-[100px] h-[100px] object-cover" alt="logo" src="/assets/logo.png">
             </div>
-            <div class="nav_btn p-[10px]">
-                <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav" href="../../">Home</a>
-                <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav" href="../home/profile/?id=<%- data._id %>">Profile</a>
+            <div class="nav_btn p-[10px] flex-col flex">
+                <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav" href="../../">Home <i class="fas fa-home float-right mt-[2px]"></i></a>
+                <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav" href="../home/profile/?id=<%- data._id %>">Profile <i class="fas fa-user float-right mt-[2px]"></i></a>
                 <% if (!join_election) { %>
-                    <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav join_elec">Join Election</a>
+                    <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav join_elec">Join Election <i class="fas fa-plus float-right mt-[2px]"></i></a>
                 <% } %>
                 <% if (join_election) { %>
-                    <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav e_btn" data="file_candidacy" href="#file_candidacy">File for Candidacy</a>
-                    <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav e_btn" data="candidates" href="#candidates">Candidates</a>
-                    <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav leave_elec">Leave Election</a>
+                    <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav e_btn" data="file_candidacy" href="#file_candidacy">File for Candidacy</a>
+                    <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav e_btn" data="candidates" href="#candidates">Candidates</a>
+                    <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav leave_elec">Leave Election</a>
                 <% } %>
-                <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav" href="#">Settings</a>
+                <a class="theme dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav">Change Theme <i class="fas fa-moon float-right mt-[2px]"></i></a>
+                <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav" href="#">Settings <i class="fas fa-cog float-right mt-[2px]"></i></a>
             </div>
         </div>
         <!--popups-->
-        <div class="nty_main xsm:w-11/12 border-b-8 border-red-800 fixed bg-gray-300 ring-red-600 shadow-2xl h-screen w-96 right-0 hidden animate__animated animate__slideInRight transition-all">
+        <div class="nty_main hidden xsm:w-[98%] border-b-8 border-red-800 dark:border-indigo-900 fixed bg-gray-300 dark:bg-[#0d1117] shadow-2xl h-screen w-[390px] right-0 animate__animated animate__slideInRight transition-all">
             <div class="nty_t container">
-                <i class="close_nty_ fa fa-arrow-circle-right float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3"></i>
-                <p class="t_nty text-3xl p-4 m-0 text-red-800 font-bold">Notifications</p>
+                <i class="close_nty_ fa fa-arrow-circle-right float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]"></i>
+                <p class="t_nty text-3xl p-4 m-0 text-red-800 font-bold dark:text-[#f2f2f2]">Notifications</p>
             </div>
             <div class="nty flex flex-col p-4 overflow-auto h[80%]">
-                <div class="container mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl border-none transition-all cursor-pointer">
+                <div class="container mb-3 shadow-md bg-gray-200 dark:bg-[#161b22] dark:border-gray-800 dark:hover:bg-[#1e252e] dark:border rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl transition-all cursor-pointer">
                     <a class="" href="#">
                         <div class="flex container flex-row p-4">
                             <i class="text-3xl text-green-700 fa fa-comment-dots"></i>
-                            <div class="break-words px-3 text-sm">
+                            <div class="break-words px-3 text-sm font-medium dark:text-[#c2c2c2]">
                                 Jake Peregrino Velasco commented on your profile
                             </div>
-                            <div class="time text-sm p-2">19hrs</div>
+                            <div class="time text-sm p-2 dark:text-[#c2c2c2]">19hrs</div>
                         </div>
                     </a>
                 </div>
                 <!-- <%- include('notification/_nty', {nty: data.notifications}) %> -->
             </div>
         </div>
-        <div class="msgs hidden xsm:w-11/12 border-b-8 border-red-800 fixed bg-gray-300 ring-red-600 shadow-2xl h-screen w-96 right-0 animate__animated animate__slideInRight transition-all">
+        <div class="msgs hidden xsm:w-[98%] border-b-8 border-red-800 dark:border-indigo-900 fixed bg-gray-300 dark:bg-[#0d1117] shadow-2xl h-screen w-[390px] right-0 animate__animated animate__slideInRight transition-all">
             <div class="t_msg">
                 <div class="m">
                     <div class="container">
                         <div class="float-right p-3 pt-5 pb-1"> 
-                            <i class="close_msg_ fa fa-arrow-circle-right text-red-700 text-2xl cursor-pointer"></i>
+                            <i class="close_msg_ fa fa-arrow-circle-right text-red-700 text-2xl cursor-pointer dark:text-[#cccbcb]"></i>
                         </div>
-                        <p class="t_m text-3xl p-4 m-0 text-red-800 font-bold">Messages</p>
+                        <p class="t_m text-3xl p-4 m-0 text-red-800 font-bold dark:text-[#f2f2f2]">Messages</p>
                     </div>
                     <div class="p-2 w-full px-4">
-                        <input type="text" autocomplete="off" placeholder="Search. . ." class="search_user placeholder-gray-600 shadow-md bg-gray-200 border-2 transition border-gray-200 rounded-lg w-full p-3 text-gray-700 leading-tight focus:outline-none focus:bg-gray-100 focus:border-blue-500" name="search_use">
+                        <input type="text" autocomplete="off" placeholder="Search. . ." class="search_user dark:bg-transparent placeholder-gray-600 shadow-md bg-gray-200 border-2 transition-all dark:border-gray-700 dark:text-gray-200 border-gray-200 rounded-lg w-full p-3 text-gray-700 leading-tight focus:outline-none focus:bg-gray-100 focus:border-blue-500 dark:focus:border-blue-500" name="search_use">
                     </div>
                 </div>
             </div>
@@ -102,23 +102,23 @@
                 <div class="user_msg_search p-4 w-full text-center hidden">
                     <div class="msg msg_s_loading text-gray-900" text="Searching . . ."></div>
                 </div>
-                <div class="w-full hidden flex-col p-4 ">
-                    <a class="chat_user mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl border-none transition-all cursor-pointer">
+                <div class="w-full flex-col p-4 flex">
+                    <a class="chat_user dark:bg-[#161b22] dark:border-gray-800 dark:hover:bg-[#1e252e] dark:border mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl transition-all cursor-pointer">
                         <div class="container flex flex-row p-2">
                             <img class="img_user w-14 h-14 object-cover rounded-full" alt="img_user" src="/assets/static.png">
-                            <p class="user_nm container break-words p-2 text-gray-900 px-3 text-lg text-left mt-1">Jake Peregrino Velasco</p>
-                            <div class="bg-green-600 h-6 w-8 rounded-full mt-4 mr-2"></div>
+                            <p class="user_nm container break-words p-2 text-gray-900 px-3 text-lg text-left mt-1 dark:text-gray-300">Jake Peregrino Velasco</p>
+                            <div class="bg-green-600 h-[22px] w-8 rounded-full mt-4 mr-2"></div>
                         </div>
                     </a>
                 </div>
-                <div class="msg_main flex flex-col p-4">
-                    <a class="chat_user mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl border-none transition-all cursor-pointer">
+                <div class="msg_main hidden flex-col p-4">
+                    <a class="chat_user dark:bg-[#161b22] dark:border-gray-800 dark:hover:bg-[#1e252e] dark:border mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl transition-all cursor-pointer">
                         <div class="container flex flex-row p-2">
                             <img class="img_user w-14 h-14 object-cover rounded-full" alt="img_user" src="/assets/static.png">
                             <div class="container p-2 pt-1">
-                                <span class="text-base ml-1 text-gray-900">Jake Peregrino Velasco</span>
+                                <span class="text-base ml-1 text-gray-900 dark:text-gray-300">Jake Peregrino Velasco</span>
                                 <br>
-                                <span class="text-sm ml-2 mt-5 text-gray-700">Chat with Election Bot</span>
+                                <span class="text-sm ml-2 mt-5 text-gray-700 dark:text-gray-400/90">Chat with Election Bot</span>
                             </div>
                         </div>
                     </a>

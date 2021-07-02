@@ -188,37 +188,64 @@ $(document).ready(() => {
 
     //open nav
     $(".open_nav").click(() => {
-        
+        var nty = $(".nty_main").hasClass("hidden"), msg = $(".msgs").hasClass("hidden")
+        if (nty !== true) {
+            $(".close_nty_").click()
+            $(".nav").removeClass("hidden")
+        }
+        if (msg !== true) {
+            $(".close_msg_").click()
+            $(".nav").removeClass("hidden")
+        }
+        if (msg === true && nty === true) {
+            $(".nav").removeClass("hidden")
+        }
+        setTimeout(() => {
+            $(".nav").removeClass("animate__slideInLeft")
+        }, 250)
     })
     $(".cls_nav").click(() => {
-        $(".nav").addClass("animate__animated animate__slideOutLeft")
+        $(".nav").addClass("animate__slideOutLeft")
         setTimeout(() => {
-            $(".msgs, .nty_main, .msg_nav, .nty_nav").removeClass("hidden")
-            $(".nav").css("display", "none")
-            $(".nav").removeClass("animate__animated animate__slideOutLeft")
-        }, 450)
+            $(".nav").addClass("hidden animate__slideInLeft")
+            $(".nav").removeClass("animate__slideOutLeft")
+        }, 250)
     })
     //open notifications
     $(".nty_nav_btn").click(function () {
-        $(".nty_main").removeClass("hidden animate__slideOutRight")
+        var nav = $(".nav").hasClass("hidden")
+        if (nav) {
+            $(".nty_main").removeClass("hidden animate__slideOutRight")
+        }
+        else {
+            $(".cls_nav").click()
+            $(".nty_main").removeClass("hidden animate__slideOutRight")
+        }
     })
-    $(".close_nty_").click( () => {
+    $(".close_nty_").click(() => {
         $(".nty_main").addClass("animate__slideOutRight")
         $(".nty_main").removeClass("animate__slideInRight")
-        setTimeout( () => {
+        setTimeout(() => {
             $(".nty_main").addClass("animate__slideInRight hidden")
         }, 250)
     })
-    $(".close_msg_").click( () => {
+    $(".close_msg_").click(() => {
         $(".msgs").addClass("animate__slideOutRight")
         $(".msgs").removeClass("animate__slideInRight")
-        setTimeout( () => {
+        setTimeout(() => {
             $(".msgs").addClass("animate__slideInRight hidden")
         }, 250)
     })
     //open msg bitsin hahah
     $(".msg_ic").click(function () {
-        $(".msgs").removeClass("hidden animate__slideOutRight")
+        var nav = $(".nav").hasClass("hidden")
+        if (nav) {
+            $(".msgs").removeClass("hidden animate__slideOutRight")
+        }
+        else {
+            $(".cls_nav").click()
+            $(".msgs").removeClass("hidden animate__slideOutRight")
+        }
     })
     //if all e_btn is click
     $(".e_btn").click(function () {

@@ -81,7 +81,7 @@ body {
 }
 
 .nav {
-	--animate-duration: 400ms;
+	--animate-duration: 200ms;
 }
 
 .main .main_nav .right {
@@ -119,7 +119,6 @@ body {
 	width: auto;
 	font-weight: 900;
 	padding: 10px 20px;
-	background-color: var(--red);
 	margin-top: 2px;
 }
 .main .main_nav .profile_settings{
