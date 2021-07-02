@@ -20,7 +20,6 @@
     <!-- <%- include('local_cdn/_index.ejs') %> -->
     <!--  -->
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
-    <link rel="stylesheet" type="text/css" href="/others/sweetalert_mod.css">
     <link rel="stylesheet" type="text/css" href="/css/index.css">
     <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
 </head>
@@ -30,28 +29,9 @@
     <!-- custom popup start -->
     <div class="my_popup"></div>
     <!-- end of custom popup -->
-    <div class="nav">
-        <i class="cls_nav fa fa-times-circle"></i>
-        <div class="logo_img">
-            <img class="img" alt="logo" src="/assets/logo.png">
-        </div>
-        <div class="nav_btn">
-            <a class="wmsu_btn btn_nav" href="../../">Home</a>
-            <a class="wmsu_btn btn_nav" href="../home/profile/?id=<%- data._id %>">Profile</a>
-            <% if (!join_election) { %>
-                <a class="wmsu_btn btn_nav join_elec">Join Election</a>
-            <% } %>
-            <% if (join_election) { %>
-                <a class="wmsu_btn btn_nav e_btn" data="file_candidacy" href="#file_candidacy">File for Candidacy</a>
-                <a class="wmsu_btn btn_nav e_btn" data="candidates" href="#candidates">Candidates</a>
-                <a class="wmsu_btn btn_nav leave_elec">Leave Election</a>
-            <% } %>
-            <a class="wmsu_btn btn_nav" href="#">Settings</a>
-        </div>
-    </div>
     <div class="main">
-        <div class="main_nav bg-red-800">
-            <button class="wmsu_btn main_btn_nav fa fa-bars open_nav"></button>
+        <div class="main_nav bg-red-800 p-[10px] w-full">
+            <i class="wmsu_btn main_btn_nav fa fa-bars open_nav"></i>
             <a class="wmsu_btn main_btn_nav fa fa-sign-out-alt right" href="../logout"></a>
             <div class="nav_actions right">
                 <div class="nty_nav">
@@ -62,6 +42,25 @@
                 <div class="msg_nav">
                     <i class="msg_ic text-xl text-gray-50 p-2 mr-2 cursor-pointer fa fa-comment"><span class="nav_msg_cnt"></span></i>
                 </div>
+            </div>
+        </div>
+        <div class="nav w-[350px] h-screen fixed bg-gray-300 transition-all shadow-2xl">
+            <i class="cls_nav fa fa-times-circle text-red-700 text-2xl pr-2 float-right cursor-pointer mt-3 mr-3"></i>
+            <div class="logo_img p-3">
+                <img class="mt-6 mb-5 w-[100px] h-[100px] object-cover" alt="logo" src="/assets/logo.png">
+            </div>
+            <div class="nav_btn p-[10px]">
+                <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav" href="../../">Home</a>
+                <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav" href="../home/profile/?id=<%- data._id %>">Profile</a>
+                <% if (!join_election) { %>
+                    <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav join_elec">Join Election</a>
+                <% } %>
+                <% if (join_election) { %>
+                    <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav e_btn" data="file_candidacy" href="#file_candidacy">File for Candidacy</a>
+                    <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav e_btn" data="candidates" href="#candidates">Candidates</a>
+                    <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav leave_elec">Leave Election</a>
+                <% } %>
+                <a class="w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider border-2 shadow-sm transition-all inline-flex bg-gray-200 p-3 text-gray-900 font-medium  btn_nav" href="#">Settings</a>
             </div>
         </div>
         <!--popups-->

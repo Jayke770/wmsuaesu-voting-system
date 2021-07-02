@@ -1,5 +1,7 @@
 node_modules/*
 tailwind/*
+public/package/*
+views/local_cdn/*
 log/logs.log
 tailwind.config.js
 postcss.config.js
@@ -7,5 +9,3 @@ postcss.config.js
 face-api/* 
 face.js
 yarn-error.log
-public/package/*
-views/local_cdn/*
