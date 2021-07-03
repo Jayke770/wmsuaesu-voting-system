@@ -7,10 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#121212">
     <title><%- data[0].firstname + ' ' + data[0].middlename + ' ' + data[0].lastname %></title>
-    <%- include('cdn/_profile.ejs') %>
+    <!-- <%- include('cdn/_profile.ejs') %> -->
+    <%- include('local_cdn/_index.ejs') %>
     <!--  -->
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
-    <link rel="stylesheet" type="text/css" href="/others/sweetalert_mod.css">
     <link rel="stylesheet" type="text/css" href="/css/index.css">
     <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
 </head>
@@ -21,51 +21,17 @@
     <div class="my_popup"></div>
     <!-- end of custom popup -->
     <div class="main">
-        <div class="main_nav">
+        <div class="main_nav bg-red-800 dark:bg-[#161b22] w-full p-[10px]">
             <a class="wmsu_btn main_btn_nav fa fa-home" href="../../"></a>
             <a class="wmsu_btn main_btn_nav fa fa-caret-down right profile_settings"></a>
             <div class="nav_actions right">
-                <div class="nty_nav">
-                    <i class="nty_nav_btn fa fa-bell"><span class="nav_nty_cnt"></span></i>
-                    <div class="nty_main">
-                        <div class="nty_t">
-                            <p class="t_nty">Notifications</p>
-                        </div>
-                        <div class="nty">
-                            <% if(profile){ %>
-                                <%- include('notification/_nty', {nty: data[0].notifications}) %>
-                            <% } else { %>
-                                <%- include('notification/_nty', {nty: nty}) %>
-                            <% } %>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="nav_actions right">
-                <div class="msg_nav">
-                    <i class="msg_ic fa fa-comment"><span class="nav_msg_cnt"></span></i>
-                    <div class="msgs">
-                        <div class="t_msg">
-                            <div class="t_msg">
-                                <div class="m">
-                                    <p class="t_m">Messages<i class="ic_search_user fa fa-search"></i></p>
-                                    <div class="s">
-                                        <i class="ic_back fa fa-arrow-alt-circle-left"></i>
-                                        <input type="text" autocomplete="off" placeholder="Search. . ." class="search_user wmsu_inpt wmsu_inpt_focus" name="search_use">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="data_msg">
-                            <div class="user_msg_search">
-                                <div class="msg msg_s_loading" text="Searching . . ."></div>
-                            </div>
-                            <div class="msg_main">
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <i class="nty_nav_btn fa fa-bell"><span class="nav_nty_cnt"></span></i>
+                <i class="msg_ic fa fa-comment"><span class="nav_msg_cnt"></span></i>
+                <% if(profile){ %>
+                    <%- include('notification/_nty', {nty: data[0].notifications}) %>
+                <% } else { %>
+                    <%- include('notification/_nty', {nty: nty}) %>
+                <% } %>
             </div>
         </div>
     </div>

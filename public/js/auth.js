@@ -1,16 +1,11 @@
 $(document).ready(function () {
-    var theme = localStorage.getItem('theme') 
-    if(theme != null){
-        $(".dark_mode").prop("checked", true )
-        $("html").addClass("dark")
-    }
-    $(".dark_mode").change(function(){
-        var prop = $(this).prop("checked") 
-        if(prop){
+    $(".dark_mode").change(function () {
+        var prop = $(this).prop("checked")
+        if (prop) {
             $("html").addClass("dark")
-            localStorage.setItem('theme', "dark") 
+            localStorage.setItem('theme', "dark")
         }
-        else{
+        else {
             $("html").removeClass("dark")
             localStorage.removeItem('theme')
         }
@@ -74,23 +69,26 @@ $(document).ready(function () {
         });
     });
     //effects
-    $(".auth_pass").on("keyup keydown", function () {
-        if ($(this).val() !== "") {
-             $(".show_pass").removeClass("hidden")
-        }
-        else {
-            $(".show_pass").addClass("hidden")
+    $("input[type='password']").on("keyup keydown", function () {
+        var attr = $(this).attr("show-pass")
+        if (attr == "true") {
+            if ($(this).val() !== "") {
+                $(".show_pass").removeClass("hidden")
+            }
+            else {
+                $(".show_pass").addClass("hidden")
+            }
         }
     })
     //show pass
     $(".show_pass").click(function () {
         var input = $('input[show-pass=true]')
-        if(input.attr("type") == "password"){
+        if (input.attr("type") == "password") {
             input.attr("type", "text")
             $(".show_pass").removeClass("fa-eye")
             $(".show_pass").addClass("fa-eye-slash")
         }
-        else{
+        else {
             input.attr("type", "password")
             $(".show_pass").addClass("fa-eye")
             $(".show_pass").removeClass("fa-eye-slash")
@@ -144,8 +142,8 @@ $(document).ready(function () {
                     form.find('.submit_id').removeClass("shake_right");
                     $(".box_reg").removeClass("animate__animated animate__shakeX");
                 }, 500);
-            } 
-            else{
+            }
+            else {
                 $(".box_reg").addClass("animate__animated animate__shakeX");
                 form.find('.wmsu_inpt').addClass("err_focus");
                 form.find('.submit_id').addClass("wmsu_err shake_right");
@@ -160,7 +158,7 @@ $(document).ready(function () {
                     $(".box_reg").removeClass("animate__animated animate__shakeX");
                 }, 500);
             }
-            
+
         });
     });
     //register 

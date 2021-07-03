@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="font-sans antialiased dark">
+<html lang="en" class="font-sans antialiased transition-all">
 
 <head>
     <meta charset="UTF-8">
@@ -21,6 +21,26 @@
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
     <link rel="stylesheet" type="text/css" href="/css/index.css">
     <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
+    <script>
+        theme()
+        async function theme(){
+            const theme = localStorage.getItem('theme')
+            if (theme == null) {
+                //set to default theme if null 
+                localStorage.setItem('theme', 'default')
+                $('html').addClass("default")
+                console.log("Theme", theme)
+            }
+            if (theme == "default") {
+                $('html').addClass("default")
+                console.log("Theme", theme)
+            }
+            if (theme == "dark") {
+                $('html').addClass("dark")
+                console.log("Theme", theme)
+            }
+        }
+    </script>
 </head>
 
 <body class="bg-gray-50 dark:bg-[#090c10]">
@@ -43,24 +63,24 @@
                 </div>
             </div>
         </div>
-        <div class="nav hidden animate__animated animate__slideInLeft w-[350px] xsm:w-[98%] h-screen fixed bg-gray-300 dark:bg-[#0d1117] transition-all shadow-2xl border-b-8 border-red-800 dark:border-indigo-900">
+        <div class="nav hidden animate__animated animate__slideInLeft w-[350px] xsm:w-[98%] h-screen fixed bg-gray-300 dark:bg-[#161b22] transition-all shadow-2xl border-b-8 border-red-800 dark:border-indigo-900">
             <i class="cls_nav fa fa-times-circle text-red-700 dark:text-gray-200 text-2xl pr-2 float-right cursor-pointer mt-3 mr-3"></i>
             <div class="logo_img p-3">
                 <img class="mt-6 mb-5 w-[100px] h-[100px] object-cover" alt="logo" src="/assets/logo.png">
             </div>
-            <div class="nav_btn p-[10px] flex-col flex">
-                <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav" href="../../">Home <i class="fas fa-home float-right mt-[2px]"></i></a>
-                <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav" href="../home/profile/?id=<%- data._id %>">Profile <i class="fas fa-user float-right mt-[2px]"></i></a>
+            <div class="nav_btn p-[15px] mt-3 flex-col flex">   
+                <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav" href="../../">Home <i class="fas fa-home float-right mt-[2px] text-green-500"></i></a>
+                <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav" href="../home/profile/?id=<%- data._id %>">Profile <i class="fas fa-user float-right mt-[2px] text-purple-500"></i></a>
                 <% if (!join_election) { %>
-                    <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav join_elec">Join Election <i class="fas fa-plus float-right mt-[2px]"></i></a>
+                    <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav join_elec">Join Election <i class="fas fa-plus float-right mt-[2px] text-pink-500"></i></a>
                 <% } %>
                 <% if (join_election) { %>
-                    <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav e_btn" data="file_candidacy" href="#file_candidacy">File for Candidacy</a>
-                    <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav e_btn" data="candidates" href="#candidates">Candidates</a>
-                    <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav leave_elec">Leave Election</a>
+                    <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav e_btn" data="file_candidacy" href="#file_candidacy">File for Candidacy</a>
+                    <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav e_btn" data="candidates" href="#candidates">Candidates</a>
+                    <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav leave_elec">Leave Election</a>
                 <% } %>
-                <a class="theme dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav">Change Theme <i class="fas fa-moon float-right mt-[2px]"></i></a>
-                <a class="dark:text-[#cccbcb] dark:hover:bg-[#151b23] dark:hover:text-gray-50 w-full mb-2 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-3 text-gray-900 font-medium  btn_nav" href="#">Settings <i class="fas fa-cog float-right mt-[2px]"></i></a>
+                <a class="theme bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav">Change Theme <i class="fas fa-moon float-right mt-[2px] text-yellow-500 dark:text-gray-500"></i></a>
+                <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav" href="#">Settings <i class="fas fa-cog float-right mt-[2px] text-red-500"></i></a>
             </div>
         </div>
         <!--popups-->
@@ -102,7 +122,7 @@
                 <div class="user_msg_search p-4 w-full text-center hidden">
                     <div class="msg msg_s_loading text-gray-900" text="Searching . . ."></div>
                 </div>
-                <div class="w-full flex-col p-4 flex">
+                <div class="w-full flex-col p-4 hidden">
                     <a class="chat_user dark:bg-[#161b22] dark:border-gray-800 dark:hover:bg-[#1e252e] dark:border mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl transition-all cursor-pointer">
                         <div class="container flex flex-row p-2">
                             <img class="img_user w-14 h-14 object-cover rounded-full" alt="img_user" src="/assets/static.png">
@@ -111,12 +131,12 @@
                         </div>
                     </a>
                 </div>
-                <div class="msg_main hidden flex-col p-4">
+                <div class="msg_main flex flex-col p-4">
                     <a class="chat_user dark:bg-[#161b22] dark:border-gray-800 dark:hover:bg-[#1e252e] dark:border mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl transition-all cursor-pointer">
                         <div class="container flex flex-row p-2">
                             <img class="img_user w-14 h-14 object-cover rounded-full" alt="img_user" src="/assets/static.png">
                             <div class="container p-2 pt-1">
-                                <span class="text-base ml-1 text-gray-900 dark:text-gray-300">Jake Peregrino Velasco</span>
+                                <span class="text-base ml-1 text-gray-900 dark:text-gray-300">Election Bot</span>
                                 <br>
                                 <span class="text-sm ml-2 mt-5 text-gray-700 dark:text-gray-400/90">Chat with Election Bot</span>
                             </div>
@@ -148,7 +168,7 @@
         </div>
     </div>
     <div class="msg_msg">
-        <% if(chat){ %>
+        <!-- <% if(chat){ %>
             <%- include('messages/_float_messenger', {msg}) %>
             <div class="pre">
                 <script>
@@ -168,7 +188,44 @@
                     }, 500)
                 </script>
             </div>
-        <% } %>
+        <% } %> -->
+        <div class="w-[380px] hidden fixed bottom-[1px] right-[5px] sm:w-[98%] sm:right-[3px] sm:bottom-[1px] float_messenger animate__animated animate__slideInRight" data-id='msg.my_ka_chatid%>'>
+            <div class="messenger_header inline-flex w-full cursor-pointer bg-red-800/70 dark:bg-gray-800 p-[5px] rounded-t-lg">
+                <img class="object-cover h-[50px] w-[50px]" src="/assets/logo.png" alt="user_img">
+                <span class="p-3 dark:text-gray-200 text-base font-medium pl-1">Election Bot</span>
+                <p class="cls_float_msg text-right fas fa-times-circle flex-1 cursor-pointer text-red-600 text-xl p-[10px]"></p>
+            </div>
+            <div class="main_messaging">
+                <div class="chats">
+                    <div class="loading_chats">
+                        <i class="fa fa-cog fa-spin ld_chats"></i>
+                    </div>
+                </div>
+                <div class="create_msg">
+                    <div class="tw" style="display: none;"></div>
+                    <script>
+                        const typing_tw = new Typewriter(".tw", {
+                            loop: true,
+                        });
+                        typing_tw.typeString('. . .')
+                            .pauseFor(400)
+                            .deleteAll()
+                            .typeString("Typing")
+                            .changeCursor('*')
+                            .pauseFor(2000)
+                            .deleteAll()
+                            .start();
+                     </script>
+                    <div class="crt_msg_data">
+                        <div class="create_ wmsu_inpt">
+                            <a class="create_menu fa fa-bars"></a>
+                            <textarea class="chat_msg_data" autocomplete="off" name="chat_msg_data"></textarea>
+                            <button  class="wmsu_btn fa fa-paper-plane send_chat_msg"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/index.js"></script>
@@ -178,6 +235,20 @@
     <script src="/js/scroll_div.js"></script>
     <script src="/js/avatar.js"></script>
     <script src="/js/time.js"></script>
+    <script>
+        $(".theme").click(function(){
+            const theme = localStorage.getItem('theme') 
+            if(theme == null || theme == "default"){
+                localStorage.setItem('theme', 'dark')
+                $('html').removeClass("default")
+                $('html').addClass("dark")
+            }
+            else{
+                localStorage.setItem('theme', 'default')
+                $('html').addClass("default")
+                $('html').removeClass("dark")
+            }
+        })
+    </script>
 </body>
-
 </html>
