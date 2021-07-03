@@ -183,76 +183,77 @@ router.get('/logout', (req, res) => {
 })
 //profile
 router.get('/home/profile/', isloggedin, async (req, res) => {
-    var { id, notification_id, read } = req.query
-    var user_id = req.session.myid
+    res.send("Route Is Not Available Right Now")
+    // var { id, notification_id, read } = req.query
+    // var user_id = req.session.myid
 
-    //check if query is from notifications 
-    if (typeof id != "undefined" && typeof notification_id != "undefined" && typeof read != "undefined") {
-        //update notification 
-        if (read == 0) {
-            await user.updateOne({ _id: user_id, "notifications.nty_id": notification_id }, { $set: { "notifications.$.read": 1 } })
-        }
-    }
+    // //check if query is from notifications 
+    // if (typeof id != "undefined" && typeof notification_id != "undefined" && typeof read != "undefined") {
+    //     //update notification 
+    //     if (read == 0) {
+    //         await user.updateOne({ _id: user_id, "notifications.nty_id": notification_id }, { $set: { "notifications.$.read": 1 } })
+    //     }
+    // }
 
-    //means the user is visited other profile or his/her profile
-    if (typeof id != "undefined") {
-        //check if the user visited his/her own profle
-        if (user_id == id) {
-            //check if the id is exist in database
-            await user.find({ _id: id }, { username: 0, password: 0, socket_id: 0, student_id: 0 }, (err, is_userfound) => {
-                if (err) {
-                    //todo send an html
-                    res.status(404).render('Error/index')
-                }
-                else {
-                    if (is_userfound.length != 0) {
-                        req.session.visited_id = is_userfound[0]._id //can be used to comment profile
-                        return res.render('profile', { profile: true, data: is_userfound })
-                    }
-                    else {
-                        //todo send an not found html
-                        res.status(404).render('Error/index')
-                    }
-                }
-            })
-        }
-        //means the user is visited other profile
-        if (user_id != id) {
-            //if not the same id means the user is try to visit another profile
-            await user.find({ _id: id }, { username: 0, password: 0, socket_id: 0, student_id: 0, notifications: 0 }, (err, is_userfound) => {
-                if (err) {
-                    //todo send an html
-                    res.status(404).render('Error/index')
-                }
-                else {
-                    if (is_userfound.length != 0) {
-                        //add the userid of visitor to user he/she currently visit
-                        user.updateOne({ _id: id }, { $pull: { visitors: user_id } }, (err, ok) => {
-                            //remove first the user id if exist
-                            if (!err) {
-                                user.updateOne({ _id: id }, { $push: { visitors: user_id } }, (err, ok2) => {
-                                    //remove first the user id if exist
-                                    if (!err) {
-                                        //get the notifications of the user who visited  other profile 
-                                        user.find({ _id: user_id }, { notifications: 1 }, (err, nty) => {
-                                            if (!err) {
-                                                req.session.visited_id = is_userfound[0]._id
-                                                return res.render('profile', { profile: false, data: is_userfound, nty: nty[0].notifications })
-                                            }
-                                        })
-                                    }
-                                })
-                            }
-                        })
-                    }
-                    else {
-                        //todo send an not found html
-                        res.status(404).render('Error/index')
-                    }
-                }
-            })
-        }
-    }
+    // //means the user is visited other profile or his/her profile
+    // if (typeof id != "undefined") {
+    //     //check if the user visited his/her own profle
+    //     if (user_id == id) {
+    //         //check if the id is exist in database
+    //         await user.find({ _id: id }, { username: 0, password: 0, socket_id: 0, student_id: 0 }, (err, is_userfound) => {
+    //             if (err) {
+    //                 //todo send an html
+    //                 res.status(404).render('Error/index')
+    //             }
+    //             else {
+    //                 if (is_userfound.length != 0) {
+    //                     req.session.visited_id = is_userfound[0]._id //can be used to comment profile
+    //                     return res.render('profile', { profile: true, data: is_userfound })
+    //                 }
+    //                 else {
+    //                     //todo send an not found html
+    //                     res.status(404).render('Error/index')
+    //                 }
+    //             }
+    //         })
+    //     }
+    //     //means the user is visited other profile
+    //     if (user_id != id) {
+    //         //if not the same id means the user is try to visit another profile
+    //         await user.find({ _id: id }, { username: 0, password: 0, socket_id: 0, student_id: 0, notifications: 0 }, (err, is_userfound) => {
+    //             if (err) {
+    //                 //todo send an html
+    //                 res.status(404).render('Error/index')
+    //             }
+    //             else {
+    //                 if (is_userfound.length != 0) {
+    //                     //add the userid of visitor to user he/she currently visit
+    //                     user.updateOne({ _id: id }, { $pull: { visitors: user_id } }, (err, ok) => {
+    //                         //remove first the user id if exist
+    //                         if (!err) {
+    //                             user.updateOne({ _id: id }, { $push: { visitors: user_id } }, (err, ok2) => {
+    //                                 //remove first the user id if exist
+    //                                 if (!err) {
+    //                                     //get the notifications of the user who visited  other profile 
+    //                                     user.find({ _id: user_id }, { notifications: 1 }, (err, nty) => {
+    //                                         if (!err) {
+    //                                             req.session.visited_id = is_userfound[0]._id
+    //                                             return res.render('profile', { profile: false, data: is_userfound, nty: nty[0].notifications })
+    //                                         }
+    //                                     })
+    //                                 }
+    //                             })
+    //                         }
+    //                     })
+    //                 }
+    //                 else {
+    //                     //todo send an not found html
+    //                     res.status(404).render('Error/index')
+    //                 }
+    //             }
+    //         })
+    //     }
+    // }
 })
 //post
 router.post('/verify', async (req, res) => {
