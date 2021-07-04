@@ -1,1 +1,1 @@
-web: yarn start
+web: forever server.js

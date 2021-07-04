@@ -37,13 +37,13 @@
   "scripts": {
     "buildcss": "NODE_ENV=production npx tailwindcss -i ./tailwind/style.css -o ./public/css/tailwindcss/style.css --minify",
     "devcss": "NODE_ENV=production npx tailwindcss -i ./tailwind/style.css -o ./public/css/tailwindcss/style.css -w",
-    "start": "node server.js",
+    "start": "forever server.js",
     "dev": "nodemon server.js"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",
     "dotenv": "^10.0.0",
-    "nodemon": "^2.0.7",
+    "nodemon": "^2.0.9",
     "postcss-cli": "^8.3.1",
     "tailwindcss": "^2.2.4"
   }
