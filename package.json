@@ -37,7 +37,7 @@
   "scripts": {
     "buildcss": "NODE_ENV=production npx tailwindcss -i ./tailwind/style.css -o ./public/css/tailwindcss/style.css --minify",
     "devcss": "NODE_ENV=production npx tailwindcss -i ./tailwind/style.css -o ./public/css/tailwindcss/style.css -w",
-    "start": "forever server.js",
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "devDependencies": {
