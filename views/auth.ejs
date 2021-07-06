@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="font-sans antialiased">
+<html lang="en" class="font-sans antialiased welcome-page">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#090c10">
+    <meta name="theme-color" content="#991b1b">
     <title>WMSU Online Voting System</title>
     <meta name="description" content="New and upgraded version of voting system">
     <meta property="og:title" content="Online Voting System">
@@ -22,24 +22,6 @@
     <link rel="stylesheet" type="text/css" href="/css/auth.css">
     <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
     <script>
-        theme()
-        async function theme(){
-            const theme = localStorage.getItem('theme')
-            if (theme == null) {
-                //set to default theme if null 
-                localStorage.setItem('theme', 'default')
-                $('html').addClass("default")
-                console.log("Theme", theme)
-            }
-            if (theme == "default") {
-                $('html').addClass("default")
-                console.log("Theme", theme)
-            }
-            if (theme == "dark") {
-                $('html').addClass("dark")
-                console.log("Theme", theme)
-            }
-        }
         document.onreadystatechange = function () {
             $(".bg-main").removeClass("hidden")
             $(".loading").remove()
@@ -224,6 +206,7 @@
     </div>
     <script src="js/auth.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/theme.js"></script>
 </body>
 
 </html>

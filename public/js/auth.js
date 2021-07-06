@@ -4,10 +4,12 @@ $(document).ready(function () {
         if (prop) {
             $("html").addClass("dark")
             localStorage.setItem('theme', "dark")
+            $("meta[name='theme-color']").attr("content", "#161b22")
         }
         else {
             $("html").removeClass("dark")
             localStorage.removeItem('theme')
+            $("meta[name='theme-color']").attr("content", "#991b1b")
         }
     })
     /*left*/

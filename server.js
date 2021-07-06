@@ -57,8 +57,6 @@ const log_stream = rfs.createStream('logs.log', {
     path: path.join(__dirname, 'log')
 })
 app.use(morgan(':status :remote-addr :method :url :response-time ms', { stream: log_stream }))
-
-app.use(helmet.hidePoweredBy());
 app.use(icon(__dirname + '/public/assets/logo.png'))
 app.use(express.static(dir))
 app.use(express.urlencoded({ extended: true }))

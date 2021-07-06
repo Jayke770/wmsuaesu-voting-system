@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#090c10">
+    <meta name="theme-color" content="#991b1b">
     <title>OVS Dashboard</title>
     <meta name="description" content="New and upgraded version of voting system">
     <meta property="og:title" content="Online Voting System">
@@ -21,26 +21,6 @@
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
     <link rel="stylesheet" type="text/css" href="/css/index.css">
     <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
-    <script>
-        theme()
-        async function theme(){
-            const theme = localStorage.getItem('theme')
-            if (theme == null) {
-                //set to default theme if null 
-                localStorage.setItem('theme', 'default')
-                $('html').addClass("default")
-                console.log("Theme", theme)
-            }
-            if (theme == "default") {
-                $('html').addClass("default")
-                console.log("Theme", theme)
-            }
-            if (theme == "dark") {
-                $('html').addClass("dark")
-                console.log("Theme", theme)
-            }
-        }
-    </script>
 </head>
 
 <body class="bg-gray-50 dark:bg-[#090c10]">
@@ -235,6 +215,7 @@
     <script src="/js/scroll_div.js"></script>
     <script src="/js/avatar.js"></script>
     <script src="/js/time.js"></script>
+    <script src="/js/theme.js"></script>
     <script>
         $(".theme").click(function(){
             const theme = localStorage.getItem('theme') 
@@ -242,11 +223,13 @@
                 localStorage.setItem('theme', 'dark')
                 $('html').removeClass("default")
                 $('html').addClass("dark")
+                $("meta[name='theme-color']").attr("content", "#161b22")
             }
             else{
                 localStorage.setItem('theme', 'default')
                 $('html').addClass("default")
                 $('html').removeClass("dark")
+                $("meta[name='theme-color']").attr("content", "#991b1b")
             }
         })
     </script>
