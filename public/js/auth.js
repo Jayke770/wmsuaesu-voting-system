@@ -1,10 +1,12 @@
 $(document).ready(function () {
     $(".dark_mode").change(function () {
         var prop = $(this).prop("checked")
+        const sweetalert_dark = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.min.css"
         if (prop) {
             $("html").addClass("dark")
             localStorage.setItem('theme', "dark")
             $("meta[name='theme-color']").attr("content", "#161b22")
+            $(".sweetalert-link").attr("href", sweetalert_dark)
         }
         else {
             $("html").removeClass("dark")
