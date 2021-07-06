@@ -16,14 +16,14 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:url" content="https://voting-system-jayke.herokuapp.com/">
-    <%- include('cdn/_index.ejs') %>
+    <%- include('cdn/_index') %>
     <!--  -->
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
     <link rel="stylesheet" type="text/css" href="/css/index.css">
     <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
 </head>
 
-<body class="bg-gray-50 dark:bg-[#090c10]">
+<body class="bg-gray-300 dark:bg-[#090c10]">
     <div class="conn">Connecting to server <span class="dot"></span></div>
     <!-- custom popup start -->
     <div class="my_popup"></div>
@@ -148,7 +148,7 @@
         </div>
     </div>
     <div class="msg_msg">
-        <!-- <% if(chat){ %>
+        <% if(chat){ %>
             <%- include('messages/_float_messenger', {msg}) %>
             <div class="pre">
                 <script>
@@ -156,56 +156,15 @@
                         //get chats 
                         $.post('/chats', (res) => {
                             if(!res.ischat){
-                                $(".float_messenger").css("height", "52px")
-                                $(".float_messenger").show()
-                                setTimeout(() => {
-                                    $(".chats").html("")
-                                    $(".chats").html(res)
-                                    $(".pre").remove()
-                                }, 500);
+                                $(".chats").html("")
+                                $(".chats").html(res)
+                                $(".pre").remove()
                             }
                         })
                     }, 500)
                 </script>
             </div>
-        <% } %> -->
-        <div class="w-[380px] hidden fixed bottom-[1px] right-[5px] sm:w-[98%] sm:right-[3px] sm:bottom-[1px] float_messenger animate__animated animate__slideInRight" data-id='msg.my_ka_chatid%>'>
-            <div class="messenger_header inline-flex w-full cursor-pointer bg-red-800/70 dark:bg-gray-800 p-[5px] rounded-t-lg">
-                <img class="object-cover h-[50px] w-[50px]" src="/assets/logo.png" alt="user_img">
-                <span class="p-3 dark:text-gray-200 text-base font-medium pl-1">Election Bot</span>
-                <p class="cls_float_msg text-right fas fa-times-circle flex-1 cursor-pointer text-red-600 text-xl p-[10px]"></p>
-            </div>
-            <div class="main_messaging">
-                <div class="chats">
-                    <div class="loading_chats">
-                        <i class="fa fa-cog fa-spin ld_chats"></i>
-                    </div>
-                </div>
-                <div class="create_msg">
-                    <div class="tw" style="display: none;"></div>
-                    <script>
-                        const typing_tw = new Typewriter(".tw", {
-                            loop: true,
-                        });
-                        typing_tw.typeString('. . .')
-                            .pauseFor(400)
-                            .deleteAll()
-                            .typeString("Typing")
-                            .changeCursor('*')
-                            .pauseFor(2000)
-                            .deleteAll()
-                            .start();
-                     </script>
-                    <div class="crt_msg_data">
-                        <div class="create_ wmsu_inpt">
-                            <a class="create_menu fa fa-bars"></a>
-                            <textarea class="chat_msg_data" autocomplete="off" name="chat_msg_data"></textarea>
-                            <button  class="wmsu_btn fa fa-paper-plane send_chat_msg"></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <% } %>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/index.js"></script>

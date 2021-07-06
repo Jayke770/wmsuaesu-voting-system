@@ -359,22 +359,6 @@ $(document).ready(() => {
         })
     })
     //when messenger header is click 
-    $(".msg_msg").delegate(".messenger_header", "click", function () {
-        if ($(".float_messenger").height() == 52) {
-            $(".float_messenger").hide()
-            $(".float_messenger").animate({
-                height: "504.9px"
-            }, 300)
-            setTimeout(() => {
-                $(".float_messenger").removeAttr("style")
-                $(".float_messenger").show()
-            }, 500)
-        } else {
-            $(".float_messenger").animate({
-                height: "52px"
-            }, 100)
-        }
-    })
     //send chat 
     $(".msg_msg").delegate(".send_chat_msg", "click", function (e) {
         e.preventDefault()
