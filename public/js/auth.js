@@ -2,6 +2,7 @@ $(document).ready(function () {
     $(".dark_mode").change(function () {
         var prop = $(this).prop("checked")
         const sweetalert_dark = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.min.css"
+        const sweetalert_defaut = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-default@4/default.min.css"
         if (prop) {
             $("html").addClass("dark")
             localStorage.setItem('theme', "dark")
@@ -12,6 +13,7 @@ $(document).ready(function () {
             $("html").removeClass("dark")
             localStorage.removeItem('theme')
             $("meta[name='theme-color']").attr("content", "#991b1b")
+            $(".sweetalert-link").attr("href", sweetalert_defaut)
         }
     })
     /*left*/
