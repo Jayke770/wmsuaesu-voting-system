@@ -85,19 +85,66 @@ $(document).ready(() => {
             }
         })
     }
+    //floating msg & nty 
+    $(".admin_nty").click(() => {
+        var msg = $(".main_admin_msg").hasClass("hidden")
+        if(msg){
+            $(".main_admin_nty").removeClass("hidden")
+            setTimeout( () => {
+                $(".main_admin_nty").removeClass("animate__slideInLeft")
+            }, 220)
+        }
+        else{
+            $(".admin_close_msg").click()
+            $(".main_admin_nty").removeClass("hidden")
+            setTimeout( () => {
+                $(".main_admin_nty").removeClass("animate__slideInLeft")
+            }, 220)
+        }
+    })
+    $(".admin_msg").click(() => {
+        var msg = $(".main_admin_nty").hasClass("hidden")
+        if(msg){
+            $(".main_admin_msg").removeClass("hidden")
+            setTimeout( () => {
+                $(".main_admin_msg").removeClass("animate__slideInLeft")
+            }, 220)
+        }
+        else{
+            $(".admin_close_nty").click()
+            $(".main_admin_msg").removeClass("hidden")
+            setTimeout( () => {
+                $(".main_admin_msg").removeClass("animate__slideInLeft")
+            }, 220)
+        }
+    })
+    $(".admin_close_msg").click( () => {
+        $(".main_admin_msg").addClass("animate__fadeOutLeft")
+        setTimeout(() => {
+            $(".main_admin_msg").removeClass("animate__fadeOutLeft")
+            $(".main_admin_msg").addClass("animate__slideInLeft hidden")
+        }, 220);
+    })
+    $(".admin_close_nty").click( () => {
+        $(".main_admin_nty").addClass("animate__fadeOutLeft")
+        setTimeout(() => {
+            $(".main_admin_nty").removeClass("animate__fadeOutLeft")
+            $(".main_admin_nty").addClass("animate__slideInLeft hidden")
+        }, 220);
+    })
     //open nav
     $(".open_nav").click(function () {
-        $(".nav").removeClass("animate__fadeOutLeft")
-        $(".nav").show()
-        $(".nav").addClass("animate__fadeInLeft")
-        $(".nav").css("border-right", "1px solid var(--active_btn)")
+        $(".nav").removeClass("my:hidden")
+        setTimeout(() => {
+            $(".nav").removeClass("animate__slideInRight")
+        }, 210)
     })
     $(".close_nav").click(function () {
-        $(".nav").removeClass("animate__fadeInLeft")
-        $(".nav").addClass("animate__fadeOutLeft")
+        $(".nav").addClass("animate__slideOutRight")
         setTimeout(() => {
-            $(".nav").removeAttr("style")
-        }, 250)
+            $(".nav").removeClass("animate__slideOutRight")
+            $(".nav").addClass("animate__slideInRight my:hidden")
+        }, 210)
     })
     //navigation
     $(".msg_open").click(() => {
@@ -122,7 +169,6 @@ $(document).ready(() => {
     $(".list_btn").click(function () {
         if (!$(this).hasClass('ignore')) {
             $(".loading_main").show(100)
-            $(".close_nav").click()
             location.hash = $(this).attr("data")
             $.post($(this).attr("data"), async (res, status, xhr) => {
                 if (status == 'success') {

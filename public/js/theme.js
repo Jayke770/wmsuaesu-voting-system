@@ -21,4 +21,8 @@ if (theme == "dark") {
         $(".sweetalert-link").attr("href", sweetalert_dark)
         $("meta[name='theme-color']").attr("content", "#161b22")
     } 
+    if($(".dark_mode").length !== 0){
+        $(".dark_mode").removeClass("fa-sun")
+        $(".dark_mode").addClass("fa-moon")
+    }
 }

@@ -4,30 +4,6 @@
 html{
 	line-height: normal !important;
 }
-/* width */
-
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-/* Track */
-
-::-webkit-scrollbar-track {
-    background: unset;
-}
-
-/* Handle */
-
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-
-/* Handle on hover */
-
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
 
 /*popup styles*/
 
@@ -99,11 +75,6 @@ html{
     }
 }
 
-body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--dark);
-}
 
 .main .body {
     width: 100%;
@@ -118,180 +89,14 @@ body {
     }
 }
 
-@media screen and (max-width: 930px) {
-    .main .body .nav {
-        display: none;
-    }
-    .main .body .nav .logo_any .close_nav {
-        pointer-events: all !important;
-        visibility: visible !important;
-    }
-}
-
 /*nav*/
 
-.main .body .nav {
-    /* border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px; */
-    background-color: var(--l_dark);
-    padding: 10px 15px;
-    height: 100%;
-    width: 350px;
-    position: fixed;
-    display: none;
-    --animate-duration: 300ms;
+.nav, .main_admin_msg, .main_admin_nty, .ms-200{
+    --animate-duration: 200ms;
 }
-
-.main .body .nav .logo_any {
-    margin-bottom: 15px;
-}
-
-.main .body .nav .logo_any .logo {
-    height: 80px;
-    width: 80px;
-    object-fit: cover;
-    margin-top: 30px;
-    margin-bottom: 20px;
-}
-
-.main .body .nav .logo_any .close_nav {
-    cursor: pointer;
-    color: var(--red);
-    font-size: 20px;
-    float: right;
-}
-
-.main .body .nav .btn .group_btn {
-    animation-delay: .10s;
-    --animate-duration: 800ms;
-}
-
-.main .body .nav .btn .group_btn .g_btn {
-    background: var(--unset);
-    text-align: left;
-    border: var(--dark_border);
-    color: var(--txt_dark);
-    transition: 1s ease;
-    display: inline-block;
-    text-decoration: none;
-}
-
-.main .body .nav .btn .group_btn .g_btn:hover {
-    border: var(--light_border);
-}
-
-.main .body .nav .btn .group_btn:first-child .g_btn:after, .main .body .nav .btn .group_btn:last-child .g_btn:after {
-    content: "";
-}
-
-.main .body .nav .btn .group_btn .g_btn:after {
-    font-family: "Font Awesome 5 Free";
-    content: '\f138';
-    color: #777;
-    float: right;
-    margin-left: 5px;
-    transition: 0.17s ease;
-    font-weight: 900;
-}
-
-.main .body .nav .btn .group_btn .g_btn_active:after {
-    color: var(--txt_clr);
-    content: '\f13a';
-    font-weight: 900;
-}
-
-.main .body .nav .btn .group_btn .g_btn_list {
-    padding: 5px 10px;
-    display: none;
-}
-
-.main .body .nav .btn .group_btn .g_btn_list .list_btn {
-    border: none;
-    background: var(--unset);
-    text-align: left;
-    font-size: 15px;
-    font-weight: normal;
-    color: var(--txt_dark);
-    transition: 1s ease;
-    display: inline-block;
-    text-decoration: none;
-}
-
-.main .body .nav .btn .group_btn .g_btn_list .list_btn:hover {
-    color: var(--txt_clr);
-}
-
-.main .body .nav .btn .group_btn:last-child .wmsu_btn {
-    border: 1px solid var(--red);
-}
-
-.main .body .nav .btn .group_btn:last-child .wmsu_btn a {
-    color: var(--red);
-    padding: 0px 200px 1px 1px;
-    text-decoration: none;
-}
-
-.main .body .nav .btn .group_btn:last-child .wmsu_btn:hover {
-    border: 1px solid #e61919;
-}
-
 .main .body .main_body {
     width: 100%;
     height: 100%;
-}
-
-.main .body .main_body .navigation {
-    width: 100%;
-    display: flex;
-    background-color: var(--l_dark);
-    flex-direction: row;
-    padding: 10px;
-}
-
-.main .body .main_body .navigation .open_nav {
-    color: var(--txt_clr);
-    cursor: pointer;
-    font-size: 25px;
-    padding: 10px;
-}
-
-.main .body .main_body .navigation .navigation_title {
-    color: var(--txt_clr);
-    font-size: 30px;
-    margin: 0;
-    width: 100%;
-    text-align: center;
-    padding-top: 5px;
-}
-.main .body .main_body .navigation .div{
-    padding: 10px;
-    position: relative;
-}
-.main .body .main_body .navigation .div .msg_main{
-    position: absolute;
-    width: 350px;
-    height: 85vh;
-    right: 10px;
-    top: 55px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    display: none;
-}
-.main .body .main_body .navigation .div .nty_main{
-    position: absolute;
-    width: 350px;
-    height: 85vh;
-    right: 10px;
-    top: 55px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    display: none;
-}
-.main .body .main_body .navigation .div .ic{
-    font-size: 1.50rem;
-    color: var(--txt_clr);
-    cursor: pointer;
-    margin-right: 10px;
 }
 .main .body .main_body .forms {
     padding: 10px;
