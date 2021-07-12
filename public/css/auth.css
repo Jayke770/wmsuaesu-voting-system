@@ -45,14 +45,6 @@ body {
 	border-radius: 15px;
 	--animation-duration: 100ms;
 }
-.main .rightt .login .login_ic{
-	width: 100%;
-	text-align: center;
-	padding: 25px 10px;
-}
-.main .rightt .login .login_ic i{
-	font-size: 9rem;
-}
 .main .rightt .form_login{
 	padding: 5px;
 }
@@ -94,11 +86,6 @@ body {
 	color: var(--red);
 	font-weight: 700;
 	font-size: 15px;
-}
-.main .rightt .form_login .auth_login .reg .register{
-	background-color: var(--unset);
-	color: #52bf34;
-	transition: 0.17s ease;
 }
 .button_next{
 	transition: 1s ease;

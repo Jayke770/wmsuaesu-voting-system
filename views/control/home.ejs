@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#121212">
     <title>Admin Dashboard</title>
-    <%- include('cdn/_home') %>
+    <%- include('local_cdn/_home') %>
     <!-- -->
     <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
@@ -16,10 +16,10 @@
 
 <body class="bg-gray-300 dark:bg-[#090c10] transition-all">
     <!-- floating messages & notifications -->
-    <div class="body_main_content hidden">
-        <div class="animate__animated animate__slideInLeft fixed z-10 gap-3 bottom-1 left-1 rounded-lg cursor-pointer bg-gray-900 p-2 grid grid-rows-2 md:grid-rows-none md:grid-cols-2 transition-all">
-            <div class="relative">
-                <i class="admin_nty p-[4px] fa fa-bell text-xl cursor-pointer text-indigo-600"></i>
+    <div class="body_main_content">
+        <div class="animate__animated animate__slideInLeft fixed z-10 gap-4 bottom-1 left-1 rounded-lg cursor-pointer bg-gray-900 p-2 grid grid-rows-2 md:grid-rows-none md:grid-cols-2 transition-all">
+            <div class="relative p-1">
+                <i class="admin_nty p-[4px] cursor-pointer text-indigo-600"><i class="far fa-bell text-xl"></i></i>
                 <div class="main_admin_nty animate__animated hidden animate__slideInLeft absolute dark:bg-[#1b1f25] bg-gray-100 md:bottom-full bottom-1/2 md:left-0 left-full rounded-xl shadow-2xl w-[350px] h-[500px] md:w-[90vw]">
                     <div class="nty_t container">
                         <i class="admin_close_nty fa fa-times-circle float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]"></i>
@@ -40,9 +40,9 @@
                     </div>
                 </div>
             </div>
-            <div class="relative">
-                <i class="admin_msg p-[4px] fa fa-comment text-xl cursor-pointer text-green-600"></i>
-                <div class="main_admin_msg hidden animate__animated animate__slideInLeft absolute dark:bg-[#1b1f25] bg-gray-100 md:bottom-full bottom-1/2 md:left-[-150%] left-full rounded-xl shadow-2xl w-[350px] h-[500px] md:w-[90vw]">
+            <div class="relative p-1">
+                <i class="admin_msg p-[4px] cursor-pointer text-green-600"><i class="fas fa-comment-alt-lines text-xl"></i></i>
+                <div class="main_admin_msg hidden animate__animated animate__slideInLeft absolute dark:bg-[#ccced1] bg-gray-100 md:bottom-full bottom-1/2 md:left-[-150%] left-full rounded-xl shadow-2xl w-[350px] h-[500px] md:w-[90vw]">
                     <div class="first">
                         <i class="admin_close_msg fa fa-times-circle float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]"></i>
                         <p class="t_nty text-3xl p-4 m-0 text-indigo-800 font-bold dark:text-[#f2f2f2]">Messages</p>
@@ -93,10 +93,10 @@
                        <a class="list_btn font-normal rounded-lg transition-all hover:bg-gray-200 dark:hover:bg-[#253547] my:hover:bg-gray-300 p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider" data="voters">Voters</a>
                        <a class="list_btn font-normal rounded-lg transition-all hover:bg-gray-200 dark:hover:bg-[#253547] my:hover:bg-gray-300 p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider" data="elections">Elections</a>
                        <a class="list_btn font-normal rounded-lg transition-all hover:bg-gray-200 dark:hover:bg-[#253547] my:hover:bg-gray-300 p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider" data="settings">System Settings</a>
-                       <a class="list_btn rounded-lg transition-all my:text-center bg-red-700 dark:bg-red-900 dark:hover:bg-red-700 text-gray-100 py-[8px] px-[15px] text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider fa fa-sign-out-alt" href="../../logout"></a>
+                       <a class="list_btn rounded-lg transition-all my:text-center bg-red-700 dark:bg-red-900 dark:hover:bg-red-700 text-gray-100 py-[8px] px-[15px] text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider" href="../../logout"><i class="far fa-sign-out-alt"></i></a>
                     </div>
                     <div class="hidden my:block transition-all p-[10px]">
-                        <i class="open_nav rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-lg cursor-pointer mr-1 last:mr-0 fa fa-bars"></i>
+                        <div class="open_nav rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-lg cursor-pointer mr-1 last:mr-0"><i class="fas fa-bars"></i></div>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                             </div>
                             <div class="user_info md:w-full transition-all flex items-center">
                                 <p class="text-left w-full font-medium text-base ml-2 dark:text-gray-300">Jake Peregrino Velasco</p>
-                                <i class="fa fa-ellipsis-h ml-10 transition-all hover:bg-gray-500 p-[5px] rounded-full hover:text-gray-100 text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"></i>
+                                <div class="ml-10 transition-all hover:bg-gray-500 p-[5px] rounded-md hover:text-gray-100 text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"><i class="fa fa-ellipsis-h"></i>
                             </div>
                         </div>
                     </div>
@@ -165,7 +165,7 @@
             </div>
         </div>
     </div>
-    <div class="loader container">
+    <div class="loader container hidden">
         <div class="e_settings">
             <div class="header w-full flex flex-row p-1 items-center bg-gray-50 shadow-md">
                 <div class="flex-[20%] xl:flex-[50%] md:flex-[80%]">
