@@ -760,10 +760,6 @@ video {
   margin-right: 1rem;
 }
 
-.mt-9 {
-  margin-top: 2.25rem;
-}
-
 .mb-3 {
   margin-bottom: 0.75rem;
 }
@@ -1555,6 +1551,10 @@ video {
   padding-top: 0.5rem;
 }
 
+.pb-0 {
+  padding-bottom: 0px;
+}
+
 .text-left {
   text-align: left;
 }
@@ -1605,6 +1605,16 @@ video {
   line-height: 2rem;
 }
 
+.text-8xl {
+  font-size: 6rem;
+  line-height: 1;
+}
+
+.text-7xl {
+  font-size: 4.5rem;
+  line-height: 1;
+}
+
 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
@@ -1618,21 +1628,6 @@ video {
 .text-4xl {
   font-size: 2.25rem;
   line-height: 2.5rem;
-}
-
-.text-8xl {
-  font-size: 6rem;
-  line-height: 1;
-}
-
-.text-9xl {
-  font-size: 8rem;
-  line-height: 1;
-}
-
-.text-7xl {
-  font-size: 4.5rem;
-  line-height: 1;
 }
 
 .font-normal {
@@ -2708,6 +2703,10 @@ input:checked~.dot{
 
   .md\:mb-3 {
     margin-bottom: 0.75rem;
+  }
+
+  .md\:mt-5 {
+    margin-top: 1.25rem;
   }
 
   .md\:flex {
