@@ -86,20 +86,6 @@ $(document).ready(function () {
             }
         }
     })
-    //show pass
-    $(".show_pass").click(function () {
-        var input = $('input[show-pass=true]')
-        if (input.attr("type") == "password") {
-            input.attr("type", "text")
-            $(".show_pass").removeClass("fa-eye")
-            $(".show_pass").addClass("fa-eye-slash")
-        }
-        else {
-            input.attr("type", "password")
-            $(".show_pass").addClass("fa-eye")
-            $(".show_pass").removeClass("fa-eye-slash")
-        }
-    })
     $(".auth_usr, .auth_pass").focusin(function () {
         $(this).parent('.wmsu_inpt').addClass(" focus");
     });
@@ -171,16 +157,21 @@ $(document).ready(function () {
 
     //show password
     $(".show_pass").click(function () {
-        if ($(this).hasClass("visible")) {
-            $(this).removeClass("visible fa-eye-slash");
-            $(this).addClass("fa-eye")
-            $(this).prev().attr("type", "password");
-        } else {
-            $(this).removeClass("fa-eye");
-            $(this).addClass("visible fa-eye-slash");
-            $(this).prev().attr("type", "text");
+        var input = $('input[show-pass=true]')
+        var icon = '<i class="fas fa-eye-slash dark:text-gray-100 cursor-pointer"></i>'
+        var icon_2 = '<i class="fas fa-eye dark:text-gray-100 cursor-pointer"></i>'
+        if(input.attr("type") === "password"){
+            $(this).html(icon_2)
+            input.attr("type", "text")
         }
-    });
+        else if(input.attr("type") === "text"){
+            $(this).html(icon)
+            input.attr("type", "password")
+        }
+        else{
+            console.error("Unknown Input : ", input)
+        }
+    })
     //check the student id feild if empty 
     setInterval(function () {
         if ($(".st_id").val().length == 0) {

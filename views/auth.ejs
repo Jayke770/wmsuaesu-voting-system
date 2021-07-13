@@ -16,7 +16,7 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:url" content="https://voting-system-jayke.herokuapp.com/">
-    <%- include('cdn/_auth') %>
+    <%- include('local_cdn/_auth') %>
     <link rel="stylesheet"  href="/css/tailwindcss/style.css">
     <link rel="stylesheet" type="text/css" href="/css/auth.css">
     <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
@@ -80,8 +80,8 @@
                                       <i class="fas fa-lock dark:text-gray-100"></i>
                                     </span>
                                     <input type="password" autocomplete="off" show-pass="true" placeholder="Password" required  name="auth_pass" class="auth_pass dark:border-gray-700 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none focus:ring-2 ring-indigo-400 transition-all w-full pl-10"/>
-                                    <span class="transition-all z-10 right-2 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                                        <i class="show_pass fas fa-eye dark:text-gray-100 cursor-pointer hidden"></i>
+                                    <span class="show_pass hidden transition-all z-10 right-2 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
+                                        <i class="fas fa-eye dark:text-gray-100 cursor-pointer"></i>
                                     </span>
                                 </div>
                             </div>
@@ -190,8 +190,8 @@
                                         <i class="fas fa-lock dark:text-gray-100"></i>
                                         </span>
                                         <input type="password" autocomplete="off" show-pass="true" placeholder="Password" required  name="auth_pass" class="dark:border-gray-700 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none focus:ring-2 ring-purple-500 transition-all w-full pl-10"/>
-                                        <span class="transition-all z-10 right-2 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                                            <i class="show_pass fas fa-eye dark:text-gray-100 cursor-pointer hidden"></i>
+                                        <span class="show_pass hidden transition-all z-10 right-2 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
+                                            <i class="fas fa-eye dark:text-gray-100 cursor-pointer"></i>
                                         </span>
                                     </div>
                                 </div>
