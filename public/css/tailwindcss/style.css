@@ -2721,6 +2721,10 @@ input:checked~.dot{
     height: 250px;
   }
 
+  .md\:max-h-\[90vh\] {
+    max-height: 90vh;
+  }
+
   .md\:w-full {
     width: 100%;
   }
