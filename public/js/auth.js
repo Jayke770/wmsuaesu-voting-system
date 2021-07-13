@@ -43,37 +43,50 @@ $(document).ready(function () {
     //login
     $(".auth_login").submit(function (e) {
         e.preventDefault();
-        toast.fire({
-            timer: 0,
-            title: '<i class="fa fa-spin fa-spinner" style="margin-right: 20px;"></i>Please Wait',
-        })
-        $.ajax({
-            url: '/login',
-            method: 'POST',
-            cache: false,
-            contentType: false,
-            processData: false,
-            data: new FormData(this),
-            success: function (res_log) {
-                if (res_log.islogin) {
-                    toast.fire({
-                        icon: 'success',
-                        title: res_log.msg,
-                    }).then((next) => {
-                        window.location.reload(true)
-                    })
-                } else {
-                    toast.fire({
-                        icon: 'error',
-                        title: res_log.msg,
-                    })
-                    setTimeout(function () {
-                        $(".login").removeClass("d_err");
-                    }, 500);
-                }
+        Swal.fire({
+            title: 'Please Wait', 
+            imageUrl: '/assets/logo.png',
+            imageAlt: 'logo',
+            showConfirmButton: false,
+            backdrop: true,
+            willOpen: () => {
+                Swal.showLoading()
+                $.ajax({
+                    url: '/login',
+                    method: 'POST',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: new FormData(this),
+                    success: function (res_log) {
+                        if (res_log.islogin) {
+                            Swal.fire({
+                                icon: 'success', 
+                                backdrop: true, 
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                                title: res_log.msg,
+                                willOpen: () => {
+                                    Swal.showLoading()
+                                    setTimeout( () => {
+                                        window.location.reload(true)
+                                    }, 1000)
+                                }
+                            })
+                        } else {
+                            Swal.fire({
+                                icon: 'question', 
+                                backdrop: true, 
+                                allowOutsideClick: false,
+                                title: res_log.msg,
+                            })
+                        }
+                    },
+                });
             },
-        });
-    });
+            allowOutsideClick: () => !Swal.isLoading()
+        })
+    })
     //effects
     $("input[type='password']").on("keyup keydown", function () {
         var attr = $(this).attr("show-pass")

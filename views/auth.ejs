@@ -16,7 +16,7 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:url" content="https://voting-system-jayke.herokuapp.com/">
-    <%- include('local_cdn/_auth') %>
+    <%- include('cdn/_auth') %>
     <link rel="stylesheet"  href="/css/tailwindcss/style.css">
     <link rel="stylesheet" type="text/css" href="/css/auth.css">
     <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
@@ -31,7 +31,7 @@
     <div class="loading flex justify-center w-screen h-screen items-center">
         <%- include('lazy/loading') %>
     </div>
-    <div class="bg-main flex flex-col h-screen">
+    <div class="bg-main flex flex-col h-screen hidden">
         <div class="top animate__animated animate__fadeIn flex p-2 pb-0">
             <div class="logo">
                 <img src="assets/logo.png" class="wmsu_logo" alt="logo">
