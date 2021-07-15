@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="font-sans antialiased">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,26 +8,32 @@
     <meta name="theme-color" content="#121212">
     <title>Admin Dashboard</title>
     <%- include('cdn/_home') %>
-    <!-- -->
-    <script src="/socket.io/socket.io.js"></script>
-    <link rel="stylesheet" href="/css/tailwindcss/style.css">
-    <link rel="stylesheet" type="text/css" href="/others/sweetalert_mod.css">
-    <link rel="stylesheet" type="text/css" href="/control/css/home.css">
+        <!-- -->
+        <script src="/socket.io/socket.io.js"></script>
+        <link rel="stylesheet" href="/css/tailwindcss/style.css">
+        <link rel="stylesheet" type="text/css" href="/control/css/home.css">
 </head>
 
 <body class="bg-gray-300 dark:bg-[#090c10] transition-all">
-    <!-- floating messages & notifications -->
     <div class="body_main_content">
-        <div class="animate__animated animate__slideInLeft fixed z-10 gap-4 bottom-1 left-1 rounded-lg cursor-pointer bg-gray-900 p-2 grid grid-rows-2 md:grid-rows-none md:grid-cols-2 transition-all">
+        <!-- floating messages & notifications -->
+        <div
+            class="animate__animated animate__slideInLeft fixed z-10 gap-4 bottom-1 left-1 rounded-lg cursor-pointer bg-gray-900 p-2 grid grid-rows-2 md:grid-rows-none md:grid-cols-2 transition-all">
             <div class="relative p-1">
                 <i class="admin_nty p-[4px] cursor-pointer text-indigo-600"><i class="far fa-bell text-xl"></i></i>
-                <div class="main_admin_nty animate__animated hidden animate__slideInLeft absolute dark:bg-[#1b1f25] bg-gray-100 md:bottom-full bottom-1/2 md:left-0 left-full rounded-xl shadow-2xl w-[350px] h-[500px] md:w-[90vw]">
+                <div
+                    class="main_admin_nty animate__animated hidden animate__slideInLeft absolute dark:bg-[#1b1f25] bg-gray-100 md:bottom-full bottom-1/2 md:left-0 left-full rounded-xl shadow-2xl w-[350px] h-[500px] md:w-[90vw]">
                     <div class="nty_t container">
-                        <i class="admin_close_nty fa fa-times-circle float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]"></i>
-                        <p class="t_nty text-3xl p-4 m-0 text-indigo-800 font-bold dark:text-[#f2f2f2]">Notifications</p>
+                        <div
+                            class="admin_close_nty float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]">
+                            <i class="fa fa-times-circle"></i>
+                        </div>
+                        <p class="t_nty text-3xl p-4 m-0 text-indigo-800 font-bold dark:text-[#f2f2f2]">Notifications
+                        </p>
                     </div>
                     <div class="nty flex flex-col py-4 px-2 overflow-auto h-[85%]">
-                        <div class="container mb-3 dark:bg-[#2b3747] bg-gray-300 rounded-xl hover:-translate-y-1 transform transition-all cursor-pointer">
+                        <div
+                            class="container mb-3 dark:bg-[#2b3747] bg-gray-300 rounded-xl hover:-translate-y-1 transform transition-all cursor-pointer">
                             <a class="" href="#">
                                 <div class="flex container flex-row p-4">
                                     <i class="text-3xl text-green-700 fa fa-comment-dots"></i>
@@ -41,37 +48,53 @@
                 </div>
             </div>
             <div class="relative p-1">
-                <i class="admin_msg p-[4px] cursor-pointer text-green-600"><i class="fas fa-comment-alt-lines text-xl"></i></i>
-                <div class="main_admin_msg hidden animate__animated animate__slideInLeft absolute dark:bg-[#ccced1] bg-gray-100 md:bottom-full bottom-1/2 md:left-[-150%] left-full rounded-xl shadow-2xl w-[350px] h-[500px] md:w-[90vw]">
+                <i class="admin_msg p-[4px] cursor-pointer text-green-600"><i
+                        class="fas fa-comment-alt-lines text-xl"></i></i>
+                <div
+                    class="main_admin_msg hidden animate__animated animate__slideInLeft absolute dark:bg-[#ccced1] bg-gray-100 md:bottom-full bottom-1/2 md:left-[-150%] left-full rounded-xl shadow-2xl w-[350px] h-[500px] md:w-[90vw]">
                     <div class="first">
-                        <i class="admin_close_msg fa fa-times-circle float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]"></i>
+                        <i
+                            class="admin_close_msg fa fa-times-circle float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]"></i>
                         <p class="t_nty text-3xl p-4 m-0 text-indigo-800 font-bold dark:text-[#f2f2f2]">Messages</p>
                         <div class="container">
                             <form class="admin_search_user">
                                 <div class="grid grid-flow-row grid-row-2 w-full px-3">
-                                    <input class="dark:bg-transparent border border-gray-600 px-3 py-[10px] rounded-lg ring-indigo-500/40 transition-all focus:ring-2 shadow-md outline-none" type="search" name="admin_search_user" autocomplete="off" placeholder="Search . . ." required>
+                                    <input
+                                        class="dark:bg-transparent border border-gray-600 px-3 py-[10px] rounded-lg ring-indigo-500/40 transition-all focus:ring-2 shadow-md outline-none"
+                                        type="search" name="admin_search_user" autocomplete="off"
+                                        placeholder="Search . . ." required>
                                 </div>
                             </form>
                             <div class="search_res hidden flex-col p-4 overflow-auto h-[390px]">
-                                <div class="card dark:bg-[#363e4d] mb-3 last:mb-0 z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-white rounded-2xl transition-all">
+                                <div
+                                    class="card dark:bg-[#363e4d] mb-3 last:mb-0 z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-white rounded-2xl transition-all">
                                     <div class="relative">
-                                        <img class="icon_e_name h-[60px] w-[60px] object-cover rounded-full" alt="election_ic" src="/assets/image.jpg">
-                                        <div class="absolute h-[15px] w-[15px] rounded-full bg-green-600 right-[1px] bottom-1"></div>
+                                        <img class="icon_e_name h-[60px] w-[60px] object-cover rounded-full"
+                                            alt="election_ic" src="/assets/image.jpg">
+                                        <div
+                                            class="absolute h-[15px] w-[15px] rounded-full bg-green-600 right-[1px] bottom-1">
+                                        </div>
                                     </div>
                                     <div class="user_info md:w-full transition-all flex items-center">
-                                        <p class="text-left w-full font-medium text-base ml-2 dark:text-gray-300">Jake Peregrino Velasco</p>
+                                        <p class="text-left w-full font-medium text-base ml-2 dark:text-gray-300">Jake
+                                            Peregrino Velasco</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="search_res flex flex-col p-4 overflow-auto h-[390px]">
-                            <div class="card dark:bg-[#363e4d] mb-3 last:mb-0 z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-white rounded-2xl transition-all">
+                            <div
+                                class="card dark:bg-[#363e4d] mb-3 last:mb-0 z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-white rounded-2xl transition-all">
                                 <div class="relative">
-                                    <img class="icon_e_name h-[60px] w-[60px] object-cover rounded-full" alt="election_ic" src="/assets/image.jpg">
-                                    <div class="absolute h-[15px] w-[15px] rounded-full bg-green-400 right-[1px] bottom-1"></div>
+                                    <img class="icon_e_name h-[60px] w-[60px] object-cover rounded-full"
+                                        alt="election_ic" src="/assets/image.jpg">
+                                    <div
+                                        class="absolute h-[15px] w-[15px] rounded-full bg-green-400 right-[1px] bottom-1">
+                                    </div>
                                 </div>
                                 <div class="user_info w-full transition-all grid grid-flow-row grid-row-2">
-                                    <p class="text-left w-full font-medium text-base ml-2 mt-2 dark:text-gray-300">Jake Peregrino Velasco</p>
+                                    <p class="text-left w-full font-medium text-base ml-2 mt-2 dark:text-gray-300">Jake
+                                        Peregrino Velasco</p>
                                     <span class="text-xs ml-5 dark:text-gray-400">You: Okay</span>
                                 </div>
                             </div>
@@ -80,67 +103,101 @@
                 </div>
             </div>
         </div>
-        <div class="main_admin">
+        <div class="main_admin ">
             <div class="nav_main dark:bg-[#161b22] bg-gray-100 shadow-md fixed flex w-full transition-all top-0  z-10">
                 <div class="w-full flex">
-                    <p class="w-full text-gray-900 dark:text-gray-200 text-xl p-4 font-semibold mt-[1px]">Admin Dashboard</p>
-                    <div class="nav md:dark:bg-[#0d1117] md:shadow-xl flex w-full justify-end p-[10px] my:fixed my:w-[350px] my:right-0 my:h-screen my:flex-col my:bg-gray-200 my:shadow-md my:justify-start my:hidden animate__animated animate__slideInRight">
+                    <p class="w-full text-gray-900 dark:text-gray-200 text-xl p-4 font-semibold mt-[1px]">Admin
+                        Dashboard</p>
+                    <div
+                        class="nav md:dark:bg-[#0d1117] md:shadow-xl flex w-full justify-end p-[10px] my:fixed my:w-[350px] my:right-0 my:h-screen my:flex-col my:bg-gray-200 my:shadow-md my:justify-start my:hidden animate__animated animate__slideInRight">
                         <div class="my:flex justify-end hidden">
-                            <i class="close_nav fa fa-times-circle text-red-600 dark:text-gray-200 text-2xl cursor-pointer"></i>
+                            <i
+                                class="close_nav fa fa-times-circle text-red-600 dark:text-gray-200 text-2xl cursor-pointer"></i>
                         </div>
-                        <a class="dark_mode fa fa-sun rounded-lg transition-all p-[8px] text-gray-900 dark:text-yellow-300 text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2"></i>
-                       <a class="list_btn font-normal rounded-lg transition-all hover:bg-gray-200 dark:hover:bg-[#253547] my:hover:bg-gray-300 p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider" data="home">Home</i>
-                       <a class="list_btn font-normal rounded-lg transition-all hover:bg-gray-200 dark:hover:bg-[#253547] my:hover:bg-gray-300 p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider" data="voters">Voters</a>
-                       <a class="list_btn font-normal rounded-lg transition-all hover:bg-gray-200 dark:hover:bg-[#253547] my:hover:bg-gray-300 p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider" data="elections">Elections</a>
-                       <a class="list_btn font-normal rounded-lg transition-all hover:bg-gray-200 dark:hover:bg-[#253547] my:hover:bg-gray-300 p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider" data="settings">System Settings</a>
-                       <a class="list_btn rounded-lg transition-all my:text-center bg-red-700 dark:bg-red-900 dark:hover:bg-red-700 text-gray-100 py-[8px] px-[15px] text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider" href="../../logout"><i class="far fa-sign-out-alt"></i></a>
+                        <a
+                            class="dark_mode rounded-lg transition-all p-[8px] text-gray-900 dark:text-yellow-300 text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2">
+                            <i class="fa fa-sun"></i>
+                        </a>
+                        <a class="list_btn font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-1 my:mr-0 my:mt-2 my:hover:tracking-wider rpl"
+                            data="home">Home</i>
+                            <a class="list_btn font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-1 my:mr-0 my:mt-2 my:hover:tracking-wider rpl"
+                                data="voters">Voters</a>
+                            <a class="list_btn font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-1 my:mr-0 my:mt-2 my:hover:tracking-wider rpl"
+                                data="elections">Elections</a>
+                            <a class="list_btn font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl"
+                                data="settings">System Settings</a>
+                            <a class="list_btn rounded-lg transition-all my:text-center bg-red-700 dark:bg-red-900 dark:hover:bg-red-700 text-gray-100 py-[8px] px-[15px] text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider rpl"
+                                href="../../logout"><i class="far fa-sign-out-alt"></i></a>
                     </div>
                     <div class="hidden my:block transition-all p-[10px]">
-                        <div class="open_nav rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-lg cursor-pointer mr-1 last:mr-0"><i class="fas fa-bars"></i></div>
+                        <div
+                            class="open_nav rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-lg cursor-pointer mr-1 last:mr-0">
+                            <i class="fas fa-bars"></i></div>
                     </div>
                 </div>
             </div>
             <div class="mt-16">
                 <div class="elections w-full p-[10px]">
-                    <div class="container text-2xl mb-3 font-semibold dark:text-gray-300">Elections <span class="float-right font-normal">6</span></div>
-                    <div class="md:flex-col md:overflow-x-hidden flex-row flex w-full overflow-x-scroll pb-8 pt-4 md:pt-2 transition-all md:max-h-[90vh] md:overflow-y-scroll">
-                        <div class="card md:w-full md:mr-0 md:mb-3 md:last:mb-0 md:flex-col cursor-pointer flex flex-row shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl dark: mr-3 transition-all last:mr-0">
+                    <div class="container text-2xl mb-3 font-semibold dark:text-gray-300">Elections <span
+                            class="float-right font-normal">6</span></div>
+                    <div
+                        class="md:flex-col md:overflow-x-hidden flex-row flex w-full overflow-x-scroll pb-8 pt-4 md:pt-2 transition-all md:max-h-[90vh] md:overflow-y-scroll">
+                        <div
+                            class="card md:w-full md:mr-0 md:mb-3 md:last:mb-0 md:flex-col cursor-pointer flex flex-row shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl dark: mr-3 transition-all last:mr-0">
                             <div class="img">
-                                <img class="icon_e_name md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[300px] h-full object-cover rounded-tl-2xl rounded-bl-2xl" alt="election_ic" src="/assets/image.jpg">
+                                <img class="icon_e_name md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[300px] h-full object-cover rounded-tl-2xl rounded-bl-2xl"
+                                    alt="election_ic" src="/assets/image.jpg">
                             </div>
                             <div class="election_info p-8 w-80 md:w-full transition-all">
                                 <div class="container">
-                                    <p class="text-left text-lg font-medium text-indigo-700 dark:text-indigo-500 md:text-center">Election Status</p>
+                                    <p
+                                        class="text-left text-lg font-medium text-indigo-700 dark:text-indigo-500 md:text-center">
+                                        Election Status</p>
                                 </div>
                                 <div class="container mt-4 transition-all">
-                                    <div class="container mt-3 dark:text-gray-400">Voters <span class="dark:text-gray-300 float-right font-semibold">0</span></div>
-                                    <div class="container mt-3 dark:text-gray-400">Active Voters <span class="dark:text-gray-300 float-right font-semibold">0</span></div>
-                                    <div class="container mt-3 dark:text-gray-400">Status <span class="dark:text-gray-300 float-right font-semibold">Not Yet Started</span></div>
-                                    <div class="container mt-3 dark:text-gray-400">Created <span class="dark:text-gray-300 float-right font-semibold">19hrs ago</span></div>
+                                    <div class="container mt-3 dark:text-gray-400">Voters <span
+                                            class="dark:text-gray-300 float-right font-semibold">0</span></div>
+                                    <div class="container mt-3 dark:text-gray-400">Active Voters <span
+                                            class="dark:text-gray-300 float-right font-semibold">0</span></div>
+                                    <div class="container mt-3 dark:text-gray-400">Status <span
+                                            class="dark:text-gray-300 float-right font-semibold">Not Yet Started</span>
+                                    </div>
+                                    <div class="container mt-3 dark:text-gray-400">Created <span
+                                            class="dark:text-gray-300 float-right font-semibold">19hrs ago</span></div>
                                 </div>
                                 <div class="container mt-8 justify-center flex flex-row ">
-                                    <button class="dark:bg-indigo-900 dark:hover:bg-indigo-800 dark:text-gray-300 transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-800 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500" type="button">More Details</button>
+                                    <button
+                                        class="more_e_settings rpl dark:bg-indigo-900 dark:hover:bg-indigo-800 dark:text-gray-300 transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-800 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500"
+                                        type="button">More Details</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="voters mx-auto w-full p-[10px] mt-4">
-                    <div class="container text-2xl mb-3 font-semibold dark:text-gray-300">All Voters <span class="float-right font-normal">6</span></div>
-                    <div class="grid grid-cols-4 xl:grid-cols-2 my:grid-cols-1 gap-3 transition-all md:max-h-[90vh] md:overflow-y-scroll md:flex md:flex-col md:p-2">
-                        <div class="card dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
+                    <div class="container text-2xl mb-3 font-semibold dark:text-gray-300">All Voters <span
+                            class="float-right font-normal">6</span></div>
+                    <div
+                        class="grid grid-cols-4 xl:grid-cols-2 my:grid-cols-1 gap-3 transition-all md:max-h-[90vh] md:overflow-y-scroll md:flex md:flex-col md:p-2">
+                        <div data-color="#bdbdbd"
+                            class="card rpl dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
                             <div class="relative">
-                                <img class="icon_e_name h-[60px] w-[60px] object-cover rounded-full" alt="election_ic" src="/assets/image.jpg">
-                                <div class="absolute h-[15px] w-[15px] rounded-full bg-green-600 right-[1px] bottom-1"></div>
+                                <img class="icon_e_name h-[60px] w-[60px] object-cover rounded-full" alt="election_ic"
+                                    src="/assets/image.jpg">
+                                <div class="absolute h-[15px] w-[15px] rounded-full bg-green-600 right-[1px] bottom-1">
+                                </div>
                             </div>
                             <div class="user_info md:w-full transition-all flex items-center">
-                                <p class="text-left w-full font-medium text-base ml-2 dark:text-gray-300">Jake Peregrino Velasco</p>
-                                <div class="ml-10 transition-all hover:bg-gray-500 p-[5px] rounded-md hover:text-gray-100 text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"><i class="fa fa-ellipsis-h"></i>
+                                <p class="text-left w-full font-medium text-base ml-2 dark:text-gray-300">Jake Peregrino
+                                    Velasco</p>
+                                <div
+                                    class="ml-10 transition-all hover:bg-gray-500 p-[5px] rounded-md hover:text-gray-100 text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
+                                    <i class="fa fa-ellipsis-h"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- <div class="body">
+                    <!-- <div class="body">
                      <div class="card p-[5px] w-[350px] md:w-full md:mr-0 md:mb-3 md:last:mb-0 flex-row cursor-pointer flex shadow-xl bg-gray-100 rounded-2xl mr-3 transition-all last:mr-0">
                             <div class="relative">
                                 <img class="object-cover rounded-full h-14 w-14" alt="user-img" src="/assets/image.jpg">
@@ -162,106 +219,201 @@
                         </div>
                     </div>
                 </div> -->
+                </div>
             </div>
         </div>
-    </div>
-    <div class="loader container hidden">
-        <div class="e_settings">
-            <div class="header w-full flex flex-row p-1 items-center bg-gray-50 shadow-md">
-                <div class="flex-[20%] xl:flex-[50%] md:flex-[80%]">
-                    <div class="flex flex-row items-center hover:ml-5 sm:hover:ml-0 transition-all">
-                        <i class="close_nty_ transition-all  fa fa-arrow-circle-left text-gray-700 text-2xl cursor-pointer ml-3 mr-2"></i>
-                        <p class="m-0 p-3 text-lg font-medium cursor-pointer">Election Settings</p>
-                   </div>
-                </div>
-                <div class="flex-[80%] xl:flex-[50%] md:flex-[20%]">
-                    <div class="nav_open_hidden hidden xl:w-full xl:flex justify-end mr-2">
-                        <i class="nav_open fa fa-bars cursor-pointer p-2 text-xl"></i>
-                    </div>
-                   <div class="ms-300 transition-all animate__animated animate__slideInRight flex xl:hidden xl:w-[350px] xl:p-2 xl:fixed xl:right-0 xl:h-screen xl:bg-gray-100 xl:top-0 xl:shadow-lg xl:flex-col xl:justify-start xl:items-start flex-row justify-end items-center w-full">
-                       <div class="hidden xl:flex xl:justify-end xl:items-end w-full">
-                        <i class="fa fa-times-circle float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]"></i>
-                       </div>
-                        <div class="center_btns flex flex-row items-center justify-center mr-2 border-red-800 border-r-2 xl:pb-3 xl:border-r-0 xl:border-b-2 xl:flex xl:flex-col xl:w-full xl:gap-2 xl:justify-start xl:items-start xl:px-2 xl:mt-4 transition-all">
-                            <a class="xl:w-full xl:hover:tracking-wider xl:hover:font-semibold hover:bg-gray-300 px-3 py-2 rounded-md last:mr-2 mr-3 cursor-pointer transition-all text-base font-normal">Home</a>
-                            <a class="xl:w-full xl:hover:tracking-wider xl:hover:font-semibold hover:bg-gray-300 px-3 py-2 rounded-md last:mr-2 mr-3 cursor-pointer transition-all text-base font-normal">Voters</a>
-                            <a class="xl:w-full xl:hover:tracking-wider xl:hover:font-semibold hover:bg-gray-300 px-3 py-2 rounded-md last:mr-2 mr-3 cursor-pointer transition-all text-base font-normal">Candidates</a>
-                            <a class="xl:w-full xl:hover:tracking-wider xl:hover:font-semibold hover:bg-gray-300 px-3 py-2 rounded-md last:mr-2 mr-3 cursor-pointer transition-all text-base font-normal">Partylist</a>
-                            <a class="xl:w-full xl:hover:tracking-wider xl:hover:font-semibold hover:bg-gray-300 px-3 py-2 rounded-md last:mr-2 mr-3 cursor-pointer transition-all text-base font-normal">Results</a>
-                            <a class="xl:w-full xl:hover:tracking-wider xl:hover:font-semibold hover:bg-gray-300 px-3 py-2 rounded-md last:mr-2 mr-3 cursor-pointer transition-all text-base font-normal">Settings</a>
-                        </div>
-                        <div class="xl:flex xl:justify-center xl:w-full xl:h-full xl:items-end xl:pb-2">
-                            <div class="flex flex-row items-center justify-center mr-1">
-                                <span class="mr-2">Status :</span>
-                                <div class="bg-yellow-500 py-1 text-sm px-2 rounded-lg ">Not Yet Started</div>
-                            </div>
-                        </div>
-                   </div>
-                </div>
-             </div>
-             <div class="e_main_content w-full px-2 py-1 mt-2 transition-all">
-               <div class="container">
-                <div class="text w-full flex justify-start sm:justify-center items-center px-3 py-2 transition-all">
-                    <p class="font-medium text-2xl text-indigo-700">Election Summary</p>
-                </div>
-                <div class="grid grid-cols-3 p-2 gap-3 xl:grid-cols-none xl:grid-rows-3 xl:gap-4 transition-all">
-                    <div class="shadow-md bg-gray-50 rounded-md p-4 transition-all">
-                        <div class="flex flex-row gap-3 sm:flex-col transition-all">
-                            <div class="flex flex-row gap-2 sm:justify-center transition-all">
-                                <div class="ic flex items-center">
-                                    <i class="fa fa-users text-6xl text-green-500"></i>
-                                </div>
-                                <div class="text flex flex-col ml-3 mt-1">
-                                    <span class="font-normal text-md tracking-wide">Voters</span>
-                                    <div class="text-4xl font-medium mt-1 tracking-wider">300</div>
-                                </div>
-                            </div>
-                           <div class="flex w-full">
-                            <div class="container flex justify-end items-center sm:mt-5 transition-all">
-                                <a class="sm:w-full sm:text-center cursor-pointer bg-gray-600 p-2 rounded-md text-gray-100 transition-all hover:-translate-y-1">View Voters</a>
-                            </div>
-                           </div>
+        <div class="loader container transition-all hidden">
+            <div class="e_settings">
+                <div class="header fixed top-0 z-30 w-full flex flex-row p-1 items-center bg-gray-50 dark:bg-[#161b22] shadow-md">
+                    <div class="flex-[20%] xl:flex-[50%] md:flex-[80%]">
+                        <div class="flex flex-row items-center hover:ml-5 sm:hover:ml-0 transition-all">
+                            <i
+                                class="return_main transition-all fa fa-arrow-circle-left text-gray-700 dark:text-gray-50 text-2xl cursor-pointer ml-3 mr-2"></i>
+                            <p class="m-0 p-3 text-lg font-medium cursor-pointer dark:text-gray-200">Election Settings</p>
                         </div>
                     </div>
-                    <div class="shadow-md bg-gray-50 rounded-md p-4 transition-all">
-                        <div class="flex flex-row gap-3 sm:flex-col transition-all">
-                            <div class="flex flex-row gap-2 sm:justify-center transition-all">
-                                <div class="ic flex items-center">
-                                    <i class="fa fa-balance-scale text-6xl text-yellow-500"></i>
-                                </div>
-                                <div class="text flex flex-col ml-3 mt-1">
-                                    <span class="font-normal text-md tracking-wide">Partylist</span>
-                                    <div class="text-4xl font-medium mt-1 tracking-wider">3</div>
-                                </div>
+                    <div class="flex-[80%] xl:flex-[50%] md:flex-[20%]">
+                        <div class="nav_open_hidden hidden xl:w-full xl:flex justify-end mr-2">
+                            <a class="cursor-pointer p-2 text-2xl rpl">
+                                <i class="fa fa-bars"></i>
+                            </a>
+                        </div>
+                        <div
+                            class="ms-300 transition-all animate__animated animate__slideInRight flex xl:hidden xl:w-[350px] xl:p-2 xl:fixed xl:right-0 xl:h-screen xl:bg-gray-100 xl:top-0 xl:shadow-lg xl:flex-col xl:justify-start xl:items-start flex-row justify-end items-center w-full">
+                            <div class="hidden xl:flex xl:justify-end xl:items-end w-full">
+                                <i
+                                    class="fa fa-times-circle float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]"></i>
                             </div>
-                           <div class="flex w-full">
-                            <div class="container flex justify-end items-center sm:mt-5 transition-all">
-                                <a class="sm:w-full sm:text-center cursor-pointer bg-gray-600 p-2 rounded-md text-gray-100 transition-all hover:-translate-y-1">View Partylist</a>
+                            <div
+                                class="center_btns flex flex-row items-center justify-center mr-2 border-red-800 border-r-2 xl:pb-3 xl:border-r-0 xl:border-b-2 xl:flex xl:flex-col xl:w-full xl:gap-2 xl:justify-start xl:items-start xl:px-2 xl:mt-4 transition-all">
+                                <a class="rpl nav_btn dark:text-gray-300" data-duration="1">Home</a>
+                                <a class="rpl nav_btn dark:text-gray-300" data-duration="1">Voters</a>
+                                <a class="rpl nav_btn dark:text-gray-300" data-duration="1">Candidates</a>
+                                <a class="rpl nav_btn dark:text-gray-300" data-duration="1">Partylist</a>
+                                <a class="rpl nav_btn dark:text-gray-300" data-duration="1">Results</a>
+                                <a class="rpl nav_btn dark:text-gray-300" data-duration="1">Settings</a>
                             </div>
-                           </div>
-                        </div>  
-                    </div>
-                    <div class="shadow-md bg-gray-50 rounded-md p-4 transition-all">
-                        <div class="flex flex-row gap-3 sm:flex-col transition-all">
-                            <div class="flex flex-row gap-2 sm:justify-center transition-all">
-                                <div class="ic flex items-center">
-                                    <i class="fa fa-poll-people text-6xl text-purple-500"></i>
-                                </div>
-                                <div class="text flex flex-col ml-3 mt-1">
-                                    <span class="font-normal text-md tracking-wide">Candidates</span>
-                                    <div class="text-4xl font-medium mt-1 tracking-wider">50</div>
+                            <div class="xl:flex xl:justify-center xl:w-full xl:h-full xl:items-end xl:pb-2">
+                                <div class="flex flex-row items-center justify-center mr-1">
+                                    <span class="mr-2 dark:text-purple-300">Status :</span>
+                                    <div class="bg-yellow-500  py-1 text-sm px-2 rounded-lg ">Not Yet Started</div>
                                 </div>
                             </div>
-                           <div class="flex w-full">
-                            <div class="container flex justify-end items-center sm:mt-5 transition-all">
-                                <a class="sm:w-full sm:text-center cursor-pointer bg-gray-600 p-2 rounded-md text-gray-100 transition-all hover:-translate-y-1">View Candidates</a>
-                            </div>
-                           </div>
                         </div>
                     </div>
                 </div>
-               </div>
-             </div>
+                <div class="e_main_content animate__animated animate__bounceIn w-full px-2 py-1 mt-16 transition-all">
+                    <div class="container">
+                        <div
+                            class="text w-full flex justify-start sm:justify-center items-center px-3 py-2 transition-all">
+                            <p class="font-medium text-2xl text-indigo-700 dark:text-gray-300">Status</p>
+                        </div>
+                        <div
+                            class="grid md:flex md:flex-col grid-cols-4 x p-2 gap-3 xl:grid-cols-3 md:grid-cols-2 xl:gap-4 transition-all">
+                            <div data-color="#bdbdbd"
+                                class="rpl shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all flex flex-col">
+                                <div class="container flex">
+                                    <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Start Election</span>
+                                </div>
+                                <div class="container flex flex-row justify-center items-center h-full">
+                                    <button class="outline-none p-1" type="button">
+                                        <i class="fa fa-play text-4xl text-blue-800"></i>
+                                    </button>
+                                    <div class="container pr-8 md:pr-1">
+                                        <div class="container flex justify-end h-full items-center">
+                                            <div class="hrs flex flex-row gap-2 justify-center items-center h-full">
+                                                <div class="h font-bold text-4xl dark:text-gray-300">08</div>
+                                                <span class="font-extrabold text-pink-700 h">:</span>
+                                                <div class="m font-bold text-4xl dark:text-gray-300">00</div>
+                                                <span class="font-extrabold text-pink-700 h">:</span>
+                                                <div class="s font-bold text-4xl dark:text-gray-300">00</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all">
+                                <div class="container p-1">
+                                    <p class="font-medium m-0 dark:text-gray-50 dark:font-normal">Election Title</p>
+                                </div>
+                                <div class="container mt-2 px-2">
+                                    <div class="text-main">
+                                        <div class="text-icon-left text-purple-600">
+                                            <i class="fa fa-info text-xl"></i>
+                                        </div>
+                                        <input value="SSG Election" type="text"
+                                            class="text-main-input rounded-lg focus:border-none focus:ring-2 ring-indigo-400 pl-8 pr-12 py-3 text-base font-medium"
+                                            autocomplete="off" required>
+                                        <div
+                                            class="text-icon-right text-gray-100 bg-green-500 py-2 px-3 rounded-tr-lg rounded-br-lg">
+                                            <i class="fas fa-check text-xl"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all">
+                                <div class="container flex">
+                                    <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Eligible Courses</span>
+                                </div>
+                                <div class="courses p-1 flex flex-wrap gap-2">
+                                    <div class="border border-purple-700 p-1 px-2 rounded-full cursor-pointer">
+                                        <span class="text-gray-900 font-medium">BSCS</span>
+                                        <button class="ml-1">
+                                            <i class="fas fa-times-circle text-red-600"></i>
+                                        </button>
+                                    </div>
+                                    <div class="border border-green-700 p-1 px-2 rounded-full cursor-pointer">
+                                        <span class="text-gray-900 font-medium">GEN ED</span>
+                                        <button class="ml-1">
+                                            <i class="fas fa-times-circle text-red-600"></i>
+                                        </button>
+                                    </div>
+                                    <div class="border border-red-700 p-1 px-2 rounded-full cursor-pointer">
+                                        <span class="text-gray-900 font-medium">BSED</span>
+                                        <button class="ml-1">
+                                            <i class="fas fa-times-circle text-red-600"></i>
+                                        </button>
+                                    </div>
+                                    <div class="add_course flex justify-center items-center">
+                                        <button type="button" class="cursor-pointer px-1 outline-none">
+                                            <i class="fas fa-plus-circle text-indigo-900"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div
+                            class="text w-full flex justify-start sm:justify-center items-center px-3 py-2 transition-all">
+                            <p class="font-medium text-2xl text-indigo-700">Summary</p>
+                        </div>
+                        <div
+                            class="grid grid-cols-3 p-2 gap-3 xl:grid-cols-none xl:grid-rows-3 xl:gap-4 transition-all">
+                            <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 rounded-md p-4 transition-all">
+                                <div class="flex flex-row gap-3 sm:flex-col transition-all">
+                                    <div class="flex flex-row gap-2 sm:justify-center transition-all">
+                                        <div class="ic flex items-center">
+                                            <i class="fa fa-users text-6xl text-green-500"></i>
+                                        </div>
+                                        <div class="text flex flex-col ml-3 mt-1">
+                                            <span class="font-normal text-md tracking-wide">Voters</span>
+                                            <div class="text-4xl font-medium mt-1 tracking-wider">300</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex w-full">
+                                        <div class="container flex justify-end items-center sm:mt-5 transition-all">
+                                            <a data-color="#bdbdbd"
+                                                class="rpl sm:w-full sm:text-center cursor-pointer bg-gray-600 p-2 rounded-md text-gray-100 transition-all hover:-translate-y-1">View
+                                                Voters</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 rounded-md p-4 transition-all">
+                                <div class="flex flex-row gap-3 sm:flex-col transition-all">
+                                    <div class="flex flex-row gap-2 sm:justify-center transition-all">
+                                        <div class="ic flex items-center">
+                                            <i class="fa fa-balance-scale text-6xl text-yellow-500"></i>
+                                        </div>
+                                        <div class="text flex flex-col ml-3 mt-1">
+                                            <span class="font-normal text-md tracking-wide">Partylist</span>
+                                            <div class="text-4xl font-medium mt-1 tracking-wider">3</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex w-full">
+                                        <div class="container flex justify-end items-center sm:mt-5 transition-all">
+                                            <a data-color="#bdbdbd"
+                                                class="rpl sm:w-full sm:text-center cursor-pointer bg-gray-600 p-2 rounded-md text-gray-100 transition-all hover:-translate-y-1">View
+                                                Partylist</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 rounded-md p-4 transition-all">
+                                <div class="flex flex-row gap-3 sm:flex-col transition-all">
+                                    <div class="flex flex-row gap-2 sm:justify-center transition-all">
+                                        <div class="ic flex items-center">
+                                            <i class="fa fa-poll-people text-6xl text-purple-500"></i>
+                                        </div>
+                                        <div class="text flex flex-col ml-3 mt-1">
+                                            <span class="font-normal text-md tracking-wide">Candidates</span>
+                                            <div class="text-4xl font-medium mt-1 tracking-wider">50</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex w-full">
+                                        <div class="container flex justify-end items-center sm:mt-5 transition-all">
+                                            <a data-color="#bdbdbd"
+                                                class="rpl sm:w-full sm:text-center cursor-pointer bg-gray-600 p-2 rounded-md text-gray-100 transition-all hover:-translate-y-1">View
+                                                Candidates</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- end main -->
@@ -271,22 +423,22 @@
     <script src="/js/avatar.js"></script>
     <script src="/js/theme.js"></script>
     <script>
-        $(".dark_mode").click(function(){
+        $(".dark_mode").click(function () {
             const sweetalert_dark = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.min.css"
             const sweetalert_defaut = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-default@4/default.min.css"
-            const theme = localStorage.getItem('theme') 
-            if(theme == null || theme == "default"){
-                $(this).removeClass("fa-sun")
-                $(this).addClass("fa-moon")
+            const theme = localStorage.getItem('theme')
+            const sun = '<i class="fa fa-sun"></i>'
+            const moon = '<i class="fa fa-moon"></i>'
+            if (theme == null || theme == "default") {
+                $(this).html(moon)
                 localStorage.setItem('theme', 'dark')
                 $('html').removeClass("default")
                 $('html').addClass("dark")
                 $("meta[name='theme-color']").attr("content", "#161b22")
                 $(".sweetalert-link").attr("href", sweetalert_dark)
             }
-            else{
-                $(this).addClass("fa-sun")
-                $(this).removeClass("fa-moon")
+            else {
+                $(this).html(sun)
                 localStorage.setItem('theme', 'default')
                 $('html').addClass("default")
                 $('html').removeClass("dark")
@@ -294,6 +446,18 @@
                 $(".sweetalert-link").attr("href", sweetalert_defaut)
             }
         })
+        $.ripple(".rpl", {
+            debug: false,
+            on: 'mousedown',
+            opacity: 0.4,
+            color: "auto",
+            multi: false,
+            duration: 0.7,
+            rate: function (pxPerSecond) {
+                return pxPerSecond;
+            },
+            easing: 'linear'
+        });
     </script>
 </body>
 

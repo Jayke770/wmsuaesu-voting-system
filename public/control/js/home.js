@@ -264,4 +264,14 @@ $(document).ready(() => {
             $(".active_v_main").removeClass("animate__bounceOut")
         }, 1000)
     })
+
+    /*Election */
+    $(".more_e_settings").click(function(e) {
+        $(".loader").removeClass("hidden")
+        $(".main_admin").addClass("hidden")
+    })
+    $(".return_main").click(function(e) {
+        $(".loader").addClass("hidden")
+        $(".main_admin").removeClass("hidden")
+    })
 })
