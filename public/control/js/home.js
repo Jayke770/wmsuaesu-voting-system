@@ -266,12 +266,27 @@ $(document).ready(() => {
     })
 
     /*Election */
-    $(".more_e_settings").click(function(e) {
+    $(".more_e_settings").click( () => {
         $(".loader").removeClass("hidden")
         $(".main_admin").addClass("hidden")
     })
-    $(".return_main").click(function(e) {
+    $(".return_main").click( () => {
         $(".loader").addClass("hidden")
         $(".main_admin").removeClass("hidden")
+    })
+    /*election nav*/
+    $(".e_nav").click( () => {
+        $(".e_nav_main").removeClass("xl:hidden")
+        setTimeout( () => {
+            $(".e_nav_main").removeClass("animate__slideInRight")
+        }, 305)
+    })
+    $(".cls_e_nav").click( () => {
+        $(".e_nav_main").removeClass("animate__slideInRight")
+        $(".e_nav_main").addClass("animate__slideOutRight")
+        setTimeout( () => {
+            $(".e_nav_main").removeClass("animate__slideOutRight")
+            $(".e_nav_main").addClass("xl:hidden animate__slideInRight")
+        }, 305)
     })
 })
