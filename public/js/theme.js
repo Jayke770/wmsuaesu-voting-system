@@ -1,5 +1,4 @@
 const theme = localStorage.getItem('theme')
-const sweetalert_dark = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.min.css"
 const sun = '<i class="fa fa-sun"></i>'
 const moon = '<i class="fa fa-moon"></i>'
 if (theme == null) {
@@ -17,12 +16,7 @@ if (theme == "dark") {
     console.log("Theme", theme)
     //login page toggle 
     $(".dark_mode").prop("checked", true)
-
-    //change sweetalert theme
-    if($(".sweetalert-link").length !== 0){
-        $(".sweetalert-link").attr("href", sweetalert_dark)
-        $("meta[name='theme-color']").attr("content", "#161b22")
-    } 
+    $("meta[name='theme-color']").attr("content", "#161b22")
     if($(".dark_mode").length !== 0){
         $(".dark_mode").html(moon)
     }

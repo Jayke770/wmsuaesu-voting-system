@@ -192,8 +192,6 @@
         <script src="/js/theme.js "></script>
         <script>
             $(".dark_mode ").click(function() {
-                const sweetalert_dark = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.min.css "
-                const sweetalert_defaut = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-default@4/default.min.css "
                 const theme = localStorage.getItem('theme')
                 const sun = '<i class="fa fa-sun "></i>'
                 const moon = '<i class="fa fa-moon "></i>'
@@ -202,19 +200,13 @@
                     localStorage.setItem('theme', 'dark')
                     $('html').removeClass("default ")
                     $('html').addClass("dark ")
-                    if($(".sweetalert-link").length !== 0){
-                        $("meta[name='theme-color']").attr("content ", "#161b22 ")
-                        $(".sweetalert-link ").attr("href ", sweetalert_dark)
-                    }
+                    $("meta[name='theme-color']").attr("content ", "#161b22 ")
                 } else {
                     $(this).html(sun)
                     localStorage.setItem('theme', 'default')
                     $('html').addClass("default")
                     $('html').removeClass("dark")
-                    if($(".sweetalert-link").length !== 0){
-                        $("meta[name='theme-color']").attr("content ", "#991b1b ")
-                        $(".sweetalert-link ").attr("href ", sweetalert_defaut)
-                    }
+                    $("meta[name='theme-color']").attr("content ", "#991b1b ")
                 }
             })
             $.ripple(".rpl", {
