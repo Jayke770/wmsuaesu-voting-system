@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="font-sans antialiased">
+<html lang="en" class="font-sans">
 
 <head>
     <meta charset="UTF-8">
@@ -8,13 +8,12 @@
     <meta name="theme-color" content="#121212">
     <title>Admin Dashboard</title>
     <%- include('cdn/_home') %>
-        <!-- -->
-        <script src="/socket.io/socket.io.js"></script>
-        <link rel="stylesheet" href="/css/tailwindcss/style.css">
-        <link rel="stylesheet" type="text/css" href="/control/css/home.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <link rel="stylesheet" type="text/css" href="/control/css/home.css">
 </head>
 
-<body class="bg-gray-300 dark:bg-[#090c10] transition-all">
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
     <div class="body_main_content">
         <!-- floating messages & notifications -->
         <div class="floating animate__animated animate__slideInLeft fixed z-10 gap-4 bottom-1 left-1 rounded-lg cursor-pointer bg-gray-900 p-2 grid grid-rows-2 md:grid-rows-none md:grid-cols-2 transition-all">
@@ -99,7 +98,7 @@
                             <i class="fa fa-sun"></i>
                         </a>
                         <a class="list_btn font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" data="home">Home</i>
-                        <a class="list_btn font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" data="voters">Voters</a>
+                        <a class="list_btn font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" href="voters/">Voters</a>
                         <a class="list_btn font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" data="elections">Elections</a>
                         <a class="list_btn font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" data="settings">System Settings</a>
                         <a class="ignore list_btn rounded-lg transition-all my:text-center bg-red-700 dark:bg-red-900 dark:hover:bg-red-700 text-gray-100 py-[8px] px-[15px] text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" href="../../logout"><i class="far fa-sign-out-alt"></i></a>
@@ -185,9 +184,7 @@
     </div>
 </div>
     <!-- end main -->
-    <script src="/control/js/location.js "></script>
     <script src="/control/js/home.js "></script>
-    <script src="/control/js/voter-menu.js "></script>
         <script src="/control/js/election.js "></script>
         <script src="/js/scroll_div.js "></script>
         <script src="/js/time.js "></script>

@@ -154,24 +154,6 @@ $(document).ready(() => {
             $(".msg_main").hide()
         }
     })
-    //list btn click
-    $(".list_btn").click(function (e) {
-        if (!$(this).hasClass('ignore')) {
-            e.preventDefault()
-            location.hash = $(this).attr("data")
-            if($(this).attr("data") === "home"){
-                $(".main_admin").removeClass("hidden")
-            }
-            else{
-                $.post($(this).attr("data"), async (res, status, xhr) => {
-                    $(".main_admin, .floating").addClass("hidden")
-                    if (status == 'success') {
-                        $(".loader").html(res)
-                    }
-                })
-            }
-        }
-    })
     $(".g_btn").click(function () {
         if (!$(this).hasClass("ignore")) {
             if ($(this).hasClass("g_btn_active")) {

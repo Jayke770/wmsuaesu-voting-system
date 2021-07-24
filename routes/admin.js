@@ -307,14 +307,11 @@ adminrouter.post('/delete-election', isadmin, async (req, res) => {
     })
 })
 //get list of all voters
-adminrouter.post('/control/voters', async (req, res) => {
-    //get all users
-    await user.find({}, { username: 0, password: 0, messages: 0, notifications: 0, hearts: 0, comments: 0}, (err, users) => {
-        return res.render("control/forms/voters", {users: users})
-    })
+adminrouter.get('/control/voters', async (req, res) => {
+    return res.render("control/forms/voters")
 })
 //election details
-adminrouter.post('/control/election_details', async (req, res) => {
+adminrouter.get('/control/election', async (req, res) => {
     return res.render("control/forms/election_details")
 })
 adminrouter.post('/control/voter-id/', isadmin, async (req, res) => {

@@ -1,13 +1,4 @@
 'use strict'
-/*Election */
-$(".more_e_settings").click(function(){
-    $.post($(this).attr("href").replace("#", ""), async (res, status, xhr) => {
-        $(".main_admin, .floating").addClass("hidden")
-        if (status == 'success') {
-            $(".loader").html(res)
-        }
-    })
-})
 /*election nav*/
 $(".e_nav").click(() => {
     $(".e_nav_main").removeClass("xl:hidden")
