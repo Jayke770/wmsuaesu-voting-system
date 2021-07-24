@@ -1,0 +1,276 @@
+<div class="voters">
+    <div class="container flex">
+        <div class="flex flex-row bg-gray-50 w-full fixed z-30 shadow-md p-1">
+            <div class="flex flex-row items-center transition-all">
+                <a href="/" class="return_main transition-all text-gray-700 dark:text-gray-50 text-2xl cursor-pointer ml-3 mr-2">
+                    <i class="fa fa-arrow-circle-left"></i>
+                </a>
+                <p class="m-0 p-3 text-lg font-medium cursor-pointer dark:text-gray-200">Voter Settings</p>
+            </div>
+        </div>
+        <div class="container p-2 pt-3 mt-16">
+            <div class="grid grid-cols-2 gap-3 xsm:grid-cols-none xsm:grid-rows-2 transition-all">
+                <div class="flex flex-row justify-start items-center">
+                    <input name="search_voter" type="text" autocomplete="off" class="form-input my-ring-2 rounded-md transition-all border-gray-50 focus:border-gray-300 bg-gray-100 focus:bg-white focus:ring-indigo-600 focus:ring-opacity-50 w-80 xsm:w-full shadow-lg p-[10px]" placeholder="Search Voter" required>
+                </div>
+                <div class="flex flex-row justify-end items-center gap-2">
+                    <select name="sort" class="form-input my-ring-2 rounded-md transition-all border-gray-50 focus:border-gray-300 focus:ring-indigo-600 bg-gray-100 focus:bg-white focus:ring-opacity-50 w-40 xsm:w-full shadow-lg p-[10px] py-2">
+                        <option value="" class="bg-indigo-500">Sort</option>
+                        <option value="BSCS">BSCS</option>
+                        <option value="BSED">BSED</option>
+                        <option value="GEN ED">GEN ED</option>
+                    </select>
+                    <div class="btn flex items-center">
+                        <a class="add_voter rpl rpl-h button-input-active cursor-pointer">
+                            <i class="fa fa-plus-circle"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="all_voters_list container grid grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 gap-3 mt-5 transition-all">
+                <% for( let i = 0; i < 32; i++ ) { %>
+                    <div class="voter shadow-lg bg-gray-100 rounded-xl">
+                        <div class="flex w-full p-2 justify-start items-center">
+                            <div class="flex-[75%] w-full flex">
+                                <div class="relative">
+                                    <img class="voter_img transition-all h-[60px] w-[60px] object-cover rounded-full" alt="Voter Image" src="/assets/image.jpg">
+                                    <div class="circle-dot transition-all bg-green-600"></div>
+                                </div>
+                                <div class="flex justify-start items-center">
+                                    <span class="ml-2 font-normal text-base transition-all">Jake Velasco</span>
+                                </div>
+                            </div>
+                            <div class="flex-[25%] flex justify-end transition-all">
+                                <a class="voter_data_menu rpl rpl-h cursor-pointer transition-all text-xl mr-1 hover:bg-gray-600 py-1 px-2 rounded-full text-gray-900 hover:text-gray-50">
+                                    <i class="fa fa-ellipsis-h"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+                <div class="voter_menu hidden h-screen w-screen fixed left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 transform z-50 bg-gray-700/40">
+                    <div class="main_voter_menu flex justify-center items-center h-full animate__animated animate__bounceIn ms-900">
+                        <div class="main_voter_menu transition-all flex flex-col w-9/12 md:w-[95%] xl:w-11/12 h-[90%] md:h-[95%] bg-gray-200 rounded-xl p-2">
+                            <div class="header w-full grid grid-cols-2">
+                                <div class="flex justify-start items-center p-1 pl-2">
+                                    <span class="font-medium text-2xl md:font-bold md:text-lg">Voter Data</span>
+                                </div>
+                                <div class="flex justify-end items-center p-1 pr-2">
+                                    <a class="close_voter_menu cursor-pointer text-red-600 text-2xl">
+                                        <i class="fas fa-times-circle"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="flex w-full h-[92.5%] p-1 md:flex-col">
+                                <div class="right flex-[25%] md:flex-[1%] md:border-r-0 border-r-2 border-bluegray-500">
+                                    <div class="grid grid-rows-2 w-full h-full md:border-b md:border-bluegray-500/50 md:mb-1 md:overflow-x-scroll">
+                                        <div class="flex flex-col gap-1 mt-1 md:flex-row md:gap-2">
+                                            <a data="voter_info" class="voter_btn_menu nav_btn rpl flex flex-row cursor-pointer md:justify-center md:mr-0 md:pl-4">
+                                                <span class="mr-2 block md:mr-0"><i class="text-xl mr-2 md:text-2xl text-amber-500 fas fa-info-circle"></i></span>
+                                                <span class="md:hidden">Voter Information</span>
+                                            </a>
+                                            <a data="edit_voter_info" class="voter_btn_menu nav_btn rpl flex flex-row cursor-pointer md:justify-center md:mr-0 md:pl-4">
+                                                <span class="mr-2 block md:mr-0"><i class="text-xl mr-1 md:text-2xl text-teal-500 far fa-user-edit"></i></span>
+                                                <span class="md:hidden">Edit Information</span>
+                                            </a>
+                                            <a data="facial_data" class="voter_btn_menu nav_btn rpl flex flex-rowcursor-pointer md:justify-center md:mr-0 md:pl-4">
+                                                <span class="mr-2 block md:mr-0"><i class="text-xl mr-2 md:text-2xl text-indigo-700 fal fa-smile-beam"></i></span>
+                                                <span class="md:hidden">Facial Data</span>
+                                            </a>
+                                            <a data="account_settings" class="voter_btn_menu nav_btn rpl flex flex-row cursor-pointer md:justify-center md:mr-0 md:pl-4">
+                                                <span class="mr-2 block md:mr-0"><i class="text-xl mr-1 md:text-2xl text-fuchsia-700 fad fa-user-cog"></i></span>
+                                                <span class="md:hidden">Acccount</span>
+                                            </a>
+                                        </div>
+                                        <div class="flex flex-row w-full justify-center items-end">
+                                            <a class="flex-row flex gap-2 py-2 md:py-0">
+                                                <span class="text-[15px] px-2 py-[3px] pr-0">Account Status :</span>
+                                                <span class="bg-green-700 text-gray-50 text-[15px] px-2 py-[3px] rounded-md">Online</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="left flex-[75%] md:flex-[99%] overflow-x-hidden">
+                                    <!-- Voter Information -->
+                                    <div class="voter_info flex flex-col px-3 md:px-1">
+                                        <div class="form-group">
+                                            <div class="flex flex-row justify-center items-center">
+                                                <div class="relative">
+                                                    <img class="rounded-full h-[200px] w-[200px] object-cover" alt="voter_img" src="/assets/image.jpg">  
+                                                    <a class="bg-gray-200 p-2 rounded-full pl-[11px] text-blue-600 absolute bottom-1 right-5 transition-all cursor-pointer ring-transparent hover:bg-white hover:ring-indigo-600 ring-2 ">
+                                                        <i class="far fa-edit"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                           <div class="grid grid-cols-3 gap-2 xl:grid-cols-none xl:grid-rows-2 xl:gap-3 xl:px-2">
+                                                <div class="animate__animated animate__fadeInDown bg-gray-50 shadow-md px-3 py-2 rounded-lg cursor-pointer">
+                                                    <span class="font-medium text-base">Fullname</span>
+                                                    <div class="py-2 text-warmgray-700 w-full">
+                                                        Jake Peregrino Velasco
+                                                    </div>
+                                                </div>
+                                                <div class="animate__animated animate__fadeInRight bg-gray-50 shadow-md px-3 py-2 rounded-lg cursor-pointer">
+                                                    <span class="font-medium text-base">Student ID</span>
+                                                    <div class="py-2 text-warmgray-700 w-full">
+                                                        ESU-7482147814-412421
+                                                    </div>
+                                                </div>
+                                           </div>
+                                        </div>
+                                        <div class="form-group mt-2">
+                                           <div class="grid grid-cols-2 xl:grid-cols-none xl:px-2">
+                                            <div class="animate__animated animate__fadeInLeft bg-gray-50 shadow-md px-3 py-2 rounded-lg cursor-pointer">
+                                                <span class="font-medium text-base">Bio</span>
+                                                <div class="py-2 text-warmgray-700 w-full">
+                                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi quam labore exercitationem sapiente quia voluptatem soluta dolorum autem, iste accusantium, similique aliquam, mollitia ipsa! Magni, corrupti. Quibusdam magni magnam voluptatem?
+                                                </div>
+                                            </div>
+                                           </div>
+                                        </div>
+                                        <div class="form-group mt-2">
+                                            <div class="grid grid-cols-3 xl:grid-cols-none xl:px-2">
+                                                <div class="animate__animated animate__fadeInUp bg-gray-50 shadow-md px-3 py-2 rounded-lg cursor-pointer">
+                                                    <span class="font-medium text-base">Course & Year</span>
+                                                    <div class="py-2 text-warmgray-700 w-full">
+                                                        BSCS 3
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Edit Voter Information -->
+                                    <div class="edit_voter_info hidden flex-col">
+                                        <form class="edit_voter_data">
+                                            <div class="form-group">
+                                                <div class="flex flex-row justify-center items-center">
+                                                    <div class="relative">
+                                                        <img class="rounded-full h-[200px] w-[200px] object-cover" alt="voter_img" src="/assets/image.jpg">  
+                                                        <a class="bg-gray-200 p-2 rounded-full pl-[11px] text-blue-600 absolute bottom-1 right-5 transition-all cursor-pointer ring-transparent hover:bg-white hover:ring-indigo-600 ring-2 ">
+                                                            <i class="far fa-edit"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>    
+                                            <div class="form-group mt-4">
+                                                <p class="w-full pl-4 pr-3 py-2 text-base font-semibold animate__animated animate__fadeInDown">Name</p>
+                                               <div class="grid grid-cols-3 gap-3 px-3 my:grid-cols-none my:grid-rows-3">
+                                                    <input type="text" class="animate__animated animate__fadeInDown form-input transition-all border-gray-300 w-full my-ring-2 focus:ring-indigo-600 rounded-md focus:ring-opacity-80 focus:border-gray-400" name="fname" autocomplete="off" placeholder="Firstname" required>
+                                                    <input type="text" class="animate__animated animate__fadeInUp form-input transition-all border-gray-300 w-full my-ring-2 focus:ring-indigo-600 rounded-md focus:ring-opacity-80 focus:border-gray-400" name="mname" autocomplete="off" placeholder="Middlename" required>
+                                                    <input type="text" class="animate__animated animate__fadeInRight form-input transition-all border-gray-300 w-full my-ring-2 focus:ring-indigo-600 rounded-md focus:ring-opacity-80 focus:border-gray-400" name="lname" autocomplete="off" placeholder="Lastname" required>
+                                               </div>
+                                            </div>
+                                            <div class="form-group mt-2">
+                                                <p class="w-full pl-4 pr-3 py-2 text-base font-semibold animate__animated animate__fadeInDown">Course & Year</p>
+                                                <div class="grid grid-cols-3 gap-3 px-3 my:grid-cols-none my:grid-rows-2">
+                                                    <input list="crs" type="text" name="course" class="animate__animated animate__fadeInTopLeft form-input transition-all border-gray-300 w-full my-ring-2 focus:ring-indigo-600 rounded-md focus:ring-opacity-80 focus:border-gray-400" autocomplete="off" placeholder="Course" required>
+                                                    <datalist id="crs">
+                                                        <option value="BSCS">
+                                                        <option value="BSED">
+                                                        <option value="GEN ED">
+                                                    </datalist>
+                                                    <input list="yr" type="text" name="year" class="animate__animated animate__fadeInTopRight form-input transition-all border-gray-300 w-full my-ring-2 focus:ring-indigo-600 rounded-md focus:ring-opacity-80 focus:border-gray-400" autocomplete="off" placeholder="Year" required>
+                                                    <datalist id="yr">
+                                                        <option value="1">
+                                                        <option value="2">
+                                                        <option value="3">
+                                                        <option value="4">
+                                                    </datalist>
+                                                </div>
+                                            </div>
+                                            <div class="form-group mt-2">
+                                                <p class="w-full pl-4 pr-3 py-2 text-base font-semibold animate__animated animate__fadeInDown">Student ID</p>
+                                                <div class="grid grid-cols-3 gap-3 px-3 my:grid-cols-none">
+                                                    <input type="text" name="student-id" class="animate__animated animate__fadeInUp form-input transition-all border-gray-300 w-full my-ring-2 focus:ring-indigo-600 rounded-md focus:ring-opacity-80 focus:border-gray-400" autocomplete="off" placeholder="Student ID" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group mt-4">
+                                                <div class="flex justify-end items-center gap-2 pr-4 md:justify-center md:pr-0">
+                                                    <button type="reset" class="button text-gray-50 bg-rose-600 cursor-pointer rounded-md focus:ring-rose-600 focus:shadow-lg">
+                                                        <span class="mr-1">
+                                                            <i class="fas fa-undo"></i>
+                                                        </span>
+                                                        <span>Reset</span>
+                                                    </button>
+                                                    <button type="submit" class="button disabled:text-gray-300 disabled:bg-green-700 text-gray-50 bg-green-600 focus:shadow-lg focus:ring-green-600 cursor-pointer rounded-md">
+                                                        <span class="mr-1">
+                                                            <i class="fad fa-save"></i>
+                                                        </span>
+                                                        <span>Save</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <!-- Voter Facial Data -->
+                                    <div class="facial_data hidden flex-col h-full w-full justify-center items-center md:justify-start md:py-5">
+                                        <p class="w-full text-center text-gray-900 font-medium text-lg animate__animated animate__fadeInDown">Voter Facial Data</p>
+                                        <div class="flex flex-row justify-center items-center gap-3 w-full px-3 py-4 md:flex-col md:py-2">
+                                            <div class="relative transition-all cursor-pointer animate__animated animate__bounceIn">
+                                                <img class="rpl h-60 peer w-60 rounded-md object-cover" src="/assets/image.jpg">
+                                                <a class="rpl absolute transition-all hidden top-1 left-1 bg-gray-200 text-rose-600 p-2 rounded-md hover:block peer-hover:block">
+                                                    <i class="far fa-trash-alt text-xl"></i>
+                                                </a>
+                                            </div>
+                                            <div class="relative transition-all cursor-pointer animate__animated animate__bounceIn">
+                                                <img class="rpl h-60 peer w-60 rounded-md object-cover" src="/assets/image.jpg">
+                                                <a class="rpl absolute transition-all hidden top-1 left-1 bg-gray-200 text-rose-600 p-2 rounded-md hover:block peer-hover:block">
+                                                    <i class="far fa-trash-alt text-xl"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-row mt-10 justify-center items-center md:mt-3 md:mb-3 md:p-3">
+                                            <button type="button" class="rpl animate__animated animate__fadeInUp button disabled:bg-green-700/60 disabled:cursor-not-allowed bg-green-700 focus:ring-green-700">
+                                                <i class="ic mr-2 text-white">
+                                                    <i class="far fa-plus-circle text-lg"></i>
+                                                </i>
+                                                <span class="font-normal">Add Facial Data</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Voter Account Settings -->
+                                    <div class="account_settings hidden py-2 px-3">
+                                        <div class="form-group grid grid-cols-4 md:grid-cols-none">
+                                            <div class="animate__animated animate__fadeInUp bg-gray-50 col-span-2 md:col-span-full shadow-md px-3 py-2 rounded-lg cursor-pointer">
+                                                <span class="font-medium text-base">Account Settings</span>
+                                                <div class="py-2 pt-4 text-warmgray-700 w-full grid grid-cols-2 gap-2 md:grid-cols-none md:grid-rows-2">
+                                                   <button type="button" class="button bg-rose-700 focus:ring-rose-700">Delete Account</button>
+                                                   <button type="button" class="button bg-green-600 focus:ring-green-600">Update Account</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group grid grid-cols-4 md:grid-cols-none">
+                                            <div class="animate__animated animate__fadeInRight bg-gray-50 col-span-2 md:col-span-full shadow-md px-3 py-2 rounded-lg cursor-pointer">
+                                                <span class="font-medium text-base">Account ID</span>
+                                                <div class="py-2 text-warmgray-700 w-full break-all">
+                                                    60d917c82588e31a08b24fa1
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group grid grid-cols-4 md:grid-cols-none">
+                                            <div class="animate__animated animate__fadeInUp bg-gray-50 col-span-2 md:col-span-full shadow-md px-3 py-2 rounded-lg cursor-pointer">
+                                                <span class="font-medium text-base">Account Created</span>
+                                                <div class="py-2 text-warmgray-700 w-full">
+                                                    412478-41284-4124
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group grid grid-cols-4 md:grid-cols-none">
+                                            <div class="animate__animated animate__fadeInRight bg-gray-50 col-span-2 md:col-span-full shadow-md px-3 py-2 rounded-lg cursor-pointer">
+                                                <span class="font-medium text-base">Socket ID</span>
+                                                <div class="py-2 text-warmgray-700 w-full">
+                                                    412478-41284-4124
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

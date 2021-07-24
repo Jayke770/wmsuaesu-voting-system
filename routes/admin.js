@@ -5,7 +5,6 @@ const user = require('../models/user')
 const ids = require('../models/student-id')
 const election = require('../models/election')
 const pass_gen = require('generate-password')
-
 adminrouter.post('/check', isadmin, async (req, res) => {
     const { id } = req.body
     if (id.trim() != "") {
@@ -307,12 +306,16 @@ adminrouter.post('/delete-election', isadmin, async (req, res) => {
         }
     })
 })
-//user
-adminrouter.post('/control/list_voter', isadmin, async (req, res) => {
+//get list of all voters
+adminrouter.post('/control/voters', async (req, res) => {
     //get all users
     await user.find({}, { username: 0, password: 0, messages: 0, notifications: 0, hearts: 0, comments: 0}, (err, users) => {
-        return res.render("control/forms/list_voter", {users: users})
+        return res.render("control/forms/voters", {users: users})
     })
+})
+//election details
+adminrouter.post('/control/election_details', async (req, res) => {
+    return res.render("control/forms/election_details")
 })
 adminrouter.post('/control/voter-id/', isadmin, async (req, res) => {
     return res.render('control/forms/voter-id')

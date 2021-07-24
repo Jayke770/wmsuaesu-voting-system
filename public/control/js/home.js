@@ -74,17 +74,6 @@ $(document).ready(() => {
             })
         }, 1000)
     }
-    //check location hash
-    if (!location.hash == "") {
-        $(".loading_main").show(100)
-        $(".close_nav").click()
-        $.post(location.hash.replace("#", ""), async (res, status, xhr) => {
-            if (status == 'success') {
-                await $(".forms").html(res)
-                $(".loading_main").hide(100)
-            }
-        })
-    }
     //floating msg & nty 
     $(".admin_nty").click(() => {
         var msg = $(".main_admin_msg").hasClass("hidden")
@@ -166,16 +155,21 @@ $(document).ready(() => {
         }
     })
     //list btn click
-    $(".list_btn").click(function () {
+    $(".list_btn").click(function (e) {
         if (!$(this).hasClass('ignore')) {
-            $(".loading_main").show(100)
+            e.preventDefault()
             location.hash = $(this).attr("data")
-            $.post($(this).attr("data"), async (res, status, xhr) => {
-                if (status == 'success') {
-                    await $(".forms").html(res)
-                    $(".loading_main").hide(100)
-                }
-            })
+            if($(this).attr("data") === "home"){
+                $(".main_admin").removeClass("hidden")
+            }
+            else{
+                $.post($(this).attr("data"), async (res, status, xhr) => {
+                    $(".main_admin, .floating").addClass("hidden")
+                    if (status == 'success') {
+                        $(".loader").html(res)
+                    }
+                })
+            }
         }
     })
     $(".g_btn").click(function () {
@@ -263,30 +257,5 @@ $(document).ready(() => {
             $(".active_v_main").addClass("animate__bounceIn")
             $(".active_v_main").removeClass("animate__bounceOut")
         }, 1000)
-    })
-
-    /*Election */
-    $(".more_e_settings").click( () => {
-        $(".loader").removeClass("hidden")
-        $(".main_admin").addClass("hidden")
-    })
-    $(".return_main").click( () => {
-        $(".loader").addClass("hidden")
-        $(".main_admin").removeClass("hidden")
-    })
-    /*election nav*/
-    $(".e_nav").click( () => {
-        $(".e_nav_main").removeClass("xl:hidden")
-        setTimeout( () => {
-            $(".e_nav_main").removeClass("animate__slideInRight")
-        }, 305)
-    })
-    $(".cls_e_nav").click( () => {
-        $(".e_nav_main").removeClass("animate__slideInRight")
-        $(".e_nav_main").addClass("animate__slideOutRight")
-        setTimeout( () => {
-            $(".e_nav_main").removeClass("animate__slideOutRight")
-            $(".e_nav_main").addClass("xl:hidden animate__slideInRight")
-        }, 305)
     })
 })

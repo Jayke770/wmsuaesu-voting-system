@@ -32,24 +32,6 @@ html{
 	display: none !important;
 }
 
-/* width */
-
-::-webkit-scrollbar {
-	width: 10px;
-}
-
-/* Track */
-
-::-webkit-scrollbar-track {
-	background: unset;
-}
-
-/* Handle */
-
-::-webkit-scrollbar-thumb {
-	background: rgb(72, 71, 71);
-	border-radius: 5px;
-}
 
 .popup {
 	background-color: var(--l_dark);
