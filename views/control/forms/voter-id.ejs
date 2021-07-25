@@ -1,133 +1,148 @@
-<div class="st_id">
-    <div class="all_student_id">
-        <div class="actions">
-            <i class="search_id_ic fas fa-search"></i>
-            <i class="search_id_ic_back fas fa-arrow-circle-left" style="  display: none;"></i>
-            <input type="text" name="search_id" class="search_id wmsu_inpt wmsu_inpt_focus" placeholder="Search Student ID">
-            <div class="selection">
-                <select name="actions" class="wmsu_inpt sort_id">
-                    <option value="df">Default</option>
-                    <option value="BSCS">BSCS</option>
-                    <option value="BEED">BEED</option>
-                    <option value="GEN ED">GEN ED</option>
-                </select>
-            </div>
-            <div class="actions_menu">
-                <button class="wmsu_btn menu_ac fas fa-caret-down"></button>
+<!DOCTYPE html>
+<html lang="en" class="font-sans">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" class="theme-color" content="#991b1b">
+    <title>Voter ID's</title>
+    <%- include('../cdn/_home') %>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+</head>
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <div class="container">
+        <div class="flex">
+            <div class="flex flex-row bg-gray-50 dark:bg-darkBlue-secondary w-full fixed z-30 shadow-lg p-1">
+                <div class="flex flex-row items-center transition-all">
+                    <a href="/" class="return_main transition-all text-gray-700 dark:text-gray-200 text-2xl cursor-pointer ml-3 mr-2">
+                        <i class="fa fa-arrow-circle-left"></i>
+                    </a>
+                    <p class="m-0 p-3 text-lg font-medium cursor-pointer dark:text-gray-200">Voter ID's</p>
+                </div>
             </div>
         </div>
-        <div style="overflow-y: auto; height: 85vh;">
-            <table>
-                <thead>
-                    <th>Student ID</th>
-                    <th>Course</th>
-                    <th>Year</th>
-                    <th>Enabled</th>
-                </thead>
-                <tbody class="st_ids"></tbody>
-            </table>
+        <div class="container p-2 pt-3 mt-16">
+            <div class="grid grid-cols-2 gap-3 xsm:grid-cols-none xsm:grid-rows-2 transition-all">
+                <div class="flex flex-row justify-start items-center">
+                    <input name="search_voter" type="text" autocomplete="off" class="form-input dark:bg-transparent dark:border-gray-600 dark:text-gray-50 my-ring-2 rounded-md transition-all border-gray-50 focus:border-gray-300 bg-gray-100 focus:bg-white focus:ring-indigo-600 focus:ring-opacity-50 w-80 xsm:w-full shadow-lg p-[10px]" placeholder="Search Voter" required>
+                </div>
+                <div class="flex flex-row justify-end items-center gap-2">
+                    <select name="sort" class="form-input my-ring-2 rounded-md dark:bg-transparent dark:text-gray-50 dark:border-gray-600 transition-all border-gray-50 focus:border-gray-300 focus:ring-indigo-600 bg-gray-100 focus:bg-white focus:ring-opacity-50 w-40 xsm:w-full shadow-lg p-[10px] py-2">
+                        <option value="" class="bg-indigo-500">Sort</option>
+                        <option value="enable">Enabled</option>
+                        <option value="disabled">Disabled</option>
+                    </select>
+                    <div class="btn flex items-center">
+                        <button class="add_voter rpl rpl-h button-input-active cursor-pointer dark:bg-green-800 dark:hover:bg-green-600 my-ring-2 hover:ring-green-600">
+                            <i class="fa fa-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Voter ID List -->
+            <% if (id.length !== 0) { %>
+                <div class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
+                    <% for( let i = 0; i < id.length; i++ ) { %>
+                        <div data="<%- id[i]._id %>" class="w-full p-3 bg-gray-50 dark:bg-darkBlue-secondary rounded-lg cursor-pointer">
+                            <div class="w-full">
+                                <span class="font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
+                                <span class="float-right font-medium text-fuchsia-600 dark:text-fuchsia-500"><%- id[i].course + ' ' + id[i].year %></span>
+                            </div>
+                            <div class="mt-2 p-2">
+                                <a data="<%- id[i]._id %>" class="rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a data="<%- id[i]._id %>" class="rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                                <span class=" <% if(id[i].enabled){ %> bg-green-700 <% } else { %> bg-amber-600 <% } %> float-right text-sm mt-3 px-2 py-[2px] rounded-md text-gray-100">
+                                    <% if(id[i].enabled){ %> 
+                                        Used
+                                    <% } else { %>
+                                        Not Used
+                                    <% } %>
+                                </span>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <div class="flex items-center justify-center transition-all">
+                    <div class=" text-center w-[350px] md:mt-12 mt-36 py-9 bg-rose-500 dark:bg-darkBlue-secondary rounded-2xl cursor-pointer">
+                        <span class="font-bold text-gray-50">Nothing To Fetch</span>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+        <div class="popup hidden transition-all z-50 fixed w-full h-full bg-gray-900/50 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+            <div animate-in="animate__animated animate__bounceIn" animate-out="animate__animated animate__bounceOut" class="add_voter_id animate__animated animate__bounceIn ms-900 flex w-full h-full justify-center items-center transition-all">
+                <div class="shadow-md w-2/6 my:w-1/2 md:w-11/12 h-auto dark:border-t-8 border-[0.5px] dark:border-amber-500 bg-gray-50 dark:bg-darkBlue-secondary rounded-lg p-2 transition-all">
+                   <div class="container">
+                        <div class="grid grid-cols-2 p-1">
+                            <p class="text-xl font-medium pl-2 pt-2 sm:text-lg dark:text-gray-200">Add Voter ID</p>
+                            <div class="flex justify-end items-center">
+                                <a class="cls_add_voter_id cursor-pointer text-rose-600 text-2xl mr-2 mt-1">
+                                    <i class="fas fa-times-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="container p-3 mt-2">
+                            <form class="add_voter_id_form w-full flex flex-col" action="/control/add-voter-id/" method="POST">
+                                <div class="container px-2 mb-2 transition-all">
+                                    <label for="id" class="pointer-events-none dark:text-gray-300">ID Number</label>
+                                    <input autocomplete="off" name="id" placeholder="ID Number" type="text" class="id_number dark:bg-transparent dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 pr-7 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
+                                </div>
+                                <div class="justify-end items-center gap-1 hidden mr-3 status_voter_id">
+                                    <span class="text-sm font-medium text-green-600 status_voter_id_status">Checking</span>
+                                </div>  
+                                <div class="container px-2 mb-2">
+                                    <label for="id" class="pointer-events-none dark:text-gray-300">Course</label>
+                                    <select disabled="true" name="crs" class="crs_voter disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 pr-7 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
+                                        <option value="">Select Course</option>
+                                        <option value="BSCS">BSCS</option>
+                                        <option value="BSED">BSED</option>
+                                        <option value="GEN ED">GEN ED</option>
+                                    </select>
+                                </div>
+                                <div class="container px-2 mb-2">
+                                    <label for="id" class="pointer-events-none dark:text-gray-300">Year</label>
+                                    <select disabled="true" name="year" class="year_voter disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 pr-7 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
+                                        <option value="">Select Year</option>
+                                        <option value="1">1st</option>
+                                        <option value="2">2nd</option>
+                                        <option value="3">3rd</option>
+                                        <option value="4">4th</option>
+                                    </select>
+                                </div>
+                                <div class="container px-2 mb-2 flex items-center justify-end">
+                                    <button type="reset" class="reset_voter_id_form hidden"></button>
+                                    <button disabled="true" type="submit" class="add_btn_voter_id disabled:cursor-not-allowed disabled:bg-green-900 button rpl dark:bg-green-700 dark:active:ring-green-700 bg-green-500 my-ring-2 active:ring-green-500 mt-5 text-gray-300">Add</button>
+                                </div>
+                            </form>
+                        </div>
+                   </div>
+                </div>
+            </div>
         </div>
     </div>
-    <!-- div popup -->
-    <div class="valid_id  wmsu_box animate__animated">
-        <div class="st_id_actions">
-            <div class="click">
-                <i class="cl_val fa far fa-times-circle"></i>
-            </div>
-            <p class="ac_t">Student Settings</p>
-            <div class="wmsu_inpt_main">
-                <button class="wmsu_btn mb-5 st" type="button" data-open="update">Update Student ID</button>
-                <button class="wmsu_btn mb-5 st" type="button" data-open="delete">Delete Student ID</button>
-                <button class="wmsu_btn st" type="button" data-open="add">Add Student ID</button>
-            </div>
-        </div>
-        <!-- update -->
-        <form class="update" style="display: none;">
-            <button type="reset" class="reset" style="display: none;"></button>
-            <div>
-                <i class="cl_val fa far fa-times-circle"></i>
-                <i class="back fas fa-arrow-circle-left" data-open="update"></i>
-            </div>
-            <p class="ac_t" style="text-align: center; font-size: 20px;">Update Student ID</p>
-            <div class="wmsu_inpt_main">
-                <input type="text" name="id" class="wmsu_inpt wmsu_inpt_focus" placeholder="Student ID">
-            </div>
-            <table width="100%">
-                <tr>
-                    <td>
-                        <input list="crs" name="course" class="wmsu_inpt wmsu_inpt_focus" placeholder="Course" required>
-                        <datalist id="crs">
-                            <option value="BSCS">
-                            <option value="BSED">
-                            <option value="GEN ED">
-                        </datalist>
-                    </td>
-                    <td>
-                        <input list="yr" name="yr" class="wmsu_inpt wmsu_inpt_focus" placeholder="Year" required>
-                        <datalist id="yr">
-                            <option value="1">
-                            <option value="2">
-                            <option value="3">
-                            <option value="4">
-                        </datalist>
-                    </td>
-                </tr>
-            </table>
-            <div class="wmsu_inpt_main">
-                <button type="submit" class="wmsu_btn">Update</button>
-            </div>
-        </form>
-        <!-- add -->
-        <form class="add_id add" style="display: none;">
-            <button type="reset" class="reset" style="display: none;"></button>
-            <div class="add_click">
-                <i class="cl_val fa far fa-times-circle"></i>
-                <i class="back fas fa-arrow-circle-left" data-open="add"></i>
-            </div>
-            <p class="ac_t" style="text-align: center; font-size: 20px;">Add Student ID</p>
-            <div class="wmsu_inpt_main">
-                <input type="text" name="id" class="wmsu_inpt wmsu_inpt_focus" placeholder="Student ID">
-            </div>
-            <table width="100%">
-                <tr>
-                    <td>
-                        <input list="crs" name="course" class="wmsu_inpt wmsu_inpt_focus" placeholder="Course" required>
-                        <datalist id="crs">
-                            <option value="BSCS">
-                            <option value="BEED">
-                            <option value="GEN ED">
-                        </datalist>
-                    </td>
-                    <td>
-                        <input list="yr" name="yr" class="wmsu_inpt wmsu_inpt_focus" placeholder="Year" required>
-                        <datalist id="yr">
-                            <option value="1">
-                            <option value="2">
-                            <option value="3">
-                            <option value="4">
-                        </datalist>
-                    </td>
-                </tr>
-            </table>
-            <div class="wmsu_inpt_main">
-                <button type="submit" class="wmsu_btn">Add</button>
-            </div>
-        </form>
-        <!-- delete -->
-        <form class="delete" style="display: none;">
-            <div>
-                <i class="cl_val fa far fa-times-circle"></i>
-                <i class="back fas fa-arrow-circle-left" data-open="delete"></i>
-            </div>
-            <p class="ac_t" style="text-align: center; font-size: 20px;">Delete Student ID</p>
-            <div class="wmsu_inpt_main">
-                <input type="text" name="id" class="wmsu_inpt wmsu_inpt_focus" placeholder="Student ID">
-            </div>
-            <div class="wmsu_inpt_main">
-                <button type="submit" class="wmsu_btn">Delete</button>
-            </div>
-            <button type="reset" class="reset" style="display: none;"></button>
-        </form>
-    </div>
-</div>
-<script src="/control/js/student-id.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/time.js"></script>
+    <script src="/js/avatar.js "></script>
+    <script src="/control/js/voter-id.js"></script>
+    <script>
+        $.ripple(".rpl", {
+            debug: false,
+            on: 'mousedown',
+            opacity: 0.3,
+            color: "auto",
+            multi: false,
+            duration: 0.7,
+            rate: function(pxPerSecond) {
+                return pxPerSecond;
+            },
+            easing: 'linear'
+        })
+    </script>
+</body>
+</html>

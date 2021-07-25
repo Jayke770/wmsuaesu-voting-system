@@ -5,6 +5,7 @@ const user = require('../models/user')
 const ids = require('../models/student-id')
 const election = require('../models/election')
 const pass_gen = require('generate-password')
+const xs = require('xss')
 adminrouter.post('/check', isadmin, async (req, res) => {
     const { id } = req.body
     if (id.trim() != "") {
@@ -314,8 +315,84 @@ adminrouter.get('/control/voters', async (req, res) => {
 adminrouter.get('/control/election', async (req, res) => {
     return res.render("control/forms/election_details")
 })
-adminrouter.post('/control/voter-id/', isadmin, async (req, res) => {
-    return res.render('control/forms/voter-id')
+//voter id
+adminrouter.get('/control/voter-id/', isadmin, async (req, res, next) => {
+    await ids.find({}, (err, res_id) => {
+        if(err){
+            //send error code
+            return next()
+        }
+        if(!err){
+            return res.render('control/forms/voter-id', {id: res_id})
+        }
+    })
+})
+adminrouter.post('/control/voter-id/', isadmin, async (req, res, next) => {
+    const {id} = req.body 
+    const voter_id = xs(id)
+    //check voter if exists 
+    await ids.find({student_id: voter_id}, (err, res_id) => {
+        if(err){
+            //send error page
+        }
+        if(!err){
+            if(res_id.length === 0){
+                return res.send({
+                    status: true, 
+                    msg: "Okay"    
+                })
+            } 
+            else{
+                return res.send({
+                    status: false, 
+                    msg: "Voter ID is already exist"
+                })
+            }
+        }
+    })
+})
+adminrouter.post('/control/add-voter-id/', isadmin, async (req, res, next) => {
+    const {id, crs, year} = req.body
+    const voter_id = xs(id)
+    const voter_crs = xs(crs)
+    const voter_year = xs(year) 
+    
+    //check id 
+    await ids.find({student_id: voter_id}, (err, res_find) => {
+        if(err){
+            //send error
+        }
+        if(!err){
+            if(res_find.length === 0){
+                ids.create({
+                    student_id: voter_id, 
+                    course: voter_crs, 
+                    year: voter_year, 
+                    enabled: false
+                }, (err, inserted) => {
+                    if(err){
+                        return res.send({
+                            status: false,
+                            msg: "Something went wrong"
+                        })
+                    }
+                    else{
+                        return res.send({
+                            status: true, 
+                            data: inserted, 
+                            msg: "Voter ID Added"
+                        })
+                    }
+                })
+            }
+            else{
+                return res.send({
+                    status: false,
+                    msg: "Voter ID is already exist"
+                })
+            }
+        }
+    })
 })
 //logs 
 adminrouter.post('/control/logs/', isadmin, async (req, res) => {
