@@ -154,6 +154,24 @@ $(document).ready(() => {
             $(".msg_main").hide()
         }
     })
+    /*election settings*/ 
+    $(".open_more_e_settings").click( () => {
+        if($(".more_e_settings_nav").hasClass("hidden")){
+            $(".more_e_settings_nav").removeClass("hidden")
+            setTimeout( () => {
+                $(".more_e_settings_nav").removeClass($(".more_e_settings_nav").attr("animate-in"))
+            }, 301)
+        }
+    })
+    $(".close_more_e_settings").click( () => {
+        if(!$(".more_e_settings_nav").hasClass("hidden")){
+            $(".more_e_settings_nav").addClass($(".more_e_settings_nav").attr("animate-out"))
+            setTimeout( () => {
+                $(".more_e_settings_nav").removeClass($(".more_e_settings_nav").attr("animate-out"))
+                $(".more_e_settings_nav").addClass(`hidden ${$(".more_e_settings_nav").attr("animate-in")}`)
+            }, 301)
+        }
+    })
     $(".g_btn").click(function () {
         if (!$(this).hasClass("ignore")) {
             if ($(this).hasClass("g_btn_active")) {
