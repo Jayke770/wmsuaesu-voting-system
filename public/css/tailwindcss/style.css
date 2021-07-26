@@ -1209,6 +1209,14 @@ video {
           appearance: none;
 }
 
+.grid-flow-row-dense {
+  grid-auto-flow: row dense;
+}
+
+.grid-flow-col-dense {
+  grid-auto-flow: column dense;
+}
+
 .grid-cols-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -3312,6 +3320,11 @@ a::selection, button::selection, span::selection {
   border-color: rgba(79, 70, 229, var(--tw-border-opacity));
 }
 
+.dark .dark\:focus\:bg-darkBlue-secondary:focus {
+  --tw-bg-opacity: 1;
+  background-color: rgba(22, 27, 34, var(--tw-bg-opacity));
+}
+
 .dark .dark\:focus\:ring-rose-800:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgba(159, 18, 57, var(--tw-ring-opacity));
@@ -3883,6 +3896,10 @@ a::selection, button::selection, span::selection {
 }
 
 @media (max-width: 400px) {
+  .xsm\:flex {
+    display: flex;
+  }
+
   .xsm\:w-\[98\%\] {
     width: 98%;
   }
