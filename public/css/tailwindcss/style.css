@@ -791,14 +791,6 @@ video {
   right: 1.25rem;
 }
 
-.right-\[50\%\] {
-  right: 50%;
-}
-
-.left-\[50\%\] {
-  left: 50%;
-}
-
 .z-10 {
   z-index: 10;
 }
@@ -811,12 +803,12 @@ video {
   z-index: 30;
 }
 
-.z-50 {
-  z-index: 50;
-}
-
 .z-\[90\] {
   z-index: 90;
+}
+
+.z-50 {
+  z-index: 50;
 }
 
 .col-span-2 {
@@ -1040,6 +1032,10 @@ video {
   height: 10%;
 }
 
+.h-2 {
+  height: 0.5rem;
+}
+
 .h-\[90\%\] {
   height: 90%;
 }
@@ -1054,22 +1050,6 @@ video {
 
 .h-60 {
   height: 15rem;
-}
-
-.h-4 {
-  height: 1rem;
-}
-
-.h-3 {
-  height: 0.75rem;
-}
-
-.h-2 {
-  height: 0.5rem;
-}
-
-.h-1 {
-  height: 0.25rem;
 }
 
 .w-screen {
@@ -1140,6 +1120,10 @@ video {
   width: 50px;
 }
 
+.w-\[3\%\] {
+  width: 3%;
+}
+
 .w-40 {
   width: 10rem;
 }
@@ -1158,18 +1142,6 @@ video {
 
 .w-60 {
   width: 15rem;
-}
-
-.w-\[5\%\] {
-  width: 5%;
-}
-
-.w-\[3\%\] {
-  width: 3%;
-}
-
-.w-\[50\%\] {
-  width: 50%;
 }
 
 .flex-\[20\%\] {
@@ -1601,9 +1573,19 @@ video {
   background-color: rgba(24, 24, 27, var(--tw-bg-opacity));
 }
 
+.bg-amber-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(245, 158, 11, var(--tw-bg-opacity));
+}
+
 .bg-indigo-500 {
   --tw-bg-opacity: 1;
   background-color: rgba(99, 102, 241, var(--tw-bg-opacity));
+}
+
+.bg-warmgray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(245, 245, 244, var(--tw-bg-opacity));
 }
 
 .bg-green-700 {
@@ -1633,31 +1615,6 @@ video {
 .bg-rose-700 {
   --tw-bg-opacity: 1;
   background-color: rgba(190, 18, 60, var(--tw-bg-opacity));
-}
-
-.bg-amber-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgba(245, 158, 11, var(--tw-bg-opacity));
-}
-
-.bg-warmgray-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgba(214, 211, 209, var(--tw-bg-opacity));
-}
-
-.bg-warmgray-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgba(231, 229, 228, var(--tw-bg-opacity));
-}
-
-.bg-warmgray-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgba(245, 245, 244, var(--tw-bg-opacity));
-}
-
-.bg-warmgray-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgba(250, 250, 249, var(--tw-bg-opacity));
 }
 
 .object-cover {
@@ -2226,11 +2183,6 @@ video {
 
 .shadow-lg {
   --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow {
-  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 

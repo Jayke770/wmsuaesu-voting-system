@@ -108,7 +108,49 @@ $(".add_voter_id_form").submit(function(e){
 //delete voter id 
 $(".delete_voter_id").click(function(e){
     e.preventDefault()
-    console.log($(this).attr("data"))
+    Swal.fire({
+        icon: 'question',
+        title: 'Delete Voter ID ?', 
+        showConfirmButton: true,
+        showCancelButton: true,
+        backdrop: true,
+    }).then( (res) => {
+        if(res.isConfirmed){
+            Swal.fire({
+                title: 'Deleting', 
+                html: 'Please Wait',
+                showConfirmButton: false, 
+                backdrop: true,
+                willOpen: () => {
+                    Swal.showLoading()
+                    $.post("delete-voter-id/", {
+                        id: $(this).attr("data")
+                    }, (res) => {
+                        if(res.status){
+                            Swal.fire({
+                                icon: 'success', 
+                                title: res.msg, 
+                                backdrop: true, 
+                                allowOutsideClick: true
+                            }).then( () => {
+                                //remove div containing the voter id 
+                                $(`div[data="${res.id_deleted}"]`).remove()
+                            })
+                        }
+                        if(!res.status){
+                            Swal.fire({
+                                icon: 'error', 
+                                title: res.msg, 
+                                backdrop: true, 
+                                allowOutsideClick: true
+                            })
+                        }
+                    })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            })
+        }
+    })
 })
 function append_voter_id(data){
     var badge, text

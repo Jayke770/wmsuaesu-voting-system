@@ -327,6 +327,7 @@ adminrouter.get('/control/voter-id/', isadmin, async (req, res, next) => {
         }
     })
 })
+//check voter id
 adminrouter.post('/control/voter-id/', isadmin, async (req, res, next) => {
     const {id} = req.body 
     const voter_id = xs(id)
@@ -351,6 +352,7 @@ adminrouter.post('/control/voter-id/', isadmin, async (req, res, next) => {
         }
     })
 })
+//add voter id
 adminrouter.post('/control/add-voter-id/', isadmin, async (req, res, next) => {
     const {id, crs, year} = req.body
     const voter_id = xs(id)
@@ -390,6 +392,52 @@ adminrouter.post('/control/add-voter-id/', isadmin, async (req, res, next) => {
                     status: false,
                     msg: "Voter ID is already exist"
                 })
+            }
+        }
+    })
+})
+//delete voter id 
+adminrouter.post('/control/voter-id/delete-voter-id/', isadmin, async (req, res, next) => {
+    const {id} = req.body
+    const voter_id = xs(id)
+    
+    //check voter id if not used
+    await ids.find({_id: voter_id}, (err, result) => {
+        if(err){
+            //send error page 
+            return next()
+        }
+        if(!err){
+            if(result.length === 0){
+                return res.send({
+                    status: false, 
+                    msg: "Voter ID not found"
+                })
+            }
+            if(result.length !== 0){
+                //check if id is not used 
+                if(result[0].enabled){
+                    return res.send({
+                        status: false, 
+                        msg: "Voter ID is in used"
+                    })
+                }
+                if(!result[0].enabled){
+                    //delete id 
+                    ids.deleteOne({_id: voter_id}, (err, is_deleted) => {
+                        if(err){
+                            //send error page 
+                            return next()
+                        }
+                        if(!err){
+                            return res.send({
+                                status: true, 
+                                id_deleted: voter_id,
+                                msg: "Voter ID deleted successfully"
+                            })
+                        }
+                    })
+                }
             }
         }
     })
