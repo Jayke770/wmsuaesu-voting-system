@@ -105,6 +105,11 @@ $(".add_voter_id_form").submit(function(e){
         allowOutsideClick: () => !Swal.isLoading()
     })
 })
+//delete voter id 
+$(".delete_voter_id").click(function(e){
+    e.preventDefault()
+    console.log($(this).attr("data"))
+})
 function append_voter_id(data){
     var badge, text
     if(data.enabled){

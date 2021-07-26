@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
 </head>
 <body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <div class="hidden fixed z-[90] flex-row items-center bg-amber-500 h-2 w-[3%]">
+        
+    </div>
     <div class="container">
         <div class="flex">
             <div class="flex flex-row bg-gray-50 dark:bg-darkBlue-secondary w-full fixed z-30 shadow-lg p-1">
@@ -44,16 +47,16 @@
             <% if (id.length !== 0) { %>
                 <div class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
                     <% for( let i = 0; i < id.length; i++ ) { %>
-                        <div data="<%- id[i]._id %>" class="w-full p-3 bg-gray-50 dark:bg-darkBlue-secondary rounded-lg cursor-pointer">
+                        <div data="<%- id[i]._id %>" class="w-full p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-700 rounded-lg cursor-pointer">
                             <div class="w-full">
                                 <span class="font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
                                 <span class="float-right font-medium text-fuchsia-600 dark:text-fuchsia-500"><%- id[i].course + ' ' + id[i].year %></span>
                             </div>
                             <div class="mt-2 p-2">
-                                <a data="<%- id[i]._id %>" class="rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
+                                <a data="<%- id[i]._id %>" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a data="<%- id[i]._id %>" class="rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
+                                <a data="<%- id[i]._id %>" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
                                 <span class=" <% if(id[i].enabled){ %> bg-green-700 <% } else { %> bg-amber-600 <% } %> float-right text-sm mt-3 px-2 py-[2px] rounded-md text-gray-100">
