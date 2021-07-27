@@ -11,7 +11,10 @@ const search_limit = rate_limit({
     windowMs: 1*60*1000, 
     max: 10,
 })
-
+const limit = rate_limit({
+    windowMs: 1*60*1000, 
+    max: 5,
+})
 adminrouter.post('/check', isadmin, async (req, res) => {
     const { id } = req.body
     if (id.trim() != "") {
@@ -454,18 +457,34 @@ adminrouter.post('/control/voter-id/search-voter-id/', search_limit, isadmin, as
     const voter_id = xs(data)
     
     //search voter id provided by voter_id variable
-    await ids.find({ student_id: { '$regex': '^' + voter_id, '$options': 'm' } }, (err, result) => {
-        if(err){
-            // send error page 
-            return next()
-        }
-        if(!err){
-            return res.send({
-                status: true, 
-                data: result
-            })
-        }
-    })
+    if(voter_id === ""){
+        await ids.find({}, (err, result) => {
+            if(err){
+                // send error page 
+                return next()
+            }
+            if(!err){
+                return res.send({
+                    status: true, 
+                    data: result
+                })
+            }
+        })
+    }
+    else{
+        await ids.find({ student_id: { '$regex': '^' + voter_id, '$options': 'm' } }, (err, result) => {
+            if(err){
+                // send error page 
+                return next()
+            }
+            if(!err){
+                return res.send({
+                    status: true, 
+                    data: result
+                })
+            }
+        })
+    }
 })
 //sort
 adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, async (req, res, next) => {
@@ -521,6 +540,99 @@ adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, async (req, res, n
             }
         })
     }
+})
+//get voter id 
+adminrouter.post('/control/voter-id/get-voter-id/', limit, isadmin, async (req, res, next) => {
+    const {data} = req.body 
+    const voter_id = xs(data)
+
+    //get voter id 
+    await ids.find({_id: voter_id}, (err, result) => {
+        if(err){
+            //send error page 
+            return next()
+        }
+        if(!err){
+            if(result.length === 0){
+                return res.send({
+                    status: false, 
+                    msg: "Voter ID not found"
+                })
+            }
+            if(result.length !== 0){
+                //set session to determine that this voter id is ready to update 
+                req.session.voter_id_to_update = result[0]._id
+                return res.send({
+                    status: true, 
+                    data: result
+                })
+            }
+        }
+    })
+})
+//update voter id 
+adminrouter.post('/control/voter-id/update-voter-id/', limit, isadmin, async (req, res, next) => {
+    const {id, course, year} = req.body 
+    const voter_id_session = req.session.voter_id_to_update
+    const voter_id = xs(id)
+    const voter_course = xs(course)
+    const voter_year = xs(year)
+
+    //check if voter is exists
+    await ids.find({_id: voter_id_session}, (err, result_check) => {
+        if(err){
+            //send error page 
+            return next()
+        }
+        if(!err){
+           if(result_check.length === 0){
+               return res.send({
+                   status: false, 
+                   msg: "Voter ID not found"
+               })
+           }
+           if(result_check.length !== 0){
+               //then check if the new voter id is not the with another voter id
+               ids.find({student_id: voter_id}, (err, result) => {
+                   if(err){
+                       //send error page 
+                        return next()
+                   }
+                   if(!err){
+                       if(result.length === 0){
+                           //update voter id
+                           ids.updateOne({_id: voter_id_session}, {student_id: voter_id, course: voter_course, year: voter_year}, (err, isUpdated) => {
+                               if(err){
+                                   //send error page 
+                               }
+                               if(!err){
+                                    const new_data = {
+                                        _id: voter_id_session, 
+                                        student_id: voter_id, 
+                                        course: voter_course, 
+                                        year: voter_year
+                                    }
+                                    console.log(new_data)
+                                    return res.send({
+                                        status: true,
+                                        msg: "Voter ID updated successfully",
+                                        data: new_data
+                                    })
+                               }
+                           })
+                       }
+                       else{
+                           return res.send({
+                               status: false, 
+                               msg: "Something went wrong", 
+                               msg2: "Voter ID is already used before or used by another voter"
+                           })
+                       }
+                   }
+               })
+           }
+        }
+    })
 })
 //logs 
 adminrouter.post('/control/logs/', isadmin, async (req, res) => {

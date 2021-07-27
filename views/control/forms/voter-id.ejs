@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
 </head>
 <body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
-    <div class="hidden fixed z-[90] flex-row items-center bg-amber-500 h-2 w-[3%]"></div>
     <div class="container">
         <div class="flex">
             <div class="flex flex-row bg-gray-50 dark:bg-darkBlue-secondary w-full fixed z-30 shadow-lg p-1">
@@ -51,7 +50,7 @@
                 <div class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
                     <% let delay = 0
                         for( let i = 0; i < id.length; i++ ) {  %>
-                        <div style="animation-delay: <%-delay + '.' + i + 10 %>s;" data="<%- id[i]._id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-700 rounded-lg cursor-pointer">
+                        <div style="animation-delay: <%- delay + '.' + i + 10 %>s;" data="<%- id[i]._id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-700 rounded-lg cursor-pointer">
                             <div class="w-full">
                                 <span class="font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
                                 <span class="float-right font-medium text-fuchsia-600 dark:text-fuchsia-500"><%- id[i].course + ' ' + id[i].year %></span>
@@ -82,7 +81,7 @@
                 </div>
             <% } %>
         </div>
-        <div class="popup hidden transition-all z-50 fixed w-full h-full bg-gray-900/50 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+        <div class="popup hidden transition-all z-50 fixed w-full h-full bg-black/50 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
             <div animate-in="animate__animated animate__bounceIn" animate-out="animate__animated animate__bounceOut" class="add_voter_id animate__animated animate__bounceIn ms-900 flex w-full h-full justify-center items-center transition-all">
                 <div class="shadow-md w-2/6 my:w-1/2 md:w-11/12 h-auto dark:border-t-8 border-[0.5px] dark:border-amber-500 bg-gray-50 dark:bg-darkBlue-secondary rounded-lg p-2 transition-all">
                    <div class="container">
@@ -98,14 +97,14 @@
                             <form class="add_voter_id_form w-full flex flex-col" action="/control/add-voter-id/" method="POST">
                                 <div class="container px-2 mb-2 transition-all">
                                     <label for="id" class="pointer-events-none dark:text-gray-300">ID Number</label>
-                                    <input autocomplete="off" name="id" placeholder="ID Number" type="text" class="id_number dark:bg-transparent dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 pr-7 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
+                                    <input autocomplete="off" name="id" placeholder="ID Number" type="text" class="id_number dark:bg-transparent dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
                                 </div>
                                 <div class="justify-end items-center gap-1 hidden mr-3 status_voter_id">
                                     <span class="text-sm font-medium text-green-600 status_voter_id_status">Checking</span>
                                 </div>  
                                 <div class="container px-2 mb-2">
                                     <label for="id" class="pointer-events-none dark:text-gray-300">Course</label>
-                                    <select disabled="true" name="crs" class="crs_voter disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 pr-7 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
+                                    <select disabled="true" name="crs" class="crs_voter disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
                                         <option value="">Select Course</option>
                                         <option value="BSCS">BSCS</option>
                                         <option value="BSED">BSED</option>
@@ -114,7 +113,7 @@
                                 </div>
                                 <div class="container px-2 mb-2">
                                     <label for="id" class="pointer-events-none dark:text-gray-300">Year</label>
-                                    <select disabled="true" name="year" class="year_voter disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 pr-7 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
+                                    <select disabled="true" name="year" class="year_voter disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
                                         <option value="">Select Year</option>
                                         <option value="1">1st</option>
                                         <option value="2">2nd</option>
@@ -124,11 +123,58 @@
                                 </div>
                                 <div class="container px-2 mb-2 flex items-center justify-end">
                                     <button type="reset" class="reset_voter_id_form hidden"></button>
-                                    <button disabled="true" type="submit" class="add_btn_voter_id disabled:cursor-not-allowed disabled:bg-green-900 button rpl dark:bg-green-700 dark:active:ring-green-700 bg-green-500 my-ring-2 active:ring-green-500 mt-5 text-gray-300">Add</button>
+                                    <button disabled="true" type="submit" class="md:w-full w-[100px] add_btn_voter_id disabled:cursor-not-allowed disabled:bg-green-900 button rpl dark:bg-green-700 dark:active:ring-green-700 bg-green-500 my-ring-2 active:ring-green-500 mt-5 text-gray-300">Add</button>
                                 </div>
                             </form>
                         </div>
                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="popup_2 hidden z-50 fixed bg-gray-900/50 w-full h-full top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+            <div class="edit_form animate__animated animate__bounceIn ms-900 flex w-full h-full justify-center items-center transition-all" animate-in="animate__animated animate__bounceIn" animate-out="animate__animated animate__bounceOut">
+                <div class="w-2/6 my:w-96 md:w-[90%] bg-gray-200 dark:bg-darkBlue-secondary dark:border-t-8 border-[0.5px] dark:border-amber-500 h-auto shadow-md rounded-lg p-2 transition-all">
+                    <div class="grid grid-cols-2 gap-1 ">
+                        <div class="flex justify-start items-center">
+                            <span class="font-bold text-2xl text-purple-700 dark:text-gray-100 pl-3 pt-4 p-3 md:text-xl md:pr-0 md:pl-1">Edit Voter ID</span>
+                        </div>
+                        <div class="flex justify-end items-center">
+                            <a class="close_edit_voter cursor-pointer rpl px-3 py-2 antialiased">
+                                <i class="fas fa-times-circle text-2xl text-rose-600"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 w-full">
+                        <form class="edit_voter_id_form px-4 py-2 pt-4">
+                            <div class="form-group mt-2 first:mt-0">
+                                <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Voter ID</label>
+                                <input type="text" name="id" class="edit_voter_id dark:bg-transparent dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " placeholder="Voter ID" autocomplete="off" required>
+                            </div>
+                            <div class="form-group mt-2 first:mt-0">
+                                <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Course</label>
+                                <input list="crs" type="text" name="course" class="edit_course dark:bg-transparent dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " placeholder="Course" autocomplete="off" required>
+                                <datalist id="crs" class="bg-green-600">
+                                    <option value="BSCS">
+                                    <option value="BSED">
+                                    <option value="GEN ED">
+                                </datalist>
+                            </div>
+                            <div class="form-group mt-2 first:mt-0">
+                                <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Year</label>
+                                <input list="yr" type="text" name="year" class="edit_year dark:bg-transparent dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " placeholder="Year" autocomplete="off" required>
+                                <datalist id="yr" class="bg-green-600">
+                                    <option value="1">
+                                    <option value="2">
+                                    <option value="3">
+                                    <option value="4">
+                                </datalist>
+                            </div>
+                            <div class="form-group flex justify-end items-center mt-4">
+                                <button class="reset_voter_id_update hidden" type="reset"></button>
+                                <button class="button rpl bg-green-700 focus:ring-green-700 hover:bg-green-600 w-[100PX] md:w-full" type="submit">Update</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
