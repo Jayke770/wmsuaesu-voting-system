@@ -26,7 +26,7 @@ $(".id_number").keyup(function(){
             $(".status_voter_id").removeClass("hidden")
             $(".status_voter_id").addClass("flex")
             req_id_number = true
-            $.post("/control/voter-id/", 
+            $.post("", 
             {
                 id: $(this).val()
             }, (res) => {
@@ -73,7 +73,7 @@ $(".add_voter_id_form").submit(function(e){
         willOpen: () => {
             Swal.showLoading()
             $.ajax({
-                url: '/control/add-voter-id/',
+                url: 'add-voter-id/',
                 method: 'POST',
                 cache: false,
                 contentType: false,
@@ -154,12 +154,30 @@ $(".delete_voter_id").click(function(e){
 })
 $(".sort_voter_id").change(function(){
     if($(this).val().trim() !== ""){
-        $.post("/control/voter-id/sort-voter-id/", {
+        $.post("sort-voter-id/", {
             data: $(this).val().trim()
         }, (res) => {
             if(res.status){
                 append_sort_voter_id(res.data)
             }
+        })
+    }
+})
+$(".search_voter_id").keyup(function(){
+    if($(this).val().trim() !== ""){
+        $.post("search-voter-id/", {
+            data: $(this).val().trim()
+        }, (res, status) => {
+            if(res.status){
+                append_sort_voter_id(res.data)
+            }
+        }).fail( (e) => {
+            console.log(e)
+            Swal.fire({
+                icon: 'error',
+                title: e.statusText,
+                html: `Please try again in 1 minute`
+            })
         })
     }
 })
@@ -172,20 +190,14 @@ function append_sort_voter_id(data){
     }
     else{
         for(let i = 0; i < data.length; i++){
-            let delay
-            if(i == 0){
-                delay = '0.10s' 
-            }
-            else{
-                delay = `${i - 0.50 - 0.10}s`
-            }
-            append_voter_id(data[i], delay)
+            let delay = 0
+            append_voter_id(data[i], delay + '.' + i + 10 + 's')
         }
     }
 }
 function empty(){
     $(".voters_id_all").append(`
-        <div class="animate__animated animate__fadeInUp w-full p-3 text-gray-200 text-center bg-gray-50 dark:bg-darkBlue-secondary rounded-lg cursor-pointer">
+        <div class="animate__animated animate__fadeInUp w-full p-3 dark:text-gray-200 text-center bg-gray-50 dark:bg-darkBlue-secondary rounded-lg cursor-pointer">
             Nothing to fetch
         </div>
     `)

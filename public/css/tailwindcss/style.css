@@ -2807,6 +2807,15 @@ a::selection, button::selection, span::selection {
   background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
 }
 
+.hover\:bg-current:hover {
+  background-color: currentColor;
+}
+
+.hover\:bg-green-500:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(34, 197, 94, var(--tw-bg-opacity));
+}
+
 .hover\:tracking-wider:hover {
   letter-spacing: 0.05em;
 }
@@ -3115,6 +3124,11 @@ a::selection, button::selection, span::selection {
   background-color: rgba(159, 18, 57, var(--tw-bg-opacity));
 }
 
+.dark .dark\:bg-yellow-900 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(113, 63, 18, var(--tw-bg-opacity));
+}
+
 .dark .dark\:font-normal {
   font-weight: 400;
 }
@@ -3235,6 +3249,11 @@ a::selection, button::selection, span::selection {
 .dark .dark\:text-gray-600 {
   --tw-text-opacity: 1;
   color: rgba(82, 82, 91, var(--tw-text-opacity));
+}
+
+.dark .dark\:text-truegray-200 {
+  --tw-text-opacity: 1;
+  color: rgba(229, 229, 229, var(--tw-text-opacity));
 }
 
 .dark .dark\:placeholder-gray-400::-moz-placeholder {

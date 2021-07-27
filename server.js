@@ -32,6 +32,7 @@ const objectid = require('mongodb').ObjectID
 const rfs = require('rotating-file-stream')
 const fs = require('fs')
 const nl2br = require('nl2br')
+
 start()
 mongoose.connect(process.env.db_url, {
     useNewUrlParser: true,
@@ -45,7 +46,6 @@ const store = new mongodbstore({
 store.on('error', (err) => {
     console.log(err)
 })
-
 const dir = path.join(__dirname, './public')
 app.use(
     helmet({

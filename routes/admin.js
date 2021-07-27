@@ -6,6 +6,12 @@ const ids = require('../models/student-id')
 const election = require('../models/election')
 const pass_gen = require('generate-password')
 const xs = require('xss')
+const rate_limit = require('express-rate-limit')
+const search_limit = rate_limit({
+    windowMs: 1*60*1000, 
+    max: 10,
+})
+
 adminrouter.post('/check', isadmin, async (req, res) => {
     const { id } = req.body
     if (id.trim() != "") {
@@ -353,7 +359,7 @@ adminrouter.post('/control/voter-id/', isadmin, async (req, res, next) => {
     })
 })
 //add voter id
-adminrouter.post('/control/add-voter-id/', isadmin, async (req, res, next) => {
+adminrouter.post('/control/voter-id/add-voter-id/', isadmin, async (req, res, next) => {
     const {id, crs, year} = req.body
     const voter_id = xs(id)
     const voter_crs = xs(crs)
@@ -439,6 +445,25 @@ adminrouter.post('/control/voter-id/delete-voter-id/', isadmin, async (req, res,
                     })
                 }
             }
+        }
+    })
+})
+//search voter id 
+adminrouter.post('/control/voter-id/search-voter-id/', search_limit, isadmin, async (req, res, next) => {
+    const {data} = req.body 
+    const voter_id = xs(data)
+    
+    //search voter id provided by voter_id variable
+    await ids.find({ student_id: { '$regex': '^' + voter_id, '$options': 'm' } }, (err, result) => {
+        if(err){
+            // send error page 
+            return next()
+        }
+        if(!err){
+            return res.send({
+                status: true, 
+                data: result
+            })
         }
     })
 })
