@@ -190,7 +190,7 @@ $(".voters_id_all").delegate(".update_voter_id", "click", function(e) {
     e.preventDefault() 
     //get voter id data 
     Swal.fire({
-        title: "Checking Voter ID . . .", 
+        title: "Checking Voter ID...", 
         html: "Please wait", 
         showConfirmButton: false,
         backdrop: true,
@@ -269,6 +269,14 @@ $(".edit_voter_id_form").submit(function(e){
             })
         }
     })
+})
+$(".close_edit_voter").click( () => {
+    $(".edit_form").addClass($(".edit_form").attr("animate-out"))
+    setTimeout( () => {
+        $(".popup_2").addClass("hidden")
+        $(".edit_form").removeClass($(".edit_form").attr("animate-out"))
+        $(".edit_form").addClass($(".edit_form").attr("animate-in"))
+    }, 900)
 })
 //functions
 function append_sort_voter_id(data){
