@@ -1,26 +1,7 @@
 * {
 	box-sizing: border-box;
 }
-:root{
-	--white: rgb(206, 202, 202); 
-	--black: rgb(33, 33, 33);
-	--s_white: rgb(249, 249, 249);
-	--active_btn: rgb(41, 130, 41);
-	--active_black: rgb(41, 40, 40);
-	--blue: rgb(0, 41, 79);
-	--l_blue: rgb(3, 169, 244);
-	--red: rgb(210, 48, 48);
-	--blue_b: rgb(40, 45, 76); 
-	--radius: 10px;
-	--l_dark: rgb(29, 29, 29); 
-	--l_dark2: rgb(25, 25, 25);
-	--dark: rgb(18, 18, 18);
-	--l_txt_clr: rgb(242, 242, 242); 
-	--txt_clr: rgb(238, 238, 238);
-	--unset: unset;
-	--dark_border: 1px solid rgb(69, 69, 70);
-	--txt_dark: rgb(191, 187, 187);
-}
+
 html{
 	line-height: normal !important;
 }
