@@ -442,6 +442,61 @@ adminrouter.post('/control/voter-id/delete-voter-id/', isadmin, async (req, res,
         }
     })
 })
+//sort
+adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, async (req, res, next) => {
+    const {data} = req.body 
+    const sort = xs(data)
+    
+    //check sort value
+    if(sort === "used" || sort === "not used"){
+        let final_sort = false
+        if(sort === "used"){
+            final_sort = true
+        }
+        
+        //get all voter containing with the sort value 
+        await ids.find({enabled: final_sort}, (err, result) => {
+            if(err){
+                //send error page 
+                return next()
+            }
+            if(!err){
+                return res.send({
+                    status: true, 
+                    data: result
+                })
+            }
+        })
+    }
+    else if(sort === "default"){
+        await ids.find({}, (err, result) => {
+            if(err){
+                //send error page 
+                return next()
+            }
+            if(!err){
+                return res.send({
+                    status: true, 
+                    data: result
+                })
+            }
+        })
+    }
+    else{
+        await ids.find({course: sort}, (err, result) => {
+            if(err){
+                //send error page 
+                return next()
+            }
+            if(!err){
+                return res.send({
+                    status: true, 
+                    data: result
+                })
+            }
+        })
+    }
+})
 //logs 
 adminrouter.post('/control/logs/', isadmin, async (req, res) => {
     return res.render('control/forms/logs')

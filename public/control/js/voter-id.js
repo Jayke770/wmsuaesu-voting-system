@@ -152,7 +152,45 @@ $(".delete_voter_id").click(function(e){
         }
     })
 })
-function append_voter_id(data){
+$(".sort_voter_id").change(function(){
+    if($(this).val().trim() !== ""){
+        $.post("/control/voter-id/sort-voter-id/", {
+            data: $(this).val().trim()
+        }, (res) => {
+            if(res.status){
+                append_sort_voter_id(res.data)
+            }
+        })
+    }
+})
+//functions
+function append_sort_voter_id(data){
+    //remove all voter id 
+    $(".voters_id_all").html("")
+    if(data.length == 0){
+        empty()
+    }
+    else{
+        for(let i = 0; i < data.length; i++){
+            let delay
+            if(i == 0){
+                delay = '0.10s' 
+            }
+            else{
+                delay = `${i - 0.50 - 0.10}s`
+            }
+            append_voter_id(data[i], delay)
+        }
+    }
+}
+function empty(){
+    $(".voters_id_all").append(`
+        <div class="animate__animated animate__fadeInUp w-full p-3 text-gray-200 text-center bg-gray-50 dark:bg-darkBlue-secondary rounded-lg cursor-pointer">
+            Nothing to fetch
+        </div>
+    `)
+}
+function append_voter_id(data, delay){
     var badge, text
     if(data.enabled){
         badge = 'bg-green-700'
@@ -163,7 +201,7 @@ function append_voter_id(data){
         text = "Not Used"
     }
     $(".voters_id_all").append(`
-        <div data="${data._id}" class="w-full p-3 bg-gray-50 dark:bg-darkBlue-secondary rounded-lg cursor-pointer">
+        <div style="animation-delay: ${delay};" data="${data._id}" class="animate__animated animate__fadeInUp w-full p-3 bg-gray-50 dark:border-gray-700 dark:bg-darkBlue-secondary rounded-lg cursor-pointer">
             <div class="w-full">
                 <span class="font-normal text-base dark:text-gray-300">${data.student_id}</span>
                 <span class="float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">${data.course} ${data.year}</span>

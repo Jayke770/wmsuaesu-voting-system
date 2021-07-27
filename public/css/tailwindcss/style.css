@@ -1199,6 +1199,10 @@ video {
   cursor: pointer;
 }
 
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
 .resize-none {
   resize: none;
 }
@@ -1207,14 +1211,6 @@ video {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-}
-
-.grid-flow-row-dense {
-  grid-auto-flow: row dense;
-}
-
-.grid-flow-col-dense {
-  grid-auto-flow: column dense;
 }
 
 .grid-cols-2 {
@@ -1586,9 +1582,9 @@ video {
   background-color: rgba(245, 158, 11, var(--tw-bg-opacity));
 }
 
-.bg-indigo-500 {
+.bg-yellow-900 {
   --tw-bg-opacity: 1;
-  background-color: rgba(99, 102, 241, var(--tw-bg-opacity));
+  background-color: rgba(113, 63, 18, var(--tw-bg-opacity));
 }
 
 .bg-warmgray-100 {
@@ -1613,6 +1609,11 @@ video {
 
 .bg-gray-900\/50 {
   background-color: rgba(24, 24, 27, 0.5);
+}
+
+.bg-indigo-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(99, 102, 241, var(--tw-bg-opacity));
 }
 
 .bg-rose-600 {
@@ -2980,6 +2981,11 @@ a::selection, button::selection, span::selection {
   background-color: rgba(21, 128, 61, 0.6);
 }
 
+.disabled\:text-gray-200:disabled {
+  --tw-text-opacity: 1;
+  color: rgba(228, 228, 231, var(--tw-text-opacity));
+}
+
 .disabled\:text-gray-300:disabled {
   --tw-text-opacity: 1;
   color: rgba(212, 212, 216, var(--tw-text-opacity));
@@ -3896,10 +3902,6 @@ a::selection, button::selection, span::selection {
 }
 
 @media (max-width: 400px) {
-  .xsm\:flex {
-    display: flex;
-  }
-
   .xsm\:w-\[98\%\] {
     width: 98%;
   }

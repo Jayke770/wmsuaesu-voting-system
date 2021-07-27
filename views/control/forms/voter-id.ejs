@@ -31,10 +31,15 @@
                     <input name="search_voter" type="text" autocomplete="off" class="form-input dark:bg-transparent dark:border-gray-600 dark:text-gray-50 my-ring-2 rounded-md transition-all border-gray-50 focus:border-gray-300 bg-gray-100 focus:bg-white focus:ring-indigo-600 focus:ring-opacity-50 w-80 xsm:w-full shadow-lg p-[10px]" placeholder="Search Voter ID" required>
                 </div>
                 <div class="flex flex-row justify-end items-center gap-2">
-                    <select name="sort" class="form-input my-ring-2 rounded-md dark:bg-transparent dark:focus:bg-darkBlue-secondary dark:text-gray-50 dark:border-gray-600 transition-all border-gray-50 focus:border-gray-300 focus:ring-indigo-600 bg-gray-100 focus:bg-white focus:ring-opacity-50 w-40 xsm:w-full shadow-lg p-[10px] py-2">
-                        <option value="" class="bg-indigo-500">Sort</option>
-                        <option value="enable">Enabled</option>
-                        <option value="disabled">Disabled</option>
+                    <select name="sort" class="sort_voter_id form-input my-ring-2 rounded-md dark:bg-transparent dark:focus:bg-darkBlue-secondary dark:text-gray-50 dark:border-gray-600 transition-all border-gray-50 focus:border-gray-300 focus:ring-indigo-600 bg-gray-100 focus:bg-white focus:ring-opacity-50 w-40 xsm:w-full shadow-lg p-[10px] py-2">
+                        <option value="" class="bg-yellow-900 cursor-not-allowed disabled:text-gray-200">Sort by</option>
+                        <option value="default">Default</option>
+                        <option value="used">Used</option>
+                        <option value="not used">Not Used</option>
+                        <option disabled value="" class="bg-yellow-900 cursor-not-allowed disabled:text-gray-200">- Sort by course</option>
+                        <option value="BSCS">BSCS</option>
+                        <option value="BSED">BSED</option>
+                        <option value="GEN ED">GEN ED</option>
                     </select>
                     <div class="btn flex items-center">
                         <button class="add_voter rpl rpl-h button-input-active cursor-pointer dark:bg-green-800 dark:hover:bg-green-600 my-ring-2 hover:ring-green-600">
@@ -46,8 +51,15 @@
             <!-- Voter ID List -->
             <% if (id.length !== 0) { %>
                 <div class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
-                    <% for( let i = 0; i < id.length; i++ ) { %>
-                        <div data="<%- id[i]._id %>" class="w-full p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-700 rounded-lg cursor-pointer">
+                    <% for( let i = 0; i < id.length; i++ ) { 
+                        let delay
+                        if(i == 0){
+                            delay = '0.10s' 
+                        }
+                        else{
+                            delay = `${i - 0.50 - 0.10}s`
+                        } %>
+                        <div style="animation-delay: <%- delay %>;" data="<%- id[i]._id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-700 rounded-lg cursor-pointer">
                             <div class="w-full">
                                 <span class="font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
                                 <span class="float-right font-medium text-fuchsia-600 dark:text-fuchsia-500"><%- id[i].course + ' ' + id[i].year %></span>
