@@ -67,7 +67,7 @@ const shared_session = (session({
     name: "session-id",
     secret: process.env.session_secret,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7
+        maxAge: 1000 * 60
     },
     store: store,
     resave: false,

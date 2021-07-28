@@ -50,7 +50,7 @@
                 <div class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
                     <% let delay = 0
                         for( let i = 0; i < id.length; i++ ) {  %>
-                        <div style="animation-delay: <%- delay + '.' + i + 10 %>s;" data="<%- id[i]._id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-700 rounded-lg cursor-pointer">
+                        <div style="animation-delay: <%- delay + '.' + i + 10 %>s;" data="<%- id[i]._id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
                             <div class="w-full">
                                 <span class="font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
                                 <span class="float-right font-medium text-fuchsia-600 dark:text-fuchsia-500"><%- id[i].course + ' ' + id[i].year %></span>

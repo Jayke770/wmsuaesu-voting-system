@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" class="font-sans">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" class="theme-color" content="#991b1b">
+    <title>Election Positions</title>
+    <%- include('../cdn/_home') %>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+</head>
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <div class="container">
+
+    </div>
+    <script src="/js/theme.js"></script>
+    <script src="/js/time.js"></script>
+    <script src="/js/avatar.js "></script>
+    <script src="/control/js/voter-id.js"></script>
+    <script>
+        $.ripple(".rpl", {
+            debug: false,
+            on: 'mousedown',
+            opacity: 0.3,
+            color: "auto",
+            multi: false,
+            duration: 0.7,
+            rate: function(pxPerSecond) {
+                return pxPerSecond;
+            },
+            easing: 'linear'
+        })
+    </script>
+</body>
+</html>
