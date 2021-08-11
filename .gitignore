@@ -1,9 +1,6 @@
 node_modules/*
-tailwind/*
 public/package/*
 log/logs.log
-tailwind.config.js
-postcss.config.js
 .env
 face-api/* 
 face.js

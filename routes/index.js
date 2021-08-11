@@ -258,7 +258,7 @@ router.get('/home/profile/', isloggedin, async (req, res) => {
 //post
 router.post('/verify', async (req, res) => {
     const { id } = req.body
-    if (id.trim() != "") {
+    if (id != "") {
         await id_db.find({ student_id: id }, function (err, doc) {
             if (doc.length == 1) {
                 //check if the id is already enabled 

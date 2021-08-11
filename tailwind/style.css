@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body{
+    padding-right: 0 !important;
+}
+button{
+    @apply disabled:cursor-not-allowed;
+}
+img,
+video {
+    max-width: none!important
+}
+html, body{
+    @apply selection:bg-purple-900 selection:text-gray-200;
+}
+/* Sweetalert dark theme */ 
+.swal2-popup {
+    @apply dark:bg-darkBlue-secondary rounded-2xl dark:ring-1 dark:ring-amber-600;
+}
+.swal2-title{
+    @apply dark:text-gray-200;
+}
+.swal2-html-container{
+    @apply dark:text-gray-400;
+}
+.swal2-container {
+    @apply dark:bg-gray-900/50;
+}
+/* width */
+
+::-webkit-scrollbar {
+	@apply w-2 h-2;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+	@apply bg-transparent;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+	@apply dark:bg-purple-900 bg-gray-500 rounded-full;
+}
+
+/* animate.css duration */
+
+.ms-200 {
+    --animate-duration: 200ms;
+}
+
+.ms-300 {
+    --animate-duration: 300ms;
+}
+
+.ms-400 {
+    --animate-duration: 400ms;
+}
+
+.ms-500 {
+    --animate-duration: 500ms;
+}
+
+.ms-600{
+    --animate-duration: 600ms
+}
+
+.ms-700{
+    --animate-duration: 700ms
+}
+.ms-800{
+    --animate-duration: 800ms
+}
+.ms-900{
+    --animate-duration: 900ms
+}
+.ms-slow{
+    --animate-duration: 2000ms
+}
+
+/* end of animate.css duration*/
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown:hover .ic_drp {
+    transform: rotate(90deg);
+}
+
+input:checked~.dot {
+    transform: translateX(100%);
+    background-color: #48bb78;
+}
+
+.chat_sent {
+    --animate-delay: 0.5s;
+    animation: fadeInRight;
+    animation-duration: 1s;
+    @apply first:mt-[5px] flex justify-end w-full mb-[5px];
+}
+
+.sent_msg {
+    @apply w-[fit-content] max-w-[80%] break-words bg-blue-700 p-[10px] rounded-[10px] rounded-tr-none text-gray-100;
+}
+.received_msg {
+    @apply w-[fit-content] max-w-[80%] break-words bg-gray-600 p-[10px] rounded-[10px] rounded-tl-none text-gray-100;
+}
+
+.typing_msg {
+    @apply w-[50px] max-w-[80%] break-words bg-gray-700 p-[10px] rounded-full text-gray-100;
+}
+
+.dot-typing {
+    @apply ml-[10px];
+}
+
+.chat_received {
+    animation: fadeInLeft;
+    animation-duration: 1s;
+    @apply first:mt-[5px] flex w-full mb-[5px];
+}
+
+.typing {
+    animation: fadeInUp;
+    animation-duration: 1s;
+    @apply first:mt-[5px] flex w-full mb-[5px];
+}
+
+.button-input {
+    @apply transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-800 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500;
+}
+.button{
+    @apply  appearance-none outline-none transition-all px-4 py-2 border border-transparent rounded-md  text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+.button-input-active {
+    @apply transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500;
+}
+.my-ring-2{
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+.my-ring-1{
+    @apply focus:outline-none focus:ring-1 focus:ring-offset-1;
+}
+.circle-dot{
+    @apply absolute h-[15px] w-[15px] rounded-full right-[1px] bottom-1;
+}
+/* text input with icon no margin & padding */
+
+.text-main {
+    @apply relative flex w-full flex-wrap items-stretch;
+}
+
+
+/*icon should have a wrapper e.g <span><i>icon here</i></span> */
+
+.text-icon-left {
+    @apply flex z-10 h-full leading-snug font-normal text-center absolute rounded text-base items-center justify-center w-8;
+}
+
+.text-icon-right {
+    @apply cursor-pointer transition-all z-10 right-0 h-full font-normal text-center absolute text-base items-center justify-center flex;
+}
+
+.text-main-input {
+    @apply relative text-base leading-tight border border-gray-800 outline-none transition-all w-full;
+}
+.text-input-icon{
+    @apply transition-all absolute right-2 top-2 cursor-pointer;
+}
+
+/* end of text input with icon */
+
+
+/* nav bar components*/
+
+.nav_btn {
+    @apply selection:bg-transparent xl:w-full xl:hover:tracking-wider xl:hover:font-semibold px-3 py-2 rounded-md last:mr-2 mr-3 cursor-pointer transition-all text-base font-normal;
+}
+a, button, span{
+    @apply selection:bg-transparent;
+}
+.form-group{
+    @apply w-full mb-1 p-1;
+}
+
+/* nav bar end */

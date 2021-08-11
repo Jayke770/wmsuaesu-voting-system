@@ -1,45 +1,16 @@
 $(document).ready(function () {
-    $(".dark_mode").change(function () {
-        var prop = $(this).prop("checked")
-        const sweetalert_dark = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.min.css"
-        const sweetalert_defaut = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-default@4/default.min.css"
-        if (prop) {
-            $("html").addClass("dark")
-            localStorage.setItem('theme', "dark")
-            $("meta[name='theme-color']").attr("content", "#161b22")
-            $(".sweetalert-link").attr("href", sweetalert_dark)
-        }
-        else {
-            $("html").removeClass("dark")
-            localStorage.removeItem('theme')
-            $("meta[name='theme-color']").attr("content", "#991b1b")
-            $(".sweetalert-link").attr("href", sweetalert_defaut)
-        }
+    $(".next_page").click( function (e) {
+        e.preventDefault() 
+        const next_page = `.${$(this).attr("next")}`
+        const parent = `.${$(this).attr("parent")}`
+        $(parent).css("background-color", "rgba(168, 85, 247, 0.5)")
+        $(parent).addClass($(parent).attr("animate-out"))
+        setTimeout( () => {
+            $(parent).addClass('hidden')
+            $(next_page).addClass(`flex ${$(next_page).attr("animate-in")}`)
+            $(next_page).removeClass("hidden")
+        }, 300)
     })
-    /*left*/
-    // const tw = new Typewriter(".txt1", {
-    //     loop: false,
-    // });
-    // const tw2 = new Typewriter(".txt2", {
-    //     loop: true,
-    // });
-    // tw.typeString('WMSU-AESU')
-    //     .pauseFor(4000)
-    //     .changeCursor(' ')
-    //     .start();
-    // tw2.typeString('Online Voting System')
-    //     .pauseFor(8000)
-    //     .deleteAll()
-    //     .changeCursor('*')
-    //     .typeString('100% Fast & Secure')
-    //     .pauseFor(5000)
-    //     .deleteAll()
-    //     .changeCursor('+')
-    //     .typeString('Realtime Votes Counter')
-    //     .pauseFor(5000)
-    //     .start();
-
-
     //login
     $(".auth_login").submit(function (e) {
         e.preventDefault();
@@ -99,74 +70,101 @@ $(document).ready(function () {
             }
         }
     })
-    $(".auth_usr, .auth_pass").focusin(function () {
-        $(this).parent('.wmsu_inpt').addClass(" focus");
-    });
-    $(".auth_usr, .auth_pass").focusout(function () {
-        $(this).parent('.wmsu_inpt').removeClass(" focus");
-    });
     //verify student id
     $(".get_id").submit(function (e) {
         e.preventDefault()
-        const form = $(this);
-        form.find('.ic').removeClass("fa-arrow-right fa-times");
-        form.find('.ic').addClass("fa-spinner fa-spin");
-        form.find('.submit_id').removeClass("wmsu_err shake_right");
-        toast.fire({
-            timer: 0,
-            title: '<i class="fa fa-spin fa-spinner" style="margin-right: 20px;"></i>Please Wait',
+        const next = `.${$(this).attr("next")}`
+        const parent = `.${$(this).attr("parent")}`
+        $(".check_id").attr("disabled", true)
+        Swal.fire({
+            title: 'Please Wait', 
+            html: 'Checking Student ID',
+            showConfirmButton: false,
+            backdrop: true,
+            willOpen: () => {
+                Swal.showLoading()
+                $.ajax({
+                    url: '/verify',
+                    method: 'POST', 
+                    cache: false, 
+                    timeout: 5000,
+                    contentType: false, 
+                    processData: false, 
+                    data: new FormData(this), 
+                    success: (res) => {
+                        if(res.isvalid === true){
+                            $(".student_id").val(res.id)
+                            Swal.fire({
+                                icon: 'success', 
+                                title: res.msg, 
+                                html: 'Please Wait..', 
+                                backdrop: true, 
+                                timer: 500,
+                                allowOutsideClick: false, 
+                                showConfirmButton: false
+                            }).then( () => {
+                                setTimeout( () => {
+                                    $(".check_id").attr("disabled", false)
+                                    $("input[name='id']").val('')
+                                    $(parent).removeClass($(parent).attr("animate-in"))
+                                    $(parent).addClass($(parent).attr("animate-out"))
+                                    setTimeout( () => {
+                                        $(parent).removeClass('flex')
+                                        $(parent).addClass('hidden')
+                                        $(next).addClass($(next).attr("animate-in"))
+                                        $(next).removeClass('hidden')
+                                        $(next).addClass('flex')
+                                        setTimeout( () => {
+                                            $(next).removeClass($(next).attr("animate-in"))
+                                        }, 250)
+                                    }, 200)
+                                }, 100)
+                            })
+                        }
+                        if(res.isvalid === null){
+                            Swal.fire({
+                                icon: 'info', 
+                                title: res.msg, 
+                                html: 'Make sure Student ID is Valid', 
+                                backdrop: true, 
+                                allowOutsideClick: false
+                            }).then( () => {
+                                $(".check_id").attr("disabled", false)
+                                $("input[name='id']").val('')
+                            })
+                        }
+                        if(res.isvalid === false){
+                            Swal.fire({
+                                icon: 'error', 
+                                title: res.msg, 
+                                html: "Make sure this Student ID is yours", 
+                                backdrop: true, 
+                                allowOutsideClick: false
+                            }).then( () => {
+                                $(".check_id").attr("disabled", false)
+                                $("input[name='id']").val('')
+                            })
+                        }
+                    }, 
+                    error: (res) => {
+                        if(res.statusText == 'timeout'){
+                            Swal.fire({
+                                icon: 'info', 
+                                title: 'Connection Timeout',
+                                html: 'Please check your internet connection',
+                                backdrop: true, 
+                                allowOutsideClick: false,
+                            }).then( () => {
+                                $(".check_id").attr("disabled", false)
+                                $("input[name='id']").val('')
+                            })
+                        }
+                    }
+                })
+            }, 
+            allowOutsideClick: () => !Swal.isLoading()
         })
-        $.post('/verify', {
-            id: $(".st_id").val()
-        }, function (res) {
-            if (res.isvalid == true) {
-                $(".my_student_id").val(res.id)
-                $(".student_id").text($('.student_id').text() + res.id)
-                form.find('.ic').removeClass("fa-spinner fa-spin ");
-                form.find('.ic').addClass("fa-check");
-                form.find('.submit_id').addClass("wmsu_active");
-                toast.fire({
-                    icon: 'success',
-                    title: res.msg,
-                })
-                setTimeout(function () {
-                    $(".verify").hide(100);
-                    $(".register_s").slideDown(250);
-                }, 400);
-            } else if (res.isvalid == false) {
-                $(".box_reg").addClass("animate__animated animate__shakeX");
-                form.find('.wmsu_inpt').addClass("err_focus");
-                form.find('.submit_id').addClass("wmsu_err shake_right");
-                form.find('.ic').removeClass("fa-spinner fa-spin ");
-                form.find('.ic').addClass("fa-times");
-                toast.fire({
-                    icon: 'info',
-                    title: res.msg
-                })
-                setTimeout(function () {
-                    form.find('.submit_id').removeClass("shake_right");
-                    $(".box_reg").removeClass("animate__animated animate__shakeX");
-                }, 500);
-            }
-            else {
-                $(".box_reg").addClass("animate__animated animate__shakeX");
-                form.find('.wmsu_inpt').addClass("err_focus");
-                form.find('.submit_id').addClass("wmsu_err shake_right");
-                form.find('.ic').removeClass("fa-spinner fa-spin ");
-                form.find('.ic').addClass("fa-times");
-                toast.fire({
-                    icon: 'error',
-                    title: res.msg
-                })
-                setTimeout(function () {
-                    form.find('.submit_id').removeClass("shake_right");
-                    $(".box_reg").removeClass("animate__animated animate__shakeX");
-                }, 500);
-            }
-
-        });
-    });
-    //register 
+    })
 
     //show password
     $(".show_pass").click(function () {
@@ -185,84 +183,180 @@ $(document).ready(function () {
             console.error("Unknown Input : ", input)
         }
     })
-    //check the student id feild if empty 
-    setInterval(function () {
-        if ($(".st_id").val().length == 0) {
-            $(".get_id").find('.submit_id').removeClass("wmsu_err");
-            $(".get_id").find('.ic').removeClass("fa-times");
-            $(".get_id").find('.ic').addClass("fa-arrow-right");
-        }
-    }, 200);
-    //register button  green 
-    $(".register").click(function () { //open reg form an close login form
-        $(".login").slideUp(250);
-        $(".box_reg").slideDown(250);
-    });
-    $(".close_reg_box").click(function () { //open login form and close reg form
-        $(".box_reg").slideUp(250);
-        $(".login").slideDown(250);
-    });
+    //register button 
+    $(".register").click(function (e) {
+        e.preventDefault()
+        const next = `.${$(this).attr("next")}`
+        const parent = `.${$(this).attr("parent")}`
+        $(parent).removeClass($(parent).attr("animate-in"))
+        $(parent).addClass($(parent).attr("animate-out"))
+        setTimeout( () => {
+            $(parent).addClass('hidden')
+            $(parent).removeClass('flex')
+            $(next).addClass(`flex ${$(next).attr("animate-in")}`)
+            $(next).removeClass('hidden')
+            setTimeout( () => {
+                $(next).removeClass($(next).attr("animate-in"))
+            }, 200)
+        }, 400)
+    })
 
+    //back button 
+    $(".back_page").click(function(e){
+        e.preventDefault()
+        const prev = `.${$(this).attr("prev")}`
+        const next = `.${$(this).attr("next")}`
+        const parent = `.${$(this).attr("parent")}`
+        $(parent).removeClass($(parent).attr("animate-in"))
+        $(parent).addClass($(parent).attr("animate-out"))
+        setTimeout( () => {
+            $(parent).removeClass(`flex ${$(parent).attr("animate-out")}`)
+            $(parent).addClass('hidden')
+            $(prev).removeClass($(prev).attr("animate-out"))
+            $(prev).addClass(`flex ${$(prev).attr("animate-in")}`)
+            $(prev).removeClass('hidden')
+            setTimeout( () => {
+                $(prev).removeClass($(prev).attr("animate-in"))
+            }, 200)
+        }, 400)
+    })
     //register form 
-    $(".next_cred").click(function () {
-        const btn = $(this);
-        var fname = $('input[name="fname"]'),
-            mname = $('input[name="mname"]'),
-            lname = $('input[name="lname"]'),
-            course = $('select[name="course"]'),
-            yr = $('select[name="yr"]'),
-            type = $('select[name="type"]');
-        if (fname.val() == '' || mname.val() == '' || lname.val() == '' || course.val() == '' || yr.val() == '' || type.val() == '') {
-            $(".box_reg").addClass("animate__animated animate__shakeX");
-            btn.html('Fill Up All Fields');
-            btn.addClass("wmsu_err");
-            setTimeout(function () {
-                btn.html('<i class="wmsu_btn_ic fa fa-arrow-right"></i>');
-                btn.removeClass("wmsu_err");
-                $(".box_reg").removeClass("animate__animated animate__shakeX");
-            }, 1000);
-        } else {
-            $(".first").slideUp(250);
-            $(".cred").slideDown(250);
-        }
-    });
     $(".reg_student").submit(function (e) {
         e.preventDefault()
-        toast.fire({
-            timer: 0,
-            title: '<i class="fa fa-spin fa-spinner" style="margin-right: 20px;"></i>Please Wait',
-        })
-        $.ajax({
-            url: '/register',
-            method: 'POST',
-            contentType: false,
-            cache: false,
-            processData: false,
-            data: new FormData(this),
-            success: function (reg) {
-                if (reg.islogin) {
-                    toast.fire({
-                        icon: 'success',
-                        title: reg.msg,
-                    }).then((next) => {
-                        window.location.reload(true)
-                    })
-                } else {
-                    toast.fire({
-                        icon: 'error',
-                        title: reg.msg
-                    })
-                }
+        Swal.fire({
+            title: 'Please wait...', 
+            backdrop: true, 
+            imageUrl: '/assets/logo.png',
+            imageAlt: 'logo',
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading()
+                $.ajax({
+                    url: '/register',
+                    method: 'POST',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    timeout: 5000,
+                    data: new FormData(this),
+                    success: (res) => {
+                        if(res.islogin){
+                            Swal.fire({
+                                icon: 'success', 
+                                title: res.msg, 
+                                backdrop: true, 
+                                showConfirmButton: false, 
+                                timer: 2000,
+                                allowOutsideClick: false
+                            }).then( () => {
+                                window.location.reload(true)
+                            })
+                        }
+                        else{
+                            Swal.fire({
+                                icon: 'info', 
+                                title: res.msg, 
+                                backdrop: true,
+                                allowOutsideClick: false
+                            })
+                        }
+                    }, 
+                    error: (res) => {
+                        Swal.fire({
+                            icon: 'error', 
+                            title: res.status, 
+                            html: res.statusText, 
+                            backdrop: true, 
+                            allowOutsideClick: false
+                        })
+                    }
+                })
             },
-        });
-    });
-    //back reg 
-    $(".back_reg").click(function () {
-        $(".register_s").hide()
-        $(".verify").show()
+            allowOutsideClick: () => !Swal.isLoading()
+        })
     })
-    $(".back_reg_2").click(function () {
-        $(".cred").hide()
-        $(".first").show()
+    //next cred 
+    $(".next_cred").click(function(e){
+        e.preventDefault()
+        const next = `.${$(this).attr("next")}`
+        const parent = `.${$(this).attr("parent")}` 
+        let isvalid_input = true
+        const inputs = [
+            $("input[name='fname'").val(),
+            $("input[name='mname'").val(),
+            $("input[name='lname'").val(),
+            $("input[name='course'").val(),
+            $("input[name='yr'").val(),
+            $("input[name='type'").val()
+        ]
+        for(let i = 0; i < inputs.length; i++){
+            if(!inputs[i]){
+                isvalid_input = false
+            }
+        }
+        if(isvalid_input){
+            $(".reg_back_page").attr("data", "true")
+            $(parent).removeClass($(parent).attr("animate-in"))
+            $(parent).addClass($(parent).attr("animate-out"))
+            setTimeout( () => {
+                $(parent).removeClass('grid')
+                $(parent).addClass('hidden')
+                $(next).addClass($(next).attr("animate-in"))
+                $(next).removeClass('hidden')
+                $(next).addClass('grid')
+                setTimeout( () => {
+                    $(next).removeClass($(next).attr("animate-in"))
+                }, 150)
+            }, 400)
+        }
+        else{
+            Swal.fire({
+                icon: 'info', 
+                title: 'Fill up all feilds', 
+                backdrop: true, 
+                allowOutsideClick: false
+            })
+        }
     })
-});
+    //register back button 
+    $(".reg_back_page").click(function(e){
+        e.preventDefault() 
+        const data = $(this).attr("data")
+        const prev = `.${$(this).attr("prev")}`
+        const parent = `.${$(this).attr("parent")}` 
+        if(data === 'false'){
+            $(parent).removeClass($(parent).attr("animate-in"))
+            $(parent).addClass($(parent).attr("animate-out"))
+            setTimeout( () => {
+                $(parent).removeClass("flex")
+                $(parent).addClass("hidden")
+                $(prev).removeClass($(prev).attr("animate-out"))
+                $(prev).addClass($(prev).attr("animate-in"))
+                $(prev).removeClass("hidden")
+                $(prev).addClass("flex")
+                setTimeout( () => {
+                    $(prev).removeClass($(prev).attr("animate-in"))
+                    $(parent).removeClass($(parent).attr("animate-out"))
+                }, 200)
+            }, 400)
+        }
+        else{
+            const parent2 = $(".cred")
+            const prev2 = $(".basic_info")
+            $(".reg_back_page").attr("data", "false")
+            parent2.removeClass($(parent2).attr("animate-in"))
+            parent2.addClass($(parent2).attr("animate-out"))
+            setTimeout( () => {
+                parent2.removeClass("grid")
+                parent2.addClass("hidden")
+                prev2.removeClass($(prev2).attr("animate-out"))
+                prev2.addClass($(prev2).attr("animate-in"))
+                prev2.addClass('grid')
+                prev2.removeClass("hidden")
+                setTimeout( () => {
+                    prev2.removeClass($(prev2).attr("animate-in"))
+                }, 200)
+            }, 400)
+        }
+    })
+})

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" class="theme-color" content="#991b1b">
+    <meta name="theme-color" class="theme-color" content="#6b21a8">
     <title>WMSU Online Voting System</title>
     <meta name="description" content="New and upgraded version of voting system">
     <meta property="og:title" content="Online Voting System">
@@ -27,59 +27,47 @@
         }
     </script>
 </head>
-<body class="bg-gray-300 dark:bg-[#090c10]">
+<body class="bg-gray-200 dark:bg-[#090c10]">
     <div class="loading flex justify-center w-screen h-screen items-center">
         <%- include('lazy/loading') %>
     </div>
-    <div class="bg-main hidden">
-        <div class="top animate__animated animate__fadeIn flex p-2 pb-0">
-            <div class="logo">
-                <img src="assets/logo.png" class="wmsu_logo" alt="logo">
-            </div>
-            <p class="break-all w-full text-center text-3xl p-2 xsm:text-lg text-gray-900 dark:text-gray-50"></p>
-            <div class="nav">
-                <div class="float-right mt-2 mr-4 enable">
-                    <label for="toggleB" class="flex items-center cursor-pointer">
-                        <!-- toggle -->
-                        <div class="relative">
-                            <!-- input -->
-                            <input type="checkbox" id="toggleB" class="dark_mode sr-only">
-                            <!-- line -->
-                            <div class="block dark:bg-[#0d1117] bg-gray-100 ring-1 dark:ring-[#892CDC] w-14 h-8 rounded-full"></div>
-                            <!-- dot -->
-                            <div class="dot absolute left-1 top-1 w-6 h-6 rounded-full transition">
-                                <i class="text-[#313131] dark:text-gray-100 flex justify-center items-center h-full"><i class="fa fa-moon"></i></i>
-                            </div>
-                        </div>
-                    </label>
-                </div>
+    <div class="h-screen w-full flex">
+        <div class="wl_page flex w-full h-full bg-purple-200  items-center justify-center transition-all" animate-out="animate__animated animate__fadeOutLeft" animate-in="animate__animated animate__fadeOutLeft">
+            <div class="flex flex-col items-center gap-3">
+                <div class="animate__animated animate__fadeInDown uppercase text-8xl md:text-6xl xsm:text-4xl xxsm:text-2xl font-bold text-purple-700">wmsu - aesu</div>
+                <div class="animate__animated animate__fadeInUp text-2xl xsm:text-xl xxsm:text-base text-bluegray-900 ">Online Voting System</div>
+                <a next="login_page" parent="wl_page" class="next_page animate__animated animate__fadeInLeft cursor-pointer py-2 text-3xl mt-4 transition-all text-purple-700">
+                    <i class="transition-all fad fa-arrow-circle-right"></i>
+                </a>
             </div>
         </div>
-        <div class="main w-full h-full flex items-center justify-center mt-10 md:block md:p-3 sm:mt-16">
-            <div class="rightt">
-                <!---login start-->
-                <div class="login wmsu_box animate__animated animate__bounceIn w-[350px] bg-gray-100 dark:border dark:border-gray-800 dark:bg-[#0d1117] shadow-xl md:w-full">
-                    <div class="w-full flex items-center justify-center py-5">
-                        <i class="text-gray-800 dark:text-gray-200 fa fa-user-circle text-[10rem]"></i>
+        <div class="login_page w-full h-full hidden" animate-out="animate__animated animate__fadeOutLeft ms-500" animate-in="animate__animated animate__fadeInLeft ms-500">
+            <div class="flex justify-center w-full items-center">
+                <div class="login gap-4 px-12 py-20 sm:px-5 sm:py-6 grid grid-cols-2 sm:grid-cols-none  transition-all p-4 rounded-xl bg-gray-50 dark:border dark:border-gray-800 dark:bg-[#0d1117] shadow-2xl md:w-[90%]">
+                    <div class="mr-5 sm:mr-0 w-full flex items-center justify-center py-5 sm:py-3">
+                        <i class="text-purple-800 dark:text-purple-600 fad fa-user-circle text-[12rem] sm:text-[10rem]"></i>
                     </div>
-                    <div class="form_login">
-                        <form class="auth_login sm:p-3" action="/login" method="POST">
+                    <div class="form_login ml-5 sm:ml-0 w-full">
+                        <div class="flex w-full flex-row items-center justify-start sm:justify-center">
+                            <span class="font-bold text-3xl text-purple-700">Login</span>
+                        </div>
+                        <form class="auth_login flex flex-col w-full h-full items-center justify-center" action="/login" method="POST">
                             <div class="wmsu_inpt_main">
                                 <label for="auth_usr"></label>
-                                <div class="relative flex w-full flex-wrap items-stretch mb-3">
+                                <div class="relative flex w-full flex-wrap items-stretch mb-2">
                                     <span class="z-10 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                                       <i class="fas fa-user dark:text-gray-100"></i>
                                     </span>
-                                    <input type="text" autocomplete="off" placeholder="Username" required name="auth_usr" class="auth_user dark:border-gray-800 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none focus:ring-2 ring-indigo-400 transition-all w-full pl-10"/>
+                                    <input type="text" autocomplete="off" placeholder="Username" required name="auth_usr" class="auth_user dark:border-gray-800 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none focus:ring-2 ring-purple-400 transition-all w-full pl-10"/>
                                 </div>
                             </div>
                             <div class="wmsu_inpt_main">
                                 <label for="auth_usr"></label>
-                                <div class="relative flex w-full flex-wrap items-stretch mb-3">
+                                <div class="relative flex w-full flex-wrap items-stretch mb-2">
                                     <span class="z-10 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                                       <i class="fas fa-lock dark:text-gray-100"></i>
                                     </span>
-                                    <input type="password" autocomplete="off" show-pass="true" placeholder="Password" required  name="auth_pass" class="auth_pass dark:border-gray-800 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none focus:ring-2 ring-indigo-400 transition-all w-full pl-10"/>
+                                    <input type="password" autocomplete="off" show-pass="true" placeholder="Password" required  name="auth_pass" class="auth_pass dark:border-gray-800 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none focus:ring-2 ring-purple-400 transition-all w-full pl-10"/>
                                     <span class="show_pass hidden transition-all z-10 right-2 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                                         <i class="fas fa-eye dark:text-gray-100 cursor-pointer"></i>
                                     </span>
@@ -87,94 +75,100 @@
                             </div>
                             <div class="wmsu_inpt_main">
                                 <button
-                                    class="transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-800 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500"
+                                    class="transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-purple-500"
                                     type="submit">Login</button>
                             </div>
-                            <div class="wmsu_inpt_main reg text-center mt-8">
-                                <button type="button" class="register text-green-700 dark:text-green-500 font-medium cursor-pointer font-sans">Register</button>
-                            </div>
-                            <div class="wmsu_inpt_main last_" style="display:  none;">
-                                <a class="forgot" href="?forgot">Forgot Password?</a>
+                            <div class="flex w-full py-4 justify-center items-center">
+                                <button parent="login_page" next="verify" type="button" class="register hover:underline active:underline text-green-700 dark:text-green-500 font-medium cursor-pointer font-sans">Register</button>
                             </div>
                         </form>
                     </div>
                 </div>
-                <!--login end-->
-
-                <!--register start-->
-                <div class="box_reg w-[350px] hidden sm:w-full shadow-xl bg-gray-50 dark:border dark:border-gray-800 dark:bg-[#0d1117] p-3 rounded-xl">
-                    <div class="verify">
-                        <div class="flex justify-end">
-                            <i class="close_reg_box fa fa-times-circle cursor-pointer text-red-600 float-right text-xl"></i>
-                        </div>
-                        <div class="t text-purple-900 dark:text-indigo-500 w-full flex justify-center items-center text-6xl mb-6 mt-6">
-                            <i class="fa fa-search"></i>
-                        </div>
-                        <form class="get_id p-3">
-                            <div class="flex">
-                                <input autocomplete="off" required class="st_id dark:bg-transparent dark:border dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-purple-500 placeholder-gray-600  bg-gray-200 border-2 transition border-gray-200 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" placeholder="Enter Student ID" name="id" type="text">            
-                            </div>
-                            <div class="flex justify-end">
-                                <button type="submit" class="bg-purple-900 dark:bg-purple-700 rounded-md outline-none border-0 border-none p-2 text-base text-gray-100 mt-2 w-3/12"><i class="ic fa fa-arrow-right"></i></button>
-                            </div>
-                        </form>
+            </div> 
+        </div>
+        <div class="verify hidden w-full h-full justify-center items-center" animate-out="animate__animated animate__fadeOutLeft ms-500" animate-in="animate__animated animate__fadeInRight ms-500">
+            <div class="transition-all p-4 w-[350px] rounded-xl bg-gray-50 dark:border dark:border-gray-800 dark:bg-[#0d1117] shadow-2xl md:w-[90%]">
+                <div>
+                    <a parent="verify" prev="login_page" next="register_s" class="back_page cursor-pointer px-3 py-2 pl-0 text-base">
+                        <i class="ic fa fa-arrow-left"></i>
+                    </a>
+                </div>
+                <div class="t text-purple-700 dark:text-amber-600 w-full flex justify-center items-center text-6xl mb-6 mt-6">
+                    <i class="fa fa-search"></i>
+                </div>
+                <form class="get_id p-3" next="register_s" parent="verify">
+                    <div class="flex">
+                        <input autocomplete="off" required class="dark:border-gray-800 px-3 py-[11px] placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none focus:ring-2 ring-purple-400 transition-all w-full" placeholder="Enter Student ID" name="id" type="text">            
                     </div>
-                    <div class="register_s"> 
-                        <form class="reg_student" style="display: none;">
-                            <div class="first">
-                                <div class="flex">
-                                    <input type="hidden" class="my_student_id" name="student_id">
-                                    <div class="back_reg cursor-pointer p-2 pl-0 dark:text-gray-100">
-                                        <i class="fas fa-arrow-circle-left text-2xl"></i>
-                                    </div>
-                                </div>
-                                <div class="flex justify-center p-2 text-purple-900 dark:text-indigo-500 w-full text-center text-6xl mb-6">
-                                    <i class="fa fa-user-plus text-8xl"></i>
-                                </div>
-                                <div class="inputs p-2">
-                                    <div class="flex gap-1">
-                                        <input autocomplete="off" required class="text-input w-full p-[10px]" name="fname" type="text" placeholder="Firstname">
-                                        <input autocomplete="off" required class="text-input w-full p-[10px]" name="mname" type="text" placeholder="Middlename">
-                                    </div>
-                                    <div class="container mt-2">
-                                      <input autocomplete="off" required class="text-input w-full p-[10px]" name="lname" type="text" placeholder="Lastname">            
-                                    </div>
-                                    <div class="flex gap-1 mt-2">
-                                        <input autocomplete="off" list="crs" required class="text-input w-full p-[10px]" name="course" type="text" placeholder="Course">  
-                                        <datalist id="crs">
-                                            <option value="BSCS">
-                                            <option value="BSED">
-                                            <option value="GEN ED">
-                                        </datalist>
-                                        <input autocomplete="off" list="yr" required class="text-input w-full p-[10px]" name="yr" type="text" placeholder="Year">  
-                                        <datalist id="yr">
-                                            <option value="">Year</option>
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                        </datalist>
-                                    </div>
-                                    <div class="mt-2">
-                                        <select name="type" required class="text-input w-full p-[10px]">
-                                            <option value="">Select User Type</option>
-                                            <option value="ca">Candidate</option>
-                                            <option value="st">Student / Voter</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <button type="button" class="next_cred dark:bg-purple-700 button_next bg-purple-900 hover:bg-purple-800 text-white transition font-bold py-3 px-4 rounded-md focus:outline-none focus:shadow-outline mt-4 w-full"><i class="fa fa-arrow-right"></i></button>
-                                    </div>
-                                </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="check_id bg-purple-700 dark:bg-purple-700 rounded-md outline-none border-0 border-none p-2 text-base text-gray-100 mt-2 w-3/12">
+                            <i class="ic fa fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="register_s hidden w-full h-full justify-center items-center transition-all" animate-out="animate__animated animate__fadeOutLeft ms-500" animate-in="animate__animated animate__fadeInRight ms-500"> 
+            <div class="w-3/5 transition-all p-6 sm:p-3 rounded-xl bg-gray-50 dark:border dark:border-gray-800 dark:bg-[#0d1117] shadow-2xl lg:w-[90%]">
+                <div>
+                    <a data="false" class="reg_back_page cursor-pointer px-3 py-2 pl-0 text-base" prev="verify" parent="register_s">
+                        <i class="ic fa fa-arrow-left"></i>
+                    </a>
+                </div>
+                <form class="reg_student">
+                   <div class="container">
+                       <div class="basic_info grid grid-cols-2 sm:grid-cols-none py-10 px-5 sm:py-5 sm:px-3" animate-out="animate__animated animate__fadeOutLeft ms-500" animate-in="animate__animated animate__fadeInRight ms-500">
+                            <div class="flex items-center justify-center p-2 text-purple-900 dark:text-indigo-500 w-full h-full text-center text-6xl">
+                                <i class="fad fa-user-plus text-9xl sm:text-7xl"></i>
                             </div>
-                            <div class="cred p-2">
-                                <div class="flex">
-                                    <div class="back_reg_2 text-2xl cursor-pointer p-2 pl-0 dark:text-gray-100">
-                                        <i class="fas fa-arrow-circle-left"></i>
-                                    </div>
+                            <div class="flex flex-col gap-1">
+                                <div class="flex flex-row items-center justify-start sm:justify-center mb-3 sm:mb-2">
+                                    <span class="font-bold text-2xl text-purple-700 xsm:text-xl">Voter Information</span>
                                 </div>
-                                <div class="flex justify-center p-2  text-purple-900 dark:text-indigo-500 w-full text-center text-6xl mb-6">
-                                    <i class="fa fa-key text-7xl"></i>
+                                <div class="flex flex-row gap-2">
+                                    <input type="hidden" name="student_id" class="student_id">
+                                    <input autocomplete="off" required class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg" name="fname" type="text" placeholder="Firstname">
+                                    <input autocomplete="off" required class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg" name="mname" type="text" placeholder="Middlename">
+                                </div>
+                                <div class="container mt-2">
+                                    <input autocomplete="off"  required class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg" name="lname" type="text" placeholder="Lastname">            
+                                </div>
+                                <div class="flex gap-2 mt-2">
+                                    <input autocomplete="off" list="crs" required class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg" name="course" type="text" placeholder="Course">  
+                                    <datalist id="crs">
+                                        <option value="BSCS"></option>
+                                        <option value="BSED"></option>
+                                        <option value="GEN ED"></option>
+                                    </datalist>
+                                    <input autocomplete="off" list="yr" required class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg" name="yr" type="text" placeholder="Year">  
+                                    <datalist id="yr">
+                                        <option value="1"></option>
+                                        <option value="2"></option>
+                                        <option value="3"></option>
+                                        <option value="4"></option>
+                                    </datalist>
+                                </div>
+                                <div class="mt-2">
+                                    <input autocomplete="off" list="type" required class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg" name="type" type="text" placeholder="User Type">  
+                                    <datalist id="type">
+                                        <option value="Candidate"></option>
+                                        <option value="Voter"></option>
+                                    </datalist>
+                                </div>
+                                <div>
+                                    <button next="cred" parent="basic_info" type="button" class="next_cred hover:bg-purple-600 dark:bg-purple-700 bg-purple-700 text-white transition-all font-bold py-3 px-4 rounded-md focus:ring focus:ring-offset-2 focus:ring-purple-500 focus:outline-none focus:shadow-outline mt-4 w-full">
+                                        <i class="fa fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div> 
+                       </div>
+                       <div class="cred hidden grid-cols-2 sm:grid-cols-none py-16 px-6 sm:py-5 sm:px-3" animate-out="animate__animated animate__fadeOutLeft ms-500" animate-in="animate__animated animate__fadeInRight ms-500">
+                            <div class="flex items-center justify-center sm:p-0 sm:py-3 p-2 text-purple-900 dark:text-indigo-500 w-full h-full text-center text-6xl">
+                                <i class="fad fa-user-lock text-9xl sm:text-7xl"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <div class="flex flex-row items-center justify-start sm:justify-center mb-3">
+                                    <span class="font-bold text-2xl text-purple-700">Credentials</span>
                                 </div>
                                 <div class="flex">
                                     <div class="relative flex w-full flex-wrap items-stretch mb-3">
@@ -185,24 +179,23 @@
                                     </div>  
                                 </div>
                                 <div>
-                                    <div class="relative flex w-full flex-wrap items-stretch mb-3">
+                                    <div class="relative flex w-full flex-wrap items-stretch mb-2">
                                         <span class="z-10 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                                         <i class="fas fa-lock dark:text-gray-100"></i>
                                         </span>
-                                        <input type="password" autocomplete="off" show-pass="true" placeholder="Password" required  name="auth_pass" class="dark:border-gray-700 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none focus:ring-2 ring-purple-500 transition-all w-full pl-10"/>
+                                        <input type="password" autocomplete="off" show-pass="true" placeholder="Password" required  name="pass" class="dark:border-gray-700 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none focus:ring-2 ring-purple-500 transition-all w-full pl-10"/>
                                         <span class="show_pass hidden transition-all z-10 right-2 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                                             <i class="fas fa-eye dark:text-gray-100 cursor-pointer"></i>
                                         </span>
                                     </div>
                                 </div>
                                 <div>
-                                    <button type="submit" class="bg-purple-900 dark:text-gray-300 dark:bg-purple-700/60 hover:bg-purple-800 text-white transition font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline mt-4 w-full">Register</button>
+                                    <button type="submit" class="bg-purple-700 dark:text-gray-300 text-white transition font-normal py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline mt-4 w-full">Register</button>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                </div>
-                <!--register end-->
+                        </div>
+                   </div>
+                </form>
             </div>
         </div>
     </div>

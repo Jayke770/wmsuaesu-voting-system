@@ -36,7 +36,7 @@
     "xss": "^1.0.9"
   },
   "scripts": {
-    "buildcss": "NODE_ENV=production npx tailwindcss -i ./tailwind/style.css -o ./public/css/tailwindcss/style.css --minify",
+    "build": "NODE_ENV=production npx tailwindcss -i ./tailwind/style.css -o ./public/css/tailwindcss/style.css --minify",
     "devcss": "npx tailwindcss -i ./tailwind/style.css -o ./public/css/tailwindcss/style.css -w",
     "start": "node server.js",
     "dev": "nodemon server.js"
