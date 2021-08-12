@@ -27,7 +27,7 @@ const helmet = require('helmet')
 const cors = require('cors')
 const icon = require('express-favicon')
 const xs = require('xss')
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
 const rfs = require('rotating-file-stream')
 const fs = require('fs')
@@ -66,8 +66,9 @@ app.use(cors())
 const shared_session = (session({
     name: "session-id",
     secret: process.env.session_secret,
+    expires: 1000 * 60 * 60 * 24 * 1,
     cookie: {
-        maxAge: 1000 * 60
+       maxAge: 1000 * 60 * 60 * 24 * 1 
     },
     store: store,
     resave: false,

@@ -11,11 +11,14 @@ module.exports = {
         return next()
     },
     isadmin: (req, res, next) => {//detect if user is admin
+      
         if (req.session.islogin) {
+            
             if (req.session.user_type == "admin") {
                 return next()
             }
         }
+
         return res.redirect('/logout')
     },
     isloggedin: (req, res, next) => { //detect if user is login 

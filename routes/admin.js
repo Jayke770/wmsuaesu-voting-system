@@ -4,8 +4,10 @@ const { authenticated, isadmin, isloggedin } = require('./auth')
 const user = require('../models/user')
 const ids = require('../models/student-id')
 const election = require('../models/election')
+const data = require('../models/data')
 const pass_gen = require('generate-password')
 const xs = require('xss')
+const { v4: uuid } = require('uuid')
 const rate_limit = require('express-rate-limit')
 const search_limit = rate_limit({
     windowMs: 1*60*1000, 
@@ -335,6 +337,111 @@ adminrouter.get('/control/voter-id/', isadmin, async (req, res, next) => {
             return res.render('control/forms/voter-id', {id: res_id})
         }
     })
+})
+//positions 
+adminrouter.get('/control/positions', isadmin, async (req, res, next) => {
+    await data.find({}, {positions: 1}, (err, pos) => {
+        if(err){
+            //send error page
+            return next()
+        }
+        if(!err){
+            return res.render('control/forms/positions', {pos: pos})
+        }
+    })
+})
+adminrouter.post('/control/positions/add-position', isadmin, async (req, res, next) => {
+    const {position} = req.body 
+    const new_pos = {
+        id: uuid(), 
+        type: xs(position)
+    }
+    try {
+        //find if position is exists 
+        await data.find({'positions.type': xs(position)}, (err, pos) => {
+            if(err){
+                return res.send({
+                    done: false, 
+                    msg: "Internal Error!"
+                })
+            }
+            if(!err){
+                if(pos.length === 1){
+                    return res.send({
+                        done: false, 
+                        msg: 'Position already exists'
+                    })
+                }
+                if(pos.length === 0){
+                    //check if position feild is empty 
+                    data.find({}, (err, datas) => {
+                        if(err){
+                            return res.send({
+                                done: false, 
+                                msg: "Internal Error"
+                            })
+                        }
+                        if(!err){
+                            if(datas.length !== 0){
+                                //insert new position 
+                                data.updateOne({$push: {positions: new_pos}}, (err, inserted_pos) => {
+                                    if(err){
+                                        console.log(err)
+                                        return res.send({
+                                            done: false, 
+                                            msg: "Internal Error!"
+                                        })
+                                    }
+                                    if(!err){
+                                        return res.send({
+                                            done: true, 
+                                            msg: "Position Added Successfully!",
+                                            data: new_pos
+                                        })
+                                    }
+                                })
+                            } 
+                            else{
+                                //insert new position 
+                                data.create({position: new_pos}, (err, created) => {
+                                    if(err){
+                                        return res.send({
+                                            done: false, 
+                                            msg: "Internal Error!"
+                                        })
+                                    }
+                                    if(!err){
+                                        //insert new position 
+                                        data.updateOne({$push: {positions: new_pos}}, (err, inserted_pos) => {
+                                            if(err){
+                                                console.log(err)
+                                                return res.send({
+                                                    done: false, 
+                                                    msg: "Internal Error!"
+                                                })
+                                            }
+                                            if(!err){
+                                                return res.send({
+                                                    done: true, 
+                                                    msg: "Position Added Successfully!", 
+                                                    data: new_pos
+                                                })
+                                            }
+                                        })
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    } catch (e) {
+        return res.send({
+            done: false, 
+            msg: "Internal Error!"
+        })
+    }
 })
 //check voter id
 adminrouter.post('/control/voter-id/', isadmin, async (req, res, next) => {

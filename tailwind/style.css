@@ -42,7 +42,7 @@ html, body{
 /* Handle */
 
 ::-webkit-scrollbar-thumb {
-	@apply dark:bg-purple-900 bg-gray-500 rounded-full;
+	@apply dark:bg-purple-500 bg-gray-500 rounded-full;
 }
 
 /* animate.css duration */
@@ -178,9 +178,6 @@ input:checked~.dot {
 
 .nav_btn {
     @apply selection:bg-transparent xl:w-full xl:hover:tracking-wider xl:hover:font-semibold px-3 py-2 rounded-md last:mr-2 mr-3 cursor-pointer transition-all text-base font-normal;
-}
-a, button, span{
-    @apply selection:bg-transparent;
 }
 .form-group{
     @apply w-full mb-1 p-1;

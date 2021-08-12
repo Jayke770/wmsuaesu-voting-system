@@ -26,10 +26,11 @@ $(document).ready(function () {
                     url: '/login',
                     method: 'POST',
                     cache: false,
+                    timeout: 5000,
                     contentType: false,
                     processData: false,
                     data: new FormData(this),
-                    success: function (res_log) {
+                    success: (res_log) => {
                         if (res_log.islogin) {
                             Swal.fire({
                                 icon: 'success', 
@@ -53,6 +54,15 @@ $(document).ready(function () {
                             })
                         }
                     },
+                    error: (res) => {
+                        Swal.fire({
+                            icon: 'error', 
+                            title: 'Connection error',
+                            html: `${res.status} ${res.statusText}`,
+                            backdrop: true, 
+                            allowOutsideClick: false,
+                        })
+                    }
                 });
             },
             allowOutsideClick: () => !Swal.isLoading()
