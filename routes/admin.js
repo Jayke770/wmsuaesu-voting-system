@@ -5,26 +5,10 @@ const user = require('../models/user')
 const ids = require('../models/student-id')
 const election = require('../models/election')
 const data = require('../models/data')
+const {search_limit, limit, normal_limit, delete_limit} = require('./rate-limit')
 const pass_gen = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
-const rate_limit = require('express-rate-limit')
-const search_limit = rate_limit({
-    windowMs: 1*60*1000, 
-    max: 10,
-})
-const limit = rate_limit({
-    windowMs: 1*60*1000, 
-    max: 5,
-})
-const normal_limit = rate_limit({
-    windowMs: 1*60*1000, 
-    max: 12,
-})
-const delete_limit = rate_limit({
-    windowMs: 1*60*1000, 
-    max: 10,
-})
 adminrouter.post('/check', isadmin, async (req, res) => {
     const { id } = req.body
     if (id.trim() != "") {
