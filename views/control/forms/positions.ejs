@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" class="theme-color" content="#991b1b">
+    <meta name="theme-color" class="theme-color" content="#6b21a8">
     <title>Election Positions</title>
-    <%- include('../cdn/_home') %>
+    <%- include('../local_cdn/_home') %>
     <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
 </head>
@@ -28,14 +28,14 @@
                 </a>
             </div>
         </div>
-        <div class="positions_all mt-[62px] py-3 px-2 sm:px-2 grid grid-cols-5 xl:grid-cols-4 transition-all lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 w-full h-[80%] sm:h-[calc(100vh-60px)] overflow-hidden sm:overflow-y-scroll gap-2">
+        <div class="positions_all mt-[62px] py-3 px-2 sm:px-2 grid grid-cols-5 xl:grid-cols-4 transition-all lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-none sm:flex sm:flex-col w-full h-[80%] sm:h-[calc(100vh-60px)] overflow-hidden sm:overflow-y-scroll gap-2">
            <% if (pos.length === 0) { %>
                 <div class="empty_pos p-3 col-span-5 justify-center flex bg-gray-100 rounded-xl cursor-pointer">
                     <span class="text-purple-700">No Positions to fetch</span>
                 </div>
            <% } else { %>
                 <% for( let i = 0; i < pos[0].positions.length; i++ ) { %>
-                    <div data="<%- pos[0].positions[i].id %>" style="animation-delay: <%- i * .100 %>s;" class="pos group sm:last:mb-4 animate__animated animate__fadeInUp p-3 grid grid-cols-2 bg-gray-100 rounded-xl cursor-pointer">
+                    <div data="<%- pos[0].positions[i].id %>" style="animation-delay: <%- i * .100 %>s;" class="pos sm:last:mb-4 group animate__animated animate__fadeInUp p-3 grid grid-cols-2 bg-gray-100 rounded-xl cursor-pointer">
                         <div>
                             <span class="text-bluegray-900 text-base font-normal break-all"><%- pos[0].positions[i].type %></span>
                         </div>

@@ -24,7 +24,6 @@ $(document).ready( function() {
     $(".add_position").click(function(e){
         const parent = $(".add_position")
         const child = $(".add_position_main")
-        console.log(e.target)
         if($(e.target).hasClass("add_position")){
             child.addClass(child.attr("animate-out"))
             setTimeout( () => {
@@ -62,6 +61,7 @@ $(document).ready( function() {
                     }).then( () => {
                         submit_btn.prop("disabled", false)
                         append_pos(res.data)
+                        $(".total_pos").text($(".pos").length)
                     })
                 }
                 if(!res.done){
@@ -257,7 +257,7 @@ $(document).ready( function() {
     function append_pos(data){
         const positions = $(".positions_all")
         $(".empty_pos").remove()
-        const element = `<div data="${data.id}" class="pos group sm:last:mb-4 animate__animated animate__fadeInUp p-3 grid grid-cols-2 bg-gray-100 rounded-xl cursor-pointer">
+        const element = `<div data="${data.id}" class="pos sm:last:mb-4 group animate__animated animate__fadeInUp p-3 grid grid-cols-2 bg-gray-100 rounded-xl cursor-pointer">
                             <div>
                                 <span class="text-bluegray-900 text-base font-normal break-all">${data.type}</span>
                             </div>

@@ -1028,8 +1028,8 @@ video {
   height: 10%;
 }
 
-.h-\[calc\(100\%-45px\)\] {
-  height: calc(100% - 45px);
+.h-\[calc\(100\%-61px\)\] {
+  height: calc(100% - 61px);
 }
 
 .h-\[90\%\] {
@@ -1046,10 +1046,6 @@ video {
 
 .h-60 {
   height: 15rem;
-}
-
-.h-\[calc\(100\%-61px\)\] {
-  height: calc(100% - 61px);
 }
 
 .w-screen {
@@ -1405,10 +1401,6 @@ video {
 
 .border-b {
   border-bottom-width: 1px;
-}
-
-.border-t {
-  border-top-width: 1px;
 }
 
 .border-none {
@@ -2193,6 +2185,11 @@ video {
   color: rgba(49, 46, 129, var(--tw-text-opacity));
 }
 
+.text-bluegray-600 {
+  --tw-text-opacity: 1;
+  color: rgba(71, 85, 105, var(--tw-text-opacity));
+}
+
 .text-green-600 {
   --tw-text-opacity: 1;
   color: rgba(22, 163, 74, var(--tw-text-opacity));
@@ -2221,11 +2218,6 @@ video {
 .text-warmgray-700 {
   --tw-text-opacity: 1;
   color: rgba(68, 64, 60, var(--tw-text-opacity));
-}
-
-.text-bluegray-600 {
-  --tw-text-opacity: 1;
-  color: rgba(71, 85, 105, var(--tw-text-opacity));
 }
 
 .underline {
@@ -2854,10 +2846,6 @@ input:checked~.dot {
 
 .last\:mr-0:last-child {
   margin-right: 0px;
-}
-
-.last\:mb-4:last-child {
-  margin-bottom: 1rem;
 }
 
 .hover\:block:hover {
@@ -4060,6 +4048,10 @@ input:checked~.dot {
 
   .sm\:mt-5 {
     margin-top: 1.25rem;
+  }
+
+  .sm\:flex {
+    display: flex;
   }
 
   .sm\:hidden {

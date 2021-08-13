@@ -5,7 +5,7 @@ const user = require('../models/user')
 const ids = require('../models/student-id')
 const election = require('../models/election')
 const data = require('../models/data')
-const {search_limit, limit, normal_limit, delete_limit} = require('./rate-limit')
+const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
 const pass_gen = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
@@ -321,102 +321,102 @@ adminrouter.get('/control/election', async (req, res) => {
 //voter id
 adminrouter.get('/control/voter-id/', isadmin, async (req, res, next) => {
     await ids.find({}, (err, res_id) => {
-        if(err){
+        if (err) {
             //send error code
             return next()
         }
-        if(!err){
-            return res.render('control/forms/voter-id', {id: res_id})
+        if (!err) {
+            return res.render('control/forms/voter-id', { id: res_id })
         }
     })
 })
 //positions 
 adminrouter.get('/control/positions', isadmin, normal_limit, async (req, res, next) => {
-    await data.find({}, {positions: 1}, (err, pos) => {
-        if(err){
+    await data.find({}, { positions: 1 }, (err, pos) => {
+        if (err) {
             //send error page
             return next()
         }
-        if(!err){
-            return res.render('control/forms/positions', {pos: pos})
+        if (!err) {
+            return res.render('control/forms/positions', { pos: pos })
         }
     })
 })
 //add position
 adminrouter.post('/control/positions/add-position', isadmin, normal_limit, async (req, res) => {
-    const {position} = req.body 
+    const { position } = req.body
     const new_pos = {
-        id: uuid(), 
+        id: uuid(),
         type: xs(position)
     }
     try {
         //find if position is exists 
-        await data.find({'positions.type': {$eq: xs(position)}}, (err, pos) => {
-            if(err){
+        await data.find({ 'positions.type': { $eq: xs(position) } }, (err, pos) => {
+            if (err) {
                 return res.send({
-                    done: false, 
+                    done: false,
                     msg: "Internal Error!"
                 })
             }
-            if(!err){
-                if(pos.length === 1){
+            if (!err) {
+                if (pos.length === 1) {
                     return res.send({
-                        done: false, 
+                        done: false,
                         msg: 'Position already exists'
                     })
                 }
-                if(pos.length === 0){
+                if (pos.length === 0) {
                     //check if position feild is empty 
                     data.find({}, (err, datas) => {
-                        if(err){
+                        if (err) {
                             return res.send({
-                                done: false, 
+                                done: false,
                                 msg: "Internal Error"
                             })
                         }
-                        if(!err){
-                            if(datas.length !== 0){
+                        if (!err) {
+                            if (datas.length !== 0) {
                                 //insert new position 
-                                data.updateOne({$push: {positions: new_pos}}, (err, inserted_pos) => {
-                                    if(err){
+                                data.updateOne({ $push: { positions: new_pos } }, (err, inserted_pos) => {
+                                    if (err) {
                                         console.log(err)
                                         return res.send({
-                                            done: false, 
+                                            done: false,
                                             msg: "Internal Error!"
                                         })
                                     }
-                                    if(!err){
+                                    if (!err) {
                                         return res.send({
-                                            done: true, 
+                                            done: true,
                                             msg: "Position Added Successfully!",
                                             data: new_pos
                                         })
                                     }
                                 })
-                            } 
-                            else{
+                            }
+                            else {
                                 //insert new position 
-                                data.create({position: new_pos}, (err, created) => {
-                                    if(err){
+                                data.create({ position: new_pos }, (err, created) => {
+                                    if (err) {
                                         return res.send({
-                                            done: false, 
+                                            done: false,
                                             msg: "Internal Error!"
                                         })
                                     }
-                                    if(!err){
+                                    if (!err) {
                                         //insert new position 
-                                        data.updateOne({$push: {positions: new_pos}}, (err, inserted_pos) => {
-                                            if(err){
+                                        data.updateOne({ $push: { positions: new_pos } }, (err, inserted_pos) => {
+                                            if (err) {
                                                 console.log(err)
                                                 return res.send({
-                                                    done: false, 
+                                                    done: false,
                                                     msg: "Internal Error!"
                                                 })
                                             }
-                                            if(!err){
+                                            if (!err) {
                                                 return res.send({
-                                                    done: true, 
-                                                    msg: "Position Added Successfully!", 
+                                                    done: true,
+                                                    msg: "Position Added Successfully!",
                                                     data: new_pos
                                                 })
                                             }
@@ -431,52 +431,52 @@ adminrouter.post('/control/positions/add-position', isadmin, normal_limit, async
         })
     } catch (e) {
         return res.send({
-            done: false, 
+            done: false,
             msg: "Internal Error!"
         })
     }
 })
 //delete position 
 adminrouter.post('/control/positions/delete-position/', isadmin, delete_limit, async (req, res) => {
-    const {id} = req.body 
+    const { id } = req.body
     //check if positin id is exists 
-    try{ 
-        await data.find({"positions.id":  {$eq: xs(id)}}, (err, find) => {
-            if(err){
+    try {
+        await data.find({ "positions.id": { $eq: xs(id) } }, (err, find) => {
+            if (err) {
                 return res.status(500).send({
-                    deleted: false, 
+                    deleted: false,
                     msg: "Internal Error!"
                 })
             }
-            if(!err){
-                if(find.length !== 0){
+            if (!err) {
+                if (find.length !== 0) {
                     //delete id 
-                    data.updateOne({}, {$pull: {positions: {id: xs(id)}}}, (err, del) => {
-                        if(err){
+                    data.updateOne({}, { $pull: { positions: { id: xs(id) } } }, (err, del) => {
+                        if (err) {
                             return res.status(500).send({
-                                deleted: false, 
+                                deleted: false,
                                 msg: "Internal Error!"
                             })
                         }
-                        if(!err){
+                        if (!err) {
                             return res.send({
-                                deleted: true, 
+                                deleted: true,
                                 msg: "Deleted successfully"
                             })
                         }
                     })
                 }
-                else{
+                else {
                     return res.send({
-                        deleted: false, 
+                        deleted: false,
                         msg: "Position not found!"
                     })
                 }
             }
         })
-    } catch (e){
+    } catch (e) {
         return res.status(500).send({
-            deleted: false, 
+            deleted: false,
             msg: "Internal Error!",
             error: e
         })
@@ -484,64 +484,83 @@ adminrouter.post('/control/positions/delete-position/', isadmin, delete_limit, a
 })
 //update position 
 adminrouter.post('/control/positions/update-position/', isadmin, normal_limit, async (req, res) => {
-    const {id, type} = req.body 
-    try{
-        await data.find({"positions.id": {$eq: xs(id)}}, (err, find) => {
-            if(err){
+    const { id, type } = req.body
+    try {
+        await data.find({ "positions.id": { $eq: xs(id) } }, (err, find) => {
+            if (err) {
                 return res.status(500).send({
-                    updated: false, 
+                    updated: false,
                     msg: "Internal Error!"
                 })
             }
-            if(!err){
-                if(find.length !== 0){
-                    data.updateOne({"positions.id": xs(id)}, {$set: {"positions.$.type": xs(type)}}, (err, updated) => {
+            if (!err) {
+                if (find.length !== 0) {
+                    //check if the new position type is not the same in the db records
+                    data.find({ "positions.type": { $eq: xs(type) } }, (err, same) => {
                         if(err){
                             return res.status(500).send({
                                 updated: false, 
                                 msg: "Internal Error!"
                             })
-                        } else {
-                            return res.send({
-                                updated: true, 
-                                msg: "Position updated successfully"
-                            })
+                        }
+                        if(!err){
+                            if(same.length === 0){
+                                data.updateOne({"positions.id": xs(id)}, {$set: {"positions.$.type": xs(type)}}, (err, updated) => {
+                                    if(err){
+                                        return res.status(500).send({
+                                            updated: false, 
+                                            msg: "Internal Error!"
+                                        })
+                                    } else {
+                                        return res.send({
+                                            updated: true, 
+                                            msg: "Position updated successfully"
+                                        })
+                                    }
+                                })
+                            }
+                            else{
+                                return res.send({
+                                    updated: false, 
+                                    msg: "Position is already in used"
+                                })
+                            }
                         }
                     })
                 } else {
                     return res.send({
-                        updated: false, 
+                        updated: false,
                         msg: "Position not found"
                     })
                 }
             }
         })
-    } catch (e){
+    } catch (e) {
         return res.status(500).send({
-            updated: false, 
+            updated: false,
             msg: "Internal Error!"
         })
     }
 })
 //check voter id
 adminrouter.post('/control/voter-id/', isadmin, async (req, res, next) => {
-    const {id} = req.body 
+    const { id } = req.body
     const voter_id = xs(id)
     //check voter if exists 
-    await ids.find({student_id: voter_id}, (err, res_id) => {
-        if(err){
+    await ids.find({ student_id: voter_id }, (err, res_id) => {
+        if (err) {
             //send error page
         }
-        if(!err){
-            if(res_id.length === 0){
+        if (!err) {
+            if (res_id.length === 0) {
                 return res.send({
-                    status: true, 
-                    msg: "Okay"    
+                    status: true,
+                    msg: "Okay"
                 })
-            } 
-            else{
+            }
+            else {
                 return res.send({
-                    status: false, 
+                    status: false,
                     msg: "Voter ID is already exist"
                 })
             }
@@ -550,40 +569,40 @@ adminrouter.post('/control/voter-id/', isadmin, async (req, res, next) => {
 })
 //add voter id
 adminrouter.post('/control/voter-id/add-voter-id/', isadmin, async (req, res, next) => {
-    const {id, crs, year} = req.body
+    const { id, crs, year } = req.body
     const voter_id = xs(id)
     const voter_crs = xs(crs)
-    const voter_year = xs(year) 
-    
+    const voter_year = xs(year)
+
     //check id 
-    await ids.find({student_id: voter_id}, (err, res_find) => {
-        if(err){
+    await ids.find({ student_id: voter_id }, (err, res_find) => {
+        if (err) {
             //send error
         }
-        if(!err){
-            if(res_find.length === 0){
+        if (!err) {
+            if (res_find.length === 0) {
                 ids.create({
-                    student_id: voter_id, 
-                    course: voter_crs, 
-                    year: voter_year, 
+                    student_id: voter_id,
+                    course: voter_crs,
+                    year: voter_year,
                     enabled: false
                 }, (err, inserted) => {
-                    if(err){
+                    if (err) {
                         return res.send({
                             status: false,
                             msg: "Something went wrong"
                         })
                     }
-                    else{
+                    else {
                         return res.send({
-                            status: true, 
-                            data: inserted, 
+                            status: true,
+                            data: inserted,
                             msg: "Voter ID Added"
                         })
                     }
                 })
             }
-            else{
+            else {
                 return res.send({
                     status: false,
                     msg: "Voter ID is already exist"
@@ -594,40 +613,40 @@ adminrouter.post('/control/voter-id/add-voter-id/', isadmin, async (req, res, ne
 })
 //delete voter id 
 adminrouter.post('/control/voter-id/delete-voter-id/', isadmin, async (req, res, next) => {
-    const {id} = req.body
+    const { id } = req.body
     const voter_id = xs(id)
-    
+
     //check voter id if not used
-    await ids.find({_id: voter_id}, (err, result) => {
-        if(err){
+    await ids.find({ _id: voter_id }, (err, result) => {
+        if (err) {
             //send error page 
             return next()
         }
-        if(!err){
-            if(result.length === 0){
+        if (!err) {
+            if (result.length === 0) {
                 return res.send({
-                    status: false, 
+                    status: false,
                     msg: "Voter ID not found"
                 })
             }
-            if(result.length !== 0){
+            if (result.length !== 0) {
                 //check if id is not used 
-                if(result[0].enabled){
+                if (result[0].enabled) {
                     return res.send({
-                        status: false, 
+                        status: false,
                         msg: "Voter ID is in used"
                     })
                 }
-                if(!result[0].enabled){
+                if (!result[0].enabled) {
                     //delete id 
-                    ids.deleteOne({_id: voter_id}, (err, is_deleted) => {
-                        if(err){
+                    ids.deleteOne({ _id: voter_id }, (err, is_deleted) => {
+                        if (err) {
                             //send error page 
                             return next()
                         }
-                        if(!err){
+                        if (!err) {
                             return res.send({
-                                status: true, 
+                                status: true,
                                 id_deleted: voter_id,
                                 msg: "Voter ID deleted successfully"
                             })
@@ -640,33 +659,33 @@ adminrouter.post('/control/voter-id/delete-voter-id/', isadmin, async (req, res,
 })
 //search voter id 
 adminrouter.post('/control/voter-id/search-voter-id/', search_limit, isadmin, async (req, res, next) => {
-    const {data} = req.body 
+    const { data } = req.body
     const voter_id = xs(data)
-    
+
     //search voter id provided by voter_id variable
-    if(voter_id === ""){
+    if (voter_id === "") {
         await ids.find({}, (err, result) => {
-            if(err){
+            if (err) {
                 // send error page 
                 return next()
             }
-            if(!err){
+            if (!err) {
                 return res.send({
-                    status: true, 
+                    status: true,
                     data: result
                 })
             }
         })
     }
-    else{
+    else {
         await ids.find({ student_id: { '$regex': '^' + voter_id, '$options': 'm' } }, (err, result) => {
-            if(err){
+            if (err) {
                 // send error page 
                 return next()
             }
-            if(!err){
+            if (!err) {
                 return res.send({
-                    status: true, 
+                    status: true,
                     data: result
                 })
             }
@@ -675,53 +694,53 @@ adminrouter.post('/control/voter-id/search-voter-id/', search_limit, isadmin, as
 })
 //sort
 adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, async (req, res, next) => {
-    const {data} = req.body 
+    const { data } = req.body
     const sort = xs(data)
-    
+
     //check sort value
-    if(sort === "used" || sort === "not used"){
+    if (sort === "used" || sort === "not used") {
         let final_sort = false
-        if(sort === "used"){
+        if (sort === "used") {
             final_sort = true
         }
-        
+
         //get all voter containing with the sort value 
-        await ids.find({enabled: final_sort}, (err, result) => {
-            if(err){
+        await ids.find({ enabled: final_sort }, (err, result) => {
+            if (err) {
                 //send error page 
                 return next()
             }
-            if(!err){
+            if (!err) {
                 return res.send({
-                    status: true, 
+                    status: true,
                     data: result
                 })
             }
         })
     }
-    else if(sort === "default"){
+    else if (sort === "default") {
         await ids.find({}, (err, result) => {
-            if(err){
+            if (err) {
                 //send error page 
                 return next()
             }
-            if(!err){
+            if (!err) {
                 return res.send({
-                    status: true, 
+                    status: true,
                     data: result
                 })
             }
         })
     }
-    else{
-        await ids.find({course: sort}, (err, result) => {
-            if(err){
+    else {
+        await ids.find({ course: sort }, (err, result) => {
+            if (err) {
                 //send error page 
                 return next()
             }
-            if(!err){
+            if (!err) {
                 return res.send({
-                    status: true, 
+                    status: true,
                     data: result
                 })
             }
@@ -730,27 +749,27 @@ adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, async (req, res, n
 })
 //get voter id 
 adminrouter.post('/control/voter-id/get-voter-id/', limit, isadmin, async (req, res, next) => {
-    const {data} = req.body 
+    const { data } = req.body
     const voter_id = xs(data)
 
     //get voter id 
-    await ids.find({_id: voter_id}, (err, result) => {
-        if(err){
+    await ids.find({ _id: voter_id }, (err, result) => {
+        if (err) {
             //send error page 
             return next()
         }
-        if(!err){
-            if(result.length === 0){
+        if (!err) {
+            if (result.length === 0) {
                 return res.send({
-                    status: false, 
+                    status: false,
                     msg: "Voter ID not found"
                 })
             }
-            if(result.length !== 0){
+            if (result.length !== 0) {
                 //set session to determine that this voter id is ready to update 
                 req.session.voter_id_to_update = result[0]._id
                 return res.send({
-                    status: true, 
+                    status: true,
                     data: result
                 })
             }
@@ -759,44 +778,44 @@ adminrouter.post('/control/voter-id/get-voter-id/', limit, isadmin, async (req, 
 })
 //update voter id 
 adminrouter.post('/control/voter-id/update-voter-id/', limit, isadmin, async (req, res, next) => {
-    const {id, course, year} = req.body 
+    const { id, course, year } = req.body
     const voter_id_session = req.session.voter_id_to_update
     const voter_id = xs(id)
     const voter_course = xs(course)
     const voter_year = xs(year)
 
     //check if voter is exists
-    await ids.find({_id: voter_id_session}, (err, result_check) => {
-        if(err){
+    await ids.find({ _id: voter_id_session }, (err, result_check) => {
+        if (err) {
             //send error page 
             return next()
         }
-        if(!err){
-           if(result_check.length === 0){
-               return res.send({
-                   status: false, 
-                   msg: "Voter ID not found"
-               })
-           }
-           if(result_check.length !== 0){
-               //then check if the new voter id is not the with another voter id
-               ids.find({student_id: voter_id}, (err, result) => {
-                   if(err){
-                       //send error page 
+        if (!err) {
+            if (result_check.length === 0) {
+                return res.send({
+                    status: false,
+                    msg: "Voter ID not found"
+                })
+            }
+            if (result_check.length !== 0) {
+                //then check if the new voter id is not the with another voter id
+                ids.find({ student_id: voter_id }, (err, result) => {
+                    if (err) {
+                        //send error page 
                         return next()
-                   }
-                   if(!err){
-                       if(result.length === 0){
-                           //update voter id
-                           ids.updateOne({_id: voter_id_session}, {student_id: voter_id, course: voter_course, year: voter_year}, (err, isUpdated) => {
-                               if(err){
-                                   //send error page 
-                               }
-                               if(!err){
+                    }
+                    if (!err) {
+                        if (result.length === 0) {
+                            //update voter id
+                            ids.updateOne({ _id: voter_id_session }, { student_id: voter_id, course: voter_course, year: voter_year }, (err, isUpdated) => {
+                                if (err) {
+                                    //send error page 
+                                }
+                                if (!err) {
                                     const new_data = {
-                                        _id: voter_id_session, 
-                                        student_id: voter_id, 
-                                        course: voter_course, 
+                                        _id: voter_id_session,
+                                        student_id: voter_id,
+                                        course: voter_course,
                                         year: voter_year
                                     }
                                     console.log(new_data)
@@ -805,19 +824,19 @@ adminrouter.post('/control/voter-id/update-voter-id/', limit, isadmin, async (re
                                         msg: "Voter ID updated successfully",
                                         data: new_data
                                     })
-                               }
-                           })
-                       }
-                       else{
-                           return res.send({
-                               status: false, 
-                               msg: "Something went wrong", 
-                               msg2: "Voter ID is already used before or used by another voter"
-                           })
-                       }
-                   }
-               })
-           }
+                                }
+                            })
+                        }
+                        else {
+                            return res.send({
+                                status: false,
+                                msg: "Something went wrong",
+                                msg2: "Voter ID is already used before or used by another voter"
+                            })
+                        }
+                    }
+                })
+            }
         }
     })
 })
@@ -828,28 +847,28 @@ adminrouter.post('/control/logs/', isadmin, async (req, res) => {
 //create election 
 adminrouter.post('/control/create_election', isadmin, async (req, res) => {
     await election.find({}, (err, elections) => {
-        return res.render('control/forms/create_election', {elections: elections})
+        return res.render('control/forms/create_election', { elections: elections })
     })
 })
 //get active voters 
 adminrouter.post('/active_voters', isadmin, async (req, res) => {
-    const {id} = req.body
+    const { id } = req.body
     //check election id 
-    await election.find({_id: id}, {voters: 1}, (err, elec) => {
-        if(!err){
-            if(elec[0].voters.length == 0){
+    await election.find({ _id: id }, { voters: 1 }, (err, elec) => {
+        if (!err) {
+            if (elec[0].voters.length == 0) {
                 return res.send({
                     active: 0
                 })
             }
-            else{
+            else {
                 var count = 0
                 //check all the voters if active 
-                for(var i = 0; i < elec[0].voters.length; i++){
+                for (var i = 0; i < elec[0].voters.length; i++) {
                     //check if user is active 
-                    user.find({_id: elec[0].voters[i].id}, {socket_id: 1}, (err, res_u) => {
-                        if(res_u[0].socket_id != "Offline"){
-                            count = count + 1                   
+                    user.find({ _id: elec[0].voters[i].id }, { socket_id: 1 }, (err, res_u) => {
+                        if (res_u[0].socket_id != "Offline") {
+                            count = count + 1
                         }
                     })
                 }
