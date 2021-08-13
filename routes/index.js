@@ -12,6 +12,7 @@ const admin = require('../models/admin')
 const elections = require('../models/election')
 const { authenticated, isadmin, isloggedin, take_photo, get_face } = require('./auth')
 const { toUppercase, chat, bot, new_msg, new_nty } = require('./functions')
+const {normal_limit} = require('./rate-limit')
 const election = require('../models/election')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
@@ -256,7 +257,7 @@ router.get('/home/profile/', isloggedin, async (req, res) => {
     // }
 })
 //post
-router.post('/verify', async (req, res) => {
+router.post('/verify', normal_limit, async (req, res) => {
     const { id } = req.body
     if (id != "") {
         await id_db.find({ student_id: id }, function (err, doc) {
@@ -375,7 +376,7 @@ router.post('/register', async (req, res) => {
                     }
                     else {
                         //check student id
-                        user.find({ student_id: student_id }, (err, result) => {
+                        user.find({ student_id: {$eq: student_id} }, (err, result) => {
                             if (err) {
                                 return res.send({
                                     islogin: false,
@@ -934,7 +935,7 @@ router.post('/chat-user', isloggedin, async (req, res) => {
                         //nag chat na sla before
                         if (naa.length != 0) {
                             //get previuos chats 
-                            user.find({ _id: data }, { socket_id: 1, firstname: 1, middlename: 1, lastname: 1 }, (err, data_msg) => {
+                            user.find({ _id: {$eq: data} }, { socket_id: 1, firstname: 1, middlename: 1, lastname: 1 }, (err, data_msg) => {
                                 if (err) {
                                     return res.send({
                                         ischat: false,
@@ -956,7 +957,7 @@ router.post('/chat-user', isloggedin, async (req, res) => {
                         //else wala sila nag chat before
                         else {
                             //get the fullname of user they want to chat 
-                            user.find({ _id: data }, { firstname: 1, middlename: 1, lastname: 1 }, (err, fl_name) => {
+                            user.find({ _id:{$eq: data} }, { firstname: 1, middlename: 1, lastname: 1 }, (err, fl_name) => {
                                 if (!err) {
                                     //construct data for chats
                                     const new_chat = {
@@ -976,7 +977,7 @@ router.post('/chat-user', isloggedin, async (req, res) => {
                                         }
                                         else {
 
-                                            user.find({ _id: data }, { socket_id: 1, firstname: 1, middlename: 1, lastname: 1 }, (err, data_msg) => {
+                                            user.find({ _id: {$eq: data} }, { socket_id: 1, firstname: 1, middlename: 1, lastname: 1 }, (err, data_msg) => {
                                                 if (err) {
                                                     return res.send({
                                                         ischat: false,

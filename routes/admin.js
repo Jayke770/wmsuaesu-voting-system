@@ -568,7 +568,7 @@ adminrouter.post('/control/voter-id/', isadmin, async (req, res, next) => {
     })
 })
 //add voter id
-adminrouter.post('/control/voter-id/add-voter-id/', isadmin, async (req, res, next) => {
+adminrouter.post('/control/voter-id/add-voter-id/', isadmin, limit, async (req, res, next) => {
     const { id, crs, year } = req.body
     const voter_id = xs(id)
     const voter_crs = xs(crs)
@@ -612,7 +612,7 @@ adminrouter.post('/control/voter-id/add-voter-id/', isadmin, async (req, res, ne
     })
 })
 //delete voter id 
-adminrouter.post('/control/voter-id/delete-voter-id/', isadmin, async (req, res, next) => {
+adminrouter.post('/control/voter-id/delete-voter-id/', isadmin, delete_limit, async (req, res, next) => {
     const { id } = req.body
     const voter_id = xs(id)
 
@@ -693,7 +693,7 @@ adminrouter.post('/control/voter-id/search-voter-id/', search_limit, isadmin, as
     }
 })
 //sort
-adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, async (req, res, next) => {
+adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, normal_limit, async (req, res, next) => {
     const { data } = req.body
     const sort = xs(data)
 
@@ -854,7 +854,7 @@ adminrouter.post('/control/create_election', isadmin, async (req, res) => {
 adminrouter.post('/active_voters', isadmin, async (req, res) => {
     const { id } = req.body
     //check election id 
-    await election.find({ _id: id }, { voters: 1 }, (err, elec) => {
+    await election.find({ _id: {$eq: id} }, { voters: 1 }, (err, elec) => {
         if (!err) {
             if (elec[0].voters.length == 0) {
                 return res.send({
