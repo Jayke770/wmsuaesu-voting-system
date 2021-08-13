@@ -1,6 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* remove light blue tap effect in android*/ 
+a, button, p, div, span, i, body{
+    -webkit-tap-highlight-color: transparent;
+}
+/* end of remove light blue tap effect in android*/ 
 body{
     padding-right: 0 !important;
 }
