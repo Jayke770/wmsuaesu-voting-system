@@ -4,20 +4,33 @@ var req_id_number = false,
     search_voter_id = false
 $(".add_voter").click( () => {
     if($(".popup").hasClass("hidden")){
+        $(".add_voter_id").addClass($(".add_voter_id").attr("animate-in"))
         $(".popup").removeClass("hidden")
         setTimeout( () => {
             $(".add_voter_id").removeClass($(".add_voter_id").attr("animate-in"))
-        }, 901)
+        }, 700)
     }
 })
 $(".cls_add_voter_id").click( () => {
     if(!$(".popup").hasClass("hidden")){
+        $(".add_voter_id").removeClass($(".add_voter_id").attr("animate-in"))
         $(".add_voter_id").addClass($(".add_voter_id").attr("animate-out"))
         setTimeout( () => {
-            $(".add_voter_id").addClass($(".add_voter_id").attr("animate-in"))
             $(".add_voter_id").removeClass($(".add_voter_id").attr("animate-out"))
             $(".popup").addClass("hidden")
-        }, 900)
+        }, 600)
+    }
+})
+$(".popup").click(function(e){
+    if($(e.target).hasClass("add_voter_id")){
+        if(!$(".popup").hasClass("hidden")){
+            $(".add_voter_id").removeClass($(".add_voter_id").attr("animate-in"))
+            $(".add_voter_id").addClass($(".add_voter_id").attr("animate-out"))
+            setTimeout( () => {
+                $(".add_voter_id").removeClass($(".add_voter_id").attr("animate-out"))
+                $(".popup").addClass("hidden")
+            }, 600)
+        }
     }
 })
 //check voter id 
@@ -309,7 +322,7 @@ function append_voter_id(data, delay){
         text = "Used"
     }
     else{
-        badge = "bg-amber-600"
+        badge = "bg-amber-700"
         text = "Not Used"
     }
     $(".voters_id_all").append(`

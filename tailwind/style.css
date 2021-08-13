@@ -20,6 +20,9 @@ html, body{
     @apply selection:bg-purple-900 selection:text-gray-200;
 }
 /* Sweetalert dark theme */ 
+.swal2-input{
+    @apply rounded-lg dark:bg-transparent dark:text-gray-200 border-gray-500 transition-all;
+}
 .swal2-popup {
     @apply dark:bg-darkBlue-secondary rounded-2xl dark:ring-1 dark:ring-amber-600;
 }
@@ -47,7 +50,7 @@ html, body{
 /* Handle */
 
 ::-webkit-scrollbar-thumb {
-	@apply dark:bg-purple-500 bg-gray-500 rounded-full;
+	@apply dark:bg-purple-900 bg-gray-500;
 }
 
 /* animate.css duration */
