@@ -367,7 +367,7 @@ router.post('/register', async (req, res) => {
         await id_db.find({ student_id: student_id, course: course, year: yr, enabled: false }, (err, okay) => {
             if (okay.length == 1) {
                 //check if the username is valid
-                user.find({ username: usr }, (err, found) => {
+                user.find({ username: {$eq: usr} }, (err, found) => {
                     if (found.length != 0) {
                         return res.send({
                             islogin: false,
@@ -407,7 +407,7 @@ router.post('/register', async (req, res) => {
                                     }
 
                                     //update student-ids and set the current id to enabled = true
-                                    id_db.updateOne({ student_id: student_id }, { $set: { enabled: true } }, (err, status) => {
+                                    id_db.updateOne({ student_id: {$eq: student_id} }, { $set: { enabled: true } }, (err, status) => {
                                         if (err) {
                                             return res.send({
                                                 islogin: false,
