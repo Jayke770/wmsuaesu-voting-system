@@ -17,6 +17,14 @@ const limit = rate_limit({
     windowMs: 1*60*1000, 
     max: 5,
 })
+const normal_limit = rate_limit({
+    windowMs: 1*60*1000, 
+    max: 12,
+})
+const delete_limit = rate_limit({
+    windowMs: 1*60*1000, 
+    max: 10,
+})
 adminrouter.post('/check', isadmin, async (req, res) => {
     const { id } = req.body
     if (id.trim() != "") {
@@ -350,7 +358,8 @@ adminrouter.get('/control/positions', isadmin, async (req, res, next) => {
         }
     })
 })
-adminrouter.post('/control/positions/add-position', isadmin, async (req, res, next) => {
+//add position
+adminrouter.post('/control/positions/add-position', isadmin, normal_limit, async (req, res) => {
     const {position} = req.body 
     const new_pos = {
         id: uuid(), 
@@ -358,7 +367,7 @@ adminrouter.post('/control/positions/add-position', isadmin, async (req, res, ne
     }
     try {
         //find if position is exists 
-        await data.find({'positions.type': xs(position)}, (err, pos) => {
+        await data.find({'positions.type': {$eq: xs(position)}}, (err, pos) => {
             if(err){
                 return res.send({
                     done: false, 
@@ -439,6 +448,94 @@ adminrouter.post('/control/positions/add-position', isadmin, async (req, res, ne
     } catch (e) {
         return res.send({
             done: false, 
+            msg: "Internal Error!"
+        })
+    }
+})
+//delete position 
+adminrouter.post('/control/positions/delete-position/', isadmin, delete_limit, async (req, res) => {
+    const {id} = req.body 
+    //check if positin id is exists 
+    try{ 
+        await data.find({"positions.id":  {$eq: xs(id)}}, (err, find) => {
+            if(err){
+                return res.status(500).send({
+                    deleted: false, 
+                    msg: "Internal Error!"
+                })
+            }
+            if(!err){
+                if(find.length !== 0){
+                    //delete id 
+                    data.updateOne({}, {$pull: {positions: {id: xs(id)}}}, (err, del) => {
+                        if(err){
+                            return res.status(500).send({
+                                deleted: false, 
+                                msg: "Internal Error!"
+                            })
+                        }
+                        if(!err){
+                            return res.send({
+                                deleted: true, 
+                                msg: "Deleted successfully"
+                            })
+                        }
+                    })
+                }
+                else{
+                    return res.send({
+                        deleted: false, 
+                        msg: "Position not found!"
+                    })
+                }
+            }
+        })
+    } catch (e){
+        return res.status(500).send({
+            deleted: false, 
+            msg: "Internal Error!",
+            error: e
+        })
+    }
+})
+//update position 
+adminrouter.post('/control/positions/update-position/', isadmin, normal_limit, async (req, res) => {
+    const {id, type} = req.body 
+    console.log(id, type)
+    try{
+        await data.find({"positions.id": {$eq: xs(id)}}, (err, find) => {
+            if(err){
+                return res.status(500).send({
+                    updated: false, 
+                    msg: "Internal Error!"
+                })
+            }
+            if(!err){
+                if(find.length !== 0){
+                    data.updateOne({"positions.id": xs(id)}, {$set: {"positions.$.type": xs(type)}}, (err, updated) => {
+                        if(err){
+                            return res.status(500).send({
+                                updated: false, 
+                                msg: "Internal Error!"
+                            })
+                        } else {
+                            return res.send({
+                                updated: true, 
+                                msg: "Position updated successfully"
+                            })
+                        }
+                    })
+                } else {
+                    return res.send({
+                        updated: false, 
+                        msg: "Position not found"
+                    })
+                }
+            }
+        })
+    } catch (e){
+        return res.status(500).send({
+            updated: false, 
             msg: "Internal Error!"
         })
     }
