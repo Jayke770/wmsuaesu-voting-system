@@ -26,7 +26,7 @@ $(document).ready(function () {
                     url: '/login',
                     method: 'POST',
                     cache: false,
-                    timeout: 5000,
+                    timeout: 10000,
                     contentType: false,
                     processData: false,
                     data: new FormData(this),
@@ -97,7 +97,7 @@ $(document).ready(function () {
                     url: '/verify',
                     method: 'POST', 
                     cache: false, 
-                    timeout: 5000,
+                    timeout: 10000,
                     contentType: false, 
                     processData: false, 
                     data: new FormData(this), 
@@ -247,7 +247,7 @@ $(document).ready(function () {
                     contentType: false,
                     cache: false,
                     processData: false,
-                    timeout: 5000,
+                    timeout: 10000,
                     data: new FormData(this),
                     success: (res) => {
                         if(res.islogin){

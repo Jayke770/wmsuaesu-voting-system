@@ -8,6 +8,7 @@ $(document).ready( function() {
         child.addClass(child.attr("animate-in"))
         setTimeout( () => {
             child.removeClass(child.attr("animate-in"))
+            $(".total_pos").text($(".pos").length)
         }, 400)
     })
     $(".close_add_pos").click( () => {
@@ -19,6 +20,19 @@ $(document).ready( function() {
             parent.removeClass("flex")
             parent.addClass("hidden")
         }, 300)
+    })
+    $(".add_position").click(function(e){
+        const parent = $(".add_position")
+        const child = $(".add_position_main")
+        console.log(e.target)
+        if($(e.target).hasClass("add_position")){
+            child.addClass(child.attr("animate-out"))
+            setTimeout( () => {
+                child.removeClass(child.attr("animate-out"))
+                parent.removeClass("flex")
+                parent.addClass("hidden")
+            }, 300)
+        }
     })
     //add position 
     $(".position_form").submit( function(e){
@@ -47,6 +61,7 @@ $(document).ready( function() {
                         title: res.msg
                     }).then( () => {
                         submit_btn.prop("disabled", false)
+                        append_pos(res.data)
                     })
                 }
                 if(!res.done){
@@ -74,4 +89,187 @@ $(document).ready( function() {
             },
         })
     })
+    //delete positions 
+    $(".positions_all").delegate(".del_pos", "click", function(e) {
+        e.preventDefault() 
+        const id = $(this).attr("data")
+        let data = new FormData()
+        data.append("id", id)
+        Swal.fire({
+            icon: 'question',
+            title: 'Delete Position ?', 
+            html: 'Deleting Positions can cause problem in other elections', 
+            backdrop: true, 
+            showCancelButton: true,
+            allowOutsideClick: false,
+        }).then( (res) => {
+            if(res.isConfirmed){
+                Swal.fire({
+                    title: 'Please wait...', 
+                    html: 'Deleting position', 
+                    backdrop: true, 
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    willOpen: () => {
+                        Swal.showLoading()
+                        $.ajax({
+                            url: 'delete-position/', 
+                            method: 'POST',
+                            cache: false, 
+                            processData: false, 
+                            contentType: false, 
+                            timeout: 10000,
+                            data: data,
+                            success: (res) => {
+                                if(res.deleted){
+                                    Swal.fire({
+                                        icon: 'success', 
+                                        title: res.msg, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false,
+                                    }).then( () => {
+                                        $(`div[data=${id}]`).remove()
+                                    })
+                                } else {
+                                    Swal.fire({
+                                        icon: 'info', 
+                                        title: res.msg, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false,
+                                    })
+                                }
+                            }, 
+                            error: (res) => {
+                                if(res.statusText === 'timeout'){
+                                    Swal.fire({
+                                        icon: 'error', 
+                                        title: `Connection ${res.statusText}`, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false,
+                                    })
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error', 
+                                        title: 'Error', 
+                                        html:`${res.status} ${res.statusText}`,
+                                        backdrop: true, 
+                                        allowOutsideClick: false,
+                                    })
+                                }
+                            }
+                        })
+                    }, 
+                })
+            }
+        })
+    })
+    //update positions 
+    $(".positions_all").delegate(".up_pos", "click", function(e) {
+        e.preventDefault() 
+        const id = $(this).attr("data") 
+        let data = new FormData()
+        Swal.fire({
+            icon: 'info',
+            title: 'Enter new position',
+            showCancelButton: true, 
+            backdrop: true, 
+            allowOutsideClick: false,
+            input: 'text',
+            inputPlaceholder: 'Position',
+            inputAttributes: {
+                autocapitalize: 'off',
+                autocorrect: 'off',
+                autocomplete: 'off',
+                required: 'true'
+            },
+            inputValidator: (val) => {
+                if(val){
+                    data.append("id", id)
+                    data.append("type", val)
+                    Swal.fire({
+                        title: 'Please wait',
+                        html: 'Updating position...', 
+                        backdrop: true, 
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => {
+                            Swal.showLoading()
+                            $.ajax({
+                                url: 'update-position/', 
+                                method: 'POST',
+                                cache: false, 
+                                processData: false, 
+                                contentType: false, 
+                                timeout: 10000,
+                                data: data,
+                                success: (res) => {
+                                    if(res.updated){
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        }).then( () => {
+                                            $(`div[data=${id}]`).find('span').text(val)
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error', 
+                                            title: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        })
+                                    }
+                                }, 
+                                error: (res) => {
+                                    if(res.statusText === 'timeout'){
+                                        Swal.fire({
+                                            icon: 'error', 
+                                            title: `Connection ${res.statusText}`, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false,
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error', 
+                                            title: 'Connection Error', 
+                                            html:`${res.status} ${res.statusText}`,
+                                            backdrop: true, 
+                                            allowOutsideClick: false,
+                                        })
+                                    }
+                                }
+                            })
+                        },
+                    })
+                }
+                else{
+                    Swal.fire({
+                        icon: 'warning', 
+                        title: 'Position cannot be empty!',
+                        backdrop: true, 
+                        allowOutsideClick: false
+                    })
+                }
+            },
+        })
+    })
+    function append_pos(data){
+        const positions = $(".positions_all")
+        $(".empty_pos").remove()
+        const element = `<div data="${data.id}" class="pos group sm:last:mb-4 animate__animated animate__fadeInUp p-3 grid grid-cols-2 bg-gray-100 rounded-xl cursor-pointer">
+                            <div>
+                                <span class="text-bluegray-900 text-base font-normal break-all">${data.type}</span>
+                            </div>
+                            <div class="hidden group-hover:flex animate__animated animate__fadeInLeft ms-200 transition-all justify-end items-center gap-1">
+                                <a data="${data.id}" class="rpl px-2 up_pos cursor-pointer text-green-600">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a data="${data.id}" class="rpl px-2 del_pos cursor-pointer text-rose-600">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>`
+        positions.append(element)
+    }
 })

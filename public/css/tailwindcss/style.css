@@ -791,16 +791,20 @@ video {
   z-index: 30;
 }
 
+.z-20 {
+  z-index: 20;
+}
+
 .z-50 {
   z-index: 50;
 }
 
-.col-span-2 {
-  grid-column: span 2 / span 2;
-}
-
 .col-span-5 {
   grid-column: span 5 / span 5;
+}
+
+.col-span-2 {
+  grid-column: span 2 / span 2;
 }
 
 .float-right {
@@ -928,6 +932,10 @@ video {
   margin-bottom: 1.75rem;
 }
 
+.mt-\[62px\] {
+  margin-top: 62px;
+}
+
 .mt-36 {
   margin-top: 9rem;
 }
@@ -1038,6 +1046,10 @@ video {
 
 .h-60 {
   height: 15rem;
+}
+
+.h-\[calc\(100\%-61px\)\] {
+  height: calc(100% - 61px);
 }
 
 .w-screen {
@@ -1293,10 +1305,6 @@ video {
   overflow-x: scroll;
 }
 
-.overflow-y-scroll {
-  overflow-y: scroll;
-}
-
 .break-words {
   overflow-wrap: break-word;
 }
@@ -1379,10 +1387,6 @@ video {
   border-width: 0.5px;
 }
 
-.border-\[\.5px\] {
-  border-width: .5px;
-}
-
 .border-b-8 {
   border-bottom-width: 8px;
 }
@@ -1401,6 +1405,10 @@ video {
 
 .border-b {
   border-bottom-width: 1px;
+}
+
+.border-t {
+  border-top-width: 1px;
 }
 
 .border-none {
@@ -1466,9 +1474,9 @@ video {
   border-color: rgba(161, 161, 170, var(--tw-border-opacity));
 }
 
-.border-rose-600 {
+.border-rose-500 {
   --tw-border-opacity: 1;
-  border-color: rgba(225, 29, 72, var(--tw-border-opacity));
+  border-color: rgba(244, 63, 94, var(--tw-border-opacity));
 }
 
 .border-bluegray-500 {
@@ -1778,6 +1786,11 @@ video {
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
+}
+
+.py-\[5px\] {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .py-\[2px\] {
@@ -2208,6 +2221,11 @@ video {
 .text-warmgray-700 {
   --tw-text-opacity: 1;
   color: rgba(68, 64, 60, var(--tw-text-opacity));
+}
+
+.text-bluegray-600 {
+  --tw-text-opacity: 1;
+  color: rgba(71, 85, 105, var(--tw-text-opacity));
 }
 
 .underline {
@@ -2838,6 +2856,10 @@ input:checked~.dot {
   margin-right: 0px;
 }
 
+.last\:mb-4:last-child {
+  margin-bottom: 1rem;
+}
+
 .hover\:block:hover {
   display: block;
 }
@@ -2909,26 +2931,6 @@ input:checked~.dot {
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
-}
-
-.hover\:bg-rose-500:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgba(244, 63, 94, var(--tw-bg-opacity));
-}
-
-.hover\:bg-rose-300:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgba(253, 164, 175, var(--tw-bg-opacity));
-}
-
-.hover\:bg-rose-200:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgba(254, 205, 211, var(--tw-bg-opacity));
-}
-
-.hover\:bg-rose-100:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgba(255, 228, 230, var(--tw-bg-opacity));
 }
 
 .hover\:tracking-wider:hover {
@@ -3110,6 +3112,11 @@ input:checked~.dot {
   cursor: not-allowed;
 }
 
+.disabled\:bg-purple-500:disabled {
+  --tw-bg-opacity: 1;
+  background-color: rgba(168, 85, 247, var(--tw-bg-opacity));
+}
+
 .disabled\:bg-green-900:disabled {
   --tw-bg-opacity: 1;
   background-color: rgba(20, 83, 45, var(--tw-bg-opacity));
@@ -3124,24 +3131,13 @@ input:checked~.dot {
   background-color: rgba(21, 128, 61, 0.6);
 }
 
-.disabled\:bg-purple-600:disabled {
-  --tw-bg-opacity: 1;
-  background-color: rgba(147, 51, 234, var(--tw-bg-opacity));
-}
-
-.disabled\:bg-purple-400:disabled {
-  --tw-bg-opacity: 1;
-  background-color: rgba(192, 132, 252, var(--tw-bg-opacity));
-}
-
-.disabled\:bg-purple-500:disabled {
-  --tw-bg-opacity: 1;
-  background-color: rgba(168, 85, 247, var(--tw-bg-opacity));
-}
-
 .disabled\:text-gray-300:disabled {
   --tw-text-opacity: 1;
   color: rgba(212, 212, 216, var(--tw-text-opacity));
+}
+
+.group:hover .group-hover\:flex {
+  display: flex;
 }
 
 .peer:hover ~ .peer-hover\:block {
@@ -4070,6 +4066,10 @@ input:checked~.dot {
     display: none;
   }
 
+  .sm\:h-\[calc\(100vh-60px\)\] {
+    height: calc(100vh - 60px);
+  }
+
   .sm\:w-\[98\%\] {
     width: 98%;
   }
@@ -4092,6 +4092,14 @@ input:checked~.dot {
 
   .sm\:justify-center {
     justify-content: center;
+  }
+
+  .sm\:overflow-hidden {
+    overflow: hidden;
+  }
+
+  .sm\:overflow-y-scroll {
+    overflow-y: scroll;
   }
 
   .sm\:p-3 {
@@ -4127,6 +4135,11 @@ input:checked~.dot {
     padding-right: 0.75rem;
   }
 
+  .sm\:px-2 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
   .sm\:text-center {
     text-align: center;
   }
@@ -4143,6 +4156,10 @@ input:checked~.dot {
   .sm\:text-lg {
     font-size: 1.125rem;
     line-height: 1.75rem;
+  }
+
+  .sm\:last\:mb-4:last-child {
+    margin-bottom: 1rem;
   }
 }
 
