@@ -331,7 +331,7 @@ adminrouter.get('/control/voter-id/', isadmin, async (req, res, next) => {
     })
 })
 //positions 
-adminrouter.get('/control/positions', isadmin, async (req, res, next) => {
+adminrouter.get('/control/positions', isadmin, normal_limit, async (req, res, next) => {
     await data.find({}, {positions: 1}, (err, pos) => {
         if(err){
             //send error page
@@ -485,7 +485,6 @@ adminrouter.post('/control/positions/delete-position/', isadmin, delete_limit, a
 //update position 
 adminrouter.post('/control/positions/update-position/', isadmin, normal_limit, async (req, res) => {
     const {id, type} = req.body 
-    console.log(id, type)
     try{
         await data.find({"positions.id": {$eq: xs(id)}}, (err, find) => {
             if(err){
