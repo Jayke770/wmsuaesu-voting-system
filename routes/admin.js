@@ -543,8 +543,9 @@ adminrouter.post('/control/positions/update-position/', isadmin, normal_limit, a
     }
 })
 //check voter id
-adminrouter.post('/control/voter-id/', isadmin, async (req, res, next) => {
+adminrouter.post('/control/voter-id/verify', isadmin, normal_limit, async (req, res) => {
     const { id } = req.body
+    console.log(req.body)
     const voter_id = xs(id)
     //check voter if exists 
     await ids.find({ student_id: voter_id }, (err, res_id) => {
@@ -707,8 +708,10 @@ adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, normal_limit, asyn
         //get all voter containing with the sort value 
         await ids.find({ enabled: final_sort }, (err, result) => {
             if (err) {
-                //send error page 
-                return next()
+                return res.send({
+                    status: false, 
+                    msg: "Internal Error"
+                })
             }
             if (!err) {
                 return res.send({
@@ -721,8 +724,10 @@ adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, normal_limit, asyn
     else if (sort === "default") {
         await ids.find({}, (err, result) => {
             if (err) {
-                //send error page 
-                return next()
+                return res.send({
+                    status: false, 
+                    msg: "Internal Error"
+                })
             }
             if (!err) {
                 return res.send({
@@ -798,8 +803,8 @@ adminrouter.post('/control/voter-id/update-voter-id/', limit, isadmin, async (re
                 })
             }
             if (result_check.length !== 0) {
-                //then check if the new voter id is not the with another voter id
-                ids.find({ student_id: voter_id }, (err, result) => {
+                //then check if the new voter id is not used with another voter
+                ids.find({ student_id: {$eq : voter_id }}, (err, result) => {
                     if (err) {
                         //send error page 
                         return next()
@@ -807,7 +812,7 @@ adminrouter.post('/control/voter-id/update-voter-id/', limit, isadmin, async (re
                     if (!err) {
                         if (result.length === 0) {
                             //update voter id
-                            ids.updateOne({ _id: voter_id_session }, { student_id: voter_id, course: voter_course, year: voter_year }, (err, isUpdated) => {
+                            ids.updateOne({ _id: {$eq: voter_id_session} }, { student_id: voter_id, course: voter_course, year: voter_year }, (err, isUpdated) => {
                                 if (err) {
                                     //send error page 
                                 }
@@ -831,7 +836,7 @@ adminrouter.post('/control/voter-id/update-voter-id/', limit, isadmin, async (re
                             return res.send({
                                 status: false,
                                 msg: "Something went wrong",
-                                msg2: "Voter ID is already used before or used by another voter"
+                                e: "Voter ID is already used before or used by another voter"
                             })
                         }
                     }

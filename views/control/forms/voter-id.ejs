@@ -52,8 +52,8 @@
                         for( let i = 0; i < id.length; i++ ) {  %>
                         <div style="animation-delay: <%- i * .100 %>s;" data="<%- id[i]._id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
                             <div class="w-full">
-                                <span class="font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
-                                <span class="float-right font-medium text-fuchsia-600 dark:text-fuchsia-500"><%- id[i].course + ' ' + id[i].year %></span>
+                                <span class="st_id font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
+                                <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500"><%- id[i].course + ' ' + id[i].year %></span>
                             </div>
                             <div class="mt-2 p-2">
                                 <a data="<%- id[i]._id %>" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
@@ -62,7 +62,7 @@
                                 <a data="<%- id[i]._id %>" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
-                                <span class=" <% if(id[i].enabled){ %> bg-green-700 <% } else { %> bg-amber-700 <% } %> float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">
+                                <span class=" <% if(id[i].enabled){ %> dark:bg-green-700 bg-green-600 <% } else { %> dark:bg-amber-700 bg-amber-600 <% } %> float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">
                                     <% if(id[i].enabled){ %> 
                                         Used
                                     <% } else { %>
@@ -83,45 +83,42 @@
         </div>
         <div class="popup hidden transition-all z-50 fixed w-full h-full bg-black/50 top-0">
             <div animate-in="animate__animated animate__fadeInRight" animate-out="animate__animated animate__fadeOutRight" class="add_voter_id ms-700 flex w-full h-full justify-end p-2 items-center transition-all">
-                <div class="shadow-md w-96 h-full dark:border-[.1px] border-gray-500 bg-gray-50 dark:bg-darkBlue-secondary rounded-xl transition-all">
+                <div class="shadow-md xsm:w-full w-96 h-full border-b-[.1px] border-gray-500 dark:border-darkBlue-secondary bg-gray-50 dark:bg-darkBlue-secondary rounded-xl transition-all">
                    <div class="container h-full">
                         <div class="flex justify-center items-center p-4 border-b border-gray-300 dark:border-gray-500">
-                            <p class="text-xl font-medium sm:text-lg dark:text-purple-500 dark:font-semibold">Add Voter ID</p>
+                            <p class="text-xl font-medium sm:text-lg text-purple-800 dark:text-purple-500 dark:font-semibold">Add Voter ID</p>
                         </div>
                         <form class="add_voter_id_form container p-4 h-[calc(100%-65px)] grid grid-rows-2">
                             <div class=" w-full flex flex-col" action="/control/add-voter-id/" method="POST">
                                 <div class="container px-2 mb-2 transition-all">
                                     <label for="id" class="pointer-events-none dark:text-gray-300">ID Number</label>
-                                    <input autocomplete="off" name="id" placeholder="ID Number" type="text" class="id_number dark:bg-transparent dark:text-gray-200 dark:border-gray-600 dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
-                                </div>
-                                <div class="justify-end items-center gap-1 hidden mr-3 status_voter_id">
-                                    <span class="text-sm font-medium text-green-600 status_voter_id_status">Checking</span>
-                                </div>  
+                                    <input autocomplete="off" name="id" placeholder="ID Number" type="text" class="id_number dark:bg-transparent dark:text-gray-200 dark:border-gray-300 dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:ring-2 focus:ring-purple-400 transition-all py-2 px-3 text-gray-900 " required>
+                                </div> 
                                 <div class="container px-2 mb-2">
                                     <label for="id" class="pointer-events-none dark:text-gray-300">Course</label>
-                                    <select disabled="true" name="crs" class="crs_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark:border-gray-600 dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
-                                        <option value="">Select Course</option>
-                                        <option value="BSCS">BSCS</option>
-                                        <option value="BSED">BSED</option>
-                                        <option value="GEN ED">GEN ED</option>
-                                    </select>
+                                    <input list="crs" placeholder="Select Course" name="crs" class="crs_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark:border-gray-300 dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:ring-2 focus:ring-purple-400 transition-all py-2 px-3 text-gray-900 " required>
+                                    <datalist id="crs">
+                                        <option value="BSCS"></option>
+                                        <option value="BSED"></option>
+                                        <option value="GEN ED"></option>
+                                    </datalist>
                                 </div>
                                 <div class="container px-2 mb-2">
                                     <label for="id" class="pointer-events-none dark:text-gray-300">Year</label>
-                                    <select disabled="true" name="year" class="year_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark:border-gray-600 dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " required>
-                                        <option value="">Select Year</option>
-                                        <option value="1">1st</option>
-                                        <option value="2">2nd</option>
-                                        <option value="3">3rd</option>
-                                        <option value="4">4th</option>
-                                    </select>
+                                    <input list="yr" placeholder="Select Year" name="year" class="year_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark:border-gray-300 dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:ring-2 focus:ring-purple-400 transition-all py-2 px-3 text-gray-900 " required>
+                                    <datalist id="yr">
+                                        <option value="1"></option>
+                                        <option value="2"></option>
+                                        <option value="3"></option>
+                                        <option value="4"></option>
+                                    </datalist>
                                 </div>
                             </div>
                             <div class="flex flex-row">
                                 <div class="container gap-2 flex items-end justify-center">
                                     <button type="reset" class="reset_voter_id_form hidden"></button>
                                     <button type="button" class="cls_add_voter_id rpl appearance-none outline-none transition-all px-4 py-2 border border-rose-500 rounded-md  text-sm font-medium text-rose-500 focus:outline-none w-full">Close</button>
-                                    <button disabled="true" type="submit" class="w-full add_btn_voter_id disabled:cursor-not-allowed dark:disabled:bg-purple-800/60 disabled:bg-purple-900 button rpl dark:bg-purple-800 dark:active:ring-purple-700 bg-purple-500 my-ring-2 active:ring-purple-700 text-gray-300">Add</button>
+                                    <button type="submit" class="w-full add_btn_voter_id disabled:cursor-not-allowed dark:disabled:bg-purple-800/60 disabled:bg-purple-500 button rpl dark:bg-purple-800 dark:active:ring-purple-700 bg-purple-600 my-ring-2 active:ring-purple-700 text-gray-300">Add</button>
                                 </div>
                             </div>
                         </form>
@@ -129,21 +126,16 @@
                 </div>
             </div>
         </div>
-        <div class="popup_2 hidden z-50 fixed bg-gray-900/50 w-full h-full top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
-            <div class="edit_form animate__animated animate__bounceIn ms-900 flex w-full h-full justify-center items-center transition-all" animate-in="animate__animated animate__bounceIn" animate-out="animate__animated animate__bounceOut">
-                <div class="w-2/6 my:w-96 md:w-[90%] bg-gray-200 dark:bg-darkBlue-secondary dark:border-t-8 border-[0.5px] dark:border-amber-500 h-auto shadow-md rounded-lg p-2 transition-all">
-                    <div class="grid grid-cols-2 gap-1 ">
-                        <div class="flex justify-start items-center">
-                            <span class="font-bold text-2xl text-purple-700 dark:text-gray-100 pl-3 pt-4 p-3 md:text-xl md:pr-0 md:pl-1">Edit Voter ID</span>
-                        </div>
-                        <div class="flex justify-end items-center">
-                            <a class="close_edit_voter cursor-pointer rpl px-3 py-2 antialiased">
-                                <i class="fas fa-times-circle text-2xl text-rose-600"></i>
-                            </a>
+        <div class="popup_2 hidden z-50 fixed bg-gray-900/50 w-full h-full top-0">
+            <div class="edit_form p-2 ms-700 flex w-full h-full justify-end items-center transition-all" animate-in="animate__animated animate__fadeInRight" animate-out="animate__animated animate__fadeOutRight">
+                <div class="xsm:w-full w-96 h-full bg-gray-50 dark:bg-darkBlue-secondary dark:border-t-8 border-[0.5px] dark:border-amber-500  shadow-md rounded-lg transition-all">
+                    <div class="flex justify-center items-center p-2 py-3 border-b-[.1px] border-gray-400 dark:border-darkBlue-secondary">
+                        <div class="">
+                            <span class="font-semibold text-xl text-purple-800 dark:text-purple-500 pl-3 pt-4 p-3 md:text-xl md:pr-0 md:pl-1">Edit Voter ID</span>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-2 w-full">
-                        <form class="edit_voter_id_form px-4 py-2 pt-4">
+                    <form class="edit_voter_id_form grid grid-rows-2 h-[calc(100%-60px)]">
+                        <div class="p-3 px-4 pt-5">
                             <div class="form-group mt-2 first:mt-0">
                                 <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Voter ID</label>
                                 <input type="text" name="id" class="edit_voter_id dark:bg-transparent dark:text-gray-200 dark:border-gray-600 dark:focus:border-indigo-600 mt-1 w-full outline-none border border-gray-400 rounded-md focus:border-indigo-600  transition-all py-2 px-3 text-gray-900 " placeholder="Voter ID" autocomplete="off" required>
@@ -167,17 +159,19 @@
                                     <option value="4">
                                 </datalist>
                             </div>
-                            <div class="form-group flex justify-end items-center mt-4">
-                                <button class="reset_voter_id_update hidden" type="reset"></button>
-                                <button class="button rpl bg-green-700 focus:ring-green-700 hover:bg-green-600 w-[100PX] md:w-full" type="submit">Update</button>
-                            </div>
-                        </form>
-                    </div>
+                        </div> 
+                        <div class="flex flex-rowd justify-center gap-2 py-2 items-end px-3">
+                            <button class="hidden" type="reset"></button>
+                            <button type="button" class="rpl close_edit_voter appearance-none outline-none transition-all px-4 py-2 border border-rose-500 rounded-md  text-sm font-medium text-rose-500 focus:outline-none w-full">Close</button>
+                            <button class="button rpl bg-teal-600 focus:ring-teal-700 hover:bg-teal-600 w-full" type="submit">Update</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
     <script src="/js/theme.js"></script>
+    <script src="/js/toast.js"></script>
     <script src="/js/time.js"></script>
     <script src="/js/avatar.js "></script>
     <script src="/control/js/voter-id.js"></script>
