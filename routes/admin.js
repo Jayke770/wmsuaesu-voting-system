@@ -835,8 +835,7 @@ adminrouter.post('/control/voter-id/update-voter-id/', limit, isadmin, async (re
                         else {
                             return res.send({
                                 status: false,
-                                msg: "Something went wrong",
-                                e: "Voter ID is already used before or used by another voter"
+                                msg: "Please use another Voter ID",
                             })
                         }
                     }
@@ -844,6 +843,91 @@ adminrouter.post('/control/voter-id/update-voter-id/', limit, isadmin, async (re
             }
         }
     })
+})
+//course & year 
+adminrouter.get('/control/course&year/', limit, isadmin, async (req, res) => {
+    try {
+        await data.find({}, {course: 1, year: 1}, (err, data) => {
+            if(err){
+                return res.status(500).send("Internal Error")
+            } else {
+                return res.render('control/forms/cy', { course: data[0].course, year: data[0].year })
+            }
+        })
+    } catch(e){
+        return res.status(500).send("Internal Error")
+    }
+})
+//add course & year 
+adminrouter.post('/control/course&year/add-cy/', limit, isadmin, async (req, res) => {
+    const {course, year} = req.body 
+    let crs,yrs
+    //new course construct with json
+    const new_crs = {
+        id: uuid(), 
+        type: xs(course).toUpperCase().trim()
+    }
+    //new year construct with json
+    const new_yrs = {
+        id: uuid(), 
+        type: xs(year).trim()
+    }
+    if(course !== "" && year !== ""){
+        //check if course is already exists     
+        await data.find({}, {course: 1, year: 1}, (err, c) => {
+            console.log(c)
+            if(err){
+                return res.send({
+                    status: false, 
+                    msg: "Internal Error"
+                })
+            } else {
+                //check if the new course is not the same with the course in db
+                for(let i = 0; i < c[0].course.length; i++){
+                    if(c[0].course[i].type === xs(course).toUpperCase().trim()){
+                        crs = true
+                        break
+                    }
+                }
+                //check if the new year is not the same with the year in db
+                for(let i = 0; i < c[0].year.length; i++){
+                    if(c[0].year[i].type === xs(year).trim()){
+                        yrs = true
+                        break
+                    }
+                }
+                //if both is not true
+                if(!crs && !yrs){
+                    //insert new course & year 
+                    data.updateOne({}, {$push: {course: new_crs, year: new_yrs}}, (err, done) => {
+                        if(err){
+                            return res.send({
+                                status: false, 
+                                msg: "Internal Error"
+                            })
+                        } else {
+                            return res.send({
+                                status: true, 
+                                msg: "Successfully Added", 
+                                data: [new_crs, new_yrs]
+                            })
+                        }
+                    })
+
+                } else {
+                    return res.send({
+                        status: false, 
+                        msg: "Course or Year is already exist"
+                    })
+                }
+            }
+        })
+    } else {
+        return res.send({
+            status: false, 
+            msg: "Some feilds is empty"
+        })
+    }
 })
 //logs 
 adminrouter.post('/control/logs/', isadmin, async (req, res) => {

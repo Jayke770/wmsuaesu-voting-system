@@ -279,6 +279,7 @@ $(".voters_id_all").delegate(".update_voter_id", "click", function(e) {
 })
 $(".edit_voter_id_form").submit(function(e){
     e.preventDefault() 
+    
     $.ajax({
         url: 'update-voter-id/', 
         method: 'POST', 
@@ -336,6 +337,12 @@ $(".edit_voter_id_form").submit(function(e){
                             }
                         }
                     })    
+                })
+            } else {
+                toast.fire({
+                    icon: 'info', 
+                    timer: 1500,
+                    title: res.msg
                 })
             }
         }, 

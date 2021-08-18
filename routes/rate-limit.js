@@ -6,7 +6,7 @@ module.exports = {
     }),
     limit: rateLimit({
         windowMs: 1*60*1000, 
-        max: 5,
+        max: 20,
     }),
     normal_limit: rateLimit({
         windowMs: 1*60*1000, 

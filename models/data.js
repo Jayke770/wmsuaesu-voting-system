@@ -3,6 +3,11 @@ const data = new mongoose.Schema({
     positions: {
         type: Array
     }, 
-    course: {}
+    course: {
+        type: Array
+    }, 
+    year: {
+        type: Array
+    }
 })
 module.exports = mongoose.model('data', data)

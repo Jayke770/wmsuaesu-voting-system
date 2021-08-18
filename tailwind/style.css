@@ -140,6 +140,12 @@ input:checked~.dot {
 .button-input {
     @apply transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-800 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500;
 }
+.dark_border {
+    @apply dark:border dark:border-[#30363d];
+}
+.dark_border_b {
+    @apply dark:border-b dark:border-[#30363d];
+}
 .button{
     @apply  appearance-none outline-none transition-all px-4 py-2 border border-transparent rounded-md  text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2;
 }
