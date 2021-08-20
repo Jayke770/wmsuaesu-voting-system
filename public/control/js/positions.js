@@ -1,32 +1,32 @@
 "use strict"
-$(document).ready( function() {
-    $(".add_pos_btn").click( () => {
+$(document).ready(function () {
+    $(".add_pos_btn").click(() => {
         const parent = $(".add_position")
         const child = $(".add_position_main")
         parent.removeClass("hidden")
         parent.addClass("flex")
         child.addClass(child.attr("animate-in"))
-        setTimeout( () => {
+        setTimeout(() => {
             child.removeClass(child.attr("animate-in"))
             $(".total_pos").text($(".pos").length)
         }, 400)
     })
-    $(".close_add_pos").click( () => {
+    $(".close_add_pos").click(() => {
         const parent = $(".add_position")
         const child = $(".add_position_main")
         child.addClass(child.attr("animate-out"))
-        setTimeout( () => {
+        setTimeout(() => {
             child.removeClass(child.attr("animate-out"))
             parent.removeClass("flex")
             parent.addClass("hidden")
         }, 300)
     })
-    $(".add_position").click(function(e){
+    $(".add_position").click(function (e) {
         const parent = $(".add_position")
         const child = $(".add_position_main")
-        if($(e.target).hasClass("add_position")){
+        if ($(e.target).hasClass("add_position")) {
             child.addClass(child.attr("animate-out"))
-            setTimeout( () => {
+            setTimeout(() => {
                 child.removeClass(child.attr("animate-out"))
                 parent.removeClass("flex")
                 parent.addClass("hidden")
@@ -34,7 +34,7 @@ $(document).ready( function() {
         }
     })
     //add position 
-    $(".position_form").submit( function(e){
+    $(".position_form").submit(function (e) {
         e.preventDefault()
         const position_input = $(this).find("input[name='position']")
         const submit_btn_text = $(this).find("button[type='submit']").text()
@@ -45,134 +45,134 @@ $(document).ready( function() {
         $.ajax({
             url: 'add-position/',
             method: 'POST',
-            cache: false, 
+            cache: false,
             processData: false,
             contentType: false,
-            timout: 5000, 
-            data: new FormData(this), 
+            timout: 5000,
+            data: new FormData(this),
             success: (res) => {
-                if(res.done){
+                if (res.done) {
                     position_input.val('')
                     submit_btn.html(submit_btn_text)
                     toast.fire({
                         timer: 2000,
-                        icon: 'success', 
+                        icon: 'success',
                         title: res.msg
-                    }).then( () => {
+                    }).then(() => {
                         submit_btn.prop("disabled", false)
                         append_pos(res.data)
                         $(".total_pos").text($(".pos").length)
                     })
                 }
-                if(!res.done){
+                if (!res.done) {
                     position_input.val('')
                     submit_btn.html(submit_btn_text)
                     toast.fire({
                         timer: 2000,
-                        icon: 'info', 
+                        icon: 'info',
                         title: res.msg
-                    }).then( () => {
+                    }).then(() => {
                         submit_btn.prop("disabled", false)
                     })
                 }
-            }, 
+            },
             error: (res) => {
                 position_input.val('')
                 submit_btn.html(submit_btn_text)
                 toast.fire({
                     timer: 2000,
-                    icon: 'error', 
+                    icon: 'error',
                     title: `${res.status} ${res.statusText}`
-                }).then( () => {
+                }).then(() => {
                     submit_btn.prop("disabled", false)
                 })
             },
         })
     })
     //delete positions 
-    $(".positions_all").delegate(".del_pos", "click", function(e) {
-        e.preventDefault() 
+    $(".positions_all").delegate(".del_pos", "click", function (e) {
+        e.preventDefault()
         const id = $(this).attr("data")
         let data = new FormData()
         data.append("id", id)
         Swal.fire({
             icon: 'question',
-            title: 'Delete Position ?', 
-            html: 'Deleting Positions can cause problem in other elections', 
-            backdrop: true, 
+            title: 'Delete Position ?',
+            html: 'Deleting Positions can cause problem in other elections',
+            backdrop: true,
             showCancelButton: true,
             allowOutsideClick: false,
-        }).then( (res) => {
-            if(res.isConfirmed){
+        }).then((res) => {
+            if (res.isConfirmed) {
                 Swal.fire({
-                    title: 'Please wait...', 
-                    html: 'Deleting position', 
-                    backdrop: true, 
+                    title: 'Please wait...',
+                    html: 'Deleting position',
+                    backdrop: true,
                     showConfirmButton: false,
                     allowOutsideClick: false,
                     willOpen: () => {
                         Swal.showLoading()
                         $.ajax({
-                            url: 'delete-position/', 
+                            url: 'delete-position/',
                             method: 'POST',
-                            cache: false, 
-                            processData: false, 
-                            contentType: false, 
+                            cache: false,
+                            processData: false,
+                            contentType: false,
                             timeout: 10000,
                             data: data,
                             success: (res) => {
-                                if(res.deleted){
+                                if (res.deleted) {
                                     Swal.fire({
-                                        icon: 'success', 
-                                        title: res.msg, 
-                                        backdrop: true, 
+                                        icon: 'success',
+                                        title: res.msg,
+                                        backdrop: true,
                                         allowOutsideClick: false,
-                                    }).then( () => {
+                                    }).then(() => {
                                         $(`div[data=${id}]`).remove()
                                     })
                                 } else {
                                     Swal.fire({
-                                        icon: 'info', 
-                                        title: res.msg, 
-                                        backdrop: true, 
+                                        icon: 'info',
+                                        title: res.msg,
+                                        backdrop: true,
                                         allowOutsideClick: false,
                                     })
                                 }
-                            }, 
+                            },
                             error: (res) => {
-                                if(res.statusText === 'timeout'){
+                                if (res.statusText === 'timeout') {
                                     Swal.fire({
-                                        icon: 'error', 
-                                        title: `Connection ${res.statusText}`, 
-                                        backdrop: true, 
+                                        icon: 'error',
+                                        title: `Connection ${res.statusText}`,
+                                        backdrop: true,
                                         allowOutsideClick: false,
                                     })
                                 } else {
                                     Swal.fire({
-                                        icon: 'error', 
-                                        title: 'Error', 
-                                        html:`${res.status} ${res.statusText}`,
-                                        backdrop: true, 
+                                        icon: 'error',
+                                        title: 'Error',
+                                        html: `${res.status} ${res.statusText}`,
+                                        backdrop: true,
                                         allowOutsideClick: false,
                                     })
                                 }
                             }
                         })
-                    }, 
+                    },
                 })
             }
         })
     })
     //update positions 
-    $(".positions_all").delegate(".up_pos", "click", function(e) {
-        e.preventDefault() 
-        const id = $(this).attr("data") 
+    $(".positions_all").delegate(".up_pos", "click", function (e) {
+        e.preventDefault()
+        const id = $(this).attr("data")
         let data = new FormData()
         Swal.fire({
             icon: 'info',
             title: 'Enter new position',
-            showCancelButton: true, 
-            backdrop: true, 
+            showCancelButton: true,
+            backdrop: true,
             allowOutsideClick: false,
             input: 'text',
             inputPlaceholder: 'Position',
@@ -183,58 +183,58 @@ $(document).ready( function() {
                 required: 'true'
             },
             inputValidator: (val) => {
-                if(val){
+                if (val) {
                     data.append("id", id)
                     data.append("type", val)
                     Swal.fire({
                         title: 'Please wait',
-                        html: 'Updating position...', 
-                        backdrop: true, 
+                        html: 'Updating position...',
+                        backdrop: true,
                         allowOutsideClick: false,
                         showConfirmButton: false,
                         willOpen: () => {
                             Swal.showLoading()
                             $.ajax({
-                                url: 'update-position/', 
+                                url: 'update-position/',
                                 method: 'POST',
-                                cache: false, 
-                                processData: false, 
-                                contentType: false, 
+                                cache: false,
+                                processData: false,
+                                contentType: false,
                                 timeout: 10000,
                                 data: data,
                                 success: (res) => {
-                                    if(res.updated){
+                                    if (res.updated) {
                                         Swal.fire({
-                                            icon: 'success', 
-                                            title: res.msg, 
-                                            backdrop: true, 
+                                            icon: 'success',
+                                            title: res.msg,
+                                            backdrop: true,
                                             allowOutsideClick: false
-                                        }).then( () => {
+                                        }).then(() => {
                                             $(`div[data=${id}]`).find('span').text(val)
                                         })
                                     } else {
                                         Swal.fire({
-                                            icon: 'error', 
-                                            title: res.msg, 
-                                            backdrop: true, 
+                                            icon: 'error',
+                                            title: res.msg,
+                                            backdrop: true,
                                             allowOutsideClick: false
                                         })
                                     }
-                                }, 
+                                },
                                 error: (res) => {
-                                    if(res.statusText === 'timeout'){
+                                    if (res.statusText === 'timeout') {
                                         Swal.fire({
-                                            icon: 'error', 
-                                            title: `Connection ${res.statusText}`, 
-                                            backdrop: true, 
+                                            icon: 'error',
+                                            title: `Connection ${res.statusText}`,
+                                            backdrop: true,
                                             allowOutsideClick: false,
                                         })
                                     } else {
                                         Swal.fire({
-                                            icon: 'error', 
-                                            title: 'Connection Error', 
-                                            html:`${res.status} ${res.statusText}`,
-                                            backdrop: true, 
+                                            icon: 'error',
+                                            title: 'Connection Error',
+                                            html: `${res.status} ${res.statusText}`,
+                                            backdrop: true,
                                             allowOutsideClick: false,
                                         })
                                     }
@@ -243,33 +243,34 @@ $(document).ready( function() {
                         },
                     })
                 }
-                else{
+                else {
                     Swal.fire({
-                        icon: 'warning', 
+                        icon: 'warning',
                         title: 'Position cannot be empty!',
-                        backdrop: true, 
+                        backdrop: true,
                         allowOutsideClick: false
                     })
                 }
             },
         })
     })
-    function append_pos(data){
+    function append_pos(data) {
         const positions = $(".positions_all")
         $(".empty_pos").remove()
-        const element = `<div data="${data.id}" class="pos sm:last:mb-4 group animate__animated animate__fadeInUp p-3 grid grid-cols-2 bg-gray-100 rounded-xl cursor-pointer">
-                            <div>
-                                <span class="text-bluegray-900 text-base font-normal break-all">${data.type}</span>
-                            </div>
-                            <div class="hidden group-hover:flex animate__animated animate__fadeInLeft ms-200 transition-all justify-end items-center gap-1">
-                                <a data="${data.id}" class="rpl px-2 up_pos cursor-pointer text-green-600">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a data="${data.id}" class="rpl px-2 del_pos cursor-pointer text-rose-600">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </div>
-                        </div>`
+        const element = `
+            <div data="${data.id}" class="pos dark:bg-darkBlue-secondary sm:last:mb-4 group animate__animated animate__fadeInUp p-3 grid grid-cols-2 bg-gray-100 rounded-xl cursor-pointe">
+                <div>
+                    <span class="text-bluegray-900 dark:text-gray-300 text-base font-normal break-all">${data.type}</span>
+                </div>
+                <div class="hidden group-hover:flex animate__animated animate__fadeInLeft ms-200 transition-all justify-end items-center gap-1">
+                    <a data="${data.id}" class="rpl px-2 up_pos cursor-pointer text-green-600">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a data="${data.id}" class="rpl px-2 del_pos cursor-pointer text-rose-600">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>`
         positions.append(element)
     }
 })

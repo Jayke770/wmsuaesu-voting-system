@@ -39,17 +39,17 @@
             </div>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-none w-full">
-            <div class="c_list flex flex-col gap-1 py-2 px-1">
+            <div class="c_list flex flex-col gap-1 py-2 px-1 transition-all">
                 <% if(course.length !== 0) { %>
                     <% for( let i = 0; i < course.length; i++ ) { %>
-                        <div data="<%- course[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="rpl animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
+                        <div data="<%- course[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="rpl transition-all animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
                             <div class="grid grid-cols-2">
-                                <p class="font-semibold text-bluegray-900 text-base dark:text-gray-300"><%- course[i].type %></p>
+                                <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300"><%- course[i].type %></p>
                                 <div class="transition-all animate__animated animate__fadeInLeft ms-300 hidden group-hover:flex flex-row justify-end items-center">
-                                    <a data="<%- course[i].id %>" class="rpl px-2 cursor-pointer text-green-600">
+                                    <a data="<%- course[i].id %>" class="rpl up_c px-2 cursor-pointer text-green-600">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a data="<%- course[i].id %>" class="rpl px-2 cursor-pointer text-rose-600">
+                                    <a data="<%- course[i].id %>" class="rpl del_c px-2 cursor-pointer text-rose-600">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>
@@ -57,22 +57,22 @@
                         </div>
                     <% } %>
                 <% } else { %>
-                    <div class="rpl empty_list animate__animated animate__fadeInUp ms-300 group flex justify-center items-center dark:bg-darkBlue-secondary bg-gray-100 rounded-md p-3 cursor-pointer">
+                    <div class="rpl empty_list transition-all animate__animated animate__fadeInUp ms-300 group flex justify-center items-center dark:bg-darkBlue-secondary bg-gray-100 rounded-md p-3 cursor-pointer">
                         <p class="font-semibold text-bluegray-900 dark:text-gray-300 text-base">Nothing to fetch</p>
                     </div>
                 <% } %>
             </div>
-            <div class="y_list flex sm:hidden flex-col gap-1 py-2 px-1">
+            <div class="y_list flex sm:hidden flex-col gap-1 py-2 px-1 transition-all">
                 <% if(year.length !== 0) { %>
                     <% for( let i = 0; i < year.length; i++ ) { %>
-                        <div data="<%- year[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="rpl animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
+                        <div data="<%- year[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="rpl transition-all animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
                             <div class="grid grid-cols-2">
-                                <p class="font-semibold text-bluegray-900 text-base dark:text-gray-300"><%- year[i].type %></p>
+                                <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300"><%- year[i].type %></p>
                                 <div class="transition-all animate__animated animate__fadeInLeft ms-300 hidden group-hover:flex flex-row justify-end items-center">
-                                    <a data="<%- year[i].id %>" class="rpl px-2 cursor-pointer text-green-600">
+                                    <a data="<%- year[i].id %>" class="rpl up_y px-2 cursor-pointer text-green-600">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a data="<%- year[i].id %>" class="rpl px-2 cursor-pointer text-rose-600">
+                                    <a data="<%- year[i].id %>" class="rpl del_y px-2 cursor-pointer text-rose-600">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>
@@ -80,7 +80,7 @@
                         </div>
                     <% } %>
                 <% } else { %>
-                    <div class="empty_list rpl animate__animated animate__fadeInUp ms-300 group flex justify-center items-center bg-gray-100 dark:bg-darkBlue-secondary rounded-md p-3 cursor-pointer">
+                    <div class="empty_list rpl transition-all animate__animated animate__fadeInUp ms-300 group flex justify-center items-center bg-gray-100 dark:bg-darkBlue-secondary rounded-md p-3 cursor-pointer">
                         <p class="font-semibold text-bluegray-900 dark:text-gray-300 text-base">Nothing to fetch</p>
                     </div>
                 <% } %>
@@ -95,15 +95,15 @@
             <form class="add_cy grid grid-rows-2 h-[calc(100%-70px)]">
                 <div class="flex flex-col gap-3 pt-6 px-3">
                     <label class="font-medium pl-1 dark:text-gray-400" for="course">Course</label>
-                    <input type="text" name="course" placeholder="Course" autocomplete="off" class="text-input w-full p-[10px] border border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg" required>
+                    <input type="text" name="course" placeholder="Course" autocomplete="off" class="dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
                     <label class="font-medium pl-1 dark:text-gray-400" for="year">Year</label>
-                    <input type="text" name="year" placeholder="Year" autocomplete="off" class="text-input w-full p-[10px] border border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg" required>
+                    <input type="text" name="year" placeholder="Year" autocomplete="off" class="dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
                 </div>
                 <div class="flex flex-row w-full justify-center items-end p-2">
                     <div class="w-full flex flex-row p-1 gap-2">
                         <button type="reset" class="hidden"></button>
                         <button type="button" class="close_add_cy rpl transition-all text-red-600 dark:text-rose-500 dark:font-medium border border-rose-500 dark:border-rose-600  font-normal py-[5px] rounded-lg outline-none mt-4 w-full">Close</button>
-                        <button type="submit" class="rpl dark:disabled:bg-purple-400 disabled:bg-purple-500 rpl dark:hover:bg-purple-700 hover:bg-purple-600 dark:bg-purple-800 bg-purple-700 text-white dark:text-gray-200 transition-all font-normal py-[5px] rounded-lg focus:ring focus:ring-offset-2 dark:focus:ring-purple-700 focus:ring-purple-500 focus:outline-none focus:shadow-outline mt-4 w-full">Add</button>
+                        <button type="submit" class="rpl dark:disabled:bg-purple-500 disabled:bg-purple-500 rpl dark:hover:bg-purple-700 hover:bg-purple-600 dark:bg-purple-800 bg-purple-700 text-white dark:text-gray-200 transition-all font-normal py-[5px] rounded-lg focus:ring focus:ring-offset-2 dark:focus:ring-purple-700 focus:ring-purple-500 focus:outline-none focus:shadow-outline mt-4 w-full">Add</button>
                     </div>
                 </div>
             </form>

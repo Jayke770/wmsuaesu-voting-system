@@ -74,3 +74,30 @@ body {
 .button_next:hover{
 	padding-left: 3rem;
 }
+.custom-shape-divider-bottom-1629426746 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.custom-shape-divider-bottom-1629426746 svg {
+    position: relative;
+    display: block;
+    width: calc(176% + 1.3px);
+    height: 380px;
+}
+
+.custom-shape-divider-bottom-1629426746 .shape-fill {
+    fill: #6B21A8;
+}
+
+/** For mobile devices **/
+@media (max-width: 767px) {
+    .custom-shape-divider-bottom-1629426746 svg {
+        width: calc(189% + 1.3px);
+        height: 268px;
+    }
+}

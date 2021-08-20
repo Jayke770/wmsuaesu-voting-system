@@ -861,71 +861,371 @@ adminrouter.get('/control/course&year/', limit, isadmin, async (req, res) => {
 //add course & year 
 adminrouter.post('/control/course&year/add-cy/', limit, isadmin, async (req, res) => {
     const {course, year} = req.body 
-    let crs,yrs
-    //new course construct with json
-    const new_crs = {
-        id: uuid(), 
-        type: xs(course).toUpperCase().trim()
+    //if course & year is empty 
+    if(!xs(course) && !xs(year)){
+        return res.send({
+            status: false, 
+            msg: "Some feilds is empty"
+        })
     }
-    //new year construct with json
-    const new_yrs = {
-        id: uuid(), 
-        type: xs(year).trim()
+    //if year is empty
+    if(xs(course) && !xs(year)){
+        //new course data
+        const new_crs = {
+            id: uuid(), 
+            type: xs(course).toUpperCase()
+        }
+        //check if the new course is already exist 
+        try {
+            await data.find({"course.type": {$eq: xs(course).toUpperCase()}}, (err, c) => {
+                if(err){
+                    return res.send({
+                        status: false, 
+                        msg: "Internal Error!"
+                    })
+                } 
+                if(!err){
+                    if(c.length == 0){
+                        //insert new course 
+                        data.updateOne({}, {$push: {course: new_crs}}, (err, n) => {
+                            if(err){
+                                return res.send({
+                                    status: false, 
+                                    msg: "Internal Error!"
+                                })
+                            } else {
+                                return res.send({
+                                    status: true, 
+                                    msg: "Course Added Successfully", 
+                                    type: "course",
+                                    data: new_crs
+                                })
+                            }
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            msg: "Course already exist!"
+                        })
+                    }
+                }
+            })
+        } catch (e) {
+            return res.send({
+                status: false, 
+                msg: "Internal Error!"
+            })
+        }
     }
-    if(course !== "" && year !== ""){
-        //check if course is already exists     
-        await data.find({}, {course: 1, year: 1}, (err, c) => {
-            console.log(c)
+    //if course is empty
+    if(!xs(course) && xs(year)){
+        //new course data
+        const new_y = {
+            id: uuid(), 
+            type: xs(year)
+        }
+        //check if the new course is already exist 
+        try {
+            await data.find({"year.type": {$eq: xs(year)}}, (err, y) => {
+                if(err){
+                    return res.send({
+                        status: false, 
+                        msg: "Internal Error!"
+                    })
+                }
+                if(!err){
+                    if(y.length == 0){
+                        //insert new year 
+                        data.updateOne({}, {$push: {year: new_y}}, (err, u) => {
+                            if(err){
+                                return res.send({
+                                    status: false, 
+                                    msg: "Internal Error!"
+                                })
+                            } else {
+                                return res.send({
+                                    status: true, 
+                                    msg: "Year Added Successfully", 
+                                    type: "year",
+                                    data: new_y
+                                })
+                            }
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            msg: "Year already exist!"
+                        })
+                    }
+                }
+            })
+        } catch (e) {
+            return res.send({
+                status: false, 
+                msg: "Internal Error!"
+            })
+        }
+    }
+    //if course & year is not empty 
+    if(xs(course) && xs(year)){
+        //new course 
+        const new_crs = {
+            id: uuid(), 
+            type: xs(course).toUpperCase()
+        }
+        //new year 
+        const new_y = {
+            id: uuid(), 
+            type: xs(year)
+        }
+
+        try{
+            //check if course & year is already exist in db
+            await data.find({"course.type": {$eq: xs(course).toUpperCase()}, "year.type": {$eq: xs(year)}}, (err, f) => {
+                if(err){
+                    return res.send({
+                        status: false, 
+                        msg: "Internal Error!"
+                    })
+                }
+                if(!err){
+                    if(f.length === 0){
+                        data.updateOne({}, {$push: {course: new_crs, year: new_y}}, (err, up) => {
+                            if(err){
+                                return res.send({
+                                    status: false, 
+                                    msg: "Internal Error!"
+                                })
+                            } else {
+                                return res.send({
+                                    status: true, 
+                                    msg: "Added Successfully", 
+                                    type: "c&y",
+                                    data: {
+                                        course: new_crs, 
+                                        year: new_y
+                                    }
+                                })
+                            }
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            msg: "Course or Year already exist"
+                        })
+                    }
+                }
+            })
+        } catch(e){
+            return res.send({
+                status: false, 
+                msg: "Internal Error!"
+            })
+        } 
+    }
+})
+//delete course 
+adminrouter.post('/control/course&year/del_c/', delete_limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+
+    //find if course is exist 
+    try{
+        await data.find({"course.id": {$eq: xs(id)}}, {"course.id": 1}, (err, find) => {
             if(err){
                 return res.send({
                     status: false, 
-                    msg: "Internal Error"
+                    msg: "Internal Error!"
                 })
-            } else {
-                //check if the new course is not the same with the course in db
-                for(let i = 0; i < c[0].course.length; i++){
-                    if(c[0].course[i].type === xs(course).toUpperCase().trim()){
-                        crs = true
-                        break
-                    }
-                }
-                //check if the new year is not the same with the year in db
-                for(let i = 0; i < c[0].year.length; i++){
-                    if(c[0].year[i].type === xs(year).trim()){
-                        yrs = true
-                        break
-                    }
-                }
-                //if both is not true
-                if(!crs && !yrs){
-                    //insert new course & year 
-                    data.updateOne({}, {$push: {course: new_crs, year: new_yrs}}, (err, done) => {
+            }
+            if(!err){
+                if(find.length != 0){
+                    data.updateOne({}, {$pull: {course: {id: xs(id)}}}, (err, del) => {
                         if(err){
                             return res.send({
                                 status: false, 
-                                msg: "Internal Error"
+                                msg: "Internal Error!"
                             })
                         } else {
                             return res.send({
                                 status: true, 
-                                msg: "Successfully Added", 
-                                data: [new_crs, new_yrs]
+                                msg: "Deleted successfully"
                             })
                         }
                     })
-
                 } else {
                     return res.send({
                         status: false, 
-                        msg: "Course or Year is already exist"
+                        msg: "Course not found!"
                     })
                 }
             }
         })
-    } else {
+    } catch (e) {
         return res.send({
             status: false, 
-            msg: "Some feilds is empty"
+            msg: "Internal Error!"
+        })
+    }
+})
+//delete year 
+adminrouter.post('/control/course&year/del_y/', delete_limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+
+    //find if year is exist 
+    try{
+        await data.find({"year.id": {$eq: xs(id)}}, {"year.id": 1}, (err, find) => {
+            if(err){
+                return res.send({
+                    status: false, 
+                    msg: "Internal Error!"
+                })
+            }
+            if(!err){
+                if(find.length != 0){
+                    data.updateOne({}, {$pull: {year: {id: xs(id)}}}, (err, del) => {
+                        if(err){
+                            return res.send({
+                                status: false, 
+                                msg: "Internal Error!"
+                            })
+                        } else {
+                            return res.send({
+                                status: true, 
+                                msg: "Deleted successfully"
+                            })
+                        }
+                    })
+                } else {
+                    return res.send({
+                        status: false, 
+                        msg: "Year not found!"
+                    })
+                }
+            }
+        })
+    } catch (e) {
+        return res.send({
+            status: false, 
+            msg: "Internal Error!"
+        })
+    }
+})
+//update course 
+adminrouter.post('/control/course&year/up_c/', normal_limit, isadmin, async (req, res) => {
+    const {id, new_course} = req.body 
+    //check if course id exists in db 
+    try {
+        await data.find({"course.id": {$eq: xs(id)}}, (err, f) => {
+            if(err){
+                return res.send({
+                    status: false, 
+                    msg: "Internal Error!"
+                })
+            }
+            if(!err){
+                if(f.length !== 0){
+                    //check if the new course is already in used or not 
+                    data.find({"course.type": {$eq: xs(new_course).toUpperCase()}}, (err, t) => {
+                        if(err){
+                            return res.send({
+                                status: false, 
+                                msg: "Internal Error!"
+                            })
+                        }
+                        if(!err){
+                            if(t.length == 0){
+                                //update course 
+                                data.updateOne({"course.id": {$eq: xs(id)}}, {$set: {"course.$.type": xs(new_course).toUpperCase()}}, (err, up_c) => {
+                                    if(err){
+                                        return res.send({
+                                            status: false, 
+                                            msg: "Internal Error!"
+                                        })
+                                    }
+                                    if(!err){
+                                        return res.send({
+                                            status: true, 
+                                            msg: "Course updated successfully"
+                                        })
+                                    }
+                                })
+                            }
+                        }
+                    })
+                } else {
+                    return res.send({
+                        status: false, 
+                        msg: "Course not found!"
+                    })
+                }
+            }
+        })
+    } catch (e){
+        return res.send({
+            status: false, 
+            msg: "Internal Error!"
+        })
+    }
+})
+//update year 
+adminrouter.post('/control/course&year/up_y/', normal_limit, isadmin, async (req, res) => {
+    const {id, new_year} = req.body 
+    //check if course id exists in db 
+    try {
+        await data.find({"year.id": {$eq: xs(id)}}, (err, f) => {
+            if(err){
+                return res.send({
+                    status: false, 
+                    msg: "Internal Error!"
+                })
+            }
+            if(!err){
+                if(f.length !== 0){
+                    //check if the new course is already in used or not 
+                    data.find({"year.type": {$eq: xs(new_year)}}, (err, t) => {
+                        if(err){
+                            return res.send({
+                                status: false, 
+                                msg: "Internal Error!"
+                            })
+                        }
+                        if(!err){
+                            if(t.length == 0){
+                                //update course 
+                                data.updateOne({"year.id": {$eq: xs(id)}}, {$set: {"year.$.type": xs(new_year)}}, (err, up_c) => {
+                                    if(err){
+                                        return res.send({
+                                            status: false, 
+                                            msg: "Internal Error!"
+                                        })
+                                    }
+                                    if(!err){
+                                        return res.send({
+                                            status: true, 
+                                            msg: "Year Updated successfully"
+                                        })
+                                    }
+                                })
+                            } else {
+                                return res.send({
+                                    status: false, 
+                                    msg: "Year is already exist"
+                                })
+                            }
+                        }
+                    })
+                } else {
+                    return res.send({
+                        status: false, 
+                        msg: "Year not found!"
+                    })
+                }
+            }
+        })
+    } catch (e){
+        return res.send({
+            status: false, 
+            msg: "Internal Error!"
         })
     }
 })
