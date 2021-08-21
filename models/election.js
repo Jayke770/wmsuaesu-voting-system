@@ -25,7 +25,6 @@ const election = new mongoose.Schema({
     },
     status:{
         type: String,
-        default: 'Not Yet Started',
     },
     created:{
         type: Date, 

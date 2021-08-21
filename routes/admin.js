@@ -314,9 +314,24 @@ adminrouter.post('/delete-election', isadmin, async (req, res) => {
 adminrouter.get('/control/voters', async (req, res) => {
     return res.render("control/forms/voters")
 })
+//list of all elections 
+adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
+    try {
+        //get all elections 
+        await election.find({}, {passcode: 0}, (err, elecs) => {
+            if(err){
+                return res.status(501).send()
+            } else {
+                return res.render("control/forms/elections", {elections: elecs})
+            }
+        })
+    } catch(e){
+        return res.status(501).send()
+    }
+})
 //election details
-adminrouter.get('/control/election', async (req, res) => {
-    return res.render("control/forms/election_details")
+adminrouter.get('/control/elections/:election_id', limit, isadmin, async (req, res) => {
+    return res.status(501).send()
 })
 //voter id
 adminrouter.get('/control/voter-id/', isadmin, async (req, res, next) => {

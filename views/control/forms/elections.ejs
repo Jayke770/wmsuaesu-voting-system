@@ -1,22 +1,86 @@
-<% if(elections.length !=0){ 
-    for(var i=0; i < elections.length; i++){ %>
-        <div class="wmsu_box dash_card animate__animated animate__zoomIn">
-            <div class="card">
-                <img class="icon_e_name" alt="election_ic">
-                <div class="other">
-                    <p class="other_e_name pt-2"><%= elections[i].election_title %></p>
-                    <p class="other_t_voters ex">Total of voters: <span class="cnt_e cnt_total_v"><%= elections[i].voters.length %></span></p>
-                    <p class="other_e_active_v ex">Active voters: <span class="cnt_e cnt_total_ac">0</span></p>
-                    <p class="other_e_status ex">Election Status: <span class="cnt_e e_stts"><%= elections[i].status %></span></p>
-                    <p class="other_e_create ex ">Election Created : <span class="cnt_e e_created created" datetime="<%= elections[i].created %>">1</span></p>
-                </div>
-            </div>
-            <div class="card_e_actions">
-                <a class="wmsu_btn e_settings">More Info</a>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" class="theme-color" content="#6b21a8">
+    <title>Elections</title>
+    <%- include('../cdn/_home') %>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+</head>
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <div class="w-full z-10 bg-gray-100 dark:bg-darkBlue-secondary shadow-lg grid grid-cols-2 fixed top-0 p-2 px-3 transition-all">
+        <div class="flex justify-start items-center">
+            <a href="/control" class="rpl transition-all dark:text-gray-200 text-bluegray-600 text-2xl px-2 cursor-pointer mr-2">
+                <i class="fa fa-arrow-circle-left"></i>
+            </a>
+            <span class="font-bold text-purple-800 dark:text-purple-500 text-2xl">Elections</span>
         </div>
-    <% } %>
-<% } %>
-<div class="e_menu blur hidden">
-    <%- include('election_menu') %> 
-</div>
+        <div class="flex items-center justify-end">
+            <a class="add_pos_btn flex flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
+                <span class="text-purple-700 dark:text-purple-500">
+                    <i class="fas fa-plus-circle"></i>
+                </span>
+                <span class="sm:hidden text-[17px] dark:text-purple-500 text-purple-700 font-normal"></span>
+            </a>
+        </div>
+    </div>
+    <div class="container mt-[4.5rem]">
+        <div class="transition-all w-full grid grid-cols-2 xl:grid-cols-1 xl:px-52 lg:px-20 md:px-2 gap-4 place-items-center p-2">
+            <% if(elections.length === 0) { %>
+               <div class="flex w-full justify-center items-center col-span-2">
+                <div style="animation-delay: .200s;" class="p-2 px-4 w-96 lg:w-full animate__animated animate__fadeInUp cursor-pointer shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-xl transition-all">
+                    <div class="flex flex-col gap-4 py-3">
+                        <p class="font-semibold text-center py-3 text-xl">Nothing to fetch</p>
+                        <button type="button" class="bg-teal-500 cursor-pointer rounded-md rpl outline-none text-white font-medium p-2 px-3">Create Election Now</button>
+                    </div>
+                </div>
+               </div>
+            <% } else { %>
+                <% elections.forEach((election, i) => { %>
+                    <div data="<%- election._id %>" style="animation-delay: <%- i * .200 %>s;" class="animate__animated animate__fadeInUp card w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
+                        <div class="img flex w-full">
+                            <img class="icon_e_name md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[325px] h-full object-cover rounded-tl-2xl rounded-bl-2xl" alt="election_ic" src="/assets/image.jpg">
+                        </div>
+                        <div class="election_info p-8 flex flex-col w-full transition-all">
+                            <div class="container">
+                                <p class="text-left text-lg font-medium text-purple-700 dark:text-purple-500 md:text-center"><%- election.election_title %></p>
+                            </div>
+                            <div class="container mt-4 transition-all">
+                                <div class="container mt-3 dark:text-gray-400">Voters <span class="dark:text-gray-300 float-right font-semibold"><%- election.voters.length %></span></div>
+                                <div class="container mt-3 dark:text-gray-400">Active Voters <span class="dark:text-gray-300 float-right font-semibold">...</span></div>
+                                <div class="container mt-3 dark:text-gray-400">Status <span class="dark:text-gray-300 float-right font-semibold"><%- election.status %></span>
+                                </div>
+                                <div class="container mt-3 dark:text-gray-400">Created <span class="dark:text-gray-300 float-right font-semibold time" data="<%- election.created %>">Calcuating...</span></div>
+                            </div>
+                            <div class="container mt-8 justify-center flex flex-row ">
+                                <a class="more_e_settings rpl rpl-h dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-300 transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-purple-500"
+                                href="elections/<%- election._id %>">More Details</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+    </div>
+    <script src="/js/theme.js"></script>
+    <script src="/js/time.js"></script>
+    <script src="/js/avatar.js "></script>
+    <script src="/js/toast.js"></script>
+    <script>
+        $.ripple(".rpl", {
+            debug: false,
+            on: 'mousedown',
+            opacity: 0.3,
+            color: "auto",
+            multi: false,
+            duration: 0.7,
+            rate: function(pxPerSecond) {
+                return pxPerSecond;
+            },
+            easing: 'linear'
+        })
+    </script>
+</body>
+</html>
