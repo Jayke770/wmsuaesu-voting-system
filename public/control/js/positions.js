@@ -43,7 +43,7 @@ $(document).ready(function () {
         submit_btn.prop("disabled", true)
         submit_btn.html(icon)
         $.ajax({
-            url: 'add-position/',
+            url: 'positions/add-position/',
             method: 'POST',
             cache: false,
             processData: false,
@@ -113,7 +113,7 @@ $(document).ready(function () {
                     willOpen: () => {
                         Swal.showLoading()
                         $.ajax({
-                            url: 'delete-position/',
+                            url: 'positions/delete-position/',
                             method: 'POST',
                             cache: false,
                             processData: false,
@@ -195,7 +195,7 @@ $(document).ready(function () {
                         willOpen: () => {
                             Swal.showLoading()
                             $.ajax({
-                                url: 'update-position/',
+                                url: 'positions/update-position/',
                                 method: 'POST',
                                 cache: false,
                                 processData: false,

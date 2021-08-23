@@ -315,7 +315,7 @@ adminrouter.get('/control/voters', async (req, res) => {
     return res.render("control/forms/voters")
 })
 //list of all elections 
-adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
+adminrouter.get('/control/elections', limit, isadmin, async (req, res) => {
     try {
         //get all elections 
         await election.find({}, {passcode: 0}, (err, elecs) => {
@@ -333,32 +333,24 @@ adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
 adminrouter.get('/control/elections/:election_id', limit, isadmin, async (req, res) => {
     return res.status(501).send()
 })
-//voter id
-adminrouter.get('/control/voter-id/', isadmin, async (req, res, next) => {
-    await ids.find({}, (err, res_id) => {
-        if (err) {
-            //send error code
-            return next()
-        }
-        if (!err) {
-            return res.render('control/forms/voter-id', { id: res_id })
-        }
-    })
-})
+
 //positions 
-adminrouter.get('/control/positions', isadmin, normal_limit, async (req, res, next) => {
-    await data.find({}, { positions: 1 }, (err, pos) => {
-        if (err) {
-            //send error page
-            return next()
-        }
-        if (!err) {
-            return res.render('control/forms/positions', { pos: pos })
-        }
-    })
+adminrouter.post('/control/elections/positions/', isadmin, normal_limit, async (req, res, next) => {
+    try {
+        await data.find({}, { positions: 1 }, (err, pos) => {
+            if (err) {
+                throw new err
+            }
+            if (!err) {
+                return res.render('control/forms/positions', { pos: pos })
+            }
+        })
+    } catch (e){
+        return res.status(500).send()
+    }
 })
 //add position
-adminrouter.post('/control/positions/add-position', isadmin, normal_limit, async (req, res) => {
+adminrouter.post('/control/elections/positions/add-position', isadmin, normal_limit, async (req, res) => {
     const { position } = req.body
     const new_pos = {
         id: uuid(),
@@ -452,7 +444,7 @@ adminrouter.post('/control/positions/add-position', isadmin, normal_limit, async
     }
 })
 //delete position 
-adminrouter.post('/control/positions/delete-position/', isadmin, delete_limit, async (req, res) => {
+adminrouter.post('/control/elections/positions/delete-position/', isadmin, delete_limit, async (req, res) => {
     const { id } = req.body
     //check if positin id is exists 
     try {
@@ -498,7 +490,7 @@ adminrouter.post('/control/positions/delete-position/', isadmin, delete_limit, a
     }
 })
 //update position 
-adminrouter.post('/control/positions/update-position/', isadmin, normal_limit, async (req, res) => {
+adminrouter.post('/control/elections/positions/update-position/', isadmin, normal_limit, async (req, res) => {
     const { id, type } = req.body
     try {
         await data.find({ "positions.id": { $eq: xs(id) } }, (err, find) => {
@@ -557,8 +549,24 @@ adminrouter.post('/control/positions/update-position/', isadmin, normal_limit, a
         })
     }
 })
+
+//voter id
+adminrouter.post('/control/elections/voter-id/', isadmin, async (req, res, next) => {
+    try {
+        await ids.find({}, (err, res_id) => {
+            if (err) {
+                throw new err
+            }
+            if (!err) {
+                return res.render('control/forms/voter-id', { id: res_id })
+            }
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
 //check voter id
-adminrouter.post('/control/voter-id/verify', isadmin, normal_limit, async (req, res) => {
+adminrouter.post('/control/elections/voter-id/verify', isadmin, normal_limit, async (req, res) => {
     const { id } = req.body
     console.log(req.body)
     const voter_id = xs(id)
@@ -584,7 +592,7 @@ adminrouter.post('/control/voter-id/verify', isadmin, normal_limit, async (req, 
     })
 })
 //add voter id
-adminrouter.post('/control/voter-id/add-voter-id/', isadmin, limit, async (req, res, next) => {
+adminrouter.post('/control/elections/voter-id/add-voter-id/', isadmin, limit, async (req, res, next) => {
     const { id, crs, year } = req.body
     const voter_id = xs(id)
     const voter_crs = xs(crs)
@@ -628,7 +636,7 @@ adminrouter.post('/control/voter-id/add-voter-id/', isadmin, limit, async (req, 
     })
 })
 //delete voter id 
-adminrouter.post('/control/voter-id/delete-voter-id/', isadmin, delete_limit, async (req, res, next) => {
+adminrouter.post('/control/elections/voter-id/delete-voter-id/', isadmin, delete_limit, async (req, res, next) => {
     const { id } = req.body
     const voter_id = xs(id)
 
@@ -674,7 +682,7 @@ adminrouter.post('/control/voter-id/delete-voter-id/', isadmin, delete_limit, as
     })
 })
 //search voter id 
-adminrouter.post('/control/voter-id/search-voter-id/', search_limit, isadmin, async (req, res, next) => {
+adminrouter.post('/control/elections/voter-id/search-voter-id/', search_limit, isadmin, async (req, res, next) => {
     const { data } = req.body
     const voter_id = xs(data)
 
@@ -709,7 +717,7 @@ adminrouter.post('/control/voter-id/search-voter-id/', search_limit, isadmin, as
     }
 })
 //sort
-adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, normal_limit, async (req, res, next) => {
+adminrouter.post('/control/elections/voter-id/sort-voter-id/', isadmin, normal_limit, async (req, res, next) => {
     const { data } = req.body
     const sort = xs(data)
 
@@ -768,7 +776,7 @@ adminrouter.post('/control/voter-id/sort-voter-id/', isadmin, normal_limit, asyn
     }
 })
 //get voter id 
-adminrouter.post('/control/voter-id/get-voter-id/', limit, isadmin, async (req, res, next) => {
+adminrouter.post('/control/elections/voter-id/get-voter-id/', limit, isadmin, async (req, res, next) => {
     const { data } = req.body
     const voter_id = xs(data)
 
@@ -797,7 +805,7 @@ adminrouter.post('/control/voter-id/get-voter-id/', limit, isadmin, async (req, 
     })
 })
 //update voter id 
-adminrouter.post('/control/voter-id/update-voter-id/', limit, isadmin, async (req, res, next) => {
+adminrouter.post('/control/elections/voter-id/update-voter-id/', limit, isadmin, async (req, res, next) => {
     const { id, course, year } = req.body
     const voter_id_session = req.session.voter_id_to_update
     const voter_id = xs(id)
@@ -859,22 +867,23 @@ adminrouter.post('/control/voter-id/update-voter-id/', limit, isadmin, async (re
         }
     })
 })
+
 //course & year 
-adminrouter.get('/control/course&year/', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/course&year/', limit, isadmin, async (req, res) => {
     try {
         await data.find({}, {course: 1, year: 1}, (err, data) => {
             if(err){
-                return res.status(500).send("Internal Error")
+                throw new err
             } else {
                 return res.render('control/forms/cy', { course: data[0].course, year: data[0].year })
             }
         })
     } catch(e){
-        return res.status(500).send("Internal Error")
+        return res.status(500).send()
     }
 })
 //add course & year 
-adminrouter.post('/control/course&year/add-cy/', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async (req, res) => {
     const {course, year} = req.body 
     //if course & year is empty 
     if(!xs(course) && !xs(year)){
@@ -1040,7 +1049,7 @@ adminrouter.post('/control/course&year/add-cy/', limit, isadmin, async (req, res
     }
 })
 //delete course 
-adminrouter.post('/control/course&year/del_c/', delete_limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/course&year/del_c/', delete_limit, isadmin, async (req, res) => {
     const {id} = req.body 
 
     //find if course is exist 
@@ -1083,7 +1092,7 @@ adminrouter.post('/control/course&year/del_c/', delete_limit, isadmin, async (re
     }
 })
 //delete year 
-adminrouter.post('/control/course&year/del_y/', delete_limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/course&year/del_y/', delete_limit, isadmin, async (req, res) => {
     const {id} = req.body 
 
     //find if year is exist 
@@ -1126,7 +1135,7 @@ adminrouter.post('/control/course&year/del_y/', delete_limit, isadmin, async (re
     }
 })
 //update course 
-adminrouter.post('/control/course&year/up_c/', normal_limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/course&year/up_c/', normal_limit, isadmin, async (req, res) => {
     const {id, new_course} = req.body 
     //check if course id exists in db 
     try {
@@ -1244,6 +1253,7 @@ adminrouter.post('/control/course&year/up_y/', normal_limit, isadmin, async (req
         })
     }
 })
+
 //logs 
 adminrouter.post('/control/logs/', isadmin, async (req, res) => {
     return res.render('control/forms/logs')

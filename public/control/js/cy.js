@@ -51,7 +51,7 @@ $(document).ready(() => {
         const default_txt = $(this).find("button[type='submit']").text()
         const icon = `<i style="font-size: 1.25rem;" class="fad fa-spin fa-spinner-third"></i>`
         $.ajax({
-            url: 'add-cy/',
+            url: 'course&year/add-cy/',
             method: 'POST',
             cache: false,
             processData: false,
@@ -128,7 +128,7 @@ $(document).ready(() => {
                     willOpen: () => {
                         Swal.showLoading()
                         $.ajax({
-                            url: "del_c/",
+                            url: "course&year/del_c/",
                             method: "POST",
                             cache: false,
                             timeout: 5000,
@@ -147,7 +147,7 @@ $(document).ready(() => {
                                         $(`div[data=${id}]`).addClass("animate__animated animate__fadeOutDown")
                                         setTimeout( () => {
                                             $(`div[data=${id}]`).remove()
-                                        }, 1000)
+                                        }, 1200)
                                     })
                                 } else {
                                     Swal.fire({
@@ -193,7 +193,7 @@ $(document).ready(() => {
             title: "Enter new course",
             showCancelButton: true,
             showConfirmButton: true,
-            confirmButtonText: `Update`,
+            confirmButtonText: 'Update',
             input: "text",
             inputPlaceholder: 'Course',
             inputAttributes: {
@@ -215,7 +215,7 @@ $(document).ready(() => {
                         willOpen: () => {
                             Swal.showLoading()
                             $.ajax({
-                                url: "up_c/", 
+                                url: "course&year/up_c/", 
                                 method: "POST", 
                                 cache: false, 
                                 processData: false, 
@@ -293,7 +293,7 @@ $(document).ready(() => {
                     willOpen: () => {
                         Swal.showLoading()
                         $.ajax({
-                            url: "del_y/",
+                            url: "course&year/del_y/",
                             method: "POST",
                             cache: false,
                             timeout: 5000,
@@ -312,7 +312,7 @@ $(document).ready(() => {
                                         $(`div[data=${id}]`).addClass("animate__animated animate__fadeOutDown")
                                         setTimeout( () => {
                                             $(`div[data=${id}]`).remove()
-                                        }, 1000)
+                                        }, 1200)
                                     })
                                 } else {
                                     Swal.fire({
@@ -380,7 +380,7 @@ $(document).ready(() => {
                         willOpen: () => {
                             Swal.showLoading()
                             $.ajax({
-                                url: "up_y/", 
+                                url: "course&year/up_y/", 
                                 method: "POST", 
                                 cache: false, 
                                 processData: false, 

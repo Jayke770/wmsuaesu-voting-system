@@ -44,7 +44,7 @@ $(".add_voter_id_form").submit(function(e){
     $(this).find("button[type='submit']").text("Checking Voter ID...")
     $(this).find("button[type='submit']").prop('disabled', true)
     $.ajax({
-        url: 'verify/', 
+        url: 'voter-id/verify/', 
         method: 'POST', 
         cache: false, 
         processData: false, 
@@ -55,7 +55,7 @@ $(".add_voter_id_form").submit(function(e){
             if(res.status){
                 $(this).find("button[type='submit']").html(icon)
                 $.ajax({
-                    url: 'add-voter-id/',
+                    url: 'voter-id/add-voter-id/',
                     method: 'POST',
                     cache: false,
                     contentType: false,
@@ -158,7 +158,7 @@ $(".voters_id_all").delegate(".delete_voter_id", "click", function(e){
                 backdrop: true,
                 willOpen: () => {
                     Swal.showLoading()
-                    $.post("delete-voter-id/", {
+                    $.post("voter-id/delete-voter-id/", {
                         id: $(this).attr("data")
                     }, (res) => {
                         if(res.status){
@@ -189,7 +189,7 @@ $(".voters_id_all").delegate(".delete_voter_id", "click", function(e){
 })
 $(".sort_voter_id").change(function(){
     if($(this).val().trim() !== ""){
-        $.post("sort-voter-id/", {
+        $.post("voter-id/sort-voter-id/", {
             data: $(this).val().trim()
         }, (res) => {
             if(res.status){
@@ -202,7 +202,7 @@ $(".search_voter_id").keyup(function(){
     if($(this).val().trim() !== ""){
         if(!search_voter_id){
             search_voter_id = true
-            $.post("search-voter-id/", {
+            $.post("voter-id/search-voter-id/", {
                 data: $(this).val().trim()
             }, (res, status) => {
                 if(res.status){
@@ -230,7 +230,7 @@ $(".voters_id_all").delegate(".update_voter_id", "click", function(e) {
         title: `${icon} Checking Voter ID...`, 
         willOpen: () => {
             $.ajax({
-                url: 'get-voter-id/', 
+                url: 'voter-id/get-voter-id/', 
                 method: 'POST',
                 data: data, 
                 cache: false, 
@@ -279,9 +279,8 @@ $(".voters_id_all").delegate(".update_voter_id", "click", function(e) {
 })
 $(".edit_voter_id_form").submit(function(e){
     e.preventDefault() 
-    
     $.ajax({
-        url: 'update-voter-id/', 
+        url: 'voter-id/update-voter-id/', 
         method: 'POST', 
         cache: false, 
         processData: false,
@@ -297,7 +296,7 @@ $(".edit_voter_id_form").submit(function(e){
                     let data = new FormData() 
                     data.append("data", "default")
                     $.ajax({
-                        url: 'sort-voter-id/', 
+                        url: 'voter-id/sort-voter-id/', 
                         method: 'POST', 
                         cache: false, 
                         processData: false, 

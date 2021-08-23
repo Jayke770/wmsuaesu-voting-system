@@ -200,7 +200,7 @@ input:checked~.dot {
 /* nav bar end */
 /*svg*/
 .custom-shape-divider-bottom-1629532818 {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
