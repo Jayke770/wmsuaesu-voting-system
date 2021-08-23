@@ -78,7 +78,6 @@ $(document).ready(() => {
     $(".settings_btn").click( function(e){
         e.preventDefault() 
         const default_icon = $(this).find(".ic").html()
-        const default_title = $("title").text()
         const title = $(this).text()
         const icon = `<i style="font-size: 1.25rem;" class="fad fa-spin fa-spinner-third"></i>`
         $(this).find(".ic").html(icon)
@@ -92,7 +91,6 @@ $(document).ready(() => {
                     $(".close_settings").click()
                     $(this).find(".ic").html(default_icon)
                     $(".main").fadeOut(10)
-                    $("title").text(title)
                     $(".loader").html(res)
                     location.hash = $(this).attr("data").replace("/", "")
                     req = false

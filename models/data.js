@@ -8,6 +8,9 @@ const data = new mongoose.Schema({
     }, 
     year: {
         type: Array
-    }
+    }, 
+    partylists: {
+        type: Array
+    },
 })
 module.exports = mongoose.model('data', data)

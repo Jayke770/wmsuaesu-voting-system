@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" class="theme-color" content="#6b21a8">
     <title>Elections</title>
-    <%- include('../cdn/_home') %>
+    <%- include('../local_cdn/_home') %>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
 </head>
 <body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
@@ -16,7 +16,7 @@
                 <a href="/control" class="rpl ml-2 transition-all dark:text-gray-200 text-bluegray-600 text-2xl px-2 cursor-pointer mr-2">
                     <i class="fa fa-arrow-circle-left"></i>
                 </a>
-                <span class="font-semibold text-purple-800 dark:text-purple-500 text-2xl">Election Settings</span>
+                <span class="font-semibold text-purple-800 dark:text-purple-500 text-xl xsm:text-base">Election Settings</span>
             </div>
             <div class="flex items-center justify-end">
                 <a class="add_pos_btn flex flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
@@ -35,23 +35,29 @@
                         <span class="font-semibold text-2xl text-purple-600">Settings</span>
                     </div>
                     <div class="grid grid-rows-2 h-[calc(100%-65px)]">
-                        <div class="flex flex-col w-full px-3 py-2">
-                            <a data="course&year/" title="View, Add, & Update Courses" class="settings_btn rpl dark:text-gray-200 dark:font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all px-4 py-3 border-none font-medium text-gray-900 md:text-lg">
-                                <span>Courses & Year</span>
+                        <div class="flex flex-col w-full px-3 py-2 gap-2">
+                            <a data="course&year/" title="View, Add, & Update Courses" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                <span class="text-base">Courses & Year</span>
                                 <i class="ic flex justify-end items-center w-full text-rose-700 dark:text-rose-600 text-xl">
                                     <i class="fal fa-list-alt"></i>
                                 </i>
                             </a>
-                            <a data="positions/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 dark:font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all px-4 py-3 border-none font-medium text-gray-900 md:text-lg">
-                                <span>Positions </span>
+                            <a data="positions/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                <span class="text-base">Positions </span>
                                 <i class="ic flex justify-end items-center w-full text-green-700 dark:text-green-600 text-xl">
                                     <i class="fas fa-list-ol"></i>
                                 </i>
                             </a>
-                            <a data="voter-id/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 dark:font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all px-4 py-3 border-none font-medium text-gray-900 md:text-lg">
-                                <span>Voter ID </span>
+                            <a data="voter-id/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                <span class="text-base">Voter ID </span>
                                 <i class="ic flex justify-end items-center w-full text-fuchsia-700 dark:text-fuchsia-600 text-xl">
                                     <i class="fas fa-id-card"></i>
+                                </i>
+                            </a>
+                            <a data="partylist/" title="View, Add, & Update Partylist" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                <span class="text-base">Partylist </span>
+                                <i class="ic flex justify-end items-center w-full text-amber-700 dark:text-amber-600 text-xl">
+                                    <i class="fas fa-ballot"></i>
                                 </i>
                             </a>
                         </div>

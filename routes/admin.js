@@ -1192,7 +1192,7 @@ adminrouter.post('/control/elections/course&year/up_c/', normal_limit, isadmin, 
     }
 })
 //update year 
-adminrouter.post('/control/course&year/up_y/', normal_limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/course&year/up_y/', normal_limit, isadmin, async (req, res) => {
     const {id, new_year} = req.body 
     //check if course id exists in db 
     try {
@@ -1251,6 +1251,21 @@ adminrouter.post('/control/course&year/up_y/', normal_limit, isadmin, async (req
             status: false, 
             msg: "Internal Error!"
         })
+    }
+})
+
+//partylist 
+adminrouter.post('/control/elections/partylist', normal_limit, isadmin, async (req, res) => {
+    try {
+        await data.find({}, {partylists: 1}, (err, p) => {
+            if(err){
+                throw new err
+            } else {
+                return res.render("control/forms/partylist", {partylist: p[0].partylists})
+            }
+        })
+    } catch (e){
+        return res.status(500).send()
     }
 })
 

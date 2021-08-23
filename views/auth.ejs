@@ -16,7 +16,7 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:url" content="https://voting-system-jayke.herokuapp.com/">
-    <%- include('cdn/_auth') %>
+    <%- include('local_cdn/_auth') %>
         <link rel="stylesheet" href="/css/tailwindcss/style.css">
         <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
         <script>
@@ -52,8 +52,7 @@
                 <div
                     class="login gap-4 px-12 py-20 sm:px-5 sm:py-6 grid grid-cols-2 sm:grid-cols-none  transition-all p-4 rounded-xl bg-gray-50 dark:border dark:border-gray-800 dark:bg-[#0d1117] shadow-2xl md:w-[90%]">
                     <div class="mr-5 sm:mr-0 w-full flex items-center justify-center py-5 sm:py-3">
-                        <i
-                            class="text-purple-800 dark:text-purple-600 fad fa-user-circle text-[12rem] sm:text-[10rem]"></i>
+                        <i class="text-purple-800 dark:text-purple-600 fad fa-user-circle text-[12rem] sm:text-[10rem]"></i>
                     </div>
                     <div class="form_login ml-5 sm:ml-0 w-full">
                         <div class="flex w-full flex-row items-center justify-start sm:justify-center">
@@ -110,12 +109,12 @@
                 class="transition-all p-4 w-[350px] rounded-xl bg-gray-50 dark:border dark:border-gray-800 dark:bg-[#0d1117] shadow-2xl md:w-[90%]">
                 <div>
                     <a parent="verify" prev="login_page" next="register_s"
-                        class="back_page cursor-pointer px-3 py-2 pl-0 text-base">
+                        class="back_page cursor-pointer px-3 py-2 pl-0 text-base dark:text-gray-100 rpl">
                         <i class="ic fa fa-arrow-left"></i>
                     </a>
                 </div>
                 <div
-                    class="t text-purple-700 dark:text-amber-600 w-full flex justify-center items-center text-6xl mb-6 mt-6">
+                    class="t text-purple-700 dark:text-purple-600 w-full flex justify-center items-center text-6xl mb-6 mt-6">
                     <i class="fa fa-search"></i>
                 </div>
                 <form class="get_id p-3" next="register_s" parent="verify">
@@ -139,7 +138,7 @@
             <div
                 class="w-3/5 transition-all p-6 sm:p-3 rounded-xl bg-gray-50 dark:border dark:border-gray-800 dark:bg-[#0d1117] shadow-2xl lg:w-[90%]">
                 <div>
-                    <a data="false" class="reg_back_page cursor-pointer px-3 py-2 pl-0 text-base" prev="verify"
+                    <a data="false" class="reg_back_page cursor-pointer px-3 py-2 pl-0 text-base dark:text-gray-100" prev="verify"
                         parent="register_s">
                         <i class="ic fa fa-arrow-left"></i>
                     </a>
@@ -150,7 +149,7 @@
                             animate-out="animate__animated animate__fadeOutLeft ms-500"
                             animate-in="animate__animated animate__fadeInRight ms-500">
                             <div
-                                class="flex items-center justify-center p-2 text-purple-900 dark:text-indigo-500 w-full h-full text-center text-6xl">
+                                class="flex rpl items-center justify-center p-2 text-purple-900 dark:text-purple-500 w-full h-full text-center text-6xl">
                                 <i class="fad fa-user-plus text-9xl sm:text-7xl"></i>
                             </div>
                             <div class="flex flex-col gap-1">
@@ -161,20 +160,20 @@
                                 <div class="flex flex-row gap-2">
                                     <input type="hidden" name="student_id" class="student_id">
                                     <input autocomplete="off" required
-                                        class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
+                                        class="dark:bg-transparent dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
                                         name="fname" type="text" placeholder="Firstname">
                                     <input autocomplete="off" required
-                                        class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
+                                        class="dark:bg-transparent dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
                                         name="mname" type="text" placeholder="Middlename">
                                 </div>
                                 <div class="container mt-2">
                                     <input autocomplete="off" required
-                                        class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
+                                        class="dark:bg-transparent dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
                                         name="lname" type="text" placeholder="Lastname">
                                 </div>
                                 <div class="flex gap-2 mt-2">
                                     <input autocomplete="off" list="crs" required
-                                        class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
+                                        class="dark:bg-transparent dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
                                         name="course" type="text" placeholder="Course">
                                     <datalist id="crs">
                                         <option value="BSCS"></option>
@@ -182,7 +181,7 @@
                                         <option value="GEN ED"></option>
                                     </datalist>
                                     <input autocomplete="off" list="yr" required
-                                        class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
+                                        class="dark:bg-transparent dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
                                         name="yr" type="text" placeholder="Year">
                                     <datalist id="yr">
                                         <option value="1"></option>
@@ -193,7 +192,7 @@
                                 </div>
                                 <div class="mt-2">
                                     <input autocomplete="off" list="type" required
-                                        class="text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
+                                        class="dark:bg-transparent dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
                                         name="type" type="text" placeholder="User Type">
                                     <datalist id="type">
                                         <option value="Candidate"></option>
@@ -246,7 +245,7 @@
                                 </div>
                                 <div>
                                     <button type="submit"
-                                        class="bg-purple-700 dark:text-gray-300 text-white transition font-normal py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline mt-4 w-full">Register</button>
+                                        class="bg-purple-700 dark:text-gray-300 text-white transition font-medium py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline mt-4 w-full">Register</button>
                                 </div>
                             </div>
                         </div>
