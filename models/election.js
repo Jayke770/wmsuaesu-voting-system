@@ -4,6 +4,7 @@ const election = new mongoose.Schema({
         type: String, 
         required: true
     },
+    election_description: {},
     courses: {
         type: Array, 
         required: true
@@ -26,6 +27,8 @@ const election = new mongoose.Schema({
     status:{
         type: String,
     },
+    start: {}, 
+    end: {}, 
     created:{
         type: Date, 
         default: Date.now()

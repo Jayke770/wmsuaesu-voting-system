@@ -126,4 +126,32 @@ $(document).ready(() => {
         $(".main").fadeIn(100)
         location.hash = ""
     })
+    $(".create_election_btn").click( function(e) {
+        e.preventDefault()
+        const parent = $(".create_election")
+        const main = $(".create_election_main")
+        parent.addClass("flex") 
+        main.addClass(main.attr("animate-in"))
+        parent.removeClass("hidden")
+        setTimeout( () => {
+            main.removeClass(main.attr("animate-in"))
+        }, 500)
+    })
+    $(".close_e_create").click( function(e) {
+        e.preventDefault() 
+        const parent = $(".create_election")
+        const main = $(".create_election_main") 
+        main.addClass(main.attr("animate-out")) 
+        setTimeout( () => {
+            parent.addClass("hidden")
+            parent.removeClass("flex")
+            main.removeClass(main.attr("animate-out")) 
+        }, 501)
+    })
+    $(".dt_picker").flatpickr({
+        disableMobile: "true", 
+        minDate: "today",
+        enableTime: true,
+        dateFormat: "Y-m-d h:i K",
+    })
 })

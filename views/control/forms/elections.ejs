@@ -19,18 +19,18 @@
                 <span class="font-semibold text-purple-800 dark:text-purple-500 text-xl xsm:text-base">Election Settings</span>
             </div>
             <div class="flex items-center justify-end">
-                <a class="add_pos_btn flex flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
+                <a class="create_election_btn flex flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
                     <span class="text-purple-700 dark:text-purple-500">
                         <i class="fas fa-plus-circle"></i>
                     </span>
                     <span class="sm:hidden text-[17px] dark:text-purple-500 text-purple-700 font-normal">Create Election</span>
                 </a>
-                <a class="open_settings rpl mr-3 px-3 py-2 cursor-pointer text-xl rounded-md">
+                <a class="open_settings rpl mr-3 px-3 py-2 cursor-pointer text-xl rounded-md dark:text-gray-200">
                     <i class="fas fa-bars"></i>
                 </a>
             </div>
-            <div class="settings bg-gray-900/60 transition-all p-2 fixed top-0 w-full h-full hidden justify-end items-center">
-                <div animate-out="animate__animated animate__fadeOutRight ms-500" animate-in="animate__animated animate__fadeInRight ms-500" class="settings_main w-96 sm:w-full rounded-lg bg-gray-100 h-full dark_border">
+            <div class="settings bg-gray-900/60 transition-all fixed top-0 w-full h-full hidden justify-end items-center py-1">
+                <div animate-out="animate__animated animate__fadeOutRight ms-500" animate-in="animate__animated animate__fadeInRight ms-500" class="settings_main w-96 sm:w-full rounded-bl-lg rounded-tl-lg bg-gray-100 dark:bg-darkBlue-secondary h-full dark_border">
                     <div class="p-4 flex justify-start items-center dark_border_b border-b-[.1px] border-gray-300">
                         <span class="font-semibold text-2xl text-purple-600">Settings</span>
                     </div>
@@ -62,7 +62,7 @@
                             </a>
                         </div>
                         <div class="flex justify-center items-end p-2 px-4">
-                            <a class="close_settings border w-full border-red-500 rpl cursor-pointer text-center rounded-md p-[7px] text-red-700 font-medium">Close</a>
+                            <a class="close_settings border w-full border-red-500 rpl cursor-pointer text-center rounded-md p-[7px] text-red-700 dark:text-red-500 font-medium">Close</a>
                         </div>
                     </div>
                 </div>
@@ -104,6 +104,74 @@
                         </div>
                     <% }) %>
                 <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="create_election z-20 dark:bg-darkBlue-primary/60 hidden justify-center items-center fixed top-0 w-full h-full">
+        <div animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp" class="create_election_main ms-500 p-2 w-[70%] h-[90%] lg:w-[85%] md:w-[95%] md:h-[max-content] dark:bg-darkBlue-secondary dark_border rounded-xl">
+            <div class="flex flex-row w-full">
+                <div class="w-[95%] flex flex-col">
+                    <p class="font-medium transition-all relative dark:text-purple-500 text-3xl py-2 px-3 after:absolute after:bottom-0 after:left-3 after:bg-purple-700 after:w-6/12 after:h-[3px]">Create Election</p>
+                </div>
+                <div class="flex justify-end items-center">
+                    <a class="close_e_create cursor-pointer dark:text-red-500 text-xl py-1 rounded-md rpl px-3">
+                        <i class="fas fa-times-circle"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="w-full h-[calc(100%-54px)] p-2 py-3">
+                <div class="w-full h-full flex flex-row md:flex-col">
+                    <div class="transition-all w-60 md:w-full md:grid md:grid-cols-4 md:dark:border-b-[.1px] md:dark:border-r-0 md:p-1 flex flex-col gap-1 p-2 dark:border-r-[.1px] dark:border-gray-600">
+                        <a class="rpl cursor-pointer md:text-center py-2 px-3 dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                            <span class="md:hidden">Information</span>
+                            <i class="hidden md:block text-xl text-teal-500">
+                                <i class="fas fa-info-circle"></i>
+                            </i>
+                        </a>
+                        <a class="rpl cursor-pointer md:text-center py-2 px-3 dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                            <span class="md:hidden">Courses</span>
+                            <i class="hidden md:block text-xl text-purple-500">
+                                <i class="fal fa-list-alt"></i>
+                            </i>
+                        </a>
+                        <a class="rpl cursor-pointer md:text-center py-2 px-3 dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                            <span class="md:hidden">Postions</span>
+                            <i class="hidden md:block text-xl text-amber-500">
+                                <i class="fas fa-list-ol"></i>
+                            </i>
+                        </a>
+                        <a class="rpl cursor-pointer md:text-center py-2 px-3 dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                            <span class="md:hidden">Finish</span>
+                            <i class="hidden md:block text-xl text-lime-600">
+                                <i class="fas fa-check-circle"></i>
+                            </i>
+                        </a>
+                    </div>
+                    <div class="w-[calc(100%-15rem)] md:h-full  md:w-full overflow-x-hidden overflow-y-auto">
+                        <div class="e_info h-full pl-3 md:pl-0">
+                            <div class="flex flex-col py-3 gap-5 h-full">
+                                <div class="flex justify-start flex-col w-2/5 lg:w-10/12 md:w-full px-4">
+                                    <label for="e_title" class="dark:text-gray-300 text-lg">Election Title</label>
+                                    <input type="text" name="e_title" placeholder="SSG Election" autocomplete="off" class="text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg" required>
+                                </div>
+                                <div class="flex justify-start flex-col w-10/12 md:w-full px-4">
+                                    <label for="e_title" class="dark:text-gray-300 text-lg">Description</label>
+                                    <textarea rows="5" name="e_title" placeholder="Optional" autocomplete="off" class="text-input resize-none w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg"></textarea>
+                                </div>
+                                <div class="grid grid-rows-2 gap-4 px-4 w-full">
+                                    <div class="flex w-1/2 md:w-full flex-col">
+                                        <label for="e_start" class="dark:text-gray-300 text-lg">Start Date & Time</label>
+                                        <input placeholder="Date & Time" type="text" name="e_start" autocomplete="off" class="dt_picker text-input appearance-none w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg" required>
+                                    </div>
+                                    <div class="flex w-1/2 md:w-full flex-col">
+                                        <label for="e_end" class="dark:text-gray-300 text-lg">End Date & Time</label>
+                                        <input placeholder="Date & Time" type="text" name="e_end" autocomplete="off" class="dt_picker text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
