@@ -756,10 +756,6 @@ video {
   grid-column: span 5 / span 5;
 }
 
-.col-span-3 {
-  grid-column: span 3 / span 3;
-}
-
 .col-span-4 {
   grid-column: span 4 / span 4;
 }
@@ -1376,14 +1372,6 @@ video {
 
 .rounded-bl-2xl {
   border-bottom-left-radius: 1rem;
-}
-
-.rounded-bl-lg {
-  border-bottom-left-radius: 0.5rem;
-}
-
-.rounded-tl-lg {
-  border-top-left-radius: 0.5rem;
 }
 
 .rounded-tr-lg {
@@ -2045,34 +2033,6 @@ video {
   font-size: 15px;
 }
 
-.text-\[1\.10rem\] {
-  font-size: 1.10rem;
-}
-
-.text-\[1\.1rem\] {
-  font-size: 1.1rem;
-}
-
-.text-\[1\.8rem\] {
-  font-size: 1.8rem;
-}
-
-.text-\[1\.01rem\] {
-  font-size: 1.01rem;
-}
-
-.text-\[1\.0rem\] {
-  font-size: 1.0rem;
-}
-
-.text-\[1\.09rem\] {
-  font-size: 1.09rem;
-}
-
-.text-\[1\.08rem\] {
-  font-size: 1.08rem;
-}
-
 .font-bold {
   font-weight: 700;
 }
@@ -2115,14 +2075,6 @@ video {
 
 .leading-normal {
   line-height: 1.5;
-}
-
-.leading-3 {
-  line-height: .75rem;
-}
-
-.leading-none {
-  line-height: 1;
 }
 
 .tracking-wide {
@@ -3051,12 +3003,6 @@ input:checked~.dot {
 .after\:w-6\/12::after {
   content: "";
   width: 50%;
-}
-
-.after\:bg-purple-700::after {
-  content: "";
-  --tw-bg-opacity: 1;
-  background-color: rgba(126, 34, 206, var(--tw-bg-opacity));
 }
 
 .after\:bg-purple-600::after {

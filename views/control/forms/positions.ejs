@@ -18,8 +18,8 @@
     </div>
     <div class="positions_all mt-[62px] py-3 px-2 sm:px-2 grid grid-cols-5 xl:grid-cols-4 transition-all lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-none sm:flex sm:flex-col w-full h-[80%] sm:h-[calc(100vh-60px)] overflow-hidden sm:overflow-y-scroll gap-2">
         <% if (pos.length === 0) { %>
-            <div class="empty_pos p-3 col-span-5 justify-center flex bg-gray-100 rounded-xl cursor-pointer">
-                <span class="text-purple-700">No Positions to fetch</span>
+            <div class="empty_pos p-3 col-span-5 justify-center flex bg-gray-100 dark:bg-darkBlue-secondary rounded-xl cursor-pointer">
+                <span class="text-purple-700 dark:text-gray-300">No Positions to fetch</span>
             </div>
         <% } else { %>
             <% for( let i = 0; i < pos[0].positions.length; i++ ) { %>

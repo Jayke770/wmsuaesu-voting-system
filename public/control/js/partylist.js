@@ -3,6 +3,7 @@ $(document).ready(() => {
         e.preventDefault()
         const parent = $(".add_pty")
         const main = $(".add_pty_main")
+        $(".total_pty").text($(".pty").length)
         parent.addClass("flex")
         main.addClass(main.attr("animate-in"))
         parent.removeClass("hidden")

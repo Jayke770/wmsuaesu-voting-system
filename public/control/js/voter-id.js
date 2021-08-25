@@ -207,7 +207,7 @@ $(".search_voter_id").keyup(function(){
                 data: $(this).val().trim()
             }, (res, status) => {
                 if(res.status){
-                    append_search(res.data)
+                    append(res.data)
                     search_voter_id = false
                 }
             }).fail( (e) => {

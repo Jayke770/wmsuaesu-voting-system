@@ -438,6 +438,7 @@ $(document).ready(() => {
         })
     })
     function append_new_cy(data, type) {
+        console.log(data, type)
         const year_list = $(".y_list")
         const course_list = $(".c_list")
         if (type === "year") {
@@ -464,14 +465,14 @@ $(document).ready(() => {
                 year_list.html('')
                 //add new data in year list
                 year_list.append(`
-                <div data="${year.id}" style="animation-delay:.150s;" class="rpl animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
+                <div data="${data.id}" style="animation-delay:.150s;" class="rpl animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
                     <div class="grid grid-cols-2">
-                        <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300">${year.type}</p>
+                        <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300">${data.type}</p>
                         <div class="transition-all animate__animated animate__fadeInLeft ms-300 hidden group-hover:flex flex-row justify-end items-center">
-                            <a data="${year.id}" class="rpl up_y px-2 cursor-pointer text-green-600">
+                            <a data="${data.id}" class="rpl up_y px-2 cursor-pointer text-green-600">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a data="${year.id}" class="rpl del_y px-2 cursor-pointer text-rose-600">
+                            <a data="${data.id}" class="rpl del_y px-2 cursor-pointer text-rose-600">
                                 <i class="fas fa-trash"></i>
                             </a>
                         </div>
@@ -503,14 +504,14 @@ $(document).ready(() => {
                 //clean course list 
                 course_list.html('')
                 course_list.append(`
-                <div data="${course.id}" style="animation-delay: .150s;" class="rpl animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
+                <div data="${data.id}" style="animation-delay: .150s;" class="rpl animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
                     <div class="grid grid-cols-2">
-                        <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300">${course.type}</p>
+                        <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300">${data.type}</p>
                        <div class="transition-all animate__animated animate__fadeInLeft ms-300 hidden group-hover:flex flex-row justify-end items-center">
-                            <a data="${course.id}" class="rpl up_c px-2 cursor-pointer text-green-600">
+                            <a data="${data.id}" class="rpl up_c px-2 cursor-pointer text-green-600">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a data="${course.id}" class="rpl del_c px-2 cursor-pointer text-rose-600">
+                            <a data="${data.id}" class="rpl del_c px-2 cursor-pointer text-rose-600">
                                 <i class="fas fa-trash"></i>
                             </a>
                         </div>

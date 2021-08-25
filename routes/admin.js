@@ -523,7 +523,16 @@ adminrouter.post('/control/elections/voter-id/', isadmin, async (req, res, next)
                         throw new err
                     } 
                     if(!err) {
-                        return res.render('control/forms/voter-id', { id: res_id, course: cy[0].course, year: cy[0].year})
+                        //if id is empty 
+                        if(res_id.length == 0 && cy.length != 0){
+                            return res.render('control/forms/voter-id', { id: [], course: cy[0].course, year: cy[0].year})
+                        } else if(res_id.length !== 0 && cy.length == 0) {
+                            //if course & year is empty 
+                            return res.render('control/forms/voter-id', { id: res_id, course: [], year: []})
+                        } else {
+                            //res_id, course, & year is empty 
+                            return res.render('control/forms/voter-id', { id: [], course: [], year: []})
+                        }
                     }
                 })
             }
@@ -876,7 +885,7 @@ adminrouter.post('/control/elections/course&year/', limit, isadmin, async (req, 
             if(err){
                 throw new err
             } else {
-                return res.render('control/forms/cy', { course: data[0].course, year: data[0].year })
+                return res.render('control/forms/cy', { cy: data })
             }
         })
     } catch(e){
@@ -886,6 +895,22 @@ adminrouter.post('/control/elections/course&year/', limit, isadmin, async (req, 
 //add course & year 
 adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async (req, res) => {
     const {course, year} = req.body 
+    let isDbempty = true
+    //check if db is not empty 
+    try{
+        await data.find({}, (err, s) => {
+            if(err){
+                throw new err
+            } 
+            if(!err){
+                if(s.length != 0){
+                    isDbempty = false
+                }
+            }
+        })
+    } catch (e){
+        return res.status(500).send()
+    }
     //if course & year is empty 
     if(!xs(course) && !xs(year)){
         return res.send({
@@ -893,6 +918,7 @@ adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async
             msg: "Some feilds is empty"
         })
     }
+
     //if year is empty
     if(xs(course) && !xs(year)){
         //new course data
@@ -904,29 +930,46 @@ adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async
         try {
             await data.find({"course.type": {$eq: xs(course).toUpperCase()}}, (err, c) => {
                 if(err){
-                    return res.send({
-                        status: false, 
-                        msg: "Internal Error!"
-                    })
+                    throw new err
                 } 
                 if(!err){
                     if(c.length == 0){
-                        //insert new course 
-                        data.updateOne({}, {$push: {course: new_crs}}, (err, n) => {
-                            if(err){
-                                return res.send({
-                                    status: false, 
-                                    msg: "Internal Error!"
-                                })
-                            } else {
-                                return res.send({
-                                    status: true, 
-                                    msg: "Course Added Successfully", 
-                                    type: "course",
-                                    data: new_crs
-                                })
-                            }
-                        })
+                        //if empty create new data
+                        if(isDbempty){
+                            //insert new data 
+                            data.create({
+                                positions: [], 
+                                course: [new_crs], 
+                                year: [], 
+                                partylists: []
+                            }, (err, n) => {
+                                console.log(n)
+                                if(err){
+                                    throw new err
+                                } else {
+                                    return res.send({
+                                        status: true, 
+                                        msg: "Course Added Successfully", 
+                                        type: "course",
+                                        data: new_crs
+                                    })
+                                }
+                            })
+                        } else {
+                            //push new data
+                            data.updateOne({}, {$push: {course: new_crs}}, (err, n) => {
+                                if(err){
+                                    throw new err
+                                } else {
+                                    return res.send({
+                                        status: true, 
+                                        msg: "Course Added Successfully", 
+                                        type: "course",
+                                        data: new_crs
+                                    })
+                                }
+                            })
+                        }
                     } else {
                         return res.send({
                             status: false, 
@@ -936,12 +979,10 @@ adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async
                 }
             })
         } catch (e) {
-            return res.send({
-                status: false, 
-                msg: "Internal Error!"
-            })
+            return res.status(500).send()
         }
     }
+
     //if course is empty
     if(!xs(course) && xs(year)){
         //new course data
@@ -960,22 +1001,40 @@ adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async
                 }
                 if(!err){
                     if(y.length == 0){
-                        //insert new year 
-                        data.updateOne({}, {$push: {year: new_y}}, (err, u) => {
-                            if(err){
-                                return res.send({
-                                    status: false, 
-                                    msg: "Internal Error!"
-                                })
-                            } else {
-                                return res.send({
-                                    status: true, 
-                                    msg: "Year Added Successfully", 
-                                    type: "year",
-                                    data: new_y
-                                })
-                            }
-                        })
+                        //if empty create new data
+                        if(isDbempty){
+                            data.create({
+                                positions: [], 
+                                course: [], 
+                                year: [new_y], 
+                                partylists: []
+                            }, (err, u) => {
+                                if(err){
+                                    throw new err
+                                } else {
+                                    return res.send({
+                                        status: true, 
+                                        msg: "Year Added Successfully", 
+                                        type: "year",
+                                        data: new_y
+                                    })
+                                }
+                            })
+                        } else {
+                            //insert new year 
+                            data.updateOne({}, {$push: {year: new_y}}, (err, u) => {
+                                if(err){
+                                    throw new err
+                                } else {
+                                    return res.send({
+                                        status: true, 
+                                        msg: "Year Added Successfully", 
+                                        type: "year",
+                                        data: new_y
+                                    })
+                                }
+                            })
+                        }
                     } else {
                         return res.send({
                             status: false, 
@@ -985,12 +1044,10 @@ adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async
                 }
             })
         } catch (e) {
-            return res.send({
-                status: false, 
-                msg: "Internal Error!"
-            })
+            return res.status(500).send()
         }
     }
+
     //if course & year is not empty 
     if(xs(course) && xs(year)){
         //new course 
@@ -1008,31 +1065,48 @@ adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async
             //check if course & year is already exist in db
             await data.find({"course.type": {$eq: xs(course).toUpperCase()}, "year.type": {$eq: xs(year)}}, (err, f) => {
                 if(err){
-                    return res.send({
-                        status: false, 
-                        msg: "Internal Error!"
-                    })
+                    throw new err
                 }
                 if(!err){
                     if(f.length === 0){
-                        data.updateOne({}, {$push: {course: new_crs, year: new_y}}, (err, up) => {
-                            if(err){
-                                return res.send({
-                                    status: false, 
-                                    msg: "Internal Error!"
-                                })
-                            } else {
-                                return res.send({
-                                    status: true, 
-                                    msg: "Added Successfully", 
-                                    type: "c&y",
-                                    data: {
-                                        course: new_crs, 
-                                        year: new_y
-                                    }
-                                })
-                            }
-                        })
+                       if(isDbempty){
+                           data.create({
+                               positions: [], 
+                               course: [new_crs], 
+                               year: [new_y], 
+                               partylists: []
+                           }, (err, up) => {
+                                if(err){
+                                    throw new err
+                                } else {
+                                    return res.send({
+                                        status: true, 
+                                        msg: "Added Successfully", 
+                                        type: "c&y",
+                                        data: {
+                                            course: new_crs, 
+                                            year: new_y
+                                        }
+                                    })
+                                }
+                           })
+                       } else {
+                            data.updateOne({}, {$push: {course: new_crs, year: new_y}}, (err, up) => {
+                                if(err){
+                                    throw new err
+                                } else {
+                                    return res.send({
+                                        status: true, 
+                                        msg: "Added Successfully", 
+                                        type: "c&y",
+                                        data: {
+                                            course: new_crs, 
+                                            year: new_y
+                                        }
+                                    })
+                                }
+                            })
+                       }
                     } else {
                         return res.send({
                             status: false, 
@@ -1042,10 +1116,7 @@ adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async
                 }
             })
         } catch(e){
-            return res.send({
-                status: false, 
-                msg: "Internal Error!"
-            })
+            return res.status(500).send()
         } 
     }
 })
@@ -1250,7 +1321,11 @@ adminrouter.post('/control/elections/partylist', normal_limit, isadmin, async (r
             if(err){
                 throw new err
             } else {
-                return res.render("control/forms/partylist", {partylist: p[0].partylists})
+                if(p.length === 0){
+                    return res.render("control/forms/partylist", {partylist: []})
+                } else {
+                    return res.render("control/forms/partylist", {partylist: p[0].partylists})
+                }
             }
         })
     } catch (e){
