@@ -1,6 +1,7 @@
 const colors = require("tailwindcss/colors")
+const { themeVariants } = require("tailwindcss-theme-variants")
 module.exports = {
-  mode: 'jit',
+  mode: "jit",
   purge: {
     content: ['./views/**/*.ejs']
   },
@@ -44,30 +45,34 @@ module.exports = {
       pink: colors.pink,
       rose: colors.rose,
       darkBlue: {
-        primary: '#090c10', 
+        primary: '#090c10',
         secondary: '#161b22'
       },
     },
     fontFamily: {
-      'sans': ["Inter var", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"]
+      'sans': ["Inter var", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"],
     },
     screens: {
-      '2xl': {'max': '1535px'},
-      'xl': {'max': '1279px'},
-      'my': {'max': '940px'},
-      'lg': {'max': '1023px'},
-      'md': {'max': '767px'},
-      'sm': {'max': '639px'},
-      'xsm': {'max': '400px'},
-      'xxsm': {'max': '250px'},
-    }
+      '2xl': { 'max': '1535px' },
+      'xl': { 'max': '1279px' },
+      'my': { 'max': '940px' },
+      'lg': { 'max': '1023px' },
+      'md': { 'max': '767px' },
+      'sm': { 'max': '639px' },
+      'xsm': { 'max': '400px' },
+      'xxsm': { 'max': '250px' },
+    },
   },
   variants: {
     extend: {},
   },
   plugins: [
-    require("@tailwindcss/forms")({
-      strategy: 'class',
+    themeVariants({
+      themes: {
+        wmsu: {
+          selector: ".wmsu",
+        }
+      },
     }),
   ],
 }

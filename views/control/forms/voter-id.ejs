@@ -30,44 +30,43 @@
     <div class="container p-2 pt-3 mt-16">
         <div class="grid grid-cols-2 gap-3 md:grid-cols-none transition-all">
             <div class="flex flex-row justify-start items-center">
-                <input name="search_voter" type="text" autocomplete="off" class="search_voter_id dark_border outline-none border focus:border-purple-500 dark:focus:border-purple-500 dark:bg-transparent dark:text-gray-300 rounded-md transition-all border-gray-50 focus:border-gray-300 bg-gray-100 w-80 md:w-full shadow-lg p-[10px]" placeholder="Search Voter ID" required>
+                <input name="search_voter" type="text" autocomplete="off" class="search_voter_id dark_border outline-none border focus:border-purple-500 dark:focus:border-purple-500 dark:bg-transparent dark:text-gray-300 rounded-md transition-all border-gray-50 bg-gray-100 w-80 md:w-full shadow-lg p-[10px]" placeholder="Search Voter ID" required>
             </div>
         </div>
         <!-- Voter ID List -->
-        <% if (id.length !== 0) { %>
-            <div class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
-                <% let delay = 0
-                    for( let i = 0; i < id.length; i++ ) {  %>
-                    <div style="animation-delay: <%- i * .150 %>s;" data="<%- id[i]._id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
-                        <div class="w-full">
-                            <span class="st_id font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
-                            <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500"><%- id[i].course + ' ' + id[i].year %></span>
-                        </div>
-                        <div class="mt-2 p-2">
-                            <a data="<%- id[i]._id %>" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a data="<%- id[i]._id %>" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
-                                <i class="fas fa-trash-alt"></i>
-                            </a>
-                            <span class=" <% if(id[i].enabled){ %> dark:bg-green-700 bg-green-600 <% } else { %> dark:bg-amber-700 bg-amber-600 <% } %> float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">
-                                <% if(id[i].enabled){ %> 
-                                    Used
-                                <% } else { %>
-                                    Not Used
-                                <% } %>
-                            </span>
-                        </div>
+        <div class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
+            <% if(id.length != 0) {
+             for( let i = 0; i < id.length; i++ ) {  %>
+                <div style="animation-delay: <%- i * .150 %>s;" data="<%- id[i]._id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
+                    <div class="w-full">
+                        <span class="st_id font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
+                        <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500"><%- id[i].course + ' ' + id[i].year %></span>
                     </div>
-                <% } %>
-            </div>
-        <% } else { %>
-            <div class="flex items-center justify-center transition-all">
-                <div class=" text-center w-[350px] md:mt-12 mt-36 py-9 bg-rose-500 dark:bg-darkBlue-secondary rounded-2xl cursor-pointer">
-                    <span class="font-bold text-gray-50">Nothing To Fetch</span>
+                    <div class="mt-2 p-2">
+                        <a data="<%- id[i]._id %>" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a data="<%- id[i]._id %>" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                        <span class=" <% if(id[i].enabled){ %> dark:bg-green-700 bg-green-600 <% } else { %> dark:bg-amber-700 bg-amber-600 <% } %> float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">
+                            <% if(id[i].enabled){ %> 
+                                Used
+                            <% } else { %>
+                                Not Used
+                            <% } %>
+                        </span>
+                    </div>
                 </div>
-            </div>
-        <% } %>
+            <% } 
+            } else { %>
+                <div class="empty_voter_id col-span-4 animate__animated animate__fadeInUp flex items-center justify-center transition-all">
+                    <div class=" text-center w-[350px] md:mt-12 mt-36 py-9 bg-rose-500 dark:bg-darkBlue-secondary rounded-2xl cursor-pointer">
+                        <span class="font-bold text-gray-50">Nothing To Fetch</span>
+                    </div>
+                </div>
+            <% } %>
+        </div>
     </div>
     <!--Add Voter ID-->
     <div class="popup hidden transition-all z-50 fixed w-full h-full bg-black/50 top-0">
@@ -85,22 +84,25 @@
                             </div> 
                             <div class="container px-2 mb-2">
                                 <label for="id" class="pointer-events-none dark:text-gray-300">Course</label>
-                                <input list="crs" placeholder="Select Course" name="crs" class="crs_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
-                                <datalist id="crs">
-                                    <option value="BSCS"></option>
-                                    <option value="BSED"></option>
-                                    <option value="GEN ED"></option>
-                                </datalist>
+                                <select name="crs" class="crs_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
+                                    <option value="">Select Course</option>
+                                    <% if(course.length != 0) { 
+                                        for(let i = 0; i < course.length; i++) { %>
+                                            <option data="<%- course[i].id %>" value="<%- course[i].type %>"><%- course[i].type %></option>
+                                        <% }
+                                    } %>
+                                </select>
                             </div>
                             <div class="container px-2 mb-2">
                                 <label for="id" class="pointer-events-none dark:text-gray-300">Year</label>
-                                <input list="yr" placeholder="Select Year" name="year" class="year_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md transition-all py-2 px-3 text-gray-900 " required>
-                                <datalist id="yr">
-                                    <option value="1"></option>
-                                    <option value="2"></option>
-                                    <option value="3"></option>
-                                    <option value="4"></option>
-                                </datalist>
+                                <select name="year" class="year_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md transition-all py-2 px-3 text-gray-900 " required>
+                                    <option value="">Select Year</option>
+                                    <% if(year.length != 0) { 
+                                        for(let i = 0; i < year.length; i++) { %>
+                                            <option data="<%- year[i].id %>" value="<%- year[i].type %>"><%- year[i].type %></option>
+                                        <% }
+                                    } %>
+                                </select>
                             </div>
                         </div>
                         <div class="flex flex-row">
@@ -119,7 +121,7 @@
     <div class="popup_2 hidden z-50 fixed w-full h-full top-0">
         <div class="edit_form p-2 ms-700 flex w-full h-full justify-end items-center transition-all" animate-in="animate__animated animate__fadeInRight" animate-out="animate__animated animate__fadeOutRight">
             <div class="xsm:w-full w-96 h-full bg-gray-50 dark:bg-darkBlue-secondary dark_border border-[0.5px] shadow-md rounded-lg transition-all">
-                <div class="flex justify-center items-center p-2 py-3 border-b-[.1px] border-gray-3 00 dark_border_b border-b border-gray-300">
+                <div class="flex justify-center items-center p-2 py-3 border-b-[.1px] border-gray-3 00 dark_border_b border-gray-300">
                     <div class="py-1">
                         <span class="font-semibold text-xl text-purple-800 dark:text-purple-500 pl-3 pt-4 p-3 md:text-xl md:pr-0 md:pl-1">Edit Voter ID</span>
                     </div>
@@ -128,26 +130,29 @@
                     <div class="p-3 px-4 pt-5">
                         <div class="form-group mt-2 first:mt-0">
                             <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Voter ID</label>
-                            <input type="text" name="id" class="edit_voter_id dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " placeholder="Voter ID" autocomplete="off" required>
+                            <input type="text" name="id" class="edit_voter_id dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " placeholder="Voter ID" autocomplete="off" required>
                         </div>
                         <div class="form-group mt-2 first:mt-0">
                             <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Course</label>
-                            <input list="crs" type="text" name="course" class="edit_course dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " placeholder="Course" autocomplete="off" required>
-                            <datalist id="crs" class="bg-green-600">
-                                <option value="BSCS">
-                                <option value="BSED">
-                                <option value="GEN ED">
-                            </datalist>
+                            <select name="course" class="edit_course dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " placeholder="Course" autocomplete="off" required>
+                                <option value="">Select Course</option>
+                                    <% if(course.length != 0) { 
+                                        for(let i = 0; i < course.length; i++) { %>
+                                            <option data="<%- course[i].id %>" value="<%- course[i].type %>"><%- course[i].type %></option>
+                                        <% }
+                                    } %>
+                            </select>
                         </div>
                         <div class="form-group mt-2 first:mt-0">
                             <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Year</label>
-                            <input list="yr" type="text" name="year" class="edit_year dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " placeholder="Year" autocomplete="off" required>
-                            <datalist id="yr" class="bg-green-600">
-                                <option value="1">
-                                <option value="2">
-                                <option value="3">
-                                <option value="4">
-                            </datalist>
+                            <select name="year" class="edit_year dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " placeholder="Year" autocomplete="off" required>
+                                <option value="">Select Year</option>
+                                    <% if(year.length != 0) { 
+                                        for(let i = 0; i < year.length; i++) { %>
+                                            <option data="<%- year[i].id %>" value="<%- year[i].type %>"><%- year[i].type %></option>
+                                        <% }
+                                    } %>
+                            </select>
                         </div>
                     </div> 
                     <div class="flex flex-rowd justify-center gap-2 py-2 items-end px-3">

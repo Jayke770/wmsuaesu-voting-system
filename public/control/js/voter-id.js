@@ -58,6 +58,7 @@ $(".add_voter_id_form").submit(function(e){
                     url: 'voter-id/add-voter-id/',
                     method: 'POST',
                     cache: false,
+                    timeout: 5000,
                     contentType: false,
                     processData: false,
                     data: new FormData(this),
@@ -193,7 +194,7 @@ $(".sort_voter_id").change(function(){
             data: $(this).val().trim()
         }, (res) => {
             if(res.status){
-                append_sort_voter_id(res.data)
+                append(res.data)
             }
         })
     }
@@ -206,7 +207,7 @@ $(".search_voter_id").keyup(function(){
                 data: $(this).val().trim()
             }, (res, status) => {
                 if(res.status){
-                    append_sort_voter_id(res.data)
+                    append_search(res.data)
                     search_voter_id = false
                 }
             }).fail( (e) => {
@@ -309,7 +310,7 @@ $(".edit_voter_id_form").submit(function(e){
                                 setTimeout( () => {
                                     $(".popup_2").addClass("hidden")
                                     $(".edit_form").removeClass($(".edit_form").attr("animate-out"))
-                                    append_sort_voter_id(res.data) 
+                                    append(res.data) 
                                 }, 700)
                             } else {
                                 toast.fire({
@@ -379,54 +380,86 @@ $(".popup_2").click( (e) => {
     }
 })
 //functions
-function append_sort_voter_id(data){
-    //remove all voter id 
-    $(".voters_id_all").html("")
-    if(data.length == 0){
-        empty()
-    }
-    else{
+function append(data){
+    if(data.length != 0){
+        $(".voters_id_all").html('')
         for(let i = 0; i < data.length; i++){
-            let delay = 0
-            append_voter_id(data[i], `${i * .100}s`)
+            let badge = "dark:bg-amber-700 bg-amber-600", text_badge = "Not Used"
+            if(data[i].enabled){
+                badge = "dark:bg-green-700 bg-green-600"
+                text_badge = "Used"
+            } 
+            $(".voters_id_all").append(`
+            <div style="animation-delay: ${i * .150}s;" data="${data[i]._id}" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
+                <div class="w-full">
+                    <span class="st_id font-normal text-base dark:text-gray-300">${data[i].student_id}</span>
+                    <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">${data[i].course} ${data[i].year}</span>
+                </div>
+                <div class="mt-2 p-2">
+                    <a data="${data[i]._id}" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a data="${data[i]._id}" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                    <span class="${badge} float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">${text_badge}</span>
+                </div>
+            </div>
+        `)
         }
+    } else {
+        $(".voters_id_all").html(`
+            <div class="empty_voter_id col-span-4 animate__animated animate__fadeInUp flex items-center justify-center transition-all">
+                <div class=" text-center w-[350px] md:mt-12 mt-36 py-9 bg-rose-500 dark:bg-darkBlue-secondary rounded-2xl cursor-pointer">
+                    <span class="font-bold text-gray-50">Nothing To Fetch</span>
+                </div>
+            </div>
+        `)
     }
 }
-function empty(){
-    $(".voters_id_all").append(`
-        <div class="empty animate__animated animate__fadeInUp ms-900 w-full p-3 dark:text-gray-200 text-center bg-gray-50 dark:bg-darkBlue-secondary dark:border dark:border-gray-700 rounded-lg cursor-pointer">
-            Nothing to fetch
-        </div>
-    `)
-    setTimeout( () => {
-        $(".empty").removeClass("animate__animated animate__fadeInUp")
-    }, 900)
-}
-function append_voter_id(data, delay){
-    var badge, text
+function append_voter_id(data) {
+    console.log('fas')
+    let badge = "dark:bg-amber-700 bg-amber-600", text_badge = "Not Used"
     if(data.enabled){
-        badge = 'dark:bg-green-700 bg-green-600'
-        text = "Used"
-    }
-    else{
-        badge = "dark:bg-amber-700 bg-amber-600"
-        text = "Not Used"
-    }
-    $(".voters_id_all").append(`
-        <div style="animation-delay: ${delay};" data="${data._id}" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-700 rounded-lg cursor-pointer">
-            <div class="w-full">
-                <span class="st_id font-normal text-base dark:text-gray-300">${data.student_id}</span>
-                <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">${data.course} ${data.year}</span>
+        badge = "dark:bg-green-700 bg-green-600"
+        text_badge = "Used"
+    } 
+    if($(".empty_voter_id").length != 0){
+        $(".empty_voter_id").remove() 
+        $(".voters_id_all").append(`
+            <div style="animation-delay: .150s;" data="${data._id}" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
+                <div class="w-full">
+                    <span class="st_id font-normal text-base dark:text-gray-300">${data.student_id}</span>
+                    <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">${data.course} ${data.year}</span>
+                </div>
+                <div class="mt-2 p-2">
+                    <a data="${data._id}" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a data="${data._id}" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                    <span class="${badge} float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">${text_badge}</span>
+                </div>
             </div>
-            <div class="mt-2 p-2">
-                <a data="${data._id}" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
-                    <i class="fas fa-edit"></i>
-                </a>
-                <a data="${data._id}" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
-                    <i class="fas fa-trash-alt"></i>
-                </a>
-                <span class="${badge} float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">${text}</span>
+        `)
+    } else {
+        $(".voters_id_all").append(`
+            <div style="animation-delay: .150s;" data="${data._id}" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
+                <div class="w-full">
+                    <span class="st_id font-normal text-base dark:text-gray-300">${data.student_id}</span>
+                    <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">${data.course} ${data.year}</span>
+                </div>
+                <div class="mt-2 p-2">
+                    <a data="${data._id}" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a data="${data._id}" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                    <span class="${badge} float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">${text_badge}</span>
+                </div>
             </div>
-        </div>
-    `)
+        `)
+    }
 }
