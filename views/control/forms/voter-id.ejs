@@ -15,9 +15,17 @@
                     <option value="used">Used</option>
                     <option value="not used">Not Used</option>
                     <option value="" class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">- Sort by course</option>
-                    <option value="BSCS">BSCS</option>
-                    <option value="BSED">BSED</option>
-                    <option value="GEN ED">GEN ED</option>
+                    <% if(course.length != 0) { 
+                        for(let i = 0; i < course.length; i++) { %>
+                            <option value='<%- JSON.stringify({course: course[i].id}) %>'><%- course[i].type %></option>
+                        <% }
+                    } %>
+                    <option value="" class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">- Sort by year</option>
+                    <% if(year.length != 0) { 
+                        for(let i = 0; i < year.length; i++) { %>
+                            <option value='<%- JSON.stringify({year: year[i].id}) %>'><%- year[i].type %></option>
+                        <% }
+                    } %>
                 </select>
                 <div class="btn flex items-center">
                     <button class="add_voter shadow-lg rpl rpl-h button-input-active hover:bg-green-600 cursor-pointer dark:bg-green-700 dark:hover:bg-green-600 my-ring-2 hover:ring-green-600">
@@ -37,16 +45,19 @@
         <div class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
             <% if(id.length != 0) {
              for( let i = 0; i < id.length; i++ ) {  %>
-                <div style="animation-delay: <%- i * .150 %>s;" data="<%- id[i]._id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
+                <div style="animation-delay: <%- i * .150 %>s;" data="<%- id[i].id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
                     <div class="w-full">
                         <span class="st_id font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
-                        <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500"><%- id[i].course + ' ' + id[i].year %></span>
+                        <div class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">
+                            <span course="<%- id[i].course %>">...</span>
+                            <span year="<%- id[i].year %>">...</span>
+                        </div>
                     </div>
                     <div class="mt-2 p-2">
-                        <a data="<%- id[i]._id %>" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
+                        <a data="<%- id[i].id %>" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a data="<%- id[i]._id %>" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
+                        <a data="<%- id[i].id %>" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
                             <i class="fas fa-trash-alt"></i>
                         </a>
                         <span class=" <% if(id[i].enabled){ %> dark:bg-green-700 bg-green-600 <% } else { %> dark:bg-amber-700 bg-amber-600 <% } %> float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">
@@ -88,7 +99,7 @@
                                     <option value="">Select Course</option>
                                     <% if(course.length != 0) { 
                                         for(let i = 0; i < course.length; i++) { %>
-                                            <option data="<%- course[i].id %>" value="<%- course[i].type %>"><%- course[i].type %></option>
+                                            <option value="<%- course[i].id %>"><%- course[i].type %></option>
                                         <% }
                                     } %>
                                 </select>
@@ -99,7 +110,7 @@
                                     <option value="">Select Year</option>
                                     <% if(year.length != 0) { 
                                         for(let i = 0; i < year.length; i++) { %>
-                                            <option data="<%- year[i].id %>" value="<%- year[i].type %>"><%- year[i].type %></option>
+                                            <option value="<%- year[i].id %>"><%- year[i].type %></option>
                                         <% }
                                     } %>
                                 </select>
@@ -138,7 +149,7 @@
                                 <option value="">Select Course</option>
                                     <% if(course.length != 0) { 
                                         for(let i = 0; i < course.length; i++) { %>
-                                            <option data="<%- course[i].id %>" value="<%- course[i].type %>"><%- course[i].type %></option>
+                                            <option value="<%- course[i].id %>"><%- course[i].type %></option>
                                         <% }
                                     } %>
                             </select>
@@ -149,7 +160,7 @@
                                 <option value="">Select Year</option>
                                     <% if(year.length != 0) { 
                                         for(let i = 0; i < year.length; i++) { %>
-                                            <option data="<%- year[i].id %>" value="<%- year[i].type %>"><%- year[i].type %></option>
+                                            <option value="<%- year[i].id %>"><%- year[i].type %></option>
                                         <% }
                                     } %>
                             </select>

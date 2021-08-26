@@ -2,7 +2,6 @@ const express = require('express')
 const adminrouter = express.Router()
 const { authenticated, isadmin, isloggedin } = require('./auth')
 const user = require('../models/user')
-const ids = require('../models/student-id')
 const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
@@ -338,6 +337,7 @@ adminrouter.get('/control/elections/:election_id', limit, isadmin, async (req, r
 adminrouter.post('/control/elections/positions/', isadmin, normal_limit, async (req, res, next) => {
     try {
         await data.find({}, { positions: 1 }, (err, pos) => {
+            console.log(pos)
             if (err) {
                 throw new err
             }
@@ -509,35 +509,17 @@ adminrouter.post('/control/elections/positions/update-position/', isadmin, norma
 })
 
 //voter id
-adminrouter.post('/control/elections/voter-id/', isadmin, async (req, res, next) => {
+adminrouter.post('/control/elections/voter-id/', normal_limit, isadmin, async (req, res) => {
     try {
-        //all voter id
-        await ids.find({}, (err, res_id) => {
-            if (err) {
-                throw new err
-            }
-            if (!err) {
-                //all course & yeal level
-                data.find({}, {course: 1, year: 1}, (err, cy) => {
-                    if(err) {
-                        throw new err
-                    } 
-                    if(!err) {
-                        //if id is empty 
-                        if(res_id.length == 0 && cy.length != 0){
-                            return res.render('control/forms/voter-id', { id: [], course: cy[0].course, year: cy[0].year})
-                        } else if(res_id.length !== 0 && cy.length == 0) {
-                            //if course & year is empty 
-                            return res.render('control/forms/voter-id', { id: res_id, course: [], year: []})
-                        } else {
-                            //res_id, course, & year is empty 
-                            return res.render('control/forms/voter-id', { id: [], course: [], year: []})
-                        }
-                    }
-                })
+        await data.find({}, {voterId: 1, course: 1, year: 1}, (err, data) => {
+            if(err) throw new err
+            if(data.length != 0){ 
+                return res.render('control/forms/voter-id', { id: data[0].voterId, course: data[0].course, year: data[0].year})
+            } else {
+                return res.render('control/forms/voter-id', { id: [], course: [], year: []})
             }
         })
-    } catch (e) {
+    } catch(e) {
         return res.status(500).send()
     }
 })
@@ -547,23 +529,18 @@ adminrouter.post('/control/elections/voter-id/verify', isadmin, normal_limit, as
     const voter_id = xs(id).toUpperCase()
     //check voter if exists 
     try {
-        await ids.find({ student_id: {$eq: voter_id} }, (err, res_id) => {
-            if (err) {
-                throw new err
+        await data.find({"voterId.student_id": {$eq: voter_id} }, (err, res_id) => {
+            if (err) throw new err
+            if (res_id.length === 0) {
+                return res.send({
+                    status: true,
+                })
             }
-            if (!err) {
-                if (res_id.length === 0) {
-                    return res.send({
-                        status: true,
-                        msg: "Okay"
-                    })
-                }
-                else {
-                    return res.send({
-                        status: false,
-                        msg: "Voter ID is already exist"
-                    })
-                }
+            else {
+                return res.send({
+                    status: false,
+                    msg: "Voter ID is already exist"
+                })
             }
         })
     } catch (e){
@@ -573,61 +550,49 @@ adminrouter.post('/control/elections/voter-id/verify', isadmin, normal_limit, as
 //add voter id
 adminrouter.post('/control/elections/voter-id/add-voter-id/', isadmin, limit, async (req, res, next) => {
     const { id, crs, year } = req.body
-    const voter_id = xs(id).toUpperCase()
-    const voter_crs = xs(crs)
-    const voter_year = xs(year)
-
+    //new voter ID
+    const new_voterId = {
+        id: uuid(), 
+        student_id: xs(id).toUpperCase(), //new student id
+        course: xs(crs), 
+        year: xs(year), 
+        enabled: false
+    }
     //check id 
     try{
-        await ids.find({ student_id: {$eq: voter_id} }, (err, res_find) => {
-            if (err) {
-                throw new err
-            }
-            if (!err) {
+        await data.find({ "voterId.student_id": {$eq: xs(id).toUpperCase()} }, (err, res_find) => {
+            if (err) throw new err
+            if (res_find.length == 0) {
                 //check if course & year is valid 
-                data.find({"course.type": {$eq: voter_crs}, "year.type": {$eq: voter_year}}, (err, cy) => {
-                    if(err){
-                        throw new err
-                    }
-                    if(!err) {
-                        if(cy.length != 0){
-                            if (res_find.length === 0) {
-                                ids.create({
-                                    student_id: voter_id,
-                                    course: voter_crs,
-                                    year: voter_year,
-                                    enabled: false
-                                }, (err, inserted) => {
-                                    if (err) {
-                                        throw new err
-                                    }
-                                    else {
-                                        return res.send({
-                                            status: true,
-                                            data: inserted,
-                                            msg: "Voter ID Added"
-                                        })
-                                    }
-                                })
-                            }
-                            else {
-                                return res.send({
-                                    status: false,
-                                    msg: "Voter ID is already exist"
-                                })
-                            }
-                        } else {
-                            return res.send({
-                                status: false, 
-                                msg: "Invalid Course / Year"
-                            })
-                        }
+                data.find({"course.id": {$eq: xs(crs)}, "year.id": {$eq: xs(year)}}, {"course.id": 1, "year.id": 1}, (err, cy) => {
+                    if(err) throw new err 
+                    if(cy.length == 0){
+                        return res.send({
+                            status: false, 
+                            msg: "Invalid Course / Year"
+                        })
+                    } else {
+                        //insert new voter id 
+                        data.updateOne({}, {$push: {voterId: new_voterId}}, (err, new_v) => {
+                           if(err) throw new err 
+                           return res.send({
+                               status: true, 
+                               data: new_voterId, 
+                               msg: "Voter ID Added"
+                           })
+                        })
                     }
                 })
                 
+            } else {
+                return res.send({
+                    status: false,
+                    msg: "Voter ID is already exists"
+                })
             }
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })
@@ -638,41 +603,33 @@ adminrouter.post('/control/elections/voter-id/delete-voter-id/', isadmin, delete
 
     //check voter id if not used
     try{
-        await ids.find({ _id: voter_id }, (err, result) => {
-            if (err) {
-            throw new err
-            }
-            if (!err) {
-                if (result.length === 0) {
-                    return res.send({
-                        status: false,
-                        msg: "Voter ID not found"
-                    })
-                }
-                if (result.length !== 0) {
-                    //check if id is not used 
-                    if (result[0].enabled) {
+        await data.find({ "voterId.id": {$eq: voter_id} }, {"voterId.id": 1, "voterId.enabled": 1, _id: 0}, (err, result) => {
+            if (err) throw new err 
+            //check if the result is not empty
+            if(result.length != 0 || result[0].voterId.length != 0){
+                let v_id = result[0].voterId // array of voterid from query
+                for(let i = 0; i < v_id.length; i++){
+                    //check if voter id is not enabled
+                    if(voter_id === v_id[i].id && !v_id[i].enabled){
+                        data.updateOne({}, {$pull: {voterId: {id: {$eq: voter_id}}}}, (err, del) => {
+                            if(err) throw new err 
+                            return res.send({
+                                status: true, 
+                                msg: "Voter ID Deleted"
+                            })
+                        })
+                    } else {
                         return res.send({
-                            status: false,
+                            status: false, 
                             msg: "Voter ID is in used"
                         })
                     }
-                    if (!result[0].enabled) {
-                        //delete id 
-                        ids.deleteOne({ _id: voter_id }, (err, is_deleted) => {
-                            if (err) {
-                                throw new err
-                            }
-                            if (!err) {
-                                return res.send({
-                                    status: true,
-                                    id_deleted: voter_id,
-                                    msg: "Voter ID deleted successfully"
-                                })
-                            }
-                        })
-                    }
                 }
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Voter ID not found"
+                })
             }
         })
     } catch (e) {
@@ -681,122 +638,165 @@ adminrouter.post('/control/elections/voter-id/delete-voter-id/', isadmin, delete
 })
 //search voter id 
 adminrouter.post('/control/elections/voter-id/search-voter-id/', search_limit, isadmin, async (req, res, next) => {
-    const { data } = req.body
-    const voter_id = xs(data).toUpperCase()
-
-    //search voter id provided by voter_id variable
+    const { id } = req.body
+    const voter_id = xs(id).toUpperCase()
     try {
-        if (voter_id === "") {
-            await ids.find({}, (err, result) => {
-                if (err) {
-                    throw new err
-                }
-                if (!err) {
-                    return res.send({
-                        status: true,
-                        data: result
-                    })
-                }
-            })
-        }
-        else {
-            await ids.find({ student_id: { '$regex': '^' + voter_id, '$options': 'm' } }, (err, result) => {
-                if (err) {
-                    throw new err
-                }
-                if (!err) {
-                    return res.send({
-                        status: true,
-                        data: result
-                    })
-                }
-            })
-        }
+        await data.find({ "voterId.student_id": { '$regex': '^' + voter_id, '$options': 'm' } }, {voterId: 1}, (err, result) => {
+            console.log(result)
+            if (err) throw new err
+            if(result.length === 0){
+                return res.send({
+                    status: true,
+                    data: []
+                })     
+            } else {
+                return res.send({
+                    status: true,
+                    data: result[0].voterId
+                })     
+            }      
+        })
     } catch (e) {
         return res.status(500).send()
     }
 })
 //sort
 adminrouter.post('/control/elections/voter-id/sort-voter-id/', isadmin, normal_limit, async (req, res, next) => {
-    const { data } = req.body
-    const sort = xs(data)
-
+    const { srt } = req.body
+    let sort, isJson
+    //try if the sort value can be converted to json
+    try {
+        sort = JSON.parse(srt) 
+        isJson = true
+    } catch (e) {
+        sort = xs(srt)
+        isJson = false 
+    }
     //check sort value
     try {
-        if (sort === "used" || sort === "not used") {
-            let final_sort = false
-            if (sort === "used") {
-                final_sort = true
-            }
+        if(!isJson){
+            if (sort === "used" || sort === "not used") {
+                let final_sort = false
+                if (sort === "used") {
+                    final_sort = true
+                }
 
-            //get all voter containing with the sort value 
-            await ids.find({ enabled: {$eq: final_sort} }, (err, result) => {
-                if (err) {
-                    throw new err
-                }
-                if (!err) {
+                //get all voter id that is already enabled
+                await data.find({ "voterId.enabled": {$eq: final_sort} }, {voterId: 1}, (err, result) => {
+                    if (err) throw new err
+                    if(result.length === 0){
+                        return res.send({
+                            status: true,
+                            data: []
+                        })
+                    } else {
+                        return res.send({
+                            status: true,
+                            data: result[0].voterId
+                        })
+                    }
+                })
+            }
+            if (sort === "default") {
+                await data.find({}, {voterId: 1}, (err, result) => {
+                    if (err) throw new err
+                    if(result.length === 0){
+                        return res.send({
+                            status: true,
+                            data: []
+                        })
+                    } else {
+                        return res.send({
+                            status: true,
+                            data: result[0].voterId
+                        })
+                    }
+                })
+            }
+        } else {
+            const array_sort = sort
+            let s = []
+            //convert json to array
+            for(let i in array_sort){
+                s.push(i, array_sort[i])
+            }
+            //get sort value 
+            if(s.length === 2){
+                //check is fisrt index is equal to course 
+                if(s[0] === "course"){
+                    //sort all voter id with the given course
+                    data.find({"voterId.course": {$eq: xs(s[1])}}, {voterId: 1}, (err, result) => {
+                        if(err) throw new err 
+                        if(result.length === 0){
+                            return res.send({
+                                status: true,
+                                data: []
+                            })
+                        } else {
+                            return res.send({
+                                status: true,
+                                data: result[0].voterId
+                            })
+                        }
+                    })
+                } else if(s[0] === "year") {
+                    //sort all voter id with the given year
+                    data.find({"voterId.year": {$eq: xs(s[1])}}, {voterId: 1}, (err, result) => {
+                        if(err) throw new err 
+                        if(result.length === 0){
+                            return res.send({
+                                status: true,
+                                data: []
+                            })
+                        } else {
+                            return res.send({
+                                status: true,
+                                data: result[0].voterId
+                            })
+                        }
+                    })
+                } else {
                     return res.send({
-                        status: true,
-                        data: result
+                        status: false,
+                        msg: "Something went wrong"
                     })
                 }
-            })
-        }
-        else if (sort === "default") {
-            await ids.find({}, (err, result) => {
-                if (err) {
-                    throw new err
-                }
-                if (!err) {
-                    return res.send({
-                        status: true,
-                        data: result
-                    })
-                }
-            })
-        }
-        else {
-            await ids.find({ course: {$eq: sort} }, (err, result) => {
-                if (err) {
-                    throw new err
-                }
-                if (!err) {
-                    return res.send({
-                        status: true,
-                        data: result
-                    })
-                }
-            })
+            } else {
+                return res.send({
+                    status: false,
+                    msg: "Something went wrong"
+                })
+            }
         }
     } catch (e) {
         return res.status(500).send()
     }
 })
-//get voter id 
+//get voter id use for checking if voter ID is valid
 adminrouter.post('/control/elections/voter-id/get-voter-id/', limit, isadmin, async (req, res, next) => {
-    const { data } = req.body
-    const voter_id = xs(data)
+    const { id } = req.body
+    const voter_id = xs(id)
 
     //get voter id 
     try {
-        await ids.find({ _id: {$eq: voter_id} }, (err, result) => {
-            if (err) {
-                throw new err
-            }
-            if (!err) {
-                if (result.length === 0) {
-                    return res.send({
-                        status: false,
-                        msg: "Voter ID not found"
-                    })
-                }
-                if (result.length !== 0) {
-                    //set session to determine that this voter id is ready to update 
-                    req.session.voter_id_to_update = result[0]._id
-                    return res.send({
-                        status: true,
-                        data: result
-                    })
+        await data.find({ "voterId.id": {$eq: voter_id} }, {voterId: 1}, (err, result) => {
+            if(err) throw new err
+            if(result.length === 0){
+                return res.send({
+                    status: false, 
+                    msg: "Voter ID not found"
+                })
+            } else {
+                //check if the voter id and the voter id from result is the same 
+                for(let i = 0; i < result[0].voterId.length; i++){
+                    if(result[0].voterId[i].id === voter_id){
+                        //flag this voter id for update
+                        req.session.voter_id_to_update = result[0].voterId[i].id 
+                        return res.send({
+                            status: true, 
+                            data: result[0].voterId[i]
+                        })
+                    }
                 }
             }
         })
@@ -808,69 +808,52 @@ adminrouter.post('/control/elections/voter-id/get-voter-id/', limit, isadmin, as
 adminrouter.post('/control/elections/voter-id/update-voter-id/', limit, isadmin, async (req, res, next) => {
     const { id, course, year } = req.body
     const voter_id_session = req.session.voter_id_to_update
-    const voter_id = xs(id).toUpperCase()
+    const student_id = xs(id).toUpperCase() // new student id
     const voter_course = xs(course)
     const voter_year = xs(year)
-
     //check if voter is exists
     try {
-        await ids.find({ _id: {$eq: voter_id_session} }, (err, result_check) => {
-            if (err) {
-                throw new err
-            }
-            if (!err) {
-                if (result_check.length === 0) {
-                    return res.send({
-                        status: false,
-                        msg: "Voter ID not found"
-                    })
-                }
-                if (result_check.length !== 0) {
-                    //then check if the new voter id is not used with another voter
-                    ids.find({ student_id: {$eq : voter_id }}, (err, result) => {
-                        if (err) {
-                            throw new err
-                        }
-                        if (!err) {
-                            if (result.length === 0) {
-                                //check if course & year is valid 
-                                data.find({"course.type": {$eq: voter_course}, "year.type": {$eq: voter_year}}, (err, cy) => {
-                                    if(err){
-                                        throw new err
-                                    } 
-                                    if(!err){
-                                        //update voter id
-                                        ids.updateOne({ _id: {$eq: voter_id_session} }, { student_id: voter_id, course: voter_course, year: voter_year }, (err, isUpdated) => {
-                                            if (err) {
-                                                throw new err
-                                            }
-                                            if (!err) {
-                                                const new_data = {
-                                                    _id: voter_id_session,
-                                                    student_id: voter_id,
-                                                    course: voter_course,
-                                                    year: voter_year
-                                                }
-                                                console.log(new_data)
-                                                return res.send({
-                                                    status: true,
-                                                    msg: "Voter ID updated successfully",
-                                                    data: new_data
-                                                })
-                                            }
-                                        })
-                                    }
-                                })
-                            }
-                            else {
+        await data.find({ "voterId.id": {$eq: voter_id_session} }, {voterId: 1}, (err, result_check) => {
+            if (err) throw new err
+            if (result_check.length === 0) {
+                return res.send({
+                    status: false,
+                    msg: "Voter ID not found"
+                })
+            } else {
+                //then check if the new student id is not used with another student id
+                data.find({"voterId.student_id": {$eq: student_id}}, {voterId: 1}, (err, f) => {
+                    console.log(student_id)
+                    if(err) throw new err 
+                    if(f.length === 0){
+                        //if all feilds is not empty
+                        if(student_id !== "" && voter_course != "" && voter_year != ""){
+                            data.updateOne({
+                                "voterId.id": {$eq: voter_id_session}
+                            }, {$set: {
+                                "voterId.$.student_id": student_id, 
+                                "voterId.$.course": voter_course, 
+                                "voterId.$.year": voter_year, 
+                            }}, (err, u) => {
+                                if(err) throw new err
                                 return res.send({
-                                    status: false,
-                                    msg: "Please use another Voter ID",
+                                    status: true,
+                                    msg: "Updated Successfully"
                                 })
-                            }
+                            })
+                        } else {
+                            return res.send({
+                                status: false,
+                                msg: "Some feilds is empty"
+                            })
                         }
-                    })
-                }
+                    } else {
+                        return res.send({
+                            status: false,
+                            msg: "Voter ID is already in used"
+                        })
+                    }
+                })
             }
         })
     } catch(e) {

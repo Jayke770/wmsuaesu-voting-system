@@ -2,12 +2,10 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
 const xs = require('xss')
-const ejs = require('ejs')
 const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcrypt')
 const user = require('../models/user')
-const id_db = require('../models/student-id')
 const admin = require('../models/admin')
 const elections = require('../models/election')
 const { authenticated, isadmin, isloggedin, take_photo, get_face } = require('./auth')

@@ -19,7 +19,6 @@ const bcrypt = require('bcrypt')
 const morgan = require('morgan')
 const multer = require('multer')
 const user = require('./models/user')
-const ids = require('./models/student-id')
 const admin_acc = require('./models/admin')
 const election = require('./models/election')
 const uploader = multer()
@@ -64,9 +63,9 @@ app.use(express.json()) // json
 app.use(uploader.array())
 app.use(cors())
 const shared_session = (session({
-    name: "session-id",
+    name: "wmsu-session-id",
     secret: process.env.session_secret,
-    expires: 1000 * 60 * 60 * 24 * 1,
+    expires: 1000 * 60 * 60 * 24,
     cookie: {
        maxAge: 1000 * 60 * 60 * 24 * 1 
     },

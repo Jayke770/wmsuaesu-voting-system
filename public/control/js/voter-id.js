@@ -85,7 +85,7 @@ $(".add_voter_id_form").submit(function(e){
                             })
                         }
                     },
-                    errror: (e) => {
+                    error: (e) => {
                         if(e.statusText === 'timeout'){
                             toast.fire({
                                 icon: 'error', 
@@ -170,7 +170,7 @@ $(".voters_id_all").delegate(".delete_voter_id", "click", function(e){
                                 allowOutsideClick: true
                             }).then( () => {
                                 //remove div containing the voter id 
-                                $(`div[data="${res.id_deleted}"]`).remove()
+                                $(`div[data="${$(this).attr("data")}"]`).remove()
                             })
                         }
                         if(!res.status){
@@ -191,7 +191,7 @@ $(".voters_id_all").delegate(".delete_voter_id", "click", function(e){
 $(".sort_voter_id").change(function(){
     if($(this).val().trim() !== ""){
         $.post("voter-id/sort-voter-id/", {
-            data: $(this).val().trim()
+            srt: $(this).val().trim()
         }, (res) => {
             if(res.status){
                 append(res.data)
@@ -204,7 +204,7 @@ $(".search_voter_id").keyup(function(){
         if(!search_voter_id){
             search_voter_id = true
             $.post("voter-id/search-voter-id/", {
-                data: $(this).val().trim()
+                id: $(this).val().trim()
             }, (res, status) => {
                 if(res.status){
                     append(res.data)
@@ -224,7 +224,7 @@ $(".voters_id_all").delegate(".update_voter_id", "click", function(e) {
     e.preventDefault() 
     const icon = `<i style="font-size: 1.50rem; margin-right: 1rem; color: green;" class="fad fa-spin fa-spinner-third"></i>`
     let data = new FormData() 
-    data.append("data", $(this).attr("data"))
+    data.append("id", $(this).attr("data"))
     update_id = $(this).attr("data")
     //get voter id data 
     toast.fire({
@@ -242,9 +242,7 @@ $(".voters_id_all").delegate(".update_voter_id", "click", function(e) {
                     if (res.status) {
                         setTimeout( () => {
                             toast.close()
-                            $(".edit_voter_id_form").find('input[name="id"]').attr("placeholder", res.data[0].student_id)
-                            $(".edit_voter_id_form").find('input[name="course"]').attr("placeholder", res.data[0].course)
-                            $(".edit_voter_id_form").find('input[name="year"]').attr("placeholder", res.data[0].year)
+                            $(".edit_voter_id_form").find('input[name="id"]').attr("placeholder", res.data.student_id)
                             $(".edit_form").addClass($(".edit_form").attr("animate-in"))
                             $(".popup_2").removeClass("hidden")
                             setTimeout(() => {
@@ -295,7 +293,7 @@ $(".edit_voter_id_form").submit(function(e){
                     timer: 1000
                 }).then( () => {
                     let data = new FormData() 
-                    data.append("data", "default")
+                    data.append("srt", "default")
                     $.ajax({
                         url: 'voter-id/sort-voter-id/', 
                         method: 'POST', 
@@ -393,7 +391,10 @@ function append(data){
             <div style="animation-delay: ${i * .150}s;" data="${data[i]._id}" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
                 <div class="w-full">
                     <span class="st_id font-normal text-base dark:text-gray-300">${data[i].student_id}</span>
-                    <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">${data[i].course} ${data[i].year}</span>
+                    <div class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">
+                        <span course="${data.course}">...</span>
+                        <span year="${data.year}">...</span>
+                    </div>
                 </div>
                 <div class="mt-2 p-2">
                     <a data="${data[i]._id}" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
@@ -418,7 +419,6 @@ function append(data){
     }
 }
 function append_voter_id(data) {
-    console.log('fas')
     let badge = "dark:bg-amber-700 bg-amber-600", text_badge = "Not Used"
     if(data.enabled){
         badge = "dark:bg-green-700 bg-green-600"
@@ -430,7 +430,10 @@ function append_voter_id(data) {
             <div style="animation-delay: .150s;" data="${data._id}" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
                 <div class="w-full">
                     <span class="st_id font-normal text-base dark:text-gray-300">${data.student_id}</span>
-                    <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">${data.course} ${data.year}</span>
+                    <div class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">
+                        <span course="${data.course}">...</span>
+                        <span year="${data.year}">...</span>
+                    </div>
                 </div>
                 <div class="mt-2 p-2">
                     <a data="${data._id}" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
@@ -448,7 +451,10 @@ function append_voter_id(data) {
             <div style="animation-delay: .150s;" data="${data._id}" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
                 <div class="w-full">
                     <span class="st_id font-normal text-base dark:text-gray-300">${data.student_id}</span>
-                    <span class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">${data.course} ${data.year}</span>
+                    <div class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">
+                        <span course="${data.course}">...</span>
+                        <span year="${data.year}">...</span>
+                    </div>
                 </div>
                 <div class="mt-2 p-2">
                     <a data="${data._id}" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
