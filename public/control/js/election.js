@@ -154,4 +154,29 @@ $(document).ready(() => {
         enableTime: true,
         dateFormat: "Y-m-d h:i K",
     })
+    $(".c_list_e").click( () => {
+        const courses = $(".courses")
+        const year = $(".year")
+        if(courses.hasClass("md:hidden")){
+            courses.removeClass("md:hidden")
+            year.addClass("md:hidden")
+        }
+    })
+    $(".y_list_e").click( () => {
+        const courses = $(".courses")
+        const year = $(".year")
+        if(year.hasClass("md:hidden")){
+            year.removeClass("md:hidden")
+            courses.addClass("md:hidden")
+        }
+    })
+    $(".create_e_btn").click( function(e){
+        e.preventDefault() 
+        $(".create_e_btn").removeAttr("style")
+        $(this).css({
+            background: "#1d2936"
+        }) 
+        $(".e_info, .e_courses, .e_positions").hide() 
+        $($(this).attr("data")).show()
+    })
 })

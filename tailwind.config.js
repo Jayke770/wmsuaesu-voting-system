@@ -8,15 +8,6 @@ module.exports = {
   darkMode: 'class', // or 'media' or 'class'
   theme: {
     extend: {},
-    // colors: {
-    //   gray: {
-    //     850: '#212121',
-    //     750: '#313131'
-    //   },
-    //   purple: {
-    //     550: '#892CDC'
-    //   }
-    // },
     colors: {
       transparent: "transparent",
       current: "currentColor",

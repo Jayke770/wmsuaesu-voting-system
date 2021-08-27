@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="wmsu">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -98,7 +98,7 @@
                                 </div>
                                 <div class="container mt-8 justify-center flex flex-row ">
                                     <a class="more_e_settings rpl rpl-h dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-300 transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-purple-500"
-                                    href="elections/<%- election._id %>">More Details</a>
+                                    href="<%- election._id %>">More Details</a>
                                 </div>
                             </div>
                         </div>
@@ -108,7 +108,7 @@
         </div>
     </div>
     <div class="create_election z-20 dark:bg-darkBlue-primary/60 bg-gray-900/60 hidden justify-center items-center fixed top-0 w-full h-full">
-        <div animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp" class="create_election_main ms-500 p-2 w-[70%] h-[90%] lg:w-[85%] md:w-[95%] md:h-[max-content] bg-gray-50 dark:bg-darkBlue-secondary dark_border rounded-xl">
+        <div class="create_election_main ms-500 p-2 w-[70%] h-[90%] lg:w-[85%] md:w-[95%] md:h-[95%] bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl" animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp">
             <div class="flex flex-row w-full">
                 <div class="w-[95%] flex flex-col">
                     <p class="font-medium transition-all relative text-purple-600 dark:text-purple-500 text-3xl py-2 px-3 after:absolute after:bottom-0 after:left-3 after:bg-purple-600 dark:after:bg-purple-700 after:w-6/12 after:h-[3px]">Create Election</p>
@@ -121,54 +121,120 @@
             </div>
             <div class="w-full h-[calc(100%-54px)] p-2 py-3">
                 <div class="w-full h-full flex flex-row md:flex-col">
-                    <div class="transition-all w-60 md:w-full md:grid md:grid-cols-4 md:dark:border-b-[.1px] md:dark:border-r-0 md:p-1 flex flex-col gap-1 p-2 dark:border-r-[.1px] dark:border-gray-600">
-                        <a class="rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                    <div class="transition-all w-60 md:w-full md:grid md:grid-cols-5 md:dark:border-b-[.1px] md:dark:border-r-0 md:p-1 flex flex-col gap-1 p-2 dark:border-r-[.1px] dark:border-gray-600">
+                        <a data=".e_info" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
                             <span class="md:hidden">Information</span>
                             <i class="hidden md:block text-xl text-teal-500">
-                                <i class="fas fa-info-circle"></i>
+                                <i class="fad fa-info-circle"></i>
                             </i>
                         </a>
-                        <a class="rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
-                            <span class="md:hidden">Courses</span>
+                        <a data=".e_courses" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                            <span class="md:hidden">Courses & Year</span>
                             <i class="hidden md:block text-xl text-purple-500">
-                                <i class="fal fa-list-alt"></i>
+                                <i class="fad fa-list-alt"></i>
                             </i>
                         </a>
-                        <a class="rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                        <a data=".e_positions" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
                             <span class="md:hidden">Postions</span>
                             <i class="hidden md:block text-xl text-amber-500">
-                                <i class="fas fa-list-ol"></i>
+                                <i class="fad fa-list-ol"></i>
+                            </i>
+                        </a>
+                        <a class="rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                            <span class="md:hidden">Partylist</span>
+                            <i class="hidden md:block text-xl text-amber-500">
+                                <i class="fad fa-th-list"></i>
                             </i>
                         </a>
                         <a class="rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
                             <span class="md:hidden">Finish</span>
                             <i class="hidden md:block text-xl text-lime-600">
-                                <i class="fas fa-check-circle"></i>
+                                <i class="fad fa-check-circle"></i>
                             </i>
                         </a>
                     </div>
-                    <div class="w-[calc(100%-15rem)] md:h-full  md:w-full overflow-x-hidden overflow-y-auto">
+                    <div class="w-[calc(100%-15rem)] md:h-full md:w-full overflow-x-hidden overflow-y-auto">
                         <div class="e_info h-full pl-3 md:pl-0">
                             <div class="flex flex-col py-3 gap-5 h-full">
-                                <div class="flex justify-start flex-col w-2/5 lg:w-10/12 md:w-full px-4">
+                                <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-2/5 lg:w-10/12 md:w-full px-4 ">
                                     <label for="e_title" class="dark:text-gray-300 text-base">Election Title</label>
                                     <input type="text" name="e_title" placeholder="SSG Election" autocomplete="off" class="text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg" required>
                                 </div>
-                                <div class="flex justify-start flex-col w-10/12 md:w-full px-4">
+                                <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-10/12 md:w-full px-4 ">
                                     <label for="e_title" class="dark:text-gray-300 text-base">Description</label>
                                     <textarea rows="5" name="e_title" placeholder="Optional" autocomplete="off" class="text-input resize-none w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg"></textarea>
                                 </div>
                                 <div class="grid grid-rows-2 gap-4 px-4 w-full">
-                                    <div class="flex w-1/2 md:w-full flex-col">
+                                    <div style="animation-delay: .350s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
                                         <label for="e_start" class="dark:text-gray-300 text-base">Start Date & Time</label>
                                         <input placeholder="Date & Time" type="text" name="e_start" autocomplete="off" class="dt_picker text-input appearance-none w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg" required>
                                     </div>
-                                    <div class="flex w-1/2 md:w-full flex-col">
+                                    <div style="animation-delay: .450s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
                                         <label for="e_end" class="dark:text-gray-300 text-base">End Date & Time</label>
                                         <input placeholder="Date & Time" type="text" name="e_end" autocomplete="off" class="dt_picker text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg" required>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="e_courses hidden h-full pl-3 md:pl-0">
+                            <div class="flex flex-col mt-2 gap-2 h-full md:grid-cols-1">
+                                <div class="flex flex-row w-full">
+                                    <div class="c_list_e py-3 rounded-l-md dark:bg-bluegray-800 dark:text-gray-300 w-full flex justify-center items-center cursor-pointer rpl">
+                                        <span>Courses</span>
+                                    </div>
+                                    <div class="y_list_e py-3 rounded-r-md dark:bg-bluegray-800 dark:text-gray-300 w-full flex justify-center items-center cursor-pointer rpl">
+                                        <span>Year</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-1 md:grid-cols-1 transition-all">
+                                    <div class="courses">
+                                        <div class="px-3 py-2 flex flex-col gap-2">
+                                            <% if(course.length != 0) { 
+                                                for( let i = 0; i < course.length; i++ ) { %>
+                                                    <div data="<%- course[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="chip animate__animated animate__fadeInUp ms-500 w-auto grid grid-cols-2 px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
+                                                        <span class="chip-title dark:text-gray-300"><%- course[i].type %></span>
+                                                        <div class="flex justify-end items-center">
+                                                            <a data="<%- course[i].id %>" class="chip-btn cursor-pointer rpl outline-none px-3 pr-1 dark:text-purple-600">
+                                                                <i class="fas fa-plus-circle"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                <% }
+                                            } else { %> 
+                                                <div style="animation-delay: .150s;" class="chip animate__animated animate__fadeInUp ms-500 w-auto flex justify-center items-center  px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
+                                                    <span class="dark:text-gray-300">No Courses Yet</span>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="year md:hidden transition-all">
+                                        <div class="px-3 py-2 flex flex-col gap-2">
+                                            <% if(year.length != 0) { 
+                                                for( let i = 0; i < year.length; i++ ) { %>
+                                                    <div data="<%- year[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="chip animate__animated animate__fadeInUp ms-500 w-auto grid grid-cols-2 px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
+                                                        <span class="chip-title dark:text-gray-300"><%- year[i].type %></span>
+                                                        <div class="flex justify-end items-center">
+                                                            <a data="<%-year[i].id %>" class="chip-btn cursor-pointer rpl outline-none px-3 pr-1 dark:text-purple-600">
+                                                                <i class="fas fa-plus-circle"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                <% }
+                                            } else { %> 
+                                                <div style="animation-delay: .150s;" class="chip animate__animated animate__fadeInUp ms-500 w-auto flex justify-center items-center  px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
+                                                    <span class="dark:text-gray-300">No Courses Yet</span>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="e_positions hidden h-full pl-3 md:pl-0">
+                            <div class="w-full flex flex-col items-center p-2">
+                                <p class="dark:text-gray-300 text-2xl">Select Positions</p>
+                            </div>
+                            <div chipdefault='<%- JSON.stringify(positions) %>' chip='<%- JSON.stringify(positions) %>' class="flex flex-col gap-2 mt-2"></div>
                         </div>
                     </div>
                 </div>
@@ -181,6 +247,7 @@
     <script src="/js/avatar.js "></script>
     <script src="/js/toast.js"></script>
     <script src="/control/js/election.js "></script>
+    <script src="/control/js/pos-add.js"></script>
     <script>
         $.ripple(".rpl", {
             debug: false,
