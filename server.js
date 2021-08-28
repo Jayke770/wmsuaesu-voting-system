@@ -637,7 +637,7 @@ async function start() {
             //retry to connect 
             console.log("Can't connect to FTP Server \n")
             console.log("Reconnecting \n")
-            start()
+            http.listen(port, console.log('Server Started on port ' + port))
         }
     }
 }
