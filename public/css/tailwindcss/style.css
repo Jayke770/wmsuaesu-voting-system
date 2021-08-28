@@ -1129,6 +1129,10 @@ video {
   width: auto;
 }
 
+.w-\[200px\] {
+  width: 200px;
+}
+
 .w-\[60\%\] {
   width: 60%;
 }
@@ -1139,10 +1143,6 @@ video {
 
 .w-9\/12 {
   width: 75%;
-}
-
-.w-\[200px\] {
-  width: 200px;
 }
 
 .flex-\[20\%\] {
@@ -3646,6 +3646,11 @@ input:checked~.dot {
   color: rgba(239, 68, 68, var(--tw-text-opacity));
 }
 
+.dark .dark\:text-teal-500 {
+  --tw-text-opacity: 1;
+  color: rgba(20, 184, 166, var(--tw-text-opacity));
+}
+
 .dark .dark\:text-purple-300 {
   --tw-text-opacity: 1;
   color: rgba(216, 180, 254, var(--tw-text-opacity));
@@ -3664,21 +3669,6 @@ input:checked~.dot {
 .dark .dark\:text-gray-600 {
   --tw-text-opacity: 1;
   color: rgba(82, 82, 91, var(--tw-text-opacity));
-}
-
-.dark .dark\:text-lime-600 {
-  --tw-text-opacity: 1;
-  color: rgba(101, 163, 13, var(--tw-text-opacity));
-}
-
-.dark .dark\:text-teal-600 {
-  --tw-text-opacity: 1;
-  color: rgba(13, 148, 136, var(--tw-text-opacity));
-}
-
-.dark .dark\:text-teal-500 {
-  --tw-text-opacity: 1;
-  color: rgba(20, 184, 166, var(--tw-text-opacity));
 }
 
 .dark .dark\:after\:bg-purple-700::after {

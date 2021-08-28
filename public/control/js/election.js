@@ -1,6 +1,6 @@
 'use strict'
 $(document).ready(() => {
-    let req = false, courses = [], year = []
+    let req = false, courses = [], year = [], partylist = []
     //detect locations hash 
     const loc = location.hash
     if(loc){
@@ -122,9 +122,7 @@ $(document).ready(() => {
         }
     })
     $(".loader").delegate(".return_main", "click", () => {
-        $(".loader").html("")
-        $(".main").fadeIn(100)
-        location.hash = ""
+        window.location.assign('')
     })
     //create election
     $(".create_election_btn").click( function(e) {
@@ -178,7 +176,7 @@ $(document).ready(() => {
         $(this).addClass("active-e-btn")
         $($(this).attr("data")).show()
     })
-    //when course list is cliked 
+    //when course list is clicked 
     $(".course_select").click(function() {
         const icon = `<i class="fad fa-check-circle"></i>`
         if(!$(this).hasClass("active-b-green")){
@@ -222,7 +220,7 @@ $(document).ready(() => {
             }
         }
     })
-    //when year list is cliked 
+    //when year list is clicked 
     $(".year_select").click(function() {
         const icon = `<i class="fad fa-check-circle"></i>`
         if(!$(this).hasClass("active-b-green")){
@@ -265,5 +263,64 @@ $(document).ready(() => {
                 }
             }
         }
+    })
+    //when partylist is clicked
+    $(".partylist_select").click(function(){
+        const icon = `<i class="fad fa-check-circle"></i>`
+        if(!$(this).hasClass("active-b-green")){
+            //check if partylist array if = to 0 
+            if(partylist.length === 0){
+                partylist.push($(this).attr("data"))
+                $(this).addClass("active-b-green")
+                $(".partylists").find("input[name='partylists']").val(partylist)
+                $(this).find(".partylist_select_ic").html(icon)
+            } else {
+                //if the partylist array is not equal to 0 
+               //check if the selected item is not equal to the partylist array 
+               for(let i = 0; i < partylist.length; i++){
+                //if not = push new item
+                if($(this).attr("data") != partylist[i]){
+                    partylist.push($(this).attr("data"))
+                    $(this).addClass("active-b-green")
+                    $(".partylists").find("input[name='partylists']").val(partylist)
+                    $(this).find(".partylist_select_ic").html(icon)
+                    break
+                } else {
+                    partylist.splice(i, 1)
+                    $(this).removeClass("active-b-green")
+                    $(".partylists").find("input[name='partylists']").val(partylist)
+                    $(this).find(".partylist_select_ic").html('')
+                    break
+                }
+            }
+            }
+        } else {
+            //remove the item selected to partylist array 
+            for(let i = 0; i < partylist.length; i++){
+                if($(this).attr("data") == partylist[i]){
+                    partylist.splice(i, 1)
+                    $(this).removeClass("active-b-green")
+                    $(".partylists").find("input[name='partylists']").val(partylist)
+                    $(this).find(".partylist_select_ic").html('')
+                    break
+                }
+            }
+        }
+    })
+    //when form is submitted 
+    $(".create_election_form").submit(function(e) {
+        e.preventDefault() 
+        $.ajax({
+            url: 'p/',
+            method: 'POST',
+            cache: false,
+            processData: false,
+            contentType: false,
+            timout: 5000,
+            data: new FormData(this), 
+            success: (res) => {
+                console.log('fas')
+            }
+        })
     })
 })

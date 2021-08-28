@@ -1,48 +1,83 @@
 $(document).ready( () => {
+    var positions = [], //use for storing selected positions
+    defaultpos = JSON.parse($("div[chip]").attr("chip")), // default positions in array 
+    posleft = JSON.parse($("div[chip]").attr("chip")) // array of not selected positions
     if($("div[chip]").length != 0){
         $("div[chip]").each( function() {
             addchip(JSON.parse($(this).attr("chip")))
         })
     }
+    //when add chip is clicked
     $("div[chip]").delegate(".addchip", "click", function() {
-        //get selected value 
-        let chips = JSON.parse($("div[chip]").attr("chip")), selectedchip
-        const selected = $("div[chip]").attr("chip-selected") 
-        for(let i = 0; i < chips.length; i++) {
-            if(chips[i].id === selected){
-                selectedchip = chips[i].id
-                chips.splice(i, 1)
+        const selected = $("div[chip]").attr("chip-selected")
+        const max = $(this).parent().parent().parent().find("input[type='number']").val()
+        //push the selected item to positions 
+        for(let i = 0; i < defaultpos.length; i++){
+            if(selected === defaultpos[i].id){
+                //push the selected item to positions 
+                positions.push({
+                    id: selected, 
+                    maxvote: max
+                })
+                //remove active class 
+                $(this).parent().parent().parent().removeClass("chip-input-active")
+                //disable inputs 
+                $(this).parent().parent().parent().find("select, input[type='number']").prop("disabled", true)
+                //add new icon 
+                $(this).parent().html(`
+                    <a data="${selected}" class="removechip rpl cursor-pointer dark:text-red-500 text-2xl px-2 rounded-md">
+                        <i class="fad fa-times-circle"></i>
+                    </a>
+                `)
                 break
             }
         }
-        $("div[chip]").attr("chip", JSON.stringify(chips))
-        //get last chip input 
-        const active = $("div[chip]").find(".activechip") 
-        if(active.find("select").val() && active.find("input").val()){
-            $(this).parent().parent().parent().removeClass("chip-input-active")
-            $(this).parent().parent().parent().find("select, input").prop("disabled", true)
-            $(this).parent().parent().parent().find("select").removeClass("activeselect")
-            //remove current active chip
-            $(this).parent().parent().prev().removeClass("activechip")
-            //add close button 
-            $(this).parent().append(`
-                <a data="${selectedchip}" class="removechip rpl cursor-pointer dark:text-rose-600 text-2xl px-2 rounded-md">
-                    <i class="fad fa-times-circle"></i>
-                </a>
-            `)  
-            $(this).remove()
-            addchip(chips)
+        //update positions input 
+        $(".e_positions").find("input[name='positions']").val(JSON.stringify(positions))
+        //update posleft array 
+        for(let y = 0; y < posleft.length; y++){
+            if(selected === posleft[y].id){
+                posleft.splice(y, 1) 
+                addchip(posleft)
+                break
+            }
         }
+    })
+    //when remove chip is clicked
+    $("div[chip]").delegate(".removechip", "click", function() {
+        const selected = $(this).attr("data")
+        //get the selected item and push to posleft 
+        for(let i = 0; i < defaultpos.length; i++){
+            if(selected === defaultpos[i].id){
+                //push the item to posleft 
+                posleft.push(defaultpos[i])
+                //remove the chip-input-active
+                $(this).parent().parent().parent().remove()
+                $(".e_positions").find(".chip-input-active").remove()
+                break
+            }
+        }
+        //remove this item to positions 
+        for(let x = 0; x < positions.length; x++){
+            if(selected === positions[x].id){
+                positions.splice(x, 1)
+                break
+            }
+        }
+        //update positions input 
+        $(".e_positions").find("input[name='positions']").val(JSON.stringify(positions))
+        //add chip 
+        addchip(posleft)
     })
     function addchip(chipvalue){
         if(chipvalue.length != 0){
             $("div[chip]").append(`
                 <div class="chip-input chip-input-active animate__animated animate__fadeInUp ms-500 flex flex-row gap-1">
                     <div class="activechip w-full grid grid-cols-2 gap-2 p-2">
-                        <select pending name="positions" class="activeselect disabled:cursor-not-allowed dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " autocomplete="off" required>
+                        <select pending class="activeselect disabled:cursor-not-allowed dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " autocomplete="off">
                             <option value="">Select Postion</option>
                         </select>
-                        <input type="number" placeholder="Max Vote" name="max_vote" class="disabled:cursor-not-allowed dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " autocomplete="off" required>
+                        <input type="number" placeholder="Max Vote" class="disabled:cursor-not-allowed dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " autocomplete="off">
                     </div>
                     <div class="chip-input-actions p-1">
                         <div class="flex flex-row gap-1 justify-center items-center h-full">
@@ -63,58 +98,5 @@ $(document).ready( () => {
     }
     $("div[chip]").delegate(".activeselect", "change", function() {
         $("div[chip]").attr("chip-selected", $(this).val())
-    })
-    $("div[chip]").delegate(".removechip", "click", function() {
-        var chipvalue = JSON.parse($("div[chip]").attr("chip"))
-        if(chipvalue.length == 0){
-            //if chip is not empty add the remove item to the array 
-            const s = $(this).attr("data")
-            const defaultchip = JSON.parse($("div[chip]").attr("chipdefault"))
-            var chip = JSON.parse($("div[chip]").attr("chip"))
-            for(var i = 0; i < defaultchip.length; i++){
-                if(s === defaultchip[i].id){
-                    chip.push(defaultchip[i])
-                    $("div[chip]").attr("chip", JSON.stringify(chip))
-                    break
-                }
-            }
-            $("div[chip]").append(`
-                <div class="chip-input chip-input-active animate__animated animate__fadeInUp ms-500 flex flex-row gap-1">
-                    <div class="activechip w-full grid grid-cols-2 gap-2 p-2">
-                        <select pending name="positions" class="activeselect disabled:cursor-not-allowed dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " autocomplete="off" required>
-                            <option value="">Postion</option>
-                        </select>
-                        <input type="number" placeholder="Max Vote" name="max_vote" class="disabled:cursor-not-allowed dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " autocomplete="off" required>
-                    </div>
-                    <div class="chip-input-actions p-1">
-                        <div class="flex flex-row gap-1 justify-center items-center h-full">
-                            <a class="addchip rpl cursor-pointer dark:text-green-600 text-2xl px-2 rounded-md">
-                                <i class="fad fa-check-circle"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `)
-            for(let i = 0; i < chip.length; i++){
-                $('select[pending]').append(`
-                    <option value="${chip[i].id}">${chip[i].type}</option>
-                `)
-            }
-            $('select[pending]').removeAttr("pending")
-            $(this).parent().parent().parent().remove()
-        } else {
-            //if chip is not empty add the remove item to the array 
-            const s = $(this).attr("data")
-            const defaultchip = JSON.parse($("div[chip]").attr("chipdefault"))
-            var chip = JSON.parse($("div[chip]").attr("chip"))
-            for(var i = 0; i < defaultchip.length; i++){
-                if(s === defaultchip[i].id){
-                    chip.push(defaultchip[i])
-                    $("div[chip]").attr("chip", JSON.stringify(chip))
-                    $(this).parent().parent().parent().remove()
-                    break
-                }
-            }
-        }
     })
 })
