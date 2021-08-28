@@ -82,7 +82,7 @@ $(document).ready( () => {
                 <div class="chip-input chip-input-active animate__animated animate__fadeInUp ms-500 flex flex-row gap-1">
                     <div class="activechip w-full grid grid-cols-2 gap-2 p-2">
                         <select pending name="positions" class="activeselect disabled:cursor-not-allowed dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " autocomplete="off" required>
-                            <option value="">Select Postion</option>
+                            <option value="">Postion</option>
                         </select>
                         <input type="number" placeholder="Max Vote" name="max_vote" class="disabled:cursor-not-allowed dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " autocomplete="off" required>
                     </div>

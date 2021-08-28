@@ -235,3 +235,10 @@ input:checked~.dot {
     }
 }
 /*svg end */
+.active-b-green{
+    border-width: .1px !important;
+    border-color: rgba(20, 184, 166, 0.6) !important;
+}
+.active-e-btn{
+    background: #1d2936 !important;
+}

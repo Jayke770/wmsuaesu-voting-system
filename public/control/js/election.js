@@ -1,6 +1,6 @@
 'use strict'
 $(document).ready(() => {
-    let req = false
+    let req = false, courses = [], year = []
     //detect locations hash 
     const loc = location.hash
     if(loc){
@@ -126,6 +126,7 @@ $(document).ready(() => {
         $(".main").fadeIn(100)
         location.hash = ""
     })
+    //create election
     $(".create_election_btn").click( function(e) {
         e.preventDefault()
         const parent = $(".create_election")
@@ -172,11 +173,97 @@ $(document).ready(() => {
     })
     $(".create_e_btn").click( function(e){
         e.preventDefault() 
-        $(".create_e_btn").removeAttr("style")
-        $(this).css({
-            background: "#1d2936"
-        }) 
-        $(".e_info, .e_courses, .e_positions").hide() 
+        $(".e_info, .e_courses, .e_positions, .e_partylist").hide() 
+        $(".create_e_btn").removeClass("active-e-btn")
+        $(this).addClass("active-e-btn")
         $($(this).attr("data")).show()
+    })
+    //when course list is cliked 
+    $(".course_select").click(function() {
+        const icon = `<i class="fad fa-check-circle"></i>`
+        if(!$(this).hasClass("active-b-green")){
+            //check if courses array is  empty 
+            if(courses.length === 0) {
+                //if = to 0 push new item
+                courses.push($(this).attr("data"))
+                $(this).addClass("active-b-green")
+                $(".courses").find("input[name='courses']").val(courses)
+                $(this).find(".course_select_ic").html(icon)
+            } else {
+               //if the courses array is not equal to 0 
+               //check if the selected item is not equal to the courses array 
+               for(let i = 0; i < courses.length; i++){
+                   //if not = push new item
+                   if($(this).attr("data") != courses[i]){
+                       courses.push($(this).attr("data"))
+                       $(this).addClass("active-b-green")
+                       $(".courses").find("input[name='courses']").val(courses)
+                       $(this).find(".course_select_ic").html(icon)
+                       break
+                   } else {
+                       courses.splice(i, 1)
+                       $(this).removeClass("active-b-green")
+                       $(".courses").find("input[name='courses']").val(courses)
+                       $(this).find(".course_select_ic").html('')
+                       break
+                   }
+               }
+            }
+        } else {
+            //remove the item selected to courses array 
+            for(let i = 0; i < courses.length; i++){
+                if($(this).attr("data") == courses[i]){
+                    courses.splice(i, 1)
+                    $(this).removeClass("active-b-green")
+                    $(".courses").find("input[name='courses']").val(courses)
+                    $(this).find(".course_select_ic").html('')
+                    break
+                }
+            }
+        }
+    })
+    //when year list is cliked 
+    $(".year_select").click(function() {
+        const icon = `<i class="fad fa-check-circle"></i>`
+        if(!$(this).hasClass("active-b-green")){
+            //check if year array is  empty 
+            if(year.length === 0) {
+                //if = to 0 push new item
+                year.push($(this).attr("data"))
+                $(this).addClass("active-b-green")
+                $(".year").find("input[name='year']").val(year)
+                $(this).find(".year_select_ic").html(icon)
+            } else {
+               //if the year array is not equal to 0 
+               //check if the selected item is not equal to the year array 
+               for(let i = 0; i < year.length; i++){
+                   //if not = push new item
+                   if($(this).attr("data") != year[i]){
+                       year.push($(this).attr("data"))
+                       $(this).addClass("active-b-green")
+                       $(".year").find("input[name='year']").val(year)
+                       $(this).find(".year_select_ic").html(icon)
+                       break
+                   } else {
+                       year.splice(i, 1)
+                       $(this).removeClass("active-b-green")
+                       $(".year").find("input[name='year']").val(year)
+                       $(this).find(".year_select_ic").html('')
+                       break
+                   }
+               }
+            }
+        } else {
+            //remove the item selected to year array 
+            for(let i = 0; i < year.length; i++){
+                if($(this).attr("data") == year[i]){
+                    year.splice(i, 1)
+                    $(this).removeClass("active-b-green")
+                    $(".year").find("input[name='year']").val(year)
+                    $(this).find(".year_select_ic").html('')
+                    break
+                }
+            }
+        }
     })
 })
