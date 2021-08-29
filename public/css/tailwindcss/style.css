@@ -1137,6 +1137,10 @@ video {
   width: 60%;
 }
 
+.w-2\/4 {
+  width: 50%;
+}
+
 .w-40 {
   width: 10rem;
 }
@@ -2408,6 +2412,23 @@ video {
   transition-property: background-color, border-color, color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+@-webkit-keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  -webkit-animation: spin 1s linear infinite;
+          animation: spin 1s linear infinite;
 }
 
 /* remove light blue tap effect in android*/
@@ -3765,6 +3786,12 @@ input:checked~.dot {
   background-color: rgba(22, 27, 34, var(--tw-bg-opacity));
 }
 
+.dark .dark\:focus\:ring-2:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
 .dark .dark\:focus\:ring-purple-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgba(168, 85, 247, var(--tw-ring-opacity));
@@ -3775,6 +3802,11 @@ input:checked~.dot {
   --tw-ring-color: rgba(126, 34, 206, var(--tw-ring-opacity));
 }
 
+.dark .dark\:focus\:ring-purple-800:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgba(107, 33, 168, var(--tw-ring-opacity));
+}
+
 .dark .dark\:focus\:ring-rose-800:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgba(159, 18, 57, var(--tw-ring-opacity));
@@ -3783,6 +3815,14 @@ input:checked~.dot {
 .dark .dark\:focus\:ring-green-800:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgba(22, 101, 52, var(--tw-ring-opacity));
+}
+
+.dark .dark\:focus\:ring-offset-2:focus {
+  --tw-ring-offset-width: 2px;
+}
+
+.dark .dark\:focus\:ring-offset-darkBlue-secondary:focus {
+  --tw-ring-offset-color: #161b22;
 }
 
 .dark .dark\:active\:ring-purple-700:active {

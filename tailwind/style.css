@@ -1,6 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.spin{
+    @apply animate-spin;
+}
 /* remove light blue tap effect in android*/ 
 a, button, p, div, span, i, body{
     -webkit-tap-highlight-color: transparent;

@@ -151,7 +151,7 @@ $(document).ready(() => {
         disableMobile: "true", 
         minDate: "today",
         enableTime: true,
-        dateFormat: "Y-m-d h:i K",
+        dateFormat: "m/d/Y h:i K",
     })
     $(".c_list_e").click( () => {
         const courses = $(".courses")
@@ -171,10 +171,10 @@ $(document).ready(() => {
     })
     $(".create_e_btn").click( function(e){
         e.preventDefault() 
-        $(".e_info, .e_courses, .e_positions, .e_partylist").hide() 
         $(".create_e_btn").removeClass("active-e-btn")
         $(this).addClass("active-e-btn")
-        $($(this).attr("data")).show()
+        $(".e_info, .e_courses, .e_positions, .e_partylist, .s_submit").addClass("hidden")
+        $($(this).attr("data")).removeClass("hidden")
     })
     //when course list is clicked 
     $(".course_select").click(function() {
@@ -310,16 +310,27 @@ $(document).ready(() => {
     //when form is submitted 
     $(".create_election_form").submit(function(e) {
         e.preventDefault() 
+        const text = $(this).find("button[type='submit']").html()
+        const icon = `<i class="fad fa-spinner-third text-xl spin"></i>`
         $.ajax({
-            url: 'p/',
+            url: 'create-election/',
             method: 'POST',
             cache: false,
             processData: false,
             contentType: false,
-            timout: 5000,
+            timout: 10000,
             data: new FormData(this), 
+            beforeSend: () => {
+                $(this).find("button[type='submit']").html(icon)
+                $(this).find("button[type='submit']").removeClass("sm:w-full w-2/4")
+            },
             success: (res) => {
-                console.log('fas')
+                $(this).find("button[type='submit']").html(text)
+                $(this).find("button[type='submit']").addClass("sm:w-full w-2/4")
+                console.log(res)
+            }, 
+            error: (e) => {
+
             }
         })
     })

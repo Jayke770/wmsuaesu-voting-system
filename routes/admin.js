@@ -5,314 +5,13 @@ const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
-const pass_gen = require('generate-password')
+const {hash} = require('./functions')
+const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
-adminrouter.post('/check', isadmin, async (req, res) => {
-    const { id } = req.body
-    if (id.trim() != "") {
-        await ids.find({ student_id: id }, function (err, doc) {
-            if (doc.length == 1) {
-                return res.send({
-                    isvalid: false,
-                    msg: "Student ID Is Already Added"
-                })
-            }
-            return res.send({
-                isvalid: true,
-                msg: ""
-            })
-        })
-    }
-})
+const moment = require('moment')
+/*##################################################################################### */
 
-adminrouter.post('/ids', isadmin, async (req, res) => {
-    await ids.find({}, { _id: 0 }, function (err, list_ids) {
-        return res.send({
-            student_ids: list_ids
-        })
-    })
-})
-adminrouter.post('/find-id', isadmin, async (req, res) => {
-    const { id } = req.body
-    await ids.find({ student_id: { '$regex': '^' + id, '$options': 'i' } }, { _id: 0 }, function (err, res_ids) {
-        return res.send({
-            result: res_ids
-        })
-    })
-})
-adminrouter.post('/sort-id', isadmin, async (req, res) => {
-    const { sort } = req.body
-    if (sort == 'df') {
-        await ids.find({}, { _id: 0 }, function (err, sort) {
-            return res.send({
-                sort: sort
-            })
-        })
-    }
-    else {
-        await ids.find({ course: sort }, { _id: 0 }, function (err, sort) {
-            return res.send({
-                sort: sort
-            })
-        })
-    }
-})
-
-//add, update, delete student id
-adminrouter.post('/add-id', isadmin, async (req, res) => {
-    const { id, course, yr } = req.body
-    //check if not empty 
-    if (id.trim() != "" && course.trim() != "" && yr.trim() != "") {
-        //find the current if 
-        await ids.find({ student_id: id }, { _id: 0, course: 0, year: 0, enabled: 0 }, function (err, res_find) {
-            if (res_find.length != 0) {
-                //means student id is already added
-                return res.send({
-                    add: false,
-                    msg: "ID is already inused"
-                })
-            }
-            ids.create({ student_id: id, course: course, year: yr, enabled: false }, function (err, inserted) {
-                //means student id is added
-                return res.send({
-                    add: true,
-                    msg: "ID Successfully Added"
-                })
-            })
-        })
-    }
-})
-adminrouter.post('/delete-id', isadmin, async (req, res) => {
-    const { id } = req.body
-    if (id.trim() != "") {
-        //check if the current id is not enabled
-        await ids.find({ student_id: id }, function (err, doc) {
-            if (doc.length != 0) {
-                if (!doc[0].enabled) {
-                    //if result is = 0, meanswla pa na na enabled or nagamit sa student/voter
-                    //then remove the student id
-                    ids.deleteOne({ student_id: id }, function (err, del_doc) {
-                        if (err) {
-                            return res.send({
-                                del: false,
-                                msg: "Internal Error"
-                            })
-                        }
-                        else {
-                            return res.send({
-                                del: true,
-                                msg: "Deleted Successfully"
-                            })
-                        }
-                    })
-                }
-                else {
-                    return res.send({
-                        del: false,
-                        msg: "Cant Delete ID is enabled!"
-                    })
-                }
-            }
-            else {
-                return res.send({
-                    del: false,
-                    msg: "Cannot find that ID"
-                })
-            }
-        })
-    }
-    else {
-        return res.send({
-            del: false,
-            msg: "All feilds is required!"
-        })
-    }
-})
-adminrouter.post('/update-id', isadmin, async (req, res) => {
-    const { id, course, yr } = req.body
-    //check the inputs 
-    if (id.trim() != "" && course.trim() != "" && yr.trim() != "") {
-        //check if id is not inserted before 
-        await ids.find({ student_id: id }, function (err, naa) {
-            if (naa.length == 1) {
-                //meaning waala pwede ra esulod ang id
-                ids.updateOne({ student_id: id }, { student_id: id, course: course, year: yr, enabled: false }, function (err, update) {
-                    if (err) {
-                        return res.send({
-                            up: false,
-                            msg: "Internal Error"
-                        })
-                    }
-                    else {
-                        return res.send({
-                            up: true,
-                            msg: "ID updated successfully"
-                        })
-                    }
-                })
-            }
-            else {
-                return res.send({
-                    up: false,
-                    msg: "Cannot Find That ID"
-                })
-            }
-        })
-    }
-    else {
-        return res.send({
-            del: false,
-            msg: "All feilds is required!"
-        })
-    }
-})
-
-//create, update, delete elections
-adminrouter.post('/elections', isadmin, async (req, res) => {
-    await election.find({}, function (err, elections) {
-        res.send({
-            election: elections
-        })
-    })
-})
-adminrouter.post('/find-election', isadmin, async (req, res) => {
-    const { title } = req.body
-    await election.find({ election_title: { '$regex': '^' + title, '$options': 'i' } }, function (err, res_elec) {
-        res.send({
-            election: res_elec
-        })
-    })
-})
-adminrouter.post('/create-election', isadmin, async (req, res) => {
-    var { elec_name, position, max_vote, course, partylist } = req.body
-    //check the array length of position and max vote
-    if (elec_name != "") {
-        if (position.length == max_vote.length || position != '' && max_vote != '') {  //if the positions and max_vote is  equal 
-            //combine position and max_vote into json
-            if (typeof position == 'string') {
-                //if theres only one position created
-                var ps = [{ name: position, max_vote: max_vote }]
-            }
-            else {
-                var ps = []
-                for (var x = 0; x < position.length; x++) {
-                    //push to array
-                    ps.push({ name: position[x], max_vote: max_vote[x] })
-                }
-            }
-
-            //check the partylist index if contains null index
-            var c_ = false, p_ = false
-            //we use looping and c, p variables to prevent server error during the process
-            for (let p = 0; p < partylist.split(",").length; p++) {
-                if (partylist.split(",")[p] == "") {
-                    p_ = true
-                    break
-                }
-            }
-            for (let c = 0; c < course.split(",").length; c++) {
-                if (course.split(",")[c] == "") {
-                    c_ = true
-                    break
-                }
-            }
-
-            //check if c and p variable is true
-            if (!c_ && !p_) { // if  all is  true, and no index is empty
-                //save the new election in db
-                const valid_courses = course.split(",")
-                const valid_positions = ps
-                const valid_partylist = partylist.split(",")
-                const passcode = pass_gen.generate({
-                    length: 5,
-                    uppercase: false,
-                    numbers: true
-                })
-                //check if election name if not taken or in used
-                await election.find({ election_title: elec_name }, (err, match) => {
-                    //if not taken
-                    if (match.length == 0) {
-                        election.create({
-                            election_title: elec_name,
-                            courses: valid_courses,
-                            positions: valid_positions,
-                            partylist: valid_partylist.push("Independent"),
-                            passcode: passcode
-                        }, (err, doc) => {
-                            // if save
-                            if (err) {
-                                res.send({
-                                    created: false,
-                                    msg: 'Internal Error',
-                                })
-                            }
-                            res.send({
-                                created: true,
-                                msg: 'Election Created',
-                                code: doc.passcode
-                            })
-                        })
-                    }
-                    else {
-                        res.send({
-                            created: false,
-                            msg: 'Election Name already in used',
-                        })
-                    }
-                })
-
-            }
-            else {
-                res.send({
-                    created: false,
-                    msg: 'Some Index is empty',
-                })
-            }
-        }
-        else {
-            res.send({
-                created: false,
-                msg: 'Empty Position & Max Vote'
-            })
-        }
-    }
-    else {
-        res.send({
-            created: false,
-            msg: 'Election Title is empty'
-        })
-    }
-})
-adminrouter.post('/election-passcode', isadmin, async (req, res) => {
-    const { id } = req.body
-    await election.find({ _id: id }, { passcode: 1 }, (err, id_res) => {
-        res.send({
-            data: id_res
-        })
-    })
-})
-adminrouter.post('/delete-election', isadmin, async (req, res) => {
-    const { id } = req.body
-    await election.findOneAndDelete({ _id: id }, (err, del_doc) => {
-        if (err) {
-            return res.send({
-                deleted: false,
-                msg: "Failed to Delete"
-            })
-        }
-        else {
-            return res.send({
-                deleted: true,
-                msg: "Deleted Successfully"
-            })
-        }
-    })
-})
-//get list of all voters
-adminrouter.get('/control/voters', async (req, res) => {
-    return res.render("control/forms/voters")
-})
 //list of all elections 
 adminrouter.get('/control/elections', limit, isadmin, async (req, res) => {
     try {
@@ -354,6 +53,154 @@ adminrouter.get('/control/elections/:electionID', limit, isadmin, async (req, re
         return res.status(500).send()
     }
 })
+//create election 
+adminrouter.post('/control/elections/create-election', limit, isadmin, async (req, res) => {
+    const {e_title, e_description, e_start, e_end, courses, year, positions, partylists} = req.body 
+    //sanitize 
+    const pass =  genpass.generate({
+        length: 5,
+        uppercase: false,
+        numbers: true
+    }) // passcode in string
+    const passcode = await hash(pass, 10) // passcode in with hashing
+    const title = xs(e_title)
+    const description = xs(e_description)
+    const start = xs(e_start) 
+    const end = xs(e_end)
+    const crs = xs(courses).split(",")
+    const yr = xs(year).split(",")
+    const pos = JSON.parse(positions)
+    const pty = xs(partylists).split(",")
+    //use to identify the the course, year, positions, partylist is exist in db 
+    let e_crs = true, 
+        e_yr = true, 
+        e_pos = true, 
+        e_pty = true,
+        e_strt = true, 
+        temp_time = moment(start).startOf().fromNow().split(" ")
+    //get courses 
+    try {
+        //get the submitted course & check if it exists in db 
+        for(let i = 0; i < crs.length; i++){
+            //get each index and find to db 
+            await data.find({"course.id": {$eq: crs[i]}}, {course:{id : 1}}, (err, f) => {
+                if(err) throw new err 
+                //if the course is not found
+                if(f.length === 0) {
+                    e_crs = false 
+                    return res.send({
+                        created: false, 
+                        msg: "Some courses not found"
+                    })
+                }
+            })
+        }
+        //get the submitted year & check if it exists in db 
+        for(let i = 0; i < yr.length; i++){
+            await data.find({"year.id": {$eq: yr[i]}}, {year:{id : 1}}, (err, f) => {
+                if(err) throw new err 
+                //if the year is not found
+                if(f.length === 0) {
+                    e_yr = false 
+                    return res.send({
+                        created: false, 
+                        msg: "Some year not found"
+                    })
+                }
+            })
+        }
+        //get the submitted positions & check if it exists in db 
+        for(let i = 0; i < pos.length; i++){
+            await data.find({"positions.id": {$eq: pos[i].id}}, {positions:{id : 1}}, (err, f) => {
+                if(err) throw new err 
+                //if the position is not found
+                if(f.length === 0) {
+                    e_pos = false 
+                    return res.send({
+                        created: false, 
+                        msg: "Some positions not found"
+                    })
+                }
+            })
+        }
+        //get the submitted partylist & check if it exists in db 
+        for(let i = 0; i < pty.length; i++){
+            await data.find({"partylists.id": {$eq: pty[i]}}, {partylists:{id : 1}}, (err, f) => {
+                if(err) throw new err 
+                //if the partylist is not found
+                if(f.length === 0) {
+                    e_pty = false 
+                    return res.send({
+                        created: false, 
+                        msg: "Some partylists not found"
+                    })
+                }
+            })
+        }
+        //check if the starting time is valid 
+        if(temp_time[2] === "ago"){
+            e_strt = false
+            return res.send({
+                created: false, 
+                msg: "Invalid Starting time", 
+                txt: "The election must begin few minutes/hour after the election is created"
+            })
+        }
+        //if no error
+        if(e_crs && e_yr && e_pos && e_pty, e_strt){
+            //check the election title if the same with the other election in db 
+            await election.find({election_title: {$eq: title}}, {election_title: 1}, (err, f) => {
+                if(err) throw new err 
+                if(f.length === 0){
+                    //create new election  
+                    election.create({
+                        election_title: title, 
+                        election_description: description, 
+                        courses: crs, 
+                        positions: pos, 
+                        candidates: [], 
+                        partylist: pty, 
+                        voters: [], 
+                        passcode: passcode, 
+                        status: "Not Started", 
+                        start: start, 
+                        end: end, 
+                        created: moment().format()
+                    }, (err, crtd) => {
+                        if(err) throw new err 
+                        if(crtd){
+                            return res.send({
+                                created: true, 
+                                passcode: passcode
+                            })
+                        } else {
+                            return res.send({
+                                created: false, 
+                                msg: "Something went wrong", 
+                                txt: "Got error while saving to database"
+                            })
+                        }
+                    })
+                } else {
+                    return res.send({
+                        created: false, 
+                        msg: "Change another election title"
+                    })
+                }
+            })
+        } else {
+            return res.send({
+                created: false, 
+                msg: "Something went wrong"
+            })
+        }
+    } catch(e) {
+        return res.status(500).send()
+    }
+})
+
+/*##################################################################################### */
+
 //positions 
 adminrouter.post('/control/elections/positions/', isadmin, normal_limit, async (req, res, next) => {
     try {
@@ -528,6 +375,8 @@ adminrouter.post('/control/elections/positions/update-position/', isadmin, norma
         return res.status(500).send()
     }
 })
+
+/*##################################################################################### */
 
 //voter id
 adminrouter.post('/control/elections/voter-id/', normal_limit, isadmin, async (req, res) => {
@@ -881,6 +730,8 @@ adminrouter.post('/control/elections/voter-id/update-voter-id/', limit, isadmin,
         return res.status(500).send()
     }
 })
+
+/*##################################################################################### */
 
 //course & year 
 adminrouter.post('/control/elections/course&year/', limit, isadmin, async (req, res) => {
@@ -1318,6 +1169,8 @@ adminrouter.post('/control/elections/course&year/up_y/', normal_limit, isadmin, 
     }
 })
 
+/*##################################################################################### */
+
 //partylist 
 adminrouter.post('/control/elections/partylist', normal_limit, isadmin, async (req, res) => {
     try {
@@ -1442,6 +1295,9 @@ adminrouter.post('/control/elections/partylist/update-partylist', normal_limit, 
         return res.status(500).send()
     }
 })
+
+/*##################################################################################### */
+
 //logs 
 adminrouter.post('/control/logs/', isadmin, async (req, res) => {
     return res.render('control/forms/logs')

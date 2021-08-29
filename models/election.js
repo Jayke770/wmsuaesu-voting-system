@@ -1,15 +1,15 @@
 const mongoose = require('mongoose')
 const election = new mongoose.Schema({
     election_title:{
-        type: String, 
-        required: true
+        type: String
     },
     election_description: {},
     courses: {
-        type: Array, 
-        required: true
+        type: Array
     },
-    positions:{}, 
+    positions:{
+        type: Array
+    }, 
     candidates:{
         type: Array
     },
@@ -29,9 +29,6 @@ const election = new mongoose.Schema({
     },
     start: {}, 
     end: {}, 
-    created:{
-        type: Date, 
-        default: Date.now()
-    }
+    created:{}
 })
 module.exports = mongoose.model('elections', election)

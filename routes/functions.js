@@ -3,6 +3,7 @@ const admin = require('../models/admin')
 const objectid = require('mongodb').ObjectID
 const { v4: uuid } = require('uuid');
 const ftp = require('basic-ftp')
+const bcrypt = require('bcrypt')
 module.exports = {
     toUppercase: function (val) {
         const str = val.charAt(0).toUpperCase() + val.slice(1)
@@ -106,5 +107,8 @@ module.exports = {
         } catch(e){
             return false
         }
+    }, 
+    hash: async (data, n) => {
+        return await bcrypt.hash(data, n)
     }
 }
