@@ -147,12 +147,6 @@ $(document).ready(() => {
             main.removeClass(main.attr("animate-out")) 
         }, 501)
     })
-    $(".dt_picker").flatpickr({
-        disableMobile: "true", 
-        minDate: "today",
-        enableTime: true,
-        dateFormat: "m/d/Y h:i K",
-    })
     $(".c_list_e").click( () => {
         const courses = $(".courses")
         const year = $(".year")

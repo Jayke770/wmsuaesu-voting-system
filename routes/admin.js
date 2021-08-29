@@ -78,124 +78,131 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
         e_pty = true,
         e_strt = true, 
         temp_time = moment(start).startOf().fromNow().split(" ")
-    //get courses 
-    try {
-        //get the submitted course & check if it exists in db 
-        for(let i = 0; i < crs.length; i++){
-            //get each index and find to db 
-            await data.find({"course.id": {$eq: crs[i]}}, {course:{id : 1}}, (err, f) => {
-                if(err) throw new err 
-                //if the course is not found
-                if(f.length === 0) {
-                    e_crs = false 
-                    return res.send({
-                        created: false, 
-                        msg: "Some courses not found"
-                    })
-                }
-            })
+    
+    if(title != "" && description != "" && start != "" && end != "" && crs.length != 0 && yr.length != 0 && pos.length != 0 && pty.length != 0){
+        try {
+            //get the submitted course & check if it exists in db 
+            for(let i = 0; i < crs.length; i++){
+                //get each index and find to db 
+                await data.find({"course.id": {$eq: crs[i]}}, {course:{id : 1}}, (err, f) => {
+                    if(err) throw new err 
+                    //if the course is not found
+                    if(f.length === 0) {
+                        e_crs = false 
+                        return res.send({
+                            created: false, 
+                            msg: "Some courses not found"
+                        })
+                    }
+                })
+            }
+            //get the submitted year & check if it exists in db 
+            for(let i = 0; i < yr.length; i++){
+                await data.find({"year.id": {$eq: yr[i]}}, {year:{id : 1}}, (err, f) => {
+                    if(err) throw new err 
+                    //if the year is not found
+                    if(f.length === 0) {
+                        e_yr = false 
+                        return res.send({
+                            created: false, 
+                            msg: "Some year not found"
+                        })
+                    }
+                })
+            }
+            //get the submitted positions & check if it exists in db 
+            for(let i = 0; i < pos.length; i++){
+                await data.find({"positions.id": {$eq: pos[i].id}}, {positions:{id : 1}}, (err, f) => {
+                    if(err) throw new err 
+                    //if the position is not found
+                    if(f.length === 0) {
+                        e_pos = false 
+                        return res.send({
+                            created: false, 
+                            msg: "Some positions not found"
+                        })
+                    }
+                })
+            }
+            //get the submitted partylist & check if it exists in db 
+            for(let i = 0; i < pty.length; i++){
+                await data.find({"partylists.id": {$eq: pty[i]}}, {partylists:{id : 1}}, (err, f) => {
+                    if(err) throw new err 
+                    //if the partylist is not found
+                    if(f.length === 0) {
+                        e_pty = false 
+                        return res.send({
+                            created: false, 
+                            msg: "Some partylists not found"
+                        })
+                    }
+                })
+            }
+            //check if the starting time is valid 
+            if(temp_time[2] === "ago"){
+                e_strt = false
+                return res.send({
+                    created: false, 
+                    msg: "Invalid Starting time", 
+                    txt: "The election must begin few minutes/hour after the election is created"
+                })
+            }
+            //if no error
+            if(e_crs && e_yr && e_pos && e_pty, e_strt){
+                //check the election title if the same with the other election in db 
+                await election.find({election_title: {$eq: title}}, {election_title: 1}, (err, f) => {
+                    if(err) throw new err 
+                    if(f.length === 0){
+                        //create new election  
+                        election.create({
+                            election_title: title, 
+                            election_description: description, 
+                            courses: crs, 
+                            positions: pos, 
+                            candidates: [], 
+                            partylist: pty, 
+                            voters: [], 
+                            passcode: passcode, 
+                            status: "Not Started", 
+                            start: start, 
+                            end: end, 
+                            created: moment().format()
+                        }, (err, crtd) => {
+                            if(err) throw new err 
+                            if(crtd){
+                                return res.send({
+                                    created: true, 
+                                    passcode: passcode
+                                })
+                            } else {
+                                return res.send({
+                                    created: false, 
+                                    msg: "Something went wrong", 
+                                    txt: "Got error while saving to database"
+                                })
+                            }
+                        })
+                    } else {
+                        return res.send({
+                            created: false, 
+                            msg: "Change another election title"
+                        })
+                    }
+                })
+            } else {
+                return res.send({
+                    created: false, 
+                    msg: "Something went wrong"
+                })
+            }
+        } catch(e) {
+            return res.status(500).send()
         }
-        //get the submitted year & check if it exists in db 
-        for(let i = 0; i < yr.length; i++){
-            await data.find({"year.id": {$eq: yr[i]}}, {year:{id : 1}}, (err, f) => {
-                if(err) throw new err 
-                //if the year is not found
-                if(f.length === 0) {
-                    e_yr = false 
-                    return res.send({
-                        created: false, 
-                        msg: "Some year not found"
-                    })
-                }
-            })
-        }
-        //get the submitted positions & check if it exists in db 
-        for(let i = 0; i < pos.length; i++){
-            await data.find({"positions.id": {$eq: pos[i].id}}, {positions:{id : 1}}, (err, f) => {
-                if(err) throw new err 
-                //if the position is not found
-                if(f.length === 0) {
-                    e_pos = false 
-                    return res.send({
-                        created: false, 
-                        msg: "Some positions not found"
-                    })
-                }
-            })
-        }
-        //get the submitted partylist & check if it exists in db 
-        for(let i = 0; i < pty.length; i++){
-            await data.find({"partylists.id": {$eq: pty[i]}}, {partylists:{id : 1}}, (err, f) => {
-                if(err) throw new err 
-                //if the partylist is not found
-                if(f.length === 0) {
-                    e_pty = false 
-                    return res.send({
-                        created: false, 
-                        msg: "Some partylists not found"
-                    })
-                }
-            })
-        }
-        //check if the starting time is valid 
-        if(temp_time[2] === "ago"){
-            e_strt = false
-            return res.send({
-                created: false, 
-                msg: "Invalid Starting time", 
-                txt: "The election must begin few minutes/hour after the election is created"
-            })
-        }
-        //if no error
-        if(e_crs && e_yr && e_pos && e_pty, e_strt){
-            //check the election title if the same with the other election in db 
-            await election.find({election_title: {$eq: title}}, {election_title: 1}, (err, f) => {
-                if(err) throw new err 
-                if(f.length === 0){
-                    //create new election  
-                    election.create({
-                        election_title: title, 
-                        election_description: description, 
-                        courses: crs, 
-                        positions: pos, 
-                        candidates: [], 
-                        partylist: pty, 
-                        voters: [], 
-                        passcode: passcode, 
-                        status: "Not Started", 
-                        start: start, 
-                        end: end, 
-                        created: moment().format()
-                    }, (err, crtd) => {
-                        if(err) throw new err 
-                        if(crtd){
-                            return res.send({
-                                created: true, 
-                                passcode: passcode
-                            })
-                        } else {
-                            return res.send({
-                                created: false, 
-                                msg: "Something went wrong", 
-                                txt: "Got error while saving to database"
-                            })
-                        }
-                    })
-                } else {
-                    return res.send({
-                        created: false, 
-                        msg: "Change another election title"
-                    })
-                }
-            })
-        } else {
-            return res.send({
-                created: false, 
-                msg: "Something went wrong"
-            })
-        }
-    } catch(e) {
-        return res.status(500).send()
+    } else {
+        return res.send({
+            created: false, 
+            msg: "All feilds is required"
+        })
     }
 })
 
