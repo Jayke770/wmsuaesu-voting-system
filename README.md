@@ -11,4 +11,5 @@
   <img src="https://img.shields.io/github/issues/Jayke770/wmsuaesu-voting-system"> 
   <img src="https://img.shields.io/github/stars/Jayke770/wmsuaesu-voting-system"> 
   <img src="https://img.shields.io/github/forks/Jayke770/wmsuaesu-voting-system"> 
+  <img src="https://img.shields.io/github/license/Jayke770/wmsuaesu-voting-system">
 </p>
