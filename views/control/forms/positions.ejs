@@ -25,7 +25,7 @@
             <% for( let i = 0; i < pos[0].positions.length; i++ ) { %>
                 <div data="<%- pos[0].positions[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="pos dark:bg-darkBlue-secondary sm:last:mb-4 group animate__animated animate__fadeInUp p-3 grid grid-cols-2 bg-gray-100 rounded-xl cursor-pointer">
                     <div>
-                        <span class="text-bluegray-900 dark:text-gray-300 text-base font-normal break-all"><%- pos[0].positions[i].type %></span>
+                        <span class="text-bluegray-900 dark:text-gray-300 text-base font-normal break-all skeleton" data="<%- pos[0].positions[i].type %>"></span>
                     </div>
                     <div class="hidden group-hover:flex animate__animated animate__fadeInLeft ms-200 transition-all justify-end items-center gap-1">
                         <a data="<%- pos[0].positions[i].id %>" class="rpl up_pos px-2 cursor-pointer text-green-600">
@@ -58,5 +58,18 @@
             </div>
         </form>
     </div>
+</div>
+<div class="preload">
+    <script>
+       setTimeout(() => {
+           $(".skeleton").each(function () {
+               if (!$(this).hasClass("time")) {
+                   $(this).text($(this).attr("data"))
+                   $(this).removeClass("skeleton")
+               }
+           })
+           $(".preload").remove()
+       }, 1500)
+    </script>
 </div>
 <script src="/control/js/positions.js "></script>

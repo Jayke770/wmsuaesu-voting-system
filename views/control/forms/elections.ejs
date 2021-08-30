@@ -69,45 +69,16 @@
             </div>
         </div>
         <div class="container mt-[4.5rem]">
-            <div class="transition-all w-full grid grid-cols-2 xl:grid-cols-1 xl:px-52 lg:px-20 md:px-2 gap-4 place-items-center p-2">
-                <% if(elections.length === 0) { %>
-                   <div class="flex w-full justify-center items-center col-span-2">
-                    <div style="animation-delay: .200s;" class="p-2 px-4 w-96 lg:w-full animate__animated animate__fadeInUp cursor-pointer shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-xl transition-all">
-                        <div class="flex flex-col gap-4 py-3">
-                            <p class="font-semibold text-center py-3 text-xl dark:text-gray-300">Nothing to fetch</p>
-                            <button type="button" class="bg-teal-500 cursor-pointer rounded-md rpl outline-none text-white font-medium p-2 px-3">Create Election Now</button>
-                        </div>
-                    </div>
-                   </div>
-                <% } else { %>
-                    <% elections.forEach((election, i) => { %>
-                        <div data="<%- election._id %>" style="animation-delay: <%- i * .200 %>s;" class="animate__animated animate__fadeInUp card w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
-                            <div class="img flex w-full">
-                                <img class="icon_e_name md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[325px] h-full object-cover rounded-tl-2xl rounded-bl-2xl" alt="election_ic" src="/assets/image.jpg">
-                            </div>
-                            <div class="election_info p-8 flex flex-col w-full transition-all">
-                                <div class="container">
-                                    <p class="text-left text-lg font-medium text-purple-700 dark:text-purple-500 md:text-center"><%- election.election_title %></p>
-                                </div>
-                                <div class="container mt-4 transition-all">
-                                    <div class="container mt-3 dark:text-gray-400">Voters <span class="dark:text-gray-300 float-right font-semibold"><%- election.voters.length %></span></div>
-                                    <div class="container mt-3 dark:text-gray-400">Active Voters <span class="dark:text-gray-300 float-right font-semibold">...</span></div>
-                                    <div class="container mt-3 dark:text-gray-400">Status <span class="dark:text-gray-300 float-right font-semibold"><%- election.status %></span>
-                                    </div>
-                                    <div class="container mt-3 dark:text-gray-400">Created <span class="dark:text-gray-300 float-right font-semibold time" data="<%- election.created %>">Calcuating...</span></div>
-                                </div>
-                                <div class="container mt-8 justify-center flex flex-row ">
-                                    <a class="more_e_settings rpl rpl-h dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-300 transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-purple-500"
-                                    href="<%- election._id %>">More Details</a>
-                                </div>
-                            </div>
-                        </div>
-                    <% }) %>
-                <% } %>
+            <div class="election_list transition-all w-full grid grid-cols-2 xl:grid-cols-1 xl:px-52 lg:px-20 md:px-2 gap-4 place-items-center p-2">
+                <%- include('election_list', {elections: elections}) %>
             </div>
         </div>
     </div>
     <div class="create_election z-20 dark:bg-darkBlue-primary/60 bg-gray-900/60 hidden justify-center items-center fixed top-0 w-full h-full">
+        <input type="hidden" name="default-course" value='<%- JSON.stringify(course) %>'>
+        <input type="hidden" name="default-year" value='<%- JSON.stringify(year) %>'>
+        <input type="hidden" name="default-pos" value='<%- JSON.stringify(positions) %>'>
+        <input type="hidden" name="default-pty" value='<%- JSON.stringify(partylists) %>'>
         <div class="create_election_main ms-500 p-2 w-[70%] h-[90%] lg:w-[85%] md:w-[95%] md:h-[95%] bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl" animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp">
             <div class="flex flex-row w-full">
                 <div class="w-[95%] flex flex-col">
@@ -258,10 +229,42 @@
                             </div>
                         </div>
                         <div class="e_submit hidden h-full pl-3 md:pl-0">
-                            <div class="w-full h-full flex justify-center items-center p-2">
-                                <button type="submit" class="rpl sm:w-full w-2/4 text-lg transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-purple-800 dark:hover:bg-purple-700 focus:outline-none dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-purple-800 dark:focus:ring-offset-darkBlue-secondary">
-                                    Submit Election
-                                </button>
+                            <div class="w-full h-full flex-col flex p-2 overflow-y-auto">
+                                <div class="w-full mb-2 grid grid-cols-2 sm:grid-cols-none gap-2">
+                                    <div class="grid grid-row-3 gap-2">
+                                        <fieldset style="animation-delay: .150s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-[max-content]">
+                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Election Title</legend>
+                                            <div class="e_submit_title p-3 dark:text-gray-300/80 text-base"></div>
+                                        </fieldset>
+                                        <fieldset style="animation-delay: .250s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-[max-content]">
+                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Eligible Courses</legend>
+                                            <div class="e_submit_crs p-3 flex flex-wrap gap-2"></div>
+                                        </fieldset>
+                                        <fieldset style="animation-delay: .350s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-[max-content]">
+                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Eligible Year</legend>
+                                            <div class="e_submit_yr p-3 flex flex-wrap gap-2"></div>
+                                        </fieldset>
+                                    </div>
+                                    <fieldset style="animation-delay: .450s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-64 overflow-x-auto">
+                                        <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Election Description</legend>
+                                        <div class="e_submit_description break-words p-3 dark:text-gray-300/80 text-base"></div>
+                                    </fieldset>
+                                </div>
+                                <div class="w-full mb-2 grid grid-cols-2 sm:grid-cols-none gap-2">
+                                    <fieldset style="animation-delay: .550s" class="animate__animated animate__fadeInUp ms-500 rounded-md border-[.1px] dark:border-gray-600 p-1 h-auto">
+                                        <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Positions</legend>
+                                        <div class="e_submit_pos p-3 flex flex-wrap gap-2"></div>
+                                    </fieldset>
+                                    <fieldset style="animation-delay: .650s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-auto">
+                                        <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Partylists</legend>
+                                        <div class="e_submit_pty p-3 flex flex-wrap gap-2"></div>
+                                    </fieldset>
+                                </div>
+                                <div class="w-full flex flex-row justify-center items-center mt-2">
+                                    <button type="submit" class="rpl sm:w-full w-2/4 text-lg transition-all text-center px-3 py-2 border border-transparent rounded-md shadow-sm text-white bg-purple-800 dark:hover:bg-purple-700 focus:outline-none dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-purple-800 dark:focus:ring-offset-darkBlue-secondary">
+                                        Submit Election
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -269,11 +272,11 @@
             </div>
         </div>
     </div>
-    <div class="loader"></div>
+    <div class="loader">...</div>
     <script src="/js/theme.js"></script>
     <script src="/js/time.js"></script>
-    <script src="/js/avatar.js "></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/color.js"></script>
     <script src="/control/js/election.js "></script>
     <script src="/control/js/position-add.js"></script>
     <script>

@@ -1,6 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* skeleton loading */
+.skeleton {
+    @apply transition-all bg-purple-400 dark:bg-purple-700 p-2 rounded-full animate-pulse;
+}
+.skeleton-image{
+    @apply transition-all bg-purple-400 dark:bg-purple-700 p-2 animate-pulse;
+}
+/* skeleton loading end */
 .spin{
     @apply animate-spin;
 }

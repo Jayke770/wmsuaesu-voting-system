@@ -165,10 +165,96 @@ $(document).ready(() => {
     })
     $(".create_e_btn").click( function(e){
         e.preventDefault() 
-        $(".create_e_btn").removeClass("active-e-btn")
-        $(this).addClass("active-e-btn")
-        $(".e_info, .e_courses, .e_positions, .e_partylist, .s_submit").addClass("hidden")
-        $($(this).attr("data")).removeClass("hidden")
+        const x = $(this)
+        const data = $(this).attr("data")
+        if($(this).attr("data") === ".e_submit"){
+            $(".create_election_form").find("input[name], select[name], textarea[name]").each(function(){
+                if($(this).val() != ""){
+                    if($($(this)).attr("name") === "e_title"){
+                        $(data).find(`${data}_title`).text($(this).val())
+                    } 
+                    if($($(this)).attr("name") === "e_description"){
+                        $(data).find(`${data}_description`).text($(this).val())
+                    } 
+                    if($($(this)).attr("name") === "e_start"){
+                        console.log("es")
+                    } 
+                    if($($(this)).attr("name") === "e_end"){
+                        console.log('ee')
+                    } 
+                    if($($(this)).attr("name") === "courses"){
+                        const selected_crs = $(this).val().split(",")
+                        $(data).find(`${data}_crs`).html('')
+                        for(let i = 0; i < selected_crs.length; i++){
+                            $(data).find(`${data}_crs`).append(`
+                                <div style="border-color: ${dark()}" class="border rpl p-1 px-3 rounded-full cursor-pointer">
+                                    <span class="text-gray-900 dark:text-gray-300/80 font-medium">
+                                        ${defaults(JSON.parse($(".create_election").find("input[name='default-course']").val()), selected_crs[i])}
+                                    </span>
+                                </div>
+                            `)
+                        }
+                    }   
+                    if($($(this)).attr("name") === "year"){
+                        const selected_yr = $(this).val().split(",")
+                        $(data).find(`${data}_yr`).html('')
+                        for(let i = 0; i < selected_yr.length; i++){
+                            $(data).find(`${data}_yr`).append(`
+                                <div style="border-color: ${dark()}" class="border rpl p-1 px-3 rounded-full cursor-pointer">
+                                    <span class="text-gray-900 dark:text-gray-300/80 font-medium">
+                                        ${defaults(JSON.parse($(".create_election").find("input[name='default-year']").val()), selected_yr[i])}
+                                    </span>
+                                </div>
+                            `)
+                        }
+                    } 
+                    if($($(this)).attr("name") === "positions"){
+                        const selected_pos = JSON.parse($(this).val())
+                        $(data).find(`${data}_pos`).html('')
+                        for(let i = 0; i < selected_pos.length; i++){
+                            $(data).find(`${data}_pos`).append(`
+                                <div style="border-color: ${dark()}" class="border rpl p-1 px-3 rounded-full cursor-pointer">
+                                    <span class="text-gray-900 dark:text-gray-300/80 font-medium">
+                                        ${defaults(JSON.parse($(".create_election").find("input[name='default-pos']").val()), selected_pos[i].id)}
+                                    </span>
+                                </div>
+                            `)
+                        }
+                    } 
+                    if($($(this)).attr("name") === "partylists"){
+                        const selected_pty = $(this).val().split(",")
+                        $(data).find(`${data}_pty`).html('')
+                        for(let i = 0; i < selected_pty.length; i++){
+                            $(data).find(`${data}_pty`).append(`
+                                <div style="border-color: ${dark()}" class="border rpl p-1 px-3 rounded-full cursor-pointer">
+                                    <span class="text-gray-900 dark:text-gray-300/80 font-medium">
+                                        ${defaults(JSON.parse($(".create_election").find("input[name='default-pty']").val()), selected_pty[i])}
+                                    </span>
+                                </div>
+                            `)
+                        }
+                    } 
+                    $(".create_e_btn").removeClass("active-e-btn")
+                    x.addClass("active-e-btn")
+                    $(".e_info, .e_courses, .e_positions, .e_partylist, .e_submit").addClass("hidden")
+                    $(data).removeClass("hidden") 
+                } else {
+                    Swal.fire({
+                        title: "Please fill up all feilds",
+                        icon: 'info', 
+                        backdrop: true, 
+                        allowOutsideClick: false
+                    }) 
+                    return false
+                }
+            })
+        } else {
+            $(".create_e_btn").removeClass("active-e-btn")
+            $(this).addClass("active-e-btn")
+            $(".e_info, .e_courses, .e_positions, .e_partylist, .e_submit").addClass("hidden")
+            $($(this).attr("data")).removeClass("hidden")
+        }
+        
     })
     //when course list is clicked 
     $(".course_select").click(function() {
@@ -321,11 +407,36 @@ $(document).ready(() => {
             success: (res) => {
                 $(this).find("button[type='submit']").html(text)
                 $(this).find("button[type='submit']").addClass("sm:w-full w-2/4")
-                console.log(res)
+                if(res.created){
+                    Swal.fire({
+                        title: "Election Created",
+                        html: `<p class="break-all">${res.passcode}</p>`,
+                        icon: 'success', 
+                        backdrop: true, 
+                        allowOutsideClick: false
+                    }).then( () => {
+                        window.location.assign('')
+                    })
+                } else {
+                    Swal.fire({
+                        title: res.msg,
+                        icon: 'info', 
+                        backdrop: true, 
+                        allowOutsideClick: false
+                    })
+                }
             }, 
             error: (e) => {
 
             }
         })
     })
+
+    function defaults(arr, data){
+        for(let i = 0; i < arr.length; i++){
+            if(arr[i].id === data){
+                return arr[i].type
+            }
+        }
+    }
 })

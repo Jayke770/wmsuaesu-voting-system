@@ -79,7 +79,7 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
         e_strt = true, 
         temp_time = moment(start).startOf().fromNow().split(" ")
     
-    if(title != "" && description != "" && start != "" && end != "" && crs.length != 0 && yr.length != 0 && pos.length != 0 && pty.length != 0){
+    if(title != "" && start != "" && end != "" && crs.length != 0 && yr.length != 0 && pos.length != 0 && pty.length != 0){
         try {
             //get the submitted course & check if it exists in db 
             for(let i = 0; i < crs.length; i++){

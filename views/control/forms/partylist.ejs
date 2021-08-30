@@ -24,7 +24,7 @@
             <% for( let i = 0; i < partylist.length; i++ ) { %>
                 <div data="<%- partylist[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="pty dark:bg-darkBlue-secondary sm:last:mb-4 group animate__animated animate__fadeInUp p-3 grid grid-cols-2 bg-gray-100 rounded-xl cursor-pointer">
                     <div>
-                        <span class="text-bluegray-900 dark:text-gray-300 text-base font-normal break-all"><%- partylist[i].type %></span>
+                        <span class="text-bluegray-900 dark:text-gray-300 text-base font-normal break-all skeleton" data="<%- partylist[i].type %>"></span>
                     </div>
                     <div class="hidden group-hover:flex animate__animated animate__fadeInLeft ms-200 transition-all justify-end items-center gap-1">
                         <a data="<%- partylist[i].id %>" class="rpl up_pty px-2 cursor-pointer text-green-600">
@@ -57,5 +57,18 @@
             </div>
         </form>
     </div>
+</div>
+<div class="preload">
+    <script>
+       setTimeout(() => {
+           $(".skeleton").each(function () {
+               if (!$(this).hasClass("time")) {
+                   $(this).text($(this).attr("data"))
+                   $(this).removeClass("skeleton")
+               }
+           })
+           $(".preload").remove()
+       }, 1500)
+    </script>
 </div>
 <script src="/control/js/partylist.js"></script>

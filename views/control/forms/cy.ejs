@@ -32,7 +32,7 @@
                 <% for( let i = 0; i < cy[0].course.length; i++ ) { %>
                     <div data="<%- cy[0].course[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="rpl transition-all animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
                         <div class="grid grid-cols-2">
-                            <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300"><%- cy[0].course[i].type %></p>
+                            <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300 skeleton" data="<%- cy[0].course[i].type %>"></p>
                             <div class="transition-all animate__animated animate__fadeInLeft ms-300 hidden group-hover:flex flex-row justify-end items-center">
                                 <a data="<%- cy[0].course[i].id %>" class="rpl up_c px-2 cursor-pointer text-green-600">
                                     <i class="fas fa-edit"></i>
@@ -55,7 +55,7 @@
                 <% for( let i = 0; i < cy[0].year.length; i++ ) { %>
                     <div data="<%- cy[0].year[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="rpl transition-all animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
                         <div class="grid grid-cols-2">
-                            <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300"><%- cy[0].year[i].type %></p>
+                            <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300 skeleton" data="<%- cy[0].year[i].type %>"></p>
                             <div class="transition-all animate__animated animate__fadeInLeft ms-300 hidden group-hover:flex flex-row justify-end items-center">
                                 <a data="<%- cy[0].year[i].id %>" class="rpl up_y px-2 cursor-pointer text-green-600">
                                     <i class="fas fa-edit"></i>
@@ -96,5 +96,18 @@
             </div>
         </form>
     </div>
+</div>
+<div class="preload">
+    <script>
+       setTimeout(() => {
+           $(".skeleton").each(function () {
+               if (!$(this).hasClass("time")) {
+                   $(this).text($(this).attr("data"))
+                   $(this).removeClass("skeleton")
+               }
+           })
+           $(".preload").remove()
+       }, 1500)
+    </script>
 </div>
 <script src="/control/js/cy.js "></script>
