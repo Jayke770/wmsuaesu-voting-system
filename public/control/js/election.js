@@ -3,7 +3,7 @@ $(document).ready(() => {
     let req = false, courses = [], year = [], partylist = []
     //set timeout for all ajax requests 
     $.ajaxSetup({
-        timeout: 1000,
+        timeout: 10000,
     })
     //detect locations hash 
     const loc = location.hash
