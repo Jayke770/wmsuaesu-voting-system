@@ -1,6 +1,10 @@
 'use strict'
 $(document).ready(() => {
     let req = false, courses = [], year = [], partylist = []
+    //set timeout for all ajax requests 
+    $.ajaxSetup({
+        timeout: 1000,
+    })
     //detect locations hash 
     const loc = location.hash
     if(loc){
@@ -438,5 +442,23 @@ $(document).ready(() => {
                 return arr[i].type
             }
         }
+    }
+    //get all elections 
+    setTimeout( () => {
+        elections()
+    }, 2000) 
+    function elections() {
+        $.get('election-list/')
+            .done( (res) => {
+                $(".election_list").html(res)
+                setTimeout( () => {
+                    $(".election_list").find(".icon_e_name").each( function() {
+                        $(this).removeClass("skeleton-image")
+                        $(this).attr("src", avatar($(this).attr("data"), "#fff", dark()) )
+                    })
+                }, 1000)
+            }).fail( (e) => {
+                
+            })
     }
 })

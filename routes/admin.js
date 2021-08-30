@@ -12,44 +12,29 @@ const { v4: uuid } = require('uuid')
 const moment = require('moment')
 /*##################################################################################### */
 
-//list of all elections 
+//elections data 
 adminrouter.get('/control/elections', limit, isadmin, async (req, res) => {
     try {
-        //get all elections 
-        await election.find({}, {passcode: 0}, (err, elecs) => {
+        //get all courses, positions, & partylist 
+        data.find({}, {positions: 1, course: 1, year: 1, partylists: 1}, (err, d) => {
             if(err) throw new err
-            //get all courses, positions, & partylist 
-            data.find({}, {positions: 1, course: 1, year: 1, partylists: 1}, (err, d) => {
-                if(err) throw new err
-                if(d.length != 0){
-                    return res.render("control/forms/elections", {
-                        elections: elecs,
-                        positions: d[0].positions, 
-                        course: d[0].course, 
-                        year: d[0].year, 
-                        partylists: d[0].partylists
-                    })
-                } else {
-                    return res.render("control/forms/elections", {
-                        elections: elecs,
-                        positions: [], 
-                        course: [], 
-                        year: [], 
-                        partylists: []
-                    })
-                }
-            })
+            if(d.length != 0){
+                return res.render("control/forms/elections", {
+                    positions: d[0].positions, 
+                    course: d[0].course, 
+                    year: d[0].year, 
+                    partylists: d[0].partylists
+                })
+            } else {
+                return res.render("control/forms/elections", {
+                    positions: [], 
+                    course: [], 
+                    year: [], 
+                    partylists: []
+                })
+            }
         })
     } catch(e){
-        return res.status(500).send()
-    }
-})
-//election details 
-adminrouter.get('/control/elections/:electionID', limit, isadmin, async (req, res) => {
-    const id = xs(req.params.electionID)
-    try {
-        return res.render("control/forms/election_details")
-    } catch (e) {
         return res.status(500).send()
     }
 })
@@ -205,7 +190,18 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
         })
     }
 })
-
+//all elections 
+adminrouter.get('/control/elections/election-list/', limit, isadmin, async (req, res) => {
+    //get all elections 
+    await election.find({}, {passcode: 0}, (err, elecs) => {
+        if(err) throw new err
+        return res.render("control/forms/election_list", {elections: elecs})
+    })
+})
+//get elections by id
+adminrouter.get('/control/elections/id/:id', limit, isadmin, async (req, res) => {
+    return res.render("control/forms/election_details")
+})
 /*##################################################################################### */
 
 //positions 

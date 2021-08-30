@@ -1177,6 +1177,50 @@ video {
   width: 75%;
 }
 
+.w-\[25\] {
+  width: 25;
+}
+
+.w-\[25\%\!important\] {
+  width: 25% !important;
+}
+
+.w-\[45\%\!important\] {
+  width: 45% !important;
+}
+
+.w-\[\%\!important\] {
+  width: % !important;
+}
+
+.w-\[80\] {
+  width: 80;
+}
+
+.w-\[80\%\] {
+  width: 80%;
+}
+
+.w-\[70\%\!important\] {
+  width: 70% !important;
+}
+
+.w-\[60\%\!important\] {
+  width: 60% !important;
+}
+
+.w-\[50\%\!important\] {
+  width: 50% !important;
+}
+
+.w-\[50\%\] {
+  width: 50%;
+}
+
+.w-\[0\%\] {
+  width: 0%;
+}
+
 .flex-\[20\%\] {
   flex: 20%;
 }

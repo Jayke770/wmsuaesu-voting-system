@@ -11,7 +11,7 @@
      <% elections.forEach((election, i) => { %>
          <div data="<%- election._id %>" style="animation-delay: <%- i * .200 %>s;" class="animate__animated animate__fadeInUp card w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
              <div class="img flex w-full">
-                 <img class="icon_e_name md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[325px] h-full object-cover rounded-tl-2xl rounded-bl-2xl skeleton-image" data-src="/assets/image.jpg">
+                 <img class="icon_e_name md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[325px] h-full object-cover rounded-tl-2xl rounded-bl-2xl skeleton-image" data="<%- election.election_title.split(" ")[0].charAt(0).toUpperCase() %>">
              </div>
              <div class="election_info p-8 flex flex-col w-full transition-all">
                  <div class="container">
@@ -26,7 +26,7 @@
                  </div>
                  <div class="container mt-8 justify-center flex flex-row ">
                      <a class="more_e_settings rpl rpl-h dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-300 transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-purple-500"
-                     href="<%- election._id %>">More Details</a>
+                     href="id/<%- election._id %>">More Details</a>
                  </div>
              </div>
          </div>
@@ -47,6 +47,6 @@
                 $(this).removeClass("skeleton-image")
             })
             $(".preload").remove()
-        }, 3000)
+        }, 1000)
      </script>
  </div>

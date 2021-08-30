@@ -70,7 +70,27 @@
         </div>
         <div class="container mt-[4.5rem]">
             <div class="election_list transition-all w-full grid grid-cols-2 xl:grid-cols-1 xl:px-52 lg:px-20 md:px-2 gap-4 place-items-center p-2">
-                <%- include('election_list', {elections: elections}) %>
+                <% for (let i = 0; i < 10; i++) { %> 
+                    <div class="w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
+                        <div class="flex w-full">
+                            <div class="md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[325px] h-full object-cover rounded-tl-2xl rounded-bl-2xl skeleton-image"></div>
+                        </div>
+                        <div class="p-8 flex flex-col w-full transition-all">
+                            <div class="container py-3">
+                                <p class="w-[45%!important] skeleton"></p>
+                            </div>
+                            <div class="container flex flex-col gap-4 mt-4 transition-all">
+                                <div class="w-[60%] skeleton"></div>
+                                <div class="w-[70%] skeleton"></div>
+                                <div class="w-[80%] skeleton"></div>
+                                <div class="w-full skeleton"></div>
+                            </div>
+                            <div class="container mt-8 justify-center flex flex-row ">
+                                <a class="skeleton w-full"></a>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
             </div>
         </div>
     </div>
@@ -277,6 +297,7 @@
     <script src="/js/time.js"></script>
     <script src="/js/toast.js"></script>
     <script src="/js/color.js"></script>
+    <script src="/js/avatar.js"></script>
     <script src="/control/js/election.js "></script>
     <script src="/control/js/position-add.js"></script>
     <script>
