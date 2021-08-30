@@ -1,7 +1,7 @@
 <p align="center">Online Voting System</p> 
 <p align="center">For</p>
 <p align="center">Western Mindanao State University - Aurora External Studies Unit</p>
-
+<hr>
 <p align="center">
     <img src="https://github.com/Jayke770/wmsuaesu-voting-system/blob/master/public/assets/logo.png">
 </p>
