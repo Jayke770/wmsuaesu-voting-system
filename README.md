@@ -6,8 +6,10 @@
     <img src="https://github.com/Jayke770/wmsuaesu-voting-system/blob/master/public/assets/logo.png">
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/github/downloads/Jayke770/wmsuaesu-voting-system/total?style=for-the-badge"> 
+<p align="center"> 
+  <a href="https://voting-system-jayke.herokuapp.com"> 
+     <img src="https://img.shields.io/website?style=for-the-badge&up_message=Online&url=https%3A%2F%2Fvoting-system-jayke.herokuapp.com">
+  </a>
   <a href="https://github.com/Jayke770/wmsuaesu-voting-system/issues> 
     <img src="https://img.shields.io/github/issues/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
   </a> 
@@ -19,5 +21,6 @@
   </a> 
   <a href="https://github.com/Jayke770/wmsuaesu-voting-system/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/Jayke770/wmsuaesu-voting-system?style=for-the-badge">
-  </a>
+  </a> 
+  
 </p>
