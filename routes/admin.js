@@ -1,6 +1,6 @@
 const express = require('express')
 const adminrouter = express.Router()
-const { authenticated, isadmin, isloggedin } = require('./auth')
+const {isadmin} = require('./auth')
 const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
@@ -43,7 +43,7 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
     const {e_title, e_description, e_start, e_end, courses, year, positions, partylists} = req.body 
     //sanitize 
     const pass =  genpass.generate({
-        length: 5,
+        length: 10,
         uppercase: false,
         numbers: true
     }) // passcode in string
@@ -62,10 +62,18 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
         e_pos = true, 
         e_pty = true,
         e_strt = true, 
-        temp_time = moment(start).startOf().fromNow().split(" ")
-    
+        start_time = moment(start).startOf().fromNow().split(" "), 
+        end_time = moment(end).startOf().fromNow().split(" ")
     if(title != "" && start != "" && end != "" && crs.length != 0 && yr.length != 0 && pos.length != 0 && pty.length != 0){
         try {
+            //if the partylist is less than 2
+            if(pty.length < 2){
+                return res.send({
+                    created: false, 
+                    msg: "Invalid Partylist",
+                    txt: "Partylist must be more than one"
+                })
+            }
             //get the submitted course & check if it exists in db 
             for(let i = 0; i < crs.length; i++){
                 //get each index and find to db 
@@ -76,7 +84,8 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
                         e_crs = false 
                         return res.send({
                             created: false, 
-                            msg: "Some courses not found"
+                            msg: "Invalid Course", 
+                            txt: "Please check the courses or do not edit the value of the element"
                         })
                     }
                 })
@@ -90,7 +99,8 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
                         e_yr = false 
                         return res.send({
                             created: false, 
-                            msg: "Some year not found"
+                            msg: "Invalid Year", 
+                            txt: "Please check the year or do not edit the value of the element"
                         })
                     }
                 })
@@ -104,7 +114,8 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
                         e_pos = false 
                         return res.send({
                             created: false, 
-                            msg: "Some positions not found"
+                            msg: "Invalid positions", 
+                            txt: "Please check the positions or do not edit the value of the element"
                         })
                     }
                 })
@@ -118,18 +129,19 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
                         e_pty = false 
                         return res.send({
                             created: false, 
-                            msg: "Some partylists not found"
+                            msg: "Invalid partylists", 
+                            txt: "Please check the partylist or do not edit the value of the element"
                         })
                     }
                 })
             }
             //check if the starting time is valid 
-            if(temp_time[2] === "ago"){
+            if(start_time[2] === "ago" || end_time[2] === "ago"){
                 e_strt = false
                 return res.send({
                     created: false, 
-                    msg: "Invalid Starting time", 
-                    txt: "The election must begin few minutes/hour after the election is created"
+                    msg: "Invalid Date or Time", 
+                    txt: "Please check the starting and ending date or time"
                 })
             }
             //if no error
@@ -157,7 +169,11 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
                             if(crtd){
                                 return res.send({
                                     created: true, 
-                                    passcode: passcode
+                                    msg: "Election Created Successfully", 
+                                    data: {
+                                        e_start: moment(start).startOf('hour').fromNow(),  
+                                        passcode: pass
+                                    }
                                 })
                             } else {
                                 return res.send({
@@ -170,7 +186,7 @@ adminrouter.post('/control/elections/create-election', limit, isadmin, async (re
                     } else {
                         return res.send({
                             created: false, 
-                            msg: "Change another election title"
+                            msg: "Change your election title"
                         })
                     }
                 })

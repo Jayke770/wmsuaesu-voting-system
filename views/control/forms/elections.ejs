@@ -68,8 +68,8 @@
                 </div>
             </div>
         </div>
-        <div class="container mt-[4.5rem]">
-            <div class="election_list transition-all w-full grid grid-cols-2 xl:grid-cols-1 xl:px-52 lg:px-20 md:px-2 gap-4 place-items-center p-2">
+        <div class="election_list container mt-[4.5rem]">
+            <div class="transition-all w-full grid grid-cols-2 xl:grid-cols-1 xl:px-52 lg:px-20 md:px-2 gap-4 place-items-center p-2">
                 <% for (let i = 0; i < 10; i++) { %> 
                     <div class="w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
                         <div class="flex w-full">
@@ -158,11 +158,11 @@
                                 <div class="grid grid-rows-2 gap-4 px-4 w-full">
                                     <div style="animation-delay: .350s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
                                         <label for="e_start" class="dark:text-gray-300 text-base">Start Date & Time</label>
-                                        <input required type="datetime-local" name="e_start" autocomplete="off" class="text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
+                                        <input required placeholder="Starting Date & Time" type="text" name="e_start" autocomplete="off" class="dt text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
                                     </div>
                                     <div style="animation-delay: .450s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
                                         <label for="e_end" class="dark:text-gray-300 text-base">End Date & Time</label>
-                                        <input required type="datetime-local" name="e_end" autocomplete="off" class="text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
+                                        <input required placeholder="Ending Date & Time" type="text" name="e_end" autocomplete="off" class="dt text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
                                     </div>
                                 </div>
                             </div>
@@ -249,41 +249,61 @@
                             </div>
                         </div>
                         <div class="e_submit hidden h-full pl-3 md:pl-0">
-                            <div class="w-full h-full flex-col flex p-2 overflow-y-auto">
-                                <div class="w-full mb-2 grid grid-cols-2 sm:grid-cols-none gap-2">
-                                    <div class="grid grid-row-3 gap-2">
-                                        <fieldset style="animation-delay: .150s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-[max-content]">
-                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Election Title</legend>
-                                            <div class="e_submit_title p-3 dark:text-gray-300/80 text-base"></div>
-                                        </fieldset>
-                                        <fieldset style="animation-delay: .250s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-[max-content]">
-                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Eligible Courses</legend>
-                                            <div class="e_submit_crs p-3 flex flex-wrap gap-2"></div>
-                                        </fieldset>
-                                        <fieldset style="animation-delay: .350s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-[max-content]">
-                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Eligible Year</legend>
-                                            <div class="e_submit_yr p-3 flex flex-wrap gap-2"></div>
+                            <div class="e_submit_summary w-full h-full grid p-2 overflow-y-auto">
+                                <div class="">
+                                    <div class="w-full mb-2 grid grid-cols-2 sm:grid-cols-none gap-2">
+                                        <div class="grid grid-row-3 gap-2">
+                                            <fieldset style="animation-delay: .150s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-[max-content]">
+                                                <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Election Title</legend>
+                                                <div class="e_submit_title p-3 dark:text-gray-300/80 text-base"></div>
+                                            </fieldset>
+                                            <fieldset style="animation-delay: .250s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-[max-content]">
+                                                <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Eligible Courses</legend>
+                                                <div class="e_submit_crs p-3 flex flex-wrap gap-2"></div>
+                                            </fieldset>
+                                            <fieldset style="animation-delay: .350s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-[max-content]">
+                                                <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Eligible Year</legend>
+                                                <div class="e_submit_yr p-3 flex flex-wrap gap-2"></div>
+                                            </fieldset>
+                                        </div>
+                                        <fieldset style="animation-delay: .450s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-64 overflow-x-auto">
+                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Election Description</legend>
+                                            <div class="e_submit_description break-words p-3 dark:text-gray-300/80 text-base"></div>
                                         </fieldset>
                                     </div>
-                                    <fieldset style="animation-delay: .450s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-64 overflow-x-auto">
-                                        <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Election Description</legend>
-                                        <div class="e_submit_description break-words p-3 dark:text-gray-300/80 text-base"></div>
-                                    </fieldset>
+                                    <div class="w-full mb-2 grid grid-cols-2 sm:grid-cols-none gap-2">
+                                        <fieldset style="animation-delay: .550s" class="animate__animated animate__fadeInUp ms-500 rounded-md border-[.1px] dark:border-gray-600 p-1 h-auto">
+                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Positions</legend>
+                                            <div class="e_submit_pos p-3 flex flex-wrap gap-2"></div>
+                                        </fieldset>
+                                        <fieldset style="animation-delay: .650s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-auto">
+                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Partylists</legend>
+                                            <div class="e_submit_pty p-3 flex flex-wrap gap-2"></div>
+                                        </fieldset>
+                                    </div>
                                 </div>
-                                <div class="w-full mb-2 grid grid-cols-2 sm:grid-cols-none gap-2">
-                                    <fieldset style="animation-delay: .550s" class="animate__animated animate__fadeInUp ms-500 rounded-md border-[.1px] dark:border-gray-600 p-1 h-auto">
-                                        <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Positions</legend>
-                                        <div class="e_submit_pos p-3 flex flex-wrap gap-2"></div>
-                                    </fieldset>
-                                    <fieldset style="animation-delay: .650s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 p-1 h-auto">
-                                        <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Partylists</legend>
-                                        <div class="e_submit_pty p-3 flex flex-wrap gap-2"></div>
-                                    </fieldset>
-                                </div>
-                                <div class="w-full flex flex-row justify-center items-center mt-2">
-                                    <button type="submit" class="rpl sm:w-full w-2/4 text-lg transition-all text-center px-3 py-2 border border-transparent rounded-md shadow-sm text-white bg-purple-800 dark:hover:bg-purple-700 focus:outline-none dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-purple-800 dark:focus:ring-offset-darkBlue-secondary">
+                                <div class="w-full flex flex-row justify-center items-end">
+                                    <button type="submit" class="rpl mb-2 sm:w-full w-2/4 text-lg transition-all text-center px-3 py-2 border border-transparent rounded-md shadow-sm text-white bg-purple-800 dark:hover:bg-purple-700 focus:outline-none dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-purple-800 dark:focus:ring-offset-darkBlue-secondary">
                                         Submit Election
                                     </button>
+                                </div>
+                            </div>
+                            <div class="e_submit_loading w-full h-full hidden flex-col gap-2 p-2 justify-center items-center">
+                                <div class="e_submit_loading_x flex justify-center items-center gap-3 flex-col">
+                                    <div class="text-5xl text-purple-600">
+                                        <i class="fad fa-spinner-third animate-spin"></i>
+                                    </div>  
+                                    <p class="text-gray-300 text-xl" id="e_creating"></p>
+                                </div>
+                                <div class="e_submit_res flex-col hidden gap-2">
+                                    <div class="flex flex-col items-center gap-2 justify-center animate__animated animate__bounceIn">
+                                        <i class="dark:text-teal-600 text-5xl fad fa-check-circle"></i>
+                                        <p class="dark:text-gray-300 text-xl e_submit_res_msg"></p>
+                                    </div>
+                                    <div class="mt-5 flex flex-col gap-2 animate__animated animate__fadeInUp items-center">
+                                        <p class="dark:text-gray-400 text-base">Election will start <span class="dark:text-gray-300 e_submit_res_start">...</span></p>
+                                        <p class="dark:text-gray-400 text-base">Election passcode <span class="dark:text-gray-300 e_submit_res_pass">...</span></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

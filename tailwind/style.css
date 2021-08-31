@@ -9,9 +9,6 @@
     @apply transition-all bg-purple-400 dark:bg-purple-700 p-2 animate-pulse;
 }
 /* skeleton loading end */
-.spin{
-    @apply animate-spin;
-}
 /* remove light blue tap effect in android*/ 
 a, button, p, div, span, i, body{
     -webkit-tap-highlight-color: transparent;

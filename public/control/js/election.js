@@ -10,17 +10,13 @@ $(document).ready(() => {
     if(loc){
         if(!req){
             req = true
-            $.ajax({
-                url: `${loc.replace("#", "")}/`, 
-                method: 'POST',
-                timeout: 5000, 
-                success: (res) => {
+            $.post(`${loc.replace("#", "")}/`)
+                .done( (res) => {
                     $(".main").fadeOut(10)
                     $(".loader").html(res)
                     location.hash = loc
                     req = false
-                }, 
-                error: (e) => {
+                }).fail( (e) => {
                     req = false
                     if (e.statusText === 'timeout') {
                         toast.fire({
@@ -35,8 +31,7 @@ $(document).ready(() => {
                             timer: 2000
                         })
                     }
-                }
-            })
+                })
         } else {
             toast.fire({
                 icon: 'info',
@@ -87,19 +82,15 @@ $(document).ready(() => {
         $(this).find(".ic").html(icon)
         if(!req){
             req = true
-            $.ajax({
-                url: $(this).attr("data"), 
-                method: 'POST',
-                timeout: 5000, 
-                success: (res) => {
+            $.post($(this).attr("data"))
+                .done( (res) => {
                     $(".close_settings").click()
                     $(this).find(".ic").html(default_icon)
                     $(".main").fadeOut(10)
                     $(".loader").html(res)
                     location.hash = $(this).attr("data").replace("/", "")
                     req = false
-                }, 
-                error: (e) => {
+                }).fail( (e) => {
                     req = false
                     $(this).find(".ic").html(default_icon)
                     if (e.statusText === 'timeout') {
@@ -115,8 +106,7 @@ $(document).ready(() => {
                             timer: 2000
                         })
                     }
-                }
-            })
+                })
         } else {
             toast.fire({
                 icon: 'info',
@@ -393,40 +383,41 @@ $(document).ready(() => {
     })
     //when form is submitted 
     $(".create_election_form").submit(function(e) {
-        e.preventDefault() 
-        const text = $(this).find("button[type='submit']").html()
-        const icon = `<i class="fad fa-spinner-third text-xl spin"></i>`
+        e.preventDefault()
         $.ajax({
             url: 'create-election/',
             method: 'POST',
             cache: false,
             processData: false,
             contentType: false,
-            timout: 10000,
             data: new FormData(this), 
             beforeSend: () => {
-                $(this).find("button[type='submit']").html(icon)
-                $(this).find("button[type='submit']").removeClass("sm:w-full w-2/4")
+                $(".e_submit_summary").slideUp(500)
+                $(".e_submit_loading").removeClass("hidden") 
+                $(".e_submit_loading").addClass("flex")
             },
             success: (res) => {
-                $(this).find("button[type='submit']").html(text)
-                $(this).find("button[type='submit']").addClass("sm:w-full w-2/4")
                 if(res.created){
-                    Swal.fire({
-                        title: "Election Created",
-                        html: `<p class="break-all">${res.passcode}</p>`,
-                        icon: 'success', 
-                        backdrop: true, 
-                        allowOutsideClick: false
-                    }).then( () => {
-                        window.location.assign('')
-                    })
+                    setTimeout( () => {
+                        $(".e_submit_loading_x").removeClass("flex") 
+                        $(".e_submit_loading_x").addClass("hidden")
+                        $(".e_submit_res").removeClass("hidden")
+                        $(".e_submit_res").addClass("flex")
+                        $(".e_submit_res").find(".e_submit_res_msg").text(res.msg)
+                        $(".e_submit_res").find(".e_submit_res_start").text(res.data.e_start)
+                        $(".e_submit_res").find(".e_submit_res_pass").text(res.data.passcode)
+                    }, 1500)
                 } else {
                     Swal.fire({
                         title: res.msg,
+                        html: res.txt,
                         icon: 'info', 
                         backdrop: true, 
                         allowOutsideClick: false
+                    }).then( () => {
+                        $(".e_submit_summary").slideDown(500)
+                        $(".e_submit_loading").removeClass("flex") 
+                        $(".e_submit_loading").addClass("hidden")
                     })
                 }
             }, 
@@ -443,6 +434,11 @@ $(document).ready(() => {
             }
         }
     }
+    $(".dt").flatpickr({
+        disableMobile: "true", 
+        minDate: "today",
+        enableTime: true,
+    })
     //get all elections 
     setTimeout( () => {
         elections()
@@ -461,4 +457,18 @@ $(document).ready(() => {
                 
             })
     }
+    //type writer effect
+    var app = document.querySelector('#e_creating');
+
+    var typewriter = new Typewriter(app, {
+      loop: true,
+      delay: 90,
+    });
+    typewriter
+      .typeString('Creating Election...')
+      .pauseFor(300)
+      .deleteAll()
+      .typeString('Please wait...')
+      .pauseFor(1000)
+      .start();
 })
