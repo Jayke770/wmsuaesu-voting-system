@@ -4,7 +4,10 @@ $(document).ready( () => {
     posleft = JSON.parse($("div[chip]").attr("chip")) // array of not selected positions
     if($("div[chip]").length != 0){
         $("div[chip]").each( function() {
-            addchip(JSON.parse($(this).attr("chip")))
+            if(JSON.parse($(this).attr("chip")).length != 0) {
+                $(this).html('')
+                addchip(JSON.parse($(this).attr("chip")))
+            }
         })
     }
     //when add chip is clicked

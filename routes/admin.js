@@ -18,21 +18,13 @@ adminrouter.get('/control/elections', limit, isadmin, async (req, res) => {
         //get all courses, positions, & partylist 
         data.find({}, {positions: 1, course: 1, year: 1, partylists: 1}, (err, d) => {
             if(err) throw new err
-            if(d.length != 0){
-                return res.render("control/forms/elections", {
-                    positions: d[0].positions, 
-                    course: d[0].course, 
-                    year: d[0].year, 
-                    partylists: d[0].partylists
-                })
-            } else {
-                return res.render("control/forms/elections", {
-                    positions: [], 
-                    course: [], 
-                    year: [], 
-                    partylists: []
-                })
-            }
+            console.log(d)
+            return res.render("control/forms/elections", {
+                positions: d.length != 0 ? d[0].positions : [], 
+                course: d.length != 0 ? d[0].course : [], 
+                year: d.length != 0 ? d[0].year : [], 
+                partylists: d.length != 0 ? d[0].partylists : []
+            })
         })
     } catch(e){
         return res.status(500).send()
@@ -224,13 +216,10 @@ adminrouter.get('/control/elections/id/:id', limit, isadmin, async (req, res) =>
 adminrouter.post('/control/elections/positions/', isadmin, normal_limit, async (req, res, next) => {
     try {
         await data.find({}, { positions: 1 }, (err, pos) => {
-            console.log(pos)
             if (err) {
                 throw new err
             }
-            if (!err) {
-                return res.render('control/forms/positions', { pos: pos.length === 0 ? [] : pos[0].positions})
-            }
+            return res.render('control/forms/positions', { pos: pos.length === 0 ? [] : pos[0].positions})
         })
     } catch (e){
         return res.status(500).send()

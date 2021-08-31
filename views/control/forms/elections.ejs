@@ -224,7 +224,11 @@
                                 <p class="dark:text-gray-300 text-2xl">Select Positions</p>
                             </div>
                             <input required type="hidden" name="positions">
-                            <div class="flex flex-col gap-2 mt-2" chip='<%- JSON.stringify(positions) %>'></div>
+                            <div class="flex flex-col gap-2 mt-2" chip='<%- JSON.stringify(positions) %>'>
+                                <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 w-auto flex justify-center items-center px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
+                                    <span class="dark:text-gray-300">Nothing To Fetch</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="e_partylist hidden h-full pl-3 md:pl-0">
                             <div class="w-full h-full items-center flex flex-col gap-3 py-2 overflow-x-hidden">
