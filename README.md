@@ -22,5 +22,16 @@
   <a href="https://github.com/Jayke770/wmsuaesu-voting-system/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/Jayke770/wmsuaesu-voting-system?style=for-the-badge">
   </a> 
-  
+  <a href=""> 
+    <img src="https://img.shields.io/github/issues-closed-raw/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
+  </a>
+  <a href=""> 
+    <img src="https://img.shields.io/github/issues-raw/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
+  </a> 
+  <a href=""> 
+    <img src="https://img.shields.io/github/issues-pr/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
+  </a> 
+  <a href=""> 
+    <img src="https://img.shields.io/github/issues-pr-closed/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
+  </a>
 </p>
