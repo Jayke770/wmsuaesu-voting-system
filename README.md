@@ -8,8 +8,16 @@
 
 <p align="center">
   <img src="https://img.shields.io/github/downloads/Jayke770/wmsuaesu-voting-system/total?style=for-the-badge"> 
-  <img src="https://img.shields.io/github/issues/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
-  <img src="https://img.shields.io/github/stars/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
-  <img src="https://img.shields.io/github/forks/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
-  <img src="https://img.shields.io/github/license/Jayke770/wmsuaesu-voting-system?style=for-the-badge">
+  <a href="https://github.com/Jayke770/wmsuaesu-voting-system/issues> 
+    <img src="https://img.shields.io/github/issues/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
+  </a> 
+  <a href="https://github.com/Jayke770/wmsuaesu-voting-system/stargazers">
+    <img src="https://img.shields.io/github/stars/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
+  </a> 
+  <a href="https://github.com/Jayke770/wmsuaesu-voting-system/network/members">
+    <img src="https://img.shields.io/github/forks/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
+  </a> 
+  <a href="https://github.com/Jayke770/wmsuaesu-voting-system/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/Jayke770/wmsuaesu-voting-system?style=for-the-badge">
+  </a>
 </p>
