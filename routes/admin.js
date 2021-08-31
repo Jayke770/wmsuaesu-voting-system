@@ -229,7 +229,7 @@ adminrouter.post('/control/elections/positions/', isadmin, normal_limit, async (
                 throw new err
             }
             if (!err) {
-                return res.render('control/forms/positions', { pos: pos })
+                return res.render('control/forms/positions', { pos: pos.length === 0 ? [] : pos[0].positions})
             }
         })
     } catch (e){
