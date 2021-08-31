@@ -1,11 +1,11 @@
 <p align="center">Online Voting System</p> 
 <p align="center">For</p>
 <p align="center">Western Mindanao State University - Aurora External Studies Unit</p>
-<hr>
 <p align="center">
     <img src="https://github.com/Jayke770/wmsuaesu-voting-system/blob/master/public/assets/logo.png">
 </p>
-
+<hr>
+<br>
 <p align="center"> 
   <a href="https://voting-system-jayke.herokuapp.com"> 
      <img src="https://img.shields.io/website?style=for-the-badge&up_message=Online&url=https%3A%2F%2Fvoting-system-jayke.herokuapp.com">
