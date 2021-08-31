@@ -7,9 +7,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/downloads/Jayke770/wmsuaesu-voting-system/total"> 
-  <img src="https://img.shields.io/github/issues/Jayke770/wmsuaesu-voting-system"> 
-  <img src="https://img.shields.io/github/stars/Jayke770/wmsuaesu-voting-system"> 
-  <img src="https://img.shields.io/github/forks/Jayke770/wmsuaesu-voting-system"> 
-  <img src="https://img.shields.io/github/license/Jayke770/wmsuaesu-voting-system">
+  <img src="https://img.shields.io/github/downloads/Jayke770/wmsuaesu-voting-system/total?style=for-the-badge"> 
+  <img src="https://img.shields.io/github/issues/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
+  <img src="https://img.shields.io/github/stars/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
+  <img src="https://img.shields.io/github/forks/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
+  <img src="https://img.shields.io/github/license/Jayke770/wmsuaesu-voting-system?style=for-the-badge">
 </p>
