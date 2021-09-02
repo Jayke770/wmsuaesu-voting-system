@@ -43,38 +43,13 @@
         </div>
         <!-- Voter ID List -->
         <div class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
-            <% if(id.length != 0) {
-             for( let i = 0; i < id.length; i++ ) {  %>
-                <div style="animation-delay: <%- i * .150 %>s;" data="<%- id[i].id %>" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
-                    <div class="w-full">
-                        <span class="st_id font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
-                        <div class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">
-                            <span course="<%- id[i].course %>">...</span>
-                            <span year="<%- id[i].year %>">...</span>
-                        </div>
+            <% for (let i = 0; i < 30; i++) { %>
+                <div style="animation-delay: <%- i * .150 %>s;"  class="voters_id_skeleton w-full animate__animated animate__fadeIn p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
+                    <div class="w-full gap-2 flex flex-row">
+                        <p class="w-full skeleton"></p>
+                        <p class="w-full skeleton"></p>
                     </div>
-                    <div class="mt-2 p-2">
-                        <a data="<%- id[i].id %>" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a data="<%- id[i].id %>" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
-                        <span class=" <% if(id[i].enabled){ %> dark:bg-green-700 bg-green-600 <% } else { %> dark:bg-amber-700 bg-amber-600 <% } %> float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">
-                            <% if(id[i].enabled){ %> 
-                                Used
-                            <% } else { %>
-                                Not Used
-                            <% } %>
-                        </span>
-                    </div>
-                </div>
-            <% } 
-            } else { %>
-                <div class="empty_voter_id col-span-4 animate__animated animate__fadeInUp flex items-center justify-center transition-all">
-                    <div class=" text-center w-[350px] md:mt-12 mt-36 py-9 bg-rose-500 dark:bg-darkBlue-secondary rounded-2xl cursor-pointer">
-                        <span class="font-bold text-gray-50">Nothing To Fetch</span>
-                    </div>
+                    <div class="mt-6 p-2 skeleton"></div>
                 </div>
             <% } %>
         </div>

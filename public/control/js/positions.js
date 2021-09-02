@@ -1,5 +1,22 @@
 "use strict"
 $(document).ready(function () {
+    //set timeout for all ajax requests 
+    $.ajaxSetup({
+        timeout: 10000,
+    })
+    setTimeout( () => {
+        pos_all()
+    }, 2000)
+    async function pos_all(){
+        await $.post('positions/pos')
+            .done( (res) => {
+                $(".positions_all").find(".pos_skeleton").remove() 
+                $(".positions_all").html(res)
+            }).fail( (e) => {
+                //todo
+            })
+    }
+
     $(".add_pos_btn").click(() => {
         const parent = $(".add_position")
         const child = $(".add_position_main")

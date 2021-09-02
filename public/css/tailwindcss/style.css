@@ -1669,11 +1669,6 @@ video {
   background-color: rgba(82, 82, 91, var(--tw-bg-opacity));
 }
 
-.bg-teal-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgba(20, 184, 166, var(--tw-bg-opacity));
-}
-
 .bg-gray-900\/30 {
   background-color: rgba(24, 24, 27, 0.3);
 }
@@ -1681,6 +1676,15 @@ video {
 .bg-warmgray-100 {
   --tw-bg-opacity: 1;
   background-color: rgba(245, 245, 244, var(--tw-bg-opacity));
+}
+
+.bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.bg-purple-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(147, 51, 234, var(--tw-bg-opacity));
 }
 
 .bg-amber-600 {
@@ -1691,15 +1695,6 @@ video {
 .bg-rose-500 {
   --tw-bg-opacity: 1;
   background-color: rgba(244, 63, 94, var(--tw-bg-opacity));
-}
-
-.bg-black\/50 {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.bg-purple-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgba(147, 51, 234, var(--tw-bg-opacity));
 }
 
 .bg-indigo-500 {
@@ -2248,14 +2243,14 @@ video {
   color: rgba(67, 56, 202, var(--tw-text-opacity));
 }
 
-.text-bluegray-600 {
-  --tw-text-opacity: 1;
-  color: rgba(71, 85, 105, var(--tw-text-opacity));
-}
-
 .text-green-600 {
   --tw-text-opacity: 1;
   color: rgba(22, 163, 74, var(--tw-text-opacity));
+}
+
+.text-bluegray-600 {
+  --tw-text-opacity: 1;
+  color: rgba(71, 85, 105, var(--tw-text-opacity));
 }
 
 .text-purple-600 {
@@ -2313,14 +2308,14 @@ video {
   color: rgba(49, 46, 129, var(--tw-text-opacity));
 }
 
-.text-fuchsia-600 {
-  --tw-text-opacity: 1;
-  color: rgba(192, 38, 211, var(--tw-text-opacity));
-}
-
 .text-rose-500 {
   --tw-text-opacity: 1;
   color: rgba(244, 63, 94, var(--tw-text-opacity));
+}
+
+.text-fuchsia-600 {
+  --tw-text-opacity: 1;
+  color: rgba(192, 38, 211, var(--tw-text-opacity));
 }
 
 .text-warmgray-700 {
@@ -2458,7 +2453,7 @@ video {
 
 .dark .skeleton {
   --tw-bg-opacity: 1;
-  background-color: rgba(126, 34, 206, var(--tw-bg-opacity));
+  background-color: rgba(107, 33, 168, var(--tw-bg-opacity));
 }
 
 @keyframes pulse {
@@ -2480,7 +2475,7 @@ video {
 
 .dark .skeleton-image {
   --tw-bg-opacity: 1;
-  background-color: rgba(126, 34, 206, var(--tw-bg-opacity));
+  background-color: rgba(107, 33, 168, var(--tw-bg-opacity));
 }
 
 /* skeleton loading end */

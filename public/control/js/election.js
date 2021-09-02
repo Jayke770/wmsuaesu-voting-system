@@ -171,10 +171,10 @@ $(document).ready(() => {
                         $(data).find(`${data}_description`).text($(this).val())
                     } 
                     if($($(this)).attr("name") === "e_start"){
-                        console.log("es")
+                        
                     } 
                     if($($(this)).attr("name") === "e_end"){
-                        console.log('ee')
+                        
                     } 
                     if($($(this)).attr("name") === "courses"){
                         const selected_crs = $(this).val().split(",")
@@ -405,7 +405,8 @@ $(document).ready(() => {
                         $(".e_submit_res").addClass("flex")
                         $(".e_submit_res").find(".e_submit_res_msg").text(res.msg)
                         $(".e_submit_res").find(".e_submit_res_start").text(res.data.e_start)
-                        $(".e_submit_res").find(".e_submit_res_pass").text(res.data.passcode)
+                        $(".e_submit_res").find(".e_submit_res_pass").text(res.data.passcode)  
+                        elections()
                     }, 1500)
                 } else {
                     Swal.fire({
@@ -452,6 +453,7 @@ $(document).ready(() => {
                         $(this).removeClass("skeleton-image")
                         $(this).attr("src", avatar($(this).attr("data"), "#fff", dark()) )
                     })
+                    activeVoters($(".election_list").find(".active_voters"))
                 }, 1000)
             }).fail( (e) => {
                 

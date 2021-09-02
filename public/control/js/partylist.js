@@ -1,4 +1,20 @@
 $(document).ready(() => {
+    //set timeout for all ajax requests 
+    $.ajaxSetup({
+        timeout: 10000,
+    })
+    setTimeout( () => {
+        pty()
+    }, 2000)
+    async function pty() {
+        await $.post('partylist/pty')
+            .done( (res) => {
+                $(".pty_all").find(".pty_skeleton").remove() 
+                $(".pty_all").html(res)
+            }).fail( (e) => {
+                //todo
+            })
+    }
     $(".add_pty_btn").click(function (e) {
         e.preventDefault()
         const parent = $(".add_pty")

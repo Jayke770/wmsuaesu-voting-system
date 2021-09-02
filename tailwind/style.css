@@ -3,10 +3,10 @@
 @tailwind utilities;
 /* skeleton loading */
 .skeleton {
-    @apply transition-all bg-purple-400 dark:bg-purple-700 p-2 rounded-full animate-pulse;
+    @apply transition-all bg-purple-400 dark:bg-purple-800 p-2 rounded-full animate-pulse;
 }
 .skeleton-image{
-    @apply transition-all bg-purple-400 dark:bg-purple-700 p-2 animate-pulse;
+    @apply transition-all bg-purple-400 dark:bg-purple-800 p-2 animate-pulse;
 }
 /* skeleton loading end */
 /* remove light blue tap effect in android*/ 

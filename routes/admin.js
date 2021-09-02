@@ -18,7 +18,6 @@ adminrouter.get('/control/elections', limit, isadmin, async (req, res) => {
         //get all courses, positions, & partylist 
         data.find({}, {positions: 1, course: 1, year: 1, partylists: 1}, (err, d) => {
             if(err) throw new err
-            console.log(d)
             return res.render("control/forms/elections", {
                 positions: d.length != 0 ? d[0].positions : [], 
                 course: d.length != 0 ? d[0].course : [], 
@@ -214,14 +213,16 @@ adminrouter.get('/control/elections/id/:id', limit, isadmin, async (req, res) =>
 
 //positions 
 adminrouter.post('/control/elections/positions/', isadmin, normal_limit, async (req, res, next) => {
+    return res.render('control/forms/positions')
+})
+//all positions
+adminrouter.post('/control/elections/positions/pos', isadmin, normal_limit, async (req, res, next) => {
     try {
-        await data.find({}, { positions: 1 }, (err, pos) => {
-            if (err) {
-                throw new err
-            }
-            return res.render('control/forms/positions', { pos: pos.length === 0 ? [] : pos[0].positions})
+        await data.find({}, {positions: 1}, (err, p) => {
+            if(err) throw new err 
+            return res.render('control/forms/positions_all', {pos: p.length == 0 ? [] : p[0].positions})
         })
-    } catch (e){
+    } catch (e) {
         return res.status(500).send()
     }
 })
@@ -389,14 +390,56 @@ adminrouter.post('/control/elections/positions/update-position/', isadmin, norma
 //voter id
 adminrouter.post('/control/elections/voter-id/', normal_limit, isadmin, async (req, res) => {
     try {
-        await data.find({}, {voterId: 1, course: 1, year: 1}, (err, data) => {
+        await data.find({}, {course: 1, year: 1}, (err, data) => {
             if(err) throw new err
-            if(data.length != 0){ 
-                return res.render('control/forms/voter-id', { id: data[0].voterId, course: data[0].course, year: data[0].year})
-            } else {
-                return res.render('control/forms/voter-id', { id: [], course: [], year: []})
-            }
+            return res.render('control/forms/voter-id', { 
+                course: data.length == 0 ? [] : data[0].course, 
+                year:  data.length == 0 ? [] : data[0].year
+            })
         })
+    } catch(e) {
+        return res.status(500).send()
+    }
+})
+//get course 
+adminrouter.post('/control/elections/voter-id/course', normal_limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    try {
+        await data.find({"course.id": {$eq: xs(id)}}, {course: 1}, (err, c) => {
+            if(err) throw new err 
+            return res.send({
+                course: c.length == 0 ? "Error" : c[0].course[0].type
+            })
+        })
+    } catch(e) {
+        return res.status(500).send()
+    }
+})
+//get year
+adminrouter.post('/control/elections/voter-id/year', normal_limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    try {
+        await data.find({"year.id": {$eq: xs(id)}}, {year: 1}, (err, c) => {
+            if(err) throw new err 
+            return res.send({
+                year: c.length == 0 ? "Error" : c[0].year[0].type
+            })
+        })
+    } catch(e) {
+        return res.status(500).send()
+    }
+})
+//all ids
+adminrouter.post('/control/elections/voter-id/ids', normal_limit, isadmin, async (req, res) => {
+    try {
+       await data.find({}, {voterId: 1, course: 1, year: 1}, (err, data) => {
+           if(err) throw new err 
+           return res.render("control/forms/voter-id_all", {
+               id: data.length != 0 ? data[0].voterId : [], 
+               course: data.length != 0 ? data[0].course : [], 
+               year: data.length != 0 ? data[0].year : [], 
+           })
+       })
     } catch(e) {
         return res.status(500).send()
     }
@@ -743,15 +786,27 @@ adminrouter.post('/control/elections/voter-id/update-voter-id/', limit, isadmin,
 
 //course & year 
 adminrouter.post('/control/elections/course&year/', limit, isadmin, async (req, res) => {
+    return res.render('control/forms/cy')
+})
+//course
+adminrouter.post('/control/elections/course/', limit, isadmin, async (req, res) => {
     try {
-        await data.find({}, {course: 1, year: 1}, (err, data) => {
-            if(err){
-                throw new err
-            } else {
-                return res.render('control/forms/cy', { cy: data })
-            }
+        await data.find({}, {course: 1}, (err, c) => {
+            if(err) throw new err 
+            return res.render('control/forms/course', {course: c.length != 0 ? c[0].course : []})
         })
-    } catch(e){
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+//year 
+adminrouter.post('/control/elections/year/', limit, isadmin, async (req, res) => {
+    try {
+        await data.find({}, {year: 1}, (err, y) => {
+            if(err) throw new err 
+            return res.render('control/forms/course', {course: y.length != 0 ? y[0].year : []})
+        })
+    } catch (e) {
         return res.status(500).send()
     }
 })
@@ -1181,17 +1236,14 @@ adminrouter.post('/control/elections/course&year/up_y/', normal_limit, isadmin, 
 
 //partylist 
 adminrouter.post('/control/elections/partylist', normal_limit, isadmin, async (req, res) => {
+    return res.render("control/forms/partylist")
+})
+//partylist all 
+adminrouter.post('/control/elections/partylist/pty', normal_limit, isadmin, async (reeq, res) => {
     try {
         await data.find({}, {partylists: 1}, (err, p) => {
-            if(err){
-                throw new err
-            } else {
-                if(p.length === 0){
-                    return res.render("control/forms/partylist", {partylist: []})
-                } else {
-                    return res.render("control/forms/partylist", {partylist: p[0].partylists})
-                }
-            }
+            if(err) throw new err
+            return res.render("control/forms/partylist_all", {partylist: p.length == 0 ? [] : p[0].partylists})
         })
     } catch (e){
         return res.status(500).send()

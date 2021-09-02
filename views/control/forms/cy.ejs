@@ -28,48 +28,22 @@
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-none w-full">
         <div class="c_list flex flex-col gap-1 py-2 px-1 transition-all">
-            <% if(cy.length !== 0) { %>
-                <% for( let i = 0; i < cy[0].course.length; i++ ) { %>
-                    <div data="<%- cy[0].course[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="rpl transition-all animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
-                        <div class="grid grid-cols-2">
-                            <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300 skeleton" data="<%- cy[0].course[i].type %>"></p>
-                            <div class="transition-all animate__animated animate__fadeInLeft ms-300 hidden group-hover:flex flex-row justify-end items-center">
-                                <a data="<%- cy[0].course[i].id %>" class="rpl up_c px-2 cursor-pointer text-green-600">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a data="<%- cy[0].course[i].id %>" class="rpl del_c px-2 cursor-pointer text-rose-600">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </div>
-                        </div>
+            <% for (let i = 0; i < 15; i++) { %>
+                <div style="animation-delay: <%- i * .100 %>s;" class="c_list_skeleton rpl transition-all animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-1 cursor-pointer">
+                    <div class="grid grid-cols-2 gap-2 p-3">
+                        <p class="skeleton"></p>
+                        <p class="skeleton"></p>
                     </div>
-                <% } %>
-            <% } else { %>
-                <div class="rpl empty_list transition-all animate__animated animate__fadeInUp ms-300 group flex justify-center items-center dark:bg-darkBlue-secondary bg-gray-100 rounded-md p-3 cursor-pointer">
-                    <p class="font-semibold text-bluegray-900 dark:text-gray-300 text-base">Nothing to fetch</p>
                 </div>
             <% } %>
         </div>
         <div class="y_list flex sm:hidden flex-col gap-1 py-2 px-1 transition-all">
-            <% if(cy.length !== 0) { %>
-                <% for( let i = 0; i < cy[0].year.length; i++ ) { %>
-                    <div data="<%- cy[0].year[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="rpl transition-all animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
-                        <div class="grid grid-cols-2">
-                            <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300 skeleton" data="<%- cy[0].year[i].type %>"></p>
-                            <div class="transition-all animate__animated animate__fadeInLeft ms-300 hidden group-hover:flex flex-row justify-end items-center">
-                                <a data="<%- cy[0].year[i].id %>" class="rpl up_y px-2 cursor-pointer text-green-600">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a data="<%- cy[0].year[i].id %>" class="rpl del_y px-2 cursor-pointer text-rose-600">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </div>
-                        </div>
+            <% for (let i = 0; i < 15; i++) { %>
+                <div style="animation-delay: <%- i * .100 %>s;" class="rpl transition-all animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-1 cursor-pointer">
+                    <div class="grid grid-cols-2 gap-2 p-3">
+                        <p class="skeleton"></p>
+                        <p class="skeleton"></p>
                     </div>
-                <% } %>
-            <% } else { %>
-                <div class="empty_list rpl transition-all animate__animated animate__fadeInUp ms-300 group flex justify-center items-center bg-gray-100 dark:bg-darkBlue-secondary rounded-md p-3 cursor-pointer">
-                    <p class="font-semibold text-bluegray-900 dark:text-gray-300 text-base">Nothing to fetch</p>
                 </div>
             <% } %>
         </div>
@@ -96,18 +70,5 @@
             </div>
         </form>
     </div>
-</div>
-<div class="preload">
-    <script>
-       setTimeout(() => {
-           $(".skeleton").each(function () {
-               if (!$(this).hasClass("time")) {
-                   $(this).text($(this).attr("data"))
-                   $(this).removeClass("skeleton")
-               }
-           })
-           $(".preload").remove()
-       }, 1500)
-    </script>
 </div>
 <script src="/control/js/cy.js "></script>

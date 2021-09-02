@@ -10,7 +10,7 @@ module.exports = {
     }),
     normal_limit: rateLimit({
         windowMs: 1*60*1000, 
-        max: 12,
+        max: 100,
     }),
     delete_limit: rateLimit({
         windowMs: 1*60*1000, 

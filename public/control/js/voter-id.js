@@ -8,6 +8,17 @@ $(document).ready( () => {
         add_voter_id = false, 
         search_voter_id = false, 
         update_id
+    setTimeout(() => {
+        ids()
+    }, 2000) 
+    async function ids() {
+        await $.post('voter-id/ids')
+            .done( async (res) => { 
+                $(".voters_id_all").html(res) 
+            }).fail( (e) => {
+                //todo
+            })
+    }
     $(".add_voter").click( () => {
         if($(".popup").hasClass("hidden")){
             $(".add_voter_id").addClass($(".add_voter_id").attr("animate-in"))
@@ -73,9 +84,9 @@ $(document).ready( () => {
                                     title: res.msg
                                 }).then( () => {
                                     $(".reset_voter_id_form").click()
-                                    append_voter_id(res.data)
                                     $(this).find("button[type='submit']").prop('disabled', false)
                                     $(this).find("button[type='submit']").text(submit_btn_text)
+                                    ids()
                                 })
                             } else {
                                 toast.fire({
@@ -415,57 +426,6 @@ $(document).ready( () => {
                 <div class="empty_voter_id col-span-4 animate__animated animate__fadeInUp flex items-center justify-center transition-all">
                     <div class=" text-center w-[350px] md:mt-12 mt-36 py-9 bg-rose-500 dark:bg-darkBlue-secondary rounded-2xl cursor-pointer">
                         <span class="font-bold text-gray-50">Nothing To Fetch</span>
-                    </div>
-                </div>
-            `)
-        }
-    }
-    function append_voter_id(data) {
-        let badge = "dark:bg-amber-700 bg-amber-600", text_badge = "Not Used"
-        if(data.enabled){
-            badge = "dark:bg-green-700 bg-green-600"
-            text_badge = "Used"
-        } 
-        if($(".empty_voter_id").length != 0){
-            $(".empty_voter_id").remove() 
-            $(".voters_id_all").append(`
-                <div style="animation-delay: .150s;" data="${data._id}" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
-                    <div class="w-full">
-                        <span class="st_id font-normal text-base dark:text-gray-300">${data.student_id}</span>
-                        <div class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">
-                            <span course="${data.course}">...</span>
-                            <span year="${data.year}">...</span>
-                        </div>
-                    </div>
-                    <div class="mt-2 p-2">
-                        <a data="${data._id}" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a data="${data._id}" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
-                        <span class="${badge} float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">${text_badge}</span>
-                    </div>
-                </div>
-            `)
-        } else {
-            $(".voters_id_all").append(`
-                <div style="animation-delay: .150s;" data="${data._id}" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
-                    <div class="w-full">
-                        <span class="st_id font-normal text-base dark:text-gray-300">${data.student_id}</span>
-                        <div class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">
-                            <span course="${data.course}">...</span>
-                            <span year="${data.year}">...</span>
-                        </div>
-                    </div>
-                    <div class="mt-2 p-2">
-                        <a data="${data._id}" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a data="${data._id}" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
-                        <span class="${badge} float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">${text_badge}</span>
                     </div>
                 </div>
             `)

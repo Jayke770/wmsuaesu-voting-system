@@ -19,7 +19,7 @@
                     </div>
                     <div class="container mt-4 transition-all">
                         <div class="container mt-3 dark:text-gray-400">Voters <span class="dark:text-gray-300 float-right font-semibold skeleton" data="<%- election.voters.length %>"></span></div>
-                        <div class="container mt-3 dark:text-gray-400">Active Voters <span class="dark:text-gray-300 float-right font-semibold skeleton"></span></div>
+                        <div class="container mt-3 dark:text-gray-400">Active Voters <span class="dark:text-gray-300 float-right font-semibold active_voters" data="<%- election._id %>">...</span></div>
                         <div class="container mt-3 dark:text-gray-400">Status <span class="dark:text-gray-300 float-right font-semibold skeleton"  data="<%- election.status %>"></span>
                         </div>
                         <div class="container mt-3 dark:text-gray-400">Created <span class="dark:text-gray-300 float-right font-semibold skeleton time" data="<%- election.created %>"></span></div>
@@ -36,18 +36,18 @@
  <div class="preload">
      <script>
         setTimeout(() => {
-            $(".skeleton").each(function () {
+            $(".election_list").find(".skeleton").each(function () {
                 if (!$(this).hasClass("time")) {
                     $(this).text($(this).attr("data"))
                     $(this).removeClass("skeleton")
                 }
             })
-            $(".skeleton-image").each(function () {
+            $(".election_list").find(".skeleton-image").each(function () {
                 $(this).attr("src", $(this).attr("data-src"))
                 $(this).attr("data-src", '')
                 $(this).removeClass("skeleton-image")
             })
-            $(".preload").remove()
+            $(".election_list").find(".preload").remove()
         }, 1000)
      </script>
  </div>

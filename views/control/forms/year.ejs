@@ -1,0 +1,21 @@
+<% if(year.length !== 0) { %>
+    <% for( let i = 0; i < year.length; i++ ) { %>
+        <div data="<%- year[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="rpl transition-all animate__animated animate__fadeInUp ms-800 group grid bg-gray-100 even:bg-gray-200 dark:bg-darkBlue-secondary dark:even:bg-darkBlue-secondary/40 rounded-md p-3 cursor-pointer">
+            <div class="grid grid-cols-2">
+                <p class="type font-semibold text-bluegray-900 text-base dark:text-gray-300"><%- year[i].type %></p>
+                <div class="transition-all animate__animated animate__fadeInLeft ms-300 hidden group-hover:flex flex-row justify-end items-center">
+                    <a data="<%- year[i].id %>" class="rpl up_y px-2 cursor-pointer text-green-600">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a data="<%- year[i].id %>" class="rpl del_y px-2 cursor-pointer text-rose-600">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    <% } %>
+<% } else { %>
+    <div class="empty_list rpl transition-all animate__animated animate__fadeInUp ms-300 group flex justify-center items-center bg-gray-100 dark:bg-darkBlue-secondary rounded-md p-3 cursor-pointer">
+        <p class="font-semibold text-bluegray-900 dark:text-gray-300 text-base">Nothing to fetch</p>
+    </div>
+<% } %>

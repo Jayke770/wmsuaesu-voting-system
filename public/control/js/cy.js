@@ -1,5 +1,29 @@
 "use strict"
 $(document).ready(() => {
+    //set timeout for all ajax requests 
+    $.ajaxSetup({
+        timeout: 10000,
+    })
+    //get course
+    setTimeout(() => {
+        cy()
+    }, 2000)
+    async function cy(){
+        await $.post('course/')
+            .done( (res) => {
+                $(".c_list").find(".c_list_skeleton").remove()
+                $(".c_list").html(res)
+            }).fail( (e) => {
+                //todo
+            })
+        await $.post('year/')
+            .done( (res) => {
+                $(".y_list").find(".c_list_skeleton").remove()
+                $(".y_list").html(res)
+            }).fail( (e) => {
+                //todo
+            })
+    }
     $(".y").click(() => {
         const course = $(".c_list")
         const year = $(".y_list")
