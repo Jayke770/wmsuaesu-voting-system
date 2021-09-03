@@ -18,7 +18,6 @@ const multer = require('multer')
 const uploader = multer()
 const helmet = require('helmet')
 const cors = require('cors')
-const icon = require('express-favicon')
 const xs = require('xss')
 const { v4: uuidv4 } = require('uuid')
 const rfs = require('rotating-file-stream')
@@ -63,7 +62,6 @@ const appsession = session({
     }
 })
 app.use(morgan(':status :remote-addr :method :url :response-time ms', { stream: log_stream }))
-app.use(icon(__dirname + '/public/assets/logo.png'))
 app.use(express.static(dir))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json()) // json 

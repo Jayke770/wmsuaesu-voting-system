@@ -12,7 +12,7 @@ $(document).ready( () => {
         ids()
     }, 2000) 
     async function ids() {
-        await $.post('voter-id/ids')
+        await $.post('ids/')
             .done( async (res) => { 
                 $(".voters_id_all").html(res) 
             }).fail( (e) => {
@@ -60,7 +60,7 @@ $(document).ready( () => {
         $(this).find("button[type='submit']").text("Checking Voter ID...")
         $(this).find("button[type='submit']").prop('disabled', true)
         $.ajax({
-            url: 'voter-id/verify/', 
+            url: 'verify/', 
             method: 'POST', 
             cache: false, 
             processData: false, 
@@ -70,7 +70,7 @@ $(document).ready( () => {
                 if(res.status){
                     $(this).find("button[type='submit']").html(icon)
                     $.ajax({
-                        url: 'voter-id/add-voter-id/',
+                        url: 'add-voter-id/',
                         method: 'POST',
                         cache: false,
                         contentType: false,
@@ -173,9 +173,9 @@ $(document).ready( () => {
                     backdrop: true,
                     willOpen: () => {
                         Swal.showLoading()
-                        $.post("voter-id/delete-voter-id/", {
+                        $.post("delete-voter-id/", {
                             id: $(this).attr("data")
-                        }, (res) => {
+                        }).done( (res) => {
                             if(res.status){
                                 Swal.fire({
                                     icon: 'success', 
@@ -190,11 +190,20 @@ $(document).ready( () => {
                             if(!res.status){
                                 Swal.fire({
                                     icon: 'error', 
-                                    title: res.msg, 
+                                    title: res.msg,
+                                    html: res.text, 
                                     backdrop: true, 
                                     allowOutsideClick: true
                                 })
                             }
+                        }).fail( (e) => {
+                            Swal.fire({
+                                icon: 'error', 
+                                title: 'Connection error',
+                                html: `${e.status} ${e.statusText}`,
+                                backdrop: true, 
+                                allowOutsideClick: false,
+                            })
                         })
                     },
                     allowOutsideClick: () => !Swal.isLoading()
@@ -204,7 +213,7 @@ $(document).ready( () => {
     })
     $(".sort_voter_id").change(function(){
         if($(this).val().trim() !== ""){
-            $.post("voter-id/sort-voter-id/", {
+            $.post("sort-voter-id/", {
                 srt: $(this).val().trim()
             }, (res) => {
                 if(res.status){
@@ -217,7 +226,7 @@ $(document).ready( () => {
         if($(this).val().trim() !== ""){
             if(!search_voter_id){
                 search_voter_id = true
-                $.post("voter-id/search-voter-id/", {
+                $.post("search-voter-id/", {
                     id: $(this).val().trim()
                 }, (res, status) => {
                     if(res.status){
@@ -245,7 +254,7 @@ $(document).ready( () => {
             title: `${icon} Checking Voter ID...`, 
             willOpen: () => {
                 $.ajax({
-                    url: 'voter-id/get-voter-id/', 
+                    url: 'get-voter-id/', 
                     method: 'POST',
                     data: data, 
                     cache: false, 
@@ -292,7 +301,7 @@ $(document).ready( () => {
     $(".edit_voter_id_form").submit(function(e){
         e.preventDefault() 
         $.ajax({
-            url: 'voter-id/update-voter-id/', 
+            url: 'update-voter-id/', 
             method: 'POST', 
             cache: false, 
             processData: false,

@@ -13,7 +13,7 @@ const moment = require('moment')
 /*##################################################################################### */
 
 //elections data 
-adminrouter.get('/control/elections', limit, isadmin, async (req, res) => {
+adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
     try {
         //get all courses, positions, & partylist 
         data.find({}, {positions: 1, course: 1, year: 1, partylists: 1}, (err, d) => {
@@ -30,7 +30,7 @@ adminrouter.get('/control/elections', limit, isadmin, async (req, res) => {
     }
 })
 //create election 
-adminrouter.post('/control/elections/create-election', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/create-election/', limit, isadmin, async (req, res) => {
     const {e_title, e_description, e_start, e_end, courses, year, positions, partylists} = req.body 
     //sanitize 
     const pass =  genpass.generate({
@@ -212,11 +212,11 @@ adminrouter.get('/control/elections/id/:id', limit, isadmin, async (req, res) =>
 /*##################################################################################### */
 
 //positions 
-adminrouter.post('/control/elections/positions/', isadmin, normal_limit, async (req, res, next) => {
+adminrouter.get('/control/elections/positions/', isadmin, normal_limit, async (req, res, next) => {
     return res.render('control/forms/positions')
 })
 //all positions
-adminrouter.post('/control/elections/positions/pos', isadmin, normal_limit, async (req, res, next) => {
+adminrouter.post('/control/elections/positions/pos/', isadmin, normal_limit, async (req, res, next) => {
     try {
         await data.find({}, {positions: 1}, (err, p) => {
             if(err) throw new err 
@@ -227,7 +227,7 @@ adminrouter.post('/control/elections/positions/pos', isadmin, normal_limit, asyn
     }
 })
 //add position
-adminrouter.post('/control/elections/positions/add-position', isadmin, normal_limit, async (req, res) => {
+adminrouter.post('/control/elections/positions/add-position/', isadmin, normal_limit, async (req, res) => {
     const { position } = req.body
     const new_pos = {
         id: uuid(),
@@ -388,7 +388,7 @@ adminrouter.post('/control/elections/positions/update-position/', isadmin, norma
 /*##################################################################################### */
 
 //voter id
-adminrouter.post('/control/elections/voter-id/', normal_limit, isadmin, async (req, res) => {
+adminrouter.get('/control/elections/voter-id/', normal_limit, isadmin, async (req, res) => {
     try {
         await data.find({}, {course: 1, year: 1}, (err, data) => {
             if(err) throw new err
@@ -402,7 +402,7 @@ adminrouter.post('/control/elections/voter-id/', normal_limit, isadmin, async (r
     }
 })
 //get course 
-adminrouter.post('/control/elections/voter-id/course', normal_limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/voter-id/course/', normal_limit, isadmin, async (req, res) => {
     const {id} = req.body 
     try {
         await data.find({"course.id": {$eq: xs(id)}}, {course: 1}, (err, c) => {
@@ -416,7 +416,7 @@ adminrouter.post('/control/elections/voter-id/course', normal_limit, isadmin, as
     }
 })
 //get year
-adminrouter.post('/control/elections/voter-id/year', normal_limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/voter-id/year/', normal_limit, isadmin, async (req, res) => {
     const {id} = req.body 
     try {
         await data.find({"year.id": {$eq: xs(id)}}, {year: 1}, (err, c) => {
@@ -430,7 +430,7 @@ adminrouter.post('/control/elections/voter-id/year', normal_limit, isadmin, asyn
     }
 })
 //all ids
-adminrouter.post('/control/elections/voter-id/ids', normal_limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/voter-id/ids/', normal_limit, isadmin, async (req, res) => {
     try {
        await data.find({}, {voterId: 1, course: 1, year: 1}, (err, data) => {
            if(err) throw new err 
@@ -445,7 +445,7 @@ adminrouter.post('/control/elections/voter-id/ids', normal_limit, isadmin, async
     }
 })
 //check voter id
-adminrouter.post('/control/elections/voter-id/verify', isadmin, normal_limit, async (req, res) => {
+adminrouter.post('/control/elections/voter-id/verify/', isadmin, normal_limit, async (req, res) => {
     const { id } = req.body
     const voter_id = xs(id).toUpperCase()
     //check voter if exists 
@@ -513,7 +513,6 @@ adminrouter.post('/control/elections/voter-id/add-voter-id/', isadmin, limit, as
             }
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -521,35 +520,24 @@ adminrouter.post('/control/elections/voter-id/add-voter-id/', isadmin, limit, as
 adminrouter.post('/control/elections/voter-id/delete-voter-id/', isadmin, delete_limit, async (req, res, next) => {
     const { id } = req.body
     const voter_id = xs(id)
-
     //check voter id if not used
     try{
-        await data.find({ "voterId.id": {$eq: voter_id} }, {"voterId.id": 1, "voterId.enabled": 1, _id: 0}, (err, result) => {
+        await data.find({ "voterId.id": {$eq: voter_id}, "voterId.enabled": {$eq: false}}, (err, result) => {
             if (err) throw new err 
-            //check if the result is not empty
-            if(result.length != 0 || result[0].voterId.length != 0){
-                let v_id = result[0].voterId // array of voterid from query
-                for(let i = 0; i < v_id.length; i++){
-                    //check if voter id is not enabled
-                    if(voter_id === v_id[i].id && !v_id[i].enabled){
-                        data.updateOne({}, {$pull: {voterId: {id: {$eq: voter_id}}}}, (err, del) => {
-                            if(err) throw new err 
-                            return res.send({
-                                status: true, 
-                                msg: "Voter ID Deleted"
-                            })
-                        })
-                    } else {
-                        return res.send({
-                            status: false, 
-                            msg: "Voter ID is in used"
-                        })
-                    }
-                }
+            //meaning the user id is not enabled
+            if(result.length != 0){
+                data.updateOne({}, {$pull: {voterId: {id: {$eq: voter_id}}}}, (err, del) => {
+                    if(err) throw new err 
+                    return res.send({
+                        status: true, 
+                        msg: "Voter ID Deleted"
+                    })
+                })
             } else {
                 return res.send({
                     status: false, 
-                    msg: "Voter ID not found"
+                    msg: "Can't Delete Voter ID", 
+                    text: "Voter ID is enabled"
                 })
             }
         })
@@ -563,7 +551,6 @@ adminrouter.post('/control/elections/voter-id/search-voter-id/', search_limit, i
     const voter_id = xs(id).toUpperCase()
     try {
         await data.find({ "voterId.student_id": { '$regex': '^' + voter_id, '$options': 'm' } }, {voterId: 1}, (err, result) => {
-            console.log(result)
             if (err) throw new err
             if(result.length === 0){
                 return res.send({
@@ -744,7 +731,6 @@ adminrouter.post('/control/elections/voter-id/update-voter-id/', limit, isadmin,
             } else {
                 //then check if the new student id is not used with another student id
                 data.find({"voterId.student_id": {$eq: student_id}}, {voterId: 1}, (err, f) => {
-                    console.log(student_id)
                     if(err) throw new err 
                     if(f.length === 0){
                         //if all feilds is not empty
@@ -785,11 +771,11 @@ adminrouter.post('/control/elections/voter-id/update-voter-id/', limit, isadmin,
 /*##################################################################################### */
 
 //course & year 
-adminrouter.post('/control/elections/course&year/', limit, isadmin, async (req, res) => {
+adminrouter.get('/control/elections/course&year/', limit, isadmin, async (req, res) => {
     return res.render('control/forms/cy')
 })
 //course
-adminrouter.post('/control/elections/course/', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/course&year/course/', limit, isadmin, async (req, res) => {
     try {
         await data.find({}, {course: 1}, (err, c) => {
             if(err) throw new err 
@@ -800,11 +786,11 @@ adminrouter.post('/control/elections/course/', limit, isadmin, async (req, res) 
     }
 })
 //year 
-adminrouter.post('/control/elections/year/', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/course&year/year/', limit, isadmin, async (req, res) => {
     try {
         await data.find({}, {year: 1}, (err, y) => {
             if(err) throw new err 
-            return res.render('control/forms/course', {course: y.length != 0 ? y[0].year : []})
+            return res.render('control/forms/year', {year: y.length != 0 ? y[0].year : []})
         })
     } catch (e) {
         return res.status(500).send()
@@ -861,7 +847,6 @@ adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async
                                 year: [], 
                                 partylists: []
                             }, (err, n) => {
-                                console.log(n)
                                 if(err){
                                     throw new err
                                 } else {
@@ -981,58 +966,60 @@ adminrouter.post('/control/elections/course&year/add-cy/', limit, isadmin, async
 
         try{
             //check if course & year is already exist in db
-            await data.find({"course.type": {$eq: xs(course).toUpperCase()}, "year.type": {$eq: xs(year)}}, (err, f) => {
-                if(err){
-                    throw new err
-                }
-                if(!err){
-                    if(f.length === 0){
-                       if(isDbempty){
-                           data.create({
-                               positions: [], 
-                               course: [new_crs], 
-                               year: [new_y], 
-                               partylists: []
-                           }, (err, up) => {
-                                if(err){
-                                    throw new err
-                                } else {
-                                    return res.send({
-                                        status: true, 
-                                        msg: "Added Successfully", 
-                                        type: "c&y",
-                                        data: {
-                                            course: new_crs, 
-                                            year: new_y
-                                        }
-                                    })
-                                }
-                           })
-                       } else {
-                            data.updateOne({}, {$push: {course: new_crs, year: new_y}}, (err, up) => {
-                                if(err){
-                                    throw new err
-                                } else {
-                                    return res.send({
-                                        status: true, 
-                                        msg: "Added Successfully", 
-                                        type: "c&y",
-                                        data: {
-                                            course: new_crs, 
-                                            year: new_y
-                                        }
-                                    })
-                                }
-                            })
-                       }
-                    } else {
-                        return res.send({
-                            status: false, 
-                            msg: "Course or Year already exist"
-                        })
-                    }
-                }
+            let crs = false, yr = false
+            await data.find({"course.type": {$eq: xs(course).toUpperCase()}}, (err, c) => {
+                if(err) throw new err 
+                crs = c.length != 0 ? true : false
             })
+            await data.find({"year.type": {$eq: xs(year)}}, (err, y) => {
+                if(err) throw new err 
+                yr = y.length != 0 ? true : false
+            })
+            if(!crs && !yr){
+                if(isDbempty){
+                    data.create({
+                        positions: [], 
+                        course: [new_crs], 
+                        year: [new_y], 
+                        partylists: []
+                    }, (err, up) => {
+                         if(err){
+                             throw new err
+                         } else {
+                             return res.send({
+                                 status: true, 
+                                 msg: "Added Successfully", 
+                                 type: "c&y",
+                                 data: {
+                                     course: new_crs, 
+                                     year: new_y
+                                 }
+                             })
+                         }
+                    })
+                } else {
+                     data.updateOne({}, {$push: {course: new_crs, year: new_y}}, (err, up) => {
+                         if(err){
+                             throw new err
+                         } else {
+                             return res.send({
+                                 status: true, 
+                                 msg: "Added Successfully", 
+                                 type: "c&y",
+                                 data: {
+                                     course: new_crs, 
+                                     year: new_y
+                                 }
+                             })
+                         }
+                     })
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Course or Year already exist"
+                })
+            }
         } catch(e){
             return res.status(500).send()
         } 
@@ -1130,48 +1117,31 @@ adminrouter.post('/control/elections/course&year/up_c/', normal_limit, isadmin, 
     //check if course id exists in db 
     try {
         await data.find({"course.id": {$eq: xs(id)}}, (err, f) => {
-            if(err){
-                return res.send({
-                    status: false, 
-                    msg: "Internal Error!"
-                })
-            }
-            if(!err){
-                if(f.length !== 0){
-                    //check if the new course is already in used or not 
-                    data.find({"course.type": {$eq: xs(new_course).toUpperCase()}}, (err, t) => {
-                        if(err){
-                            return res.send({
-                                status: false, 
-                                msg: "Internal Error!"
+            if(err) throw new err
+            if(f.length !== 0){
+                //check if the new course is already in used or not 
+                data.find({"course.type": {$eq: xs(new_course).toUpperCase()}}, (err, t) => {
+                    if(err) throw new err
+                    if(!err){
+                        if(t.length == 0){
+                            //update course 
+                            data.updateOne({"course.id": {$eq: xs(id)}}, {$set: {"course.$.type": xs(new_course).toUpperCase()}}, (err, up_c) => {
+                                if(err) throw new err
+                                if(!err){
+                                    return res.send({
+                                        status: true, 
+                                        msg: "Course updated successfully"
+                                    })
+                                }
                             })
                         }
-                        if(!err){
-                            if(t.length == 0){
-                                //update course 
-                                data.updateOne({"course.id": {$eq: xs(id)}}, {$set: {"course.$.type": xs(new_course).toUpperCase()}}, (err, up_c) => {
-                                    if(err){
-                                        return res.send({
-                                            status: false, 
-                                            msg: "Internal Error!"
-                                        })
-                                    }
-                                    if(!err){
-                                        return res.send({
-                                            status: true, 
-                                            msg: "Course updated successfully"
-                                        })
-                                    }
-                                })
-                            }
-                        }
-                    })
-                } else {
-                    return res.send({
-                        status: false, 
-                        msg: "Course not found!"
-                    })
-                }
+                    }
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Course not found!"
+                })
             }
         })
     } catch (e){
@@ -1235,11 +1205,11 @@ adminrouter.post('/control/elections/course&year/up_y/', normal_limit, isadmin, 
 /*##################################################################################### */
 
 //partylist 
-adminrouter.post('/control/elections/partylist', normal_limit, isadmin, async (req, res) => {
+adminrouter.get('/control/elections/partylist/', normal_limit, isadmin, async (req, res) => {
     return res.render("control/forms/partylist")
 })
 //partylist all 
-adminrouter.post('/control/elections/partylist/pty', normal_limit, isadmin, async (reeq, res) => {
+adminrouter.post('/control/elections/partylist/pty/', normal_limit, isadmin, async (reeq, res) => {
     try {
         await data.find({}, {partylists: 1}, (err, p) => {
             if(err) throw new err
@@ -1250,7 +1220,7 @@ adminrouter.post('/control/elections/partylist/pty', normal_limit, isadmin, asyn
     }
 })
 //add partylist 
-adminrouter.post('/control/elections/partylist/add-partylist', normal_limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/partylist/add-partylist/', normal_limit, isadmin, async (req, res) => {
     const {partylist} = req.body
     const pty = xs(partylist)
     const new_pty = {
@@ -1289,7 +1259,7 @@ adminrouter.post('/control/elections/partylist/add-partylist', normal_limit, isa
     }
 })
 //delete partylist 
-adminrouter.post('/control/elections/partylist/delete-partylist', delete_limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/partylist/delete-partylist/', delete_limit, isadmin, async (req, res) => {
     const {id} = req.body 
     
     try{ 
@@ -1323,7 +1293,7 @@ adminrouter.post('/control/elections/partylist/delete-partylist', delete_limit, 
     }
 })
 //update partylist 
-adminrouter.post('/control/elections/partylist/update-partylist', normal_limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/partylist/update-partylist/', normal_limit, isadmin, async (req, res) => {
     const {id, type} = req.body 
     try {
         await data.find({"partylists.id": {$eq: xs(id)}}, {"partylists.id": 1}, (err, i) => {
@@ -1361,12 +1331,6 @@ adminrouter.post('/control/elections/partylist/update-partylist', normal_limit, 
 //logs 
 adminrouter.post('/control/logs/', isadmin, async (req, res) => {
     return res.render('control/forms/logs')
-})
-//create election 
-adminrouter.post('/control/create_election', isadmin, async (req, res) => {
-    await election.find({}, (err, elections) => {
-        return res.render('control/forms/create_election', { elections: elections })
-    })
 })
 //get active voters 
 adminrouter.post('/active_voters', isadmin, async (req, res) => {

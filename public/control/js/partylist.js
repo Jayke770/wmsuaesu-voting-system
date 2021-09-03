@@ -7,7 +7,7 @@ $(document).ready(() => {
         pty()
     }, 2000)
     async function pty() {
-        await $.post('partylist/pty')
+        await $.post('pty/')
             .done( (res) => {
                 $(".pty_all").find(".pty_skeleton").remove() 
                 $(".pty_all").html(res)
@@ -59,7 +59,7 @@ $(document).ready(() => {
         submit_btn.prop("disabled", true)
         submit_btn.html(icon)
         $.ajax({
-            url: 'partylist/add-partylist/',
+            url: 'add-partylist/',
             method: 'POST',
             cache: false,
             processData: false,
@@ -128,7 +128,7 @@ $(document).ready(() => {
                     willOpen: () => {
                         Swal.showLoading()
                         $.ajax({
-                            url: 'partylist/delete-partylist/',
+                            url: 'delete-partylist/',
                             method: 'POST',
                             cache: false,
                             processData: false,
@@ -209,7 +209,7 @@ $(document).ready(() => {
                         willOpen: () => {
                             Swal.showLoading()
                             $.ajax({
-                                url: 'partylist/update-partylist/',
+                                url: 'update-partylist/',
                                 method: 'POST',
                                 cache: false,
                                 processData: false,

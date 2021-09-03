@@ -5,12 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" class="theme-color" content="#6b21a8">
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
     <title>Elections</title>
     <%- include('../cdn/_home') %>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
 </head>
 <body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
-    <div class="main" style="display: none;">
+    <div class="main">
         <div class="w-full z-10 bg-gray-100 dark:bg-darkBlue-secondary shadow-lg grid grid-cols-2 fixed top-0 p-2 px-0 transition-all">
             <div class="flex justify-start items-center">
                 <a href="/control" class="rpl ml-2 transition-all dark:text-gray-200 text-bluegray-600 text-2xl px-2 cursor-pointer mr-2">
@@ -36,25 +37,25 @@
                     </div>
                     <div class="grid grid-rows-2 h-[calc(100%-65px)]">
                         <div class="flex flex-col w-full px-3 py-2 gap-2">
-                            <a data="course&year/" title="View, Add, & Update Courses" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                            <a href="course&year/" title="View, Add, & Update Courses" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
                                 <span class="text-base">Courses & Year</span>
                                 <i class="ic flex justify-end items-center w-full text-rose-700 dark:text-rose-600 text-xl">
                                     <i class="fal fa-list-alt"></i>
                                 </i>
                             </a>
-                            <a data="positions/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                            <a href="positions/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
                                 <span class="text-base">Positions </span>
                                 <i class="ic flex justify-end items-center w-full text-green-700 dark:text-green-600 text-xl">
                                     <i class="fas fa-list-ol"></i>
                                 </i>
                             </a>
-                            <a data="voter-id/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                            <a href="voter-id/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
                                 <span class="text-base">Voter ID </span>
                                 <i class="ic flex justify-end items-center w-full text-fuchsia-700 dark:text-fuchsia-600 text-xl">
                                     <i class="fas fa-id-card"></i>
                                 </i>
                             </a>
-                            <a data="partylist/" title="View, Add, & Update Partylist" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                            <a href="partylist/" title="View, Add, & Update Partylist" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
                                 <span class="text-base">Partylist </span>
                                 <i class="ic flex justify-end items-center w-full text-amber-700 dark:text-amber-600 text-xl">
                                     <i class="fas fa-ballot"></i>
@@ -71,7 +72,7 @@
         <div class="election_list container mt-[4.5rem]">
             <div class="transition-all w-full grid grid-cols-2 xl:grid-cols-1 xl:px-52 lg:px-20 md:px-2 gap-4 place-items-center p-2">
                 <% for (let i = 0; i < 10; i++) { %> 
-                    <div class="w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
+                    <div style="animation-delay: <%- i * .150%>s" class="animate__animated animate__fadeInUp w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
                         <div class="flex w-full">
                             <div class="md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[325px] h-full object-cover rounded-tl-2xl rounded-bl-2xl skeleton-image"></div>
                         </div>
@@ -316,7 +317,6 @@
             </div>
         </div>
     </div>
-    <div class="loader">...</div>
     <script src="/js/theme.js"></script>
     <script src="/js/time.js"></script>
     <script src="/js/toast.js"></script>

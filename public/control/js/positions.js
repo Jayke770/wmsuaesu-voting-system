@@ -8,7 +8,7 @@ $(document).ready(function () {
         pos_all()
     }, 2000)
     async function pos_all(){
-        await $.post('positions/pos')
+        await $.post('pos/')
             .done( (res) => {
                 $(".positions_all").find(".pos_skeleton").remove() 
                 $(".positions_all").html(res)
@@ -60,7 +60,7 @@ $(document).ready(function () {
         submit_btn.prop("disabled", true)
         submit_btn.html(icon)
         $.ajax({
-            url: 'positions/add-position/',
+            url: 'add-position/',
             method: 'POST',
             cache: false,
             processData: false,
@@ -130,7 +130,7 @@ $(document).ready(function () {
                     willOpen: () => {
                         Swal.showLoading()
                         $.ajax({
-                            url: 'positions/delete-position/',
+                            url: 'delete-position/',
                             method: 'POST',
                             cache: false,
                             processData: false,
@@ -212,7 +212,7 @@ $(document).ready(function () {
                         willOpen: () => {
                             Swal.showLoading()
                             $.ajax({
-                                url: 'positions/update-position/',
+                                url: 'update-position/',
                                 method: 'POST',
                                 cache: false,
                                 processData: false,

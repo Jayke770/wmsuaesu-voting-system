@@ -1,48 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
 
-<div class="container flex flex-col gap-2">
-    <div class="w-full z-10 bg-gray-100 dark:bg-darkBlue-secondary shadow-lg grid grid-cols-2 fixed top-0 p-2 px-3 transition-all">
-        <div class="flex justify-start items-center">
-            <a class="return_main rpl transition-all dark:text-gray-200 text-bluegray-600 text-2xl px-2 cursor-pointer mr-2">
-                <i class="fa fa-arrow-circle-left"></i>
-            </a>
-            <span class="font-bold text-purple-800 dark:text-purple-500 text-2xl">Positions</span>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" class="theme-color" content="#6b21a8">
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
+    <title>Positions</title>
+    <%- include('../cdn/_home') %>
+        <link rel="stylesheet" href="/css/tailwindcss/style.css">
+</head>
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <div class="container flex flex-col gap-2">
+        <div
+            class="w-full z-10 bg-gray-100 dark:bg-darkBlue-secondary shadow-lg grid grid-cols-2 fixed top-0 p-2 px-3 transition-all">
+            <div class="flex justify-start items-center">
+                <a
+                href="/control/elections/" class="return_main rpl transition-all dark:text-gray-200 text-bluegray-600 text-2xl px-2 cursor-pointer mr-2">
+                    <i class="fa fa-arrow-circle-left"></i>
+                </a>
+                <span class="font-bold text-purple-800 dark:text-purple-500 text-2xl">Positions</span>
+            </div>
+            <div class="flex items-center justify-end">
+                <a class="add_pos_btn flex flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
+                    <span class="text-purple-700 dark:text-purple-500">
+                        <i class="fas fa-plus-circle"></i>
+                    </span>
+                    <span class="sm:hidden text-[17px] dark:text-purple-500 text-purple-700 font-normal">Add
+                        Position</span>
+                </a>
+            </div>
         </div>
-        <div class="flex items-center justify-end">
-            <a class="add_pos_btn flex flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
-                <span class="text-purple-700 dark:text-purple-500">
-                    <i class="fas fa-plus-circle"></i>
-                </span>
-                <span class="sm:hidden text-[17px] dark:text-purple-500 text-purple-700 font-normal">Add Position</span>
-            </a>
-        </div>
-    </div>
-    <div class="positions_all mt-[62px] py-3 px-2 sm:px-2 grid grid-cols-5 xl:grid-cols-4 transition-all lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-none sm:flex sm:flex-col w-full h-[80%] sm:h-[calc(100vh-60px)] overflow-hidden sm:overflow-y-scroll gap-2">
-        <% for (let i = 0; i < 50; i++) { %>
-            <div style="animation-delay: <%- i * .150 %>s;" class="pos_skeleton dark:bg-darkBlue-secondary sm:last:mb-4 group ms-100 animate__animated animate__fadeInUp p-3 bg-gray-100 rounded-xl cursor-pointer">
-                <div class="p-4">
-                    <p class="skeleton"></p>
+        <div
+            class="positions_all mt-[62px] py-3 px-2 sm:px-2 grid grid-cols-5 xl:grid-cols-4 transition-all lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-none sm:flex sm:flex-col w-full h-[80%] sm:h-[calc(100vh-60px)] overflow-hidden sm:overflow-y-scroll gap-2">
+            <% for (let i=0; i < 50; i++) { %>
+                <div style="animation-delay: <%- i * .150 %>s;"
+                    class="pos_skeleton dark:bg-darkBlue-secondary sm:last:mb-4 group ms-100 animate__animated animate__fadeInUp p-3 bg-gray-100 rounded-xl cursor-pointer">
+                    <div class="p-4">
+                        <p class="skeleton"></p>
+                    </div>
                 </div>
-            </div>
-        <% } %>
-    </div>
-</div>
-<div class="add_position p-2 z-20 fixed bg-gray-900/30 dark:bg-gray-900/50 w-full h-full hidden top-0 justify-end items-center">
-    <div class="add_position_main h-full w-96 xsm:w-full bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl transition-all" animate-in="animate__animated animate__fadeInRight ms-400" animate-out="animate__animated animate__fadeOutRight ms-400">
-        <div class="flex flex-row justify-center items-center p-4 border-b border-gray-300 dark_border_b">
-            <span class="font-bold text-xl text-purple-600 dark:text-purple-500">Add Position</span>
+                <% } %>
         </div>
-        <form class="position_form p-2 h-[calc(100%-61px)] bg-rose grid grid-rows-2">
-            <div class=" h-full flex flex-col p-2 gap-3 justify-start pt-10">
-                <input type="text" name="position" placeholder="Position" autocomplete="off" class="text-input w-full p-[10px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg" required>
-                <div class="px-1 mt-5 text-bluegray-900 dark:text-gray-300 font-normal text-base">Total Positions : <span class="total_pos dark:text-purple-500 text-purple-900 font-semibold">80</span></div>
-            </div>
-            <div class="flex flex-row w-full justify-center items-end">
-                <div class="w-full flex flex-row p-1 gap-2">
-                    <button type="button" class="close_add_pos rpl transition-all text-red-600 dark:text-rose-500 dark:font-medium border border-rose-500 dark:border-rose-600  font-normal py-[5px] rounded-lg outline-none mt-4 w-full">Close</button>
-                    <button type="submit" class="rpl dark:disabled:bg-purple-600 disabled:bg-purple-500 rpl dark:hover:bg-purple-700 hover:bg-purple-600 dark:bg-purple-800 bg-purple-700 text-white dark:text-gray-200 transition-all font-normal py-[5px] rounded-lg focus:ring focus:ring-offset-2 dark:focus:ring-purple-700 focus:ring-purple-500 focus:outline-none focus:shadow-outline mt-4 w-full">Add</button>
-                </div>
-            </div>
-        </form>
     </div>
-</div>
-<script src="/control/js/positions.js "></script>
+    <div
+        class="add_position p-2 z-20 fixed bg-gray-900/30 dark:bg-gray-900/50 w-full h-full hidden top-0 justify-end items-center">
+        <div class="add_position_main h-full w-96 xsm:w-full bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl transition-all"
+            animate-in="animate__animated animate__fadeInRight ms-400"
+            animate-out="animate__animated animate__fadeOutRight ms-400">
+            <div class="flex flex-row justify-center items-center p-4 border-b border-gray-300 dark_border_b">
+                <span class="font-bold text-xl text-purple-600 dark:text-purple-500">Add Position</span>
+            </div>
+            <form class="position_form p-2 h-[calc(100%-61px)] bg-rose grid grid-rows-2">
+                <div class=" h-full flex flex-col p-2 gap-3 justify-start pt-10">
+                    <input type="text" name="position" placeholder="Position" autocomplete="off"
+                        class="text-input w-full p-[10px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg"
+                        required>
+                    <div class="px-1 mt-5 text-bluegray-900 dark:text-gray-300 font-normal text-base">Total Positions :
+                        <span class="total_pos dark:text-purple-500 text-purple-900 font-semibold">80</span></div>
+                </div>
+                <div class="flex flex-row w-full justify-center items-end">
+                    <div class="w-full flex flex-row p-1 gap-2">
+                        <button type="button"
+                            class="close_add_pos rpl transition-all text-red-600 dark:text-rose-500 dark:font-medium border border-rose-500 dark:border-rose-600  font-normal py-[5px] rounded-lg outline-none mt-4 w-full">Close</button>
+                        <button type="submit"
+                            class="rpl dark:disabled:bg-purple-600 disabled:bg-purple-500 rpl dark:hover:bg-purple-700 hover:bg-purple-600 dark:bg-purple-800 bg-purple-700 text-white dark:text-gray-200 transition-all font-normal py-[5px] rounded-lg focus:ring focus:ring-offset-2 dark:focus:ring-purple-700 focus:ring-purple-500 focus:outline-none focus:shadow-outline mt-4 w-full">Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="/control/js/positions.js "></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/time.js"></script>
+    <script src="/js/toast.js"></script>
+</body>
+
+</html>

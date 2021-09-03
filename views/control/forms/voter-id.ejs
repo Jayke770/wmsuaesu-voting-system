@@ -1,154 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
 
-<div class="container">
-    <div class="flex">
-        <div class="grid grid-cols-2 bg-gray-50 dark:bg-darkBlue-secondary w-full fixed z-30 shadow-lg p-1">
-            <div class="flex flex-row items-center transition-all">
-                <a class="return_main transition-all text-gray-700 dark:text-gray-200 text-2xl cursor-pointer ml-3 mr-2">
-                    <i class="fa fa-arrow-circle-left"></i>
-                </a>
-                <p class="m-0 p-3 text-lg font-semibold cursor-pointer dark:text-gray-200">Voter ID</p>
-            </div>
-            <div class="flex flex-row justify-end items-center gap-2 px-2">
-                <select name="sort" class="sort_voter_id dark_border border focus:border-purple-500 dark:focus:border-purple-500 rounded-md dark:bg-transparent dark:focus:bg-darkBlue-secondary outline-none dark:text-gray-300 dark:border-gray-600 transition-all border-gray-50 bg-gray-200 focus:ring-opacity-50 w-40 md:w-full p-[10px] py-2">
-                    <option value="" class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">- Sort by</option>
-                    <option value="default">Default</option>
-                    <option value="used">Used</option>
-                    <option value="not used">Not Used</option>
-                    <option value="" class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">- Sort by course</option>
-                    <% if(course.length != 0) { 
-                        for(let i = 0; i < course.length; i++) { %>
-                            <option value='<%- JSON.stringify({course: course[i].id}) %>'><%- course[i].type %></option>
-                        <% }
-                    } %>
-                    <option value="" class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">- Sort by year</option>
-                    <% if(year.length != 0) { 
-                        for(let i = 0; i < year.length; i++) { %>
-                            <option value='<%- JSON.stringify({year: year[i].id}) %>'><%- year[i].type %></option>
-                        <% }
-                    } %>
-                </select>
-                <div class="btn flex items-center">
-                    <button class="add_voter shadow-lg rpl rpl-h button-input-active hover:bg-green-600 cursor-pointer dark:bg-green-700 dark:hover:bg-green-600 my-ring-2 hover:ring-green-600">
-                        <i class="fa fa-plus-circle"></i>
-                    </button>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" class="theme-color" content="#6b21a8">
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
+    <title>Voter ID's</title>
+    <%- include('../cdn/_home') %>
+        <link rel="stylesheet" href="/css/tailwindcss/style.css">
+</head>
+
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <div class="container">
+        <div class="flex">
+            <div class="grid grid-cols-2 bg-gray-50 dark:bg-darkBlue-secondary w-full fixed z-30 shadow-lg p-1">
+                <div class="flex flex-row items-center transition-all">
+                    <a
+                    href="/control/elections/" class="return_main transition-all text-gray-700 dark:text-gray-200 text-2xl cursor-pointer ml-3 mr-2">
+                        <i class="fa fa-arrow-circle-left"></i>
+                    </a>
+                    <p class="m-0 p-3 text-lg font-semibold cursor-pointer dark:text-gray-200">Voter ID</p>
+                </div>
+                <div class="flex flex-row justify-end items-center gap-2 px-2">
+                    <select name="sort"
+                        class="sort_voter_id dark_border border focus:border-purple-500 dark:focus:border-purple-500 rounded-md dark:bg-transparent dark:focus:bg-darkBlue-secondary outline-none dark:text-gray-300 dark:border-gray-600 transition-all border-gray-50 bg-gray-200 focus:ring-opacity-50 w-40 md:w-full p-[10px] py-2">
+                        <option value="" class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">-
+                            Sort by</option>
+                        <option value="default">Default</option>
+                        <option value="used">Used</option>
+                        <option value="not used">Not Used</option>
+                        <option value="" class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">-
+                            Sort by course</option>
+                        <% if(course.length !=0) { for(let i=0; i < course.length; i++) { %>
+                            <option value='<%- JSON.stringify({course: course[i].id}) %>'>
+                                <%- course[i].type %>
+                            </option>
+                            <% } } %>
+                                <option value=""
+                                    class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">- Sort
+                                    by year</option>
+                                <% if(year.length !=0) { for(let i=0; i < year.length; i++) { %>
+                                    <option value='<%- JSON.stringify({year: year[i].id}) %>'>
+                                        <%- year[i].type %>
+                                    </option>
+                                    <% } } %>
+                    </select>
+                    <div class="btn flex items-center">
+                        <button
+                            class="add_voter shadow-lg rpl rpl-h button-input-active hover:bg-green-600 cursor-pointer dark:bg-green-700 dark:hover:bg-green-600 my-ring-2 hover:ring-green-600">
+                            <i class="fa fa-plus-circle"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="container p-2 pt-3 mt-16">
-        <div class="grid grid-cols-2 gap-3 md:grid-cols-none transition-all">
-            <div class="flex flex-row justify-start items-center">
-                <input name="search_voter" type="text" autocomplete="off" class="search_voter_id dark_border outline-none border focus:border-purple-500 dark:focus:border-purple-500 dark:bg-transparent dark:text-gray-300 rounded-md transition-all border-gray-50 bg-gray-100 w-80 md:w-full shadow-lg p-[10px]" placeholder="Search Voter ID" required>
+        <div class="container p-2 pt-3 mt-16">
+            <div class="grid grid-cols-2 gap-3 md:grid-cols-none transition-all">
+                <div class="flex flex-row justify-start items-center">
+                    <input name="search_voter" type="text" autocomplete="off"
+                        class="search_voter_id dark_border outline-none border focus:border-purple-500 dark:focus:border-purple-500 dark:bg-transparent dark:text-gray-300 rounded-md transition-all border-gray-50 bg-gray-100 w-80 md:w-full shadow-lg p-[10px]"
+                        placeholder="Search Voter ID" required>
+                </div>
+            </div>
+            <!-- Voter ID List -->
+            <div
+                class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
+                <% for (let i=0; i < 30; i++) { %>
+                    <div style="animation-delay: <%- i * .150 %>s;"
+                        class="voters_id_skeleton w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
+                        <div class="w-full gap-2 flex flex-row">
+                            <p class="w-full skeleton"></p>
+                            <p class="w-full skeleton"></p>
+                        </div>
+                        <div class="mt-6 p-2 skeleton"></div>
+                    </div>
+                    <% } %>
             </div>
         </div>
-        <!-- Voter ID List -->
-        <div class="voters_id_all grid grid-cols-4 gap-3 mt-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
-            <% for (let i = 0; i < 30; i++) { %>
-                <div style="animation-delay: <%- i * .150 %>s;"  class="voters_id_skeleton w-full animate__animated animate__fadeIn p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
-                    <div class="w-full gap-2 flex flex-row">
-                        <p class="w-full skeleton"></p>
-                        <p class="w-full skeleton"></p>
+        <!--Add Voter ID-->
+        <div class="popup hidden transition-all z-50 fixed w-full h-full bg-black/50 top-0">
+            <div animate-in="animate__animated animate__fadeInRight"
+                animate-out="animate__animated animate__fadeOutRight"
+                class="add_voter_id ms-700 flex w-full h-full justify-end p-2 items-center transition-all">
+                <div
+                    class="shadow-md xsm:w-full w-96 h-full dark_border bg-gray-50 dark:bg-darkBlue-secondary rounded-xl transition-all">
+                    <div class="container h-full">
+                        <div class="flex justify-center items-center p-4 dark_border_b border-b border-gray-300">
+                            <p
+                                class="text-xl font-medium sm:text-lg text-purple-800 dark:text-purple-500 dark:font-semibold">
+                                Add Voter ID</p>
+                        </div>
+                        <form class="add_voter_id_form container p-4 h-[calc(100%-65px)] grid grid-rows-2">
+                            <div class=" w-full flex flex-col" action="/control/add-voter-id/" method="POST">
+                                <div class="container px-2 mb-2 transition-all">
+                                    <label for="id" class="pointer-events-none dark:text-gray-300">ID Number</label>
+                                    <input autocomplete="off" name="id" placeholder="ID Number" type="text"
+                                        class="id_number dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 "
+                                        required>
+                                </div>
+                                <div class="container px-2 mb-2">
+                                    <label for="id" class="pointer-events-none dark:text-gray-300">Course</label>
+                                    <select name="crs"
+                                        class="crs_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 "
+                                        required>
+                                        <option value="">Select Course</option>
+                                        <% if(course.length !=0) { for(let i=0; i < course.length; i++) { %>
+                                            <option value="<%- course[i].id %>">
+                                                <%- course[i].type %>
+                                            </option>
+                                            <% } } %>
+                                    </select>
+                                </div>
+                                <div class="container px-2 mb-2">
+                                    <label for="id" class="pointer-events-none dark:text-gray-300">Year</label>
+                                    <select name="year"
+                                        class="year_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md transition-all py-2 px-3 text-gray-900 "
+                                        required>
+                                        <option value="">Select Year</option>
+                                        <% if(year.length !=0) { for(let i=0; i < year.length; i++) { %>
+                                            <option value="<%- year[i].id %>">
+                                                <%- year[i].type %>
+                                            </option>
+                                            <% } } %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex flex-row">
+                                <div class="container gap-2 flex items-end justify-center">
+                                    <button type="reset" class="reset_voter_id_form hidden"></button>
+                                    <button type="button"
+                                        class="cls_add_voter_id rpl appearance-none outline-none transition-all px-4 py-2 border border-rose-500 rounded-md  text-sm font-medium text-rose-500 focus:outline-none w-full">Close</button>
+                                    <button type="submit"
+                                        class="w-full add_btn_voter_id disabled:cursor-not-allowed dark:disabled:bg-purple-800/60 disabled:bg-purple-500 button rpl dark:bg-purple-800 dark:active:ring-purple-700 bg-purple-600 my-ring-2 active:ring-purple-700 text-gray-300">Add</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div class="mt-6 p-2 skeleton"></div>
                 </div>
-            <% } %>
+            </div>
         </div>
-    </div>
-    <!--Add Voter ID-->
-    <div class="popup hidden transition-all z-50 fixed w-full h-full bg-black/50 top-0">
-        <div animate-in="animate__animated animate__fadeInRight" animate-out="animate__animated animate__fadeOutRight" class="add_voter_id ms-700 flex w-full h-full justify-end p-2 items-center transition-all">
-            <div class="shadow-md xsm:w-full w-96 h-full dark_border bg-gray-50 dark:bg-darkBlue-secondary rounded-xl transition-all">
-                <div class="container h-full">
-                    <div class="flex justify-center items-center p-4 dark_border_b border-b border-gray-300">
-                        <p class="text-xl font-medium sm:text-lg text-purple-800 dark:text-purple-500 dark:font-semibold">Add Voter ID</p>
+        <!--Edit Voter ID-->
+        <div class="popup_2 hidden z-50 fixed w-full h-full top-0">
+            <div class="edit_form p-2 ms-700 flex w-full h-full justify-end items-center transition-all"
+                animate-in="animate__animated animate__fadeInRight"
+                animate-out="animate__animated animate__fadeOutRight">
+                <div
+                    class="xsm:w-full w-96 h-full bg-gray-50 dark:bg-darkBlue-secondary dark_border border-[0.5px] shadow-md rounded-lg transition-all">
+                    <div
+                        class="flex justify-center items-center p-2 py-3 border-b-[.1px] border-gray-3 00 dark_border_b border-gray-300">
+                        <div class="py-1">
+                            <span
+                                class="font-semibold text-xl text-purple-800 dark:text-purple-500 pl-3 pt-4 p-3 md:text-xl md:pr-0 md:pl-1">Edit
+                                Voter ID</span>
+                        </div>
                     </div>
-                    <form class="add_voter_id_form container p-4 h-[calc(100%-65px)] grid grid-rows-2">
-                        <div class=" w-full flex flex-col" action="/control/add-voter-id/" method="POST">
-                            <div class="container px-2 mb-2 transition-all">
-                                <label for="id" class="pointer-events-none dark:text-gray-300">ID Number</label>
-                                <input autocomplete="off" name="id" placeholder="ID Number" type="text" class="id_number dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
-                            </div> 
-                            <div class="container px-2 mb-2">
-                                <label for="id" class="pointer-events-none dark:text-gray-300">Course</label>
-                                <select name="crs" class="crs_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
+                    <form class="edit_voter_id_form grid grid-rows-2 h-[calc(100%-60px)]">
+                        <div class="p-3 px-4 pt-5">
+                            <div class="form-group mt-2 first:mt-0">
+                                <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Voter ID</label>
+                                <input type="text" name="id"
+                                    class="edit_voter_id dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 "
+                                    placeholder="Voter ID" autocomplete="off" required>
+                            </div>
+                            <div class="form-group mt-2 first:mt-0">
+                                <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Course</label>
+                                <select name="course"
+                                    class="edit_course dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 "
+                                    placeholder="Course" autocomplete="off" required>
                                     <option value="">Select Course</option>
-                                    <% if(course.length != 0) { 
-                                        for(let i = 0; i < course.length; i++) { %>
-                                            <option value="<%- course[i].id %>"><%- course[i].type %></option>
-                                        <% }
-                                    } %>
+                                    <% if(course.length !=0) { for(let i=0; i < course.length; i++) { %>
+                                        <option value="<%- course[i].id %>">
+                                            <%- course[i].type %>
+                                        </option>
+                                        <% } } %>
                                 </select>
                             </div>
-                            <div class="container px-2 mb-2">
-                                <label for="id" class="pointer-events-none dark:text-gray-300">Year</label>
-                                <select name="year" class="year_voter appearance-none disabled:cursor-not-allowed dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md transition-all py-2 px-3 text-gray-900 " required>
+                            <div class="form-group mt-2 first:mt-0">
+                                <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Year</label>
+                                <select name="year"
+                                    class="edit_year dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 "
+                                    placeholder="Year" autocomplete="off" required>
                                     <option value="">Select Year</option>
-                                    <% if(year.length != 0) { 
-                                        for(let i = 0; i < year.length; i++) { %>
-                                            <option value="<%- year[i].id %>"><%- year[i].type %></option>
-                                        <% }
-                                    } %>
+                                    <% if(year.length !=0) { for(let i=0; i < year.length; i++) { %>
+                                        <option value="<%- year[i].id %>">
+                                            <%- year[i].type %>
+                                        </option>
+                                        <% } } %>
                                 </select>
                             </div>
                         </div>
-                        <div class="flex flex-row">
-                            <div class="container gap-2 flex items-end justify-center">
-                                <button type="reset" class="reset_voter_id_form hidden"></button>
-                                <button type="button" class="cls_add_voter_id rpl appearance-none outline-none transition-all px-4 py-2 border border-rose-500 rounded-md  text-sm font-medium text-rose-500 focus:outline-none w-full">Close</button>
-                                <button type="submit" class="w-full add_btn_voter_id disabled:cursor-not-allowed dark:disabled:bg-purple-800/60 disabled:bg-purple-500 button rpl dark:bg-purple-800 dark:active:ring-purple-700 bg-purple-600 my-ring-2 active:ring-purple-700 text-gray-300">Add</button>
-                            </div>
+                        <div class="flex flex-rowd justify-center gap-2 py-2 items-end px-3">
+                            <button class="hidden" type="reset"></button>
+                            <button type="button"
+                                class="rpl close_edit_voter appearance-none outline-none transition-all px-4 py-2 border border-rose-500 rounded-md  text-sm font-medium text-rose-500 focus:outline-none w-full">Close</button>
+                            <button
+                                class="rpl button bg-purple-600 hover:bg-purple-500 focus:ring-purple-500 dark:bg-purple-800 dark:hover:bg-purple-700 dark:focus:ring-purple-700 dark:text-gray-200 w-full"
+                                type="submit">Update</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    <!--Edit Voter ID-->
-    <div class="popup_2 hidden z-50 fixed w-full h-full top-0">
-        <div class="edit_form p-2 ms-700 flex w-full h-full justify-end items-center transition-all" animate-in="animate__animated animate__fadeInRight" animate-out="animate__animated animate__fadeOutRight">
-            <div class="xsm:w-full w-96 h-full bg-gray-50 dark:bg-darkBlue-secondary dark_border border-[0.5px] shadow-md rounded-lg transition-all">
-                <div class="flex justify-center items-center p-2 py-3 border-b-[.1px] border-gray-3 00 dark_border_b border-gray-300">
-                    <div class="py-1">
-                        <span class="font-semibold text-xl text-purple-800 dark:text-purple-500 pl-3 pt-4 p-3 md:text-xl md:pr-0 md:pl-1">Edit Voter ID</span>
-                    </div>
-                </div>
-                <form class="edit_voter_id_form grid grid-rows-2 h-[calc(100%-60px)]">
-                    <div class="p-3 px-4 pt-5">
-                        <div class="form-group mt-2 first:mt-0">
-                            <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Voter ID</label>
-                            <input type="text" name="id" class="edit_voter_id dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " placeholder="Voter ID" autocomplete="off" required>
-                        </div>
-                        <div class="form-group mt-2 first:mt-0">
-                            <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Course</label>
-                            <select name="course" class="edit_course dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " placeholder="Course" autocomplete="off" required>
-                                <option value="">Select Course</option>
-                                    <% if(course.length != 0) { 
-                                        for(let i = 0; i < course.length; i++) { %>
-                                            <option value="<%- course[i].id %>"><%- course[i].type %></option>
-                                        <% }
-                                    } %>
-                            </select>
-                        </div>
-                        <div class="form-group mt-2 first:mt-0">
-                            <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Year</label>
-                            <select name="year" class="edit_year dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 " placeholder="Year" autocomplete="off" required>
-                                <option value="">Select Year</option>
-                                    <% if(year.length != 0) { 
-                                        for(let i = 0; i < year.length; i++) { %>
-                                            <option value="<%- year[i].id %>"><%- year[i].type %></option>
-                                        <% }
-                                    } %>
-                            </select>
-                        </div>
-                    </div> 
-                    <div class="flex flex-rowd justify-center gap-2 py-2 items-end px-3">
-                        <button class="hidden" type="reset"></button>
-                        <button type="button" class="rpl close_edit_voter appearance-none outline-none transition-all px-4 py-2 border border-rose-500 rounded-md  text-sm font-medium text-rose-500 focus:outline-none w-full">Close</button>
-                        <button class="rpl button bg-purple-600 hover:bg-purple-500 focus:ring-purple-500 dark:bg-purple-800 dark:hover:bg-purple-700 dark:focus:ring-purple-700 dark:text-gray-200 w-full" type="submit">Update</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<script src="/control/js/voter-id.js"></script>
+    <script src="/control/js/voter-id.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/time.js"></script>
+    <script src="/js/toast.js"></script>
+</body>
+
+</html>

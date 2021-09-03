@@ -5,43 +5,6 @@ $(document).ready(() => {
     $.ajaxSetup({
         timeout: 10000,
     })
-    //detect locations hash 
-    const loc = location.hash
-    if(loc){
-        if(!req){
-            req = true
-            $.post(`${loc.replace("#", "")}/`)
-                .done( (res) => {
-                    $(".main").fadeOut(10)
-                    $(".loader").html(res)
-                    location.hash = loc
-                    req = false
-                }).fail( (e) => {
-                    req = false
-                    if (e.statusText === 'timeout') {
-                        toast.fire({
-                            icon: 'error',
-                            title: `Connection ${e.statusText}`,
-                            timer: 2000
-                        })
-                    } else {
-                        toast.fire({
-                            icon: 'error',
-                            title: `${e.status} ${e.statusText}`,
-                            timer: 2000
-                        })
-                    }
-                })
-        } else {
-            toast.fire({
-                icon: 'info',
-                title: 'Please wait',
-                timer: 2000
-            })
-        }
-    } else {
-        $(".main").fadeIn(500)
-    }
     $(".open_settings").click(() => {
         const settings_parent = $(".settings")
         const settings_main = $(".settings_main")
@@ -73,47 +36,6 @@ $(document).ready(() => {
             settings_parent.removeClass("flex")
             settings_main.removeClass(settings_main.attr("animate-out"))
         }, 500)
-    })
-    $(".settings_btn").click( function(e){
-        e.preventDefault() 
-        const default_icon = $(this).find(".ic").html()
-        const title = $(this).text()
-        const icon = `<i style="font-size: 1.25rem;" class="fad fa-spin fa-spinner-third"></i>`
-        $(this).find(".ic").html(icon)
-        if(!req){
-            req = true
-            $.post($(this).attr("data"))
-                .done( (res) => {
-                    $(".close_settings").click()
-                    $(this).find(".ic").html(default_icon)
-                    $(".main").fadeOut(10)
-                    $(".loader").html(res)
-                    location.hash = $(this).attr("data").replace("/", "")
-                    req = false
-                }).fail( (e) => {
-                    req = false
-                    $(this).find(".ic").html(default_icon)
-                    if (e.statusText === 'timeout') {
-                        toast.fire({
-                            icon: 'error',
-                            title: `Connection ${e.statusText}`,
-                            timer: 2000
-                        })
-                    } else {
-                        toast.fire({
-                            icon: 'error',
-                            title: `${e.status} ${e.statusText}`,
-                            timer: 2000
-                        })
-                    }
-                })
-        } else {
-            toast.fire({
-                icon: 'info',
-                title: 'Please wait',
-                timer: 2000
-            })
-        }
     })
     $(".loader").delegate(".return_main", "click", () => {
         window.location.assign('')
@@ -169,12 +91,6 @@ $(document).ready(() => {
                     } 
                     if($($(this)).attr("name") === "e_description"){
                         $(data).find(`${data}_description`).text($(this).val())
-                    } 
-                    if($($(this)).attr("name") === "e_start"){
-                        
-                    } 
-                    if($($(this)).attr("name") === "e_end"){
-                        
                     } 
                     if($($(this)).attr("name") === "courses"){
                         const selected_crs = $(this).val().split(",")
@@ -441,6 +357,16 @@ $(document).ready(() => {
         enableTime: true,
     })
     //get all elections 
+    Snackbar.show({ 
+        text: `
+            <div class="flex justify-center items-center gap-2"> 
+                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                <span>Fetching Elections</span>
+            </div>
+        `, 
+        duration: false,
+        showAction: false
+    })
     setTimeout( () => {
         elections()
     }, 2000) 
@@ -448,6 +374,11 @@ $(document).ready(() => {
         $.get('election-list/')
             .done( (res) => {
                 $(".election_list").html(res)
+                Snackbar.show({ 
+                    text: 'All Election Fetch',
+                    duration: 3000, 
+                    actionText: 'Okay'
+                })
                 setTimeout( () => {
                     $(".election_list").find(".icon_e_name").each( function() {
                         $(this).removeClass("skeleton-image")
@@ -456,7 +387,24 @@ $(document).ready(() => {
                     activeVoters($(".election_list").find(".active_voters"))
                 }, 1000)
             }).fail( (e) => {
-                
+                Snackbar.show({ 
+                    text: 'Connection Error',
+                    actionText: 'Retry',
+                    duration: false, 
+                    onActionClick: () => {
+                        Snackbar.show({ 
+                            text: `
+                                <div class="flex justify-center items-center gap-2"> 
+                                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                                    <span>Fetching Elections</span>
+                                </div>
+                            `, 
+                            duration: false,
+                            showAction: false
+                        }) 
+                        elections()
+                    }
+                })
             })
     }
     //type writer effect

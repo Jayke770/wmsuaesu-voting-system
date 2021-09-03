@@ -75,7 +75,7 @@ $(document).ready(() => {
         const default_txt = $(this).find("button[type='submit']").text()
         const icon = `<i style="font-size: 1.25rem;" class="fad fa-spin fa-spinner-third"></i>`
         $.ajax({
-            url: 'course&year/add-cy/',
+            url: 'add-cy/',
             method: 'POST',
             cache: false,
             processData: false,
@@ -152,7 +152,7 @@ $(document).ready(() => {
                     willOpen: () => {
                         Swal.showLoading()
                         $.ajax({
-                            url: "course&year/del_c/",
+                            url: "del_c/",
                             method: "POST",
                             cache: false,
                             timeout: 5000,
@@ -239,7 +239,7 @@ $(document).ready(() => {
                         willOpen: () => {
                             Swal.showLoading()
                             $.ajax({
-                                url: "course&year/up_c/", 
+                                url: "up_c/", 
                                 method: "POST", 
                                 cache: false, 
                                 processData: false, 
@@ -317,7 +317,7 @@ $(document).ready(() => {
                     willOpen: () => {
                         Swal.showLoading()
                         $.ajax({
-                            url: "course&year/del_y/",
+                            url: "del_y/",
                             method: "POST",
                             cache: false,
                             timeout: 5000,
@@ -372,11 +372,10 @@ $(document).ready(() => {
             }
         })
     })
-    $(".y_list").delegate(".up_y", "click", function (e) {
-        e.preventDefault() 
+    $(".y_list").delegate(".up_y", "click", function () {
         const id = $(this).attr("data")
         let data = new FormData() 
-        data.append("id", id)
+        data.append("id", id) 
         Swal.fire({
             icon: "info", 
             title: "Enter new year",
@@ -404,7 +403,7 @@ $(document).ready(() => {
                         willOpen: () => {
                             Swal.showLoading()
                             $.ajax({
-                                url: "course&year/up_y/", 
+                                url: "up_y/", 
                                 method: "POST", 
                                 cache: false, 
                                 processData: false, 
