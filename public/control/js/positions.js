@@ -4,6 +4,16 @@ $(document).ready(function () {
     $.ajaxSetup({
         timeout: 10000,
     })
+    Snackbar.show({ 
+        text: `
+            <div class="flex justify-center items-center gap-2"> 
+                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                <span>Fetching Positions</span>
+            </div>
+        `, 
+        duration: false,
+        showAction: false
+    })
     setTimeout( () => {
         pos_all()
     }, 2000)
@@ -12,8 +22,30 @@ $(document).ready(function () {
             .done( (res) => {
                 $(".positions_all").find(".pos_skeleton").remove() 
                 $(".positions_all").html(res)
-            }).fail( (e) => {
-                //todo
+                Snackbar.show({ 
+                    text: 'All Positions Fetch',
+                    duration: 3000, 
+                    actionText: 'Okay'
+                })
+            }).fail( () => {
+                Snackbar.show({ 
+                    text: 'Connection Error',
+                    actionText: 'Retry',
+                    duration: false, 
+                    onActionClick: () => {
+                        Snackbar.show({ 
+                            text: `
+                                <div class="flex justify-center items-center gap-2"> 
+                                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                                    <span>Retrying...</span>
+                                </div>
+                            `, 
+                            duration: false,
+                            showAction: false
+                        }) 
+                        pos_all()
+                    }
+                })
             })
     }
 

@@ -8,6 +8,16 @@ $(document).ready( () => {
         add_voter_id = false, 
         search_voter_id = false, 
         update_id
+    Snackbar.show({ 
+        text: `
+            <div class="flex justify-center items-center gap-2"> 
+                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                <span>Fetching Voter ID's</span>
+            </div>
+        `, 
+        duration: false,
+        showAction: false
+    })
     setTimeout(() => {
         ids()
     }, 2000) 
@@ -15,8 +25,30 @@ $(document).ready( () => {
         await $.post('ids/')
             .done( async (res) => { 
                 $(".voters_id_all").html(res) 
+                Snackbar.show({ 
+                    text: "All Voter ID's Fetch",
+                    duration: 3000, 
+                    actionText: 'Okay'
+                })
             }).fail( (e) => {
-                //todo
+                Snackbar.show({ 
+                    text: 'Connection Error',
+                    actionText: 'Retry',
+                    duration: false, 
+                    onActionClick: () => {
+                        Snackbar.show({ 
+                            text: `
+                                <div class="flex justify-center items-center gap-2"> 
+                                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                                    <span>Retrying...</span>
+                                </div>
+                            `, 
+                            duration: false,
+                            showAction: false
+                        }) 
+                        ids()
+                    }
+                })
             })
     }
     $(".add_voter").click( () => {

@@ -396,7 +396,7 @@ $(document).ready(() => {
                             text: `
                                 <div class="flex justify-center items-center gap-2"> 
                                     <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
-                                    <span>Fetching Elections</span>
+                                    <span>Retrying...</span>
                                 </div>
                             `, 
                             duration: false,

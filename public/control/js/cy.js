@@ -5,24 +5,74 @@ $(document).ready(() => {
         timeout: 10000,
     })
     //get course
+    Snackbar.show({ 
+        text: `
+            <div class="flex justify-center items-center gap-2"> 
+                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                <span>Fetching Courses & Year</span>
+            </div>
+        `, 
+        duration: false,
+        showAction: false
+    })
     setTimeout(() => {
         cy()
     }, 2000)
     async function cy(){
         await $.post('course/')
-            .done( (res) => {
+            .done( async (res) => {
                 $(".c_list").find(".c_list_skeleton").remove()
                 $(".c_list").html(res)
-            }).fail( (e) => {
-                //todo
+                await $.post('year/')
+                    .done( (res) => {
+                        $(".y_list").find(".c_list_skeleton").remove()
+                        $(".y_list").html(res)
+                        Snackbar.show({ 
+                            text: 'All Courses & Year Fetch',
+                            duration: 3000, 
+                            actionText: 'Okay'
+                        })
+                    }).fail( () => {
+                        Snackbar.show({ 
+                            text: 'Connection Error',
+                            actionText: 'Retry',
+                            duration: false, 
+                            onActionClick: () => {
+                                Snackbar.show({ 
+                                    text: `
+                                        <div class="flex justify-center items-center gap-2"> 
+                                            <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                                            <span>retrying...</span>
+                                        </div>
+                                    `, 
+                                    duration: false,
+                                    showAction: false
+                                }) 
+                                cy()
+                            }
+                        })
+                    })
+            }).fail( () => {
+                Snackbar.show({ 
+                    text: 'Connection Error',
+                    actionText: 'Retry',
+                    duration: false, 
+                    onActionClick: () => {
+                        Snackbar.show({ 
+                            text: `
+                                <div class="flex justify-center items-center gap-2"> 
+                                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                                    <span>Retrying...</span>
+                                </div>
+                            `, 
+                            duration: false,
+                            showAction: false
+                        }) 
+                        cy()
+                    }
+                })
             })
-        await $.post('year/')
-            .done( (res) => {
-                $(".y_list").find(".c_list_skeleton").remove()
-                $(".y_list").html(res)
-            }).fail( (e) => {
-                //todo
-            })
+        
     }
     $(".y").click(() => {
         const course = $(".c_list")
