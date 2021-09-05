@@ -111,7 +111,7 @@ module.exports = {
     hash: async (data, n) => {
         return await bcrypt.hash(data, n)
     }, 
-    isadminSocket: async (id, type) => {
-        return true
+    isadminSocket: async (type) => {
+        return type === "admin" ? true : false
     }
 }

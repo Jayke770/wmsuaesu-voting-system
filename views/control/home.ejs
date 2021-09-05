@@ -9,7 +9,6 @@
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
     <title>Admin Dashboard</title>
     <%- include('cdn/_home') %>
-    <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
 </head>
 <body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
@@ -117,28 +116,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="body">
-                     <div class="card p-[5px] w-[350px] md:w-full md:mr-0 md:mb-3 md:last:mb-0 flex-row cursor-pointer flex shadow-xl bg-gray-100 rounded-2xl mr-3 transition-all last:mr-0">
-                            <div class="relative">
-                                <img class="object-cover rounded-full h-14 w-14" alt="user-img" src="/assets/image.jpg">
-                                <div class="bg-green-600 absolute h-[15px] w-[15px] rounded-full right-[2px] bottom-[1px] border-2 border-gray-100"></div>
-                            </div>
-                            <div class="container flex flex-row items-center">
-                                <p class="m-0 p-[10px] text-center font-normal text-lg">Jake Peregrino Velasco</p>
-                            </div>
-                            <div class="p-[10px] flex items-center">
-                                <a class="fa fa-ellipsis-h float-right cursor-pointer bg-green-600 p-[5px] rounded-md text-gray-100"></a>
-                            </div>
-                        </div>
-                    <div class="main_body">
-                        <div class="forms">
-                            <%- 
-                                //get all the data from the server 
-                                // include('forms/main', {elections: elections, users: users}) 
-                            %>
-                        </div>
-                    </div>
-                </div> -->
                 </div>
             </div>
         </div>
@@ -151,6 +128,8 @@
         <script src="/js/time.js "></script>
         <script src="/js/avatar.js "></script>
         <script src="/js/theme.js "></script>
+        <script src="/socket.io/socket.io.js"></script> 
+        <script src="/control/js/io.js "></script>
         <script>
             $(".dark_mode ").click(function() {
                 const theme = localStorage.getItem('theme')

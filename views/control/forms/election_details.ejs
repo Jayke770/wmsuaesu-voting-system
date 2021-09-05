@@ -15,7 +15,7 @@
         <div class="header fixed top-0 z-30 w-full flex flex-row p-1 items-center bg-gray-50 dark:bg-[#161b22] shadow-md">
             <div class="flex-[20%] xl:flex-[50%] md:flex-[80%]">
                 <div class="flex flex-row items-center transition-all">
-                    <a href="/control" class="return_main transition-all text-gray-700 dark:text-gray-50 text-2xl cursor-pointer ml-3 mr-2">
+                    <a href="/control/elections/" class="return_main transition-all text-gray-700 dark:text-gray-50 text-2xl cursor-pointer ml-3 mr-2">
                         <i class="fa fa-arrow-circle-left"></i>
                     </a>
                     <p class="m-0 p-3 text-lg font-medium cursor-pointer dark:text-gray-200">Election Settings</p>
@@ -52,29 +52,13 @@
         </div>
         <div class="e_main_content animate__animated animate__bounceIn w-full px-2 py-1 mt-16 transition-all">
             <div class="container">
-                <div class="text w-full flex justify-start sm:justify-center items-center px-3 py-2 transition-all">
-                    <p class="font-medium text-2xl text-indigo-700 dark:text-gray-300">Status</p>
-                </div>
-                <div class="grid md:flex md:flex-col grid-cols-4 x p-2 gap-3 xl:grid-cols-3 md:grid-cols-2 xl:gap-4 transition-all">
-                    <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all flex flex-col">
+                <div class="grid grid-cols-2 xl:grid-cols-none transition-all">
+                    <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all gap-2 flex flex-col">
                         <div class="container flex">
-                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Start Election</span>
+                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Election will begin in</span>
                         </div>
-                        <div class="container flex flex-row justify-center items-center h-full">
-                            <button class="outline-none p-1" type="button">
-                                <i class="fa fa-play text-4xl text-blue-800"></i>
-                            </button>
-                            <div class="container pr-8 md:pr-1">
-                                <div class="container flex justify-end h-full items-center">
-                                    <div class="hrs flex flex-row gap-2 justify-center items-center h-full">
-                                        <div class="h font-bold text-4xl dark:text-gray-300">08</div>
-                                        <span class="font-extrabold text-pink-700 h">:</span>
-                                        <div class="m font-bold text-4xl dark:text-gray-300">00</div>
-                                        <span class="font-extrabold text-pink-700 h">:</span>
-                                        <div class="s font-bold text-4xl dark:text-gray-300">00</div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="container flex flex-col justify-center items-center h-full p-2">
+                            <div id="e_start" class="e_start flipdown" data="<%- election.start %>"></div>
                         </div>
                     </div>
                 </div>
@@ -216,8 +200,9 @@
     </div>
     <script src="/js/theme.js "></script>
     <script src="/js/time.js "></script>
-    <script src="/js/avatar.js "></script>
-    <script src="/control/js/election.js "></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/control/js/io.js "></script>
+    <script src="/control/js/election-details.js"></script>
     <script>
         $.ripple(".rpl", {
             debug: false,

@@ -207,7 +207,17 @@ adminrouter.post('/control/elections/election-list/', limit, isadmin, async (req
 })
 //get elections by id
 adminrouter.get('/control/elections/id/:id', limit, isadmin, async (req, res) => {
-    return res.render("control/forms/election_details")
+    const id = req.params.id
+    try {
+        await election.find({_id: {$eq: xs(id)}}, (err, elecs) => {
+            if(err) throw new err 
+            return res.render("control/forms/election_details", {
+                election: elecs.length === 0 ? '' : elecs[0]
+            })
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
 })
 /*##################################################################################### */
 
