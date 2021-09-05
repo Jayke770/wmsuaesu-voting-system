@@ -210,7 +210,7 @@ adminrouter.get('/control/elections/id/:id', limit, isadmin, async (req, res) =>
     const id = req.params.id
     try {
         await election.find({_id: {$eq: xs(id)}}, (err, elecs) => {
-            if(err) throw new err 
+            if(err) throw new err
             return res.render("control/forms/election_details", {
                 election: elecs.length === 0 ? '' : elecs[0]
             })

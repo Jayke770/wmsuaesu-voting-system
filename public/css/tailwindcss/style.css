@@ -684,14 +684,6 @@ video {
   bottom: 0.25rem;
 }
 
-.right-\[2px\] {
-  right: 2px;
-}
-
-.bottom-\[1px\] {
-  bottom: 1px;
-}
-
 .bottom-\[70px\] {
   bottom: 70px;
 }
@@ -1512,11 +1504,6 @@ video {
   border-color: rgba(239, 68, 68, var(--tw-border-opacity));
 }
 
-.border-gray-100 {
-  --tw-border-opacity: 1;
-  border-color: rgba(244, 244, 245, var(--tw-border-opacity));
-}
-
 .border-gray-50 {
   --tw-border-opacity: 1;
   border-color: rgba(250, 250, 250, var(--tw-border-opacity));
@@ -2100,10 +2087,6 @@ video {
   font-weight: 600;
 }
 
-.font-extrabold {
-  font-weight: 800;
-}
-
 .uppercase {
   text-transform: uppercase;
 }
@@ -2291,16 +2274,6 @@ video {
 .text-gray-300 {
   --tw-text-opacity: 1;
   color: rgba(212, 212, 216, var(--tw-text-opacity));
-}
-
-.text-blue-800 {
-  --tw-text-opacity: 1;
-  color: rgba(30, 64, 175, var(--tw-text-opacity));
-}
-
-.text-pink-700 {
-  --tw-text-opacity: 1;
-  color: rgba(190, 24, 93, var(--tw-text-opacity));
 }
 
 .text-indigo-900 {
@@ -3963,12 +3936,12 @@ input:checked~.dot {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
-  .xl\:grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .xl\:grid-cols-none {
     grid-template-columns: none;
+  }
+
+  .xl\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .xl\:grid-cols-4 {
@@ -4304,6 +4277,22 @@ input:checked~.dot {
     width: 95%;
   }
 
+  .md\:w-\[\] {
+    width: ;
+  }
+
+  .md\:w-\[calc\(100\)\] {
+    width: calc(100);
+  }
+
+  .md\:w-\[calc\(100\%\)\] {
+    width: calc(100%);
+  }
+
+  .md\:w-\[calc\(100\%-50px\)\] {
+    width: calc(100% - 50px);
+  }
+
   .md\:flex-\[80\%\] {
     flex: 80%;
   }
@@ -4449,10 +4438,6 @@ input:checked~.dot {
     padding-left: 0px;
   }
 
-  .md\:pr-1 {
-    padding-right: 0.25rem;
-  }
-
   .md\:pl-1 {
     padding-left: 0.25rem;
   }
@@ -4546,6 +4531,34 @@ input:checked~.dot {
 
   .sm\:w-full {
     width: 100%;
+  }
+
+  .sm\:w-\[c\] {
+    width: c;
+  }
+
+  .sm\:w-\[calc\] {
+    width: calc;
+  }
+
+  .sm\:w-\[calc\(100\)\] {
+    width: calc(100);
+  }
+
+  .sm\:w-\[calc\(100\%\)\] {
+    width: calc(100%);
+  }
+
+  .sm\:w-\[calc\(100\%-\)\] {
+    width: calc(100% - );
+  }
+
+  .sm\:w-\[calc\(100\%-100px\)\] {
+    width: calc(100% - 100px);
+  }
+
+  .sm\:w-\[calc\(100\%-50px\)\] {
+    width: calc(100% - 50px);
   }
 
   .sm\:grid-cols-none {
