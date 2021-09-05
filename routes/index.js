@@ -114,14 +114,7 @@ router.post('/register-face', take_photo, async (req, res, next) => {
 router.get('/', authenticated, get_face, async (req, res) => {
     res.render('auth')
 })
-router.get('/control', isadmin, async (req, res) => {
-    //get all elections 
-    await election.find({}, (err, elec) => {
-        user.find({}, { firstname: 1, middlename: 1, lastname: 1, socket_id: 1, _id: 1 }, (err, users) => {
-            res.render('control/home', { elections: elec, users: users })
-        })
-    })
-})
+
 router.get('/home', isloggedin, chat, get_face, async (req, res) => {
     //if user logged data is save 
     const user_id = req.session.myid

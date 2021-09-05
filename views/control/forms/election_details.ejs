@@ -27,7 +27,7 @@
                         <i class="fa fa-bars"></i>
                     </a>
                 </div>
-                <div class="e_nav_main ms-300 transition-all animate__animated animate__slideInRight flex xsm:w-[95%] xl:hidden xl:w-[350px] xl:p-2 xl:fixed xl:right-0 xl:h-full xl:bg-gray-100 xl:dark:bg-[#171b22]  xl:top-0 xl:shadow-2xl xl:flex-col xl:justify-start xl:items-start flex-row justify-end items-center w-full">
+                <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="e_nav_main transition-all  flex xsm:w-[95%] xl:hidden xl:w-[350px] xl:p-2 xl:fixed xl:right-0 xl:h-full xl:bg-gray-100 xl:dark:bg-[#171b22]  xl:top-0 xl:shadow-2xl xl:flex-col xl:justify-start xl:items-start flex-row justify-end items-center w-full">
                     <div class="hidden xl:flex xl:justify-end xl:items-end w-full">
                         <i class="cls_e_nav float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]">
                             <i class="fa fa-times-circle"></i>
@@ -55,11 +55,12 @@
                 <div class="grid grid-cols-2 xl:grid-cols-none transition-all">
                     <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all gap-2 flex flex-col">
                         <div class="container flex">
-                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Election will begin in</span>
+                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">
+                                <%- started && !end ? 'Election will end in' : started && end ? `Election ended ${endtime}` : `Election will begin in` %>
+                            </span>
                         </div>
                         <div class="container flex flex-col justify-center items-center h-full p-2">
-                            <div id="e_start" class="e_start flipdown" data="<%- election.start %>"></div>
-                            <div id="e_end" class="e_end flipdown" data="<%- election.end %>"></div>
+                            <div id="e_time" class="e_time flipdown" data="<%- started ? election.end : election.start %>" started="<%- started ? 'true' : 'false' %>"></div>
                         </div>
                     </div>
                 </div>

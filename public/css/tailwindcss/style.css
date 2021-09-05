@@ -4111,10 +4111,6 @@ input:checked~.dot {
     height: 100vh;
   }
 
-  .my\:w-\[350px\] {
-    width: 350px;
-  }
-
   .my\:grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
@@ -4269,28 +4265,16 @@ input:checked~.dot {
     width: 91.666667%;
   }
 
+  .md\:w-\[calc\(100\%-50px\)\] {
+    width: calc(100% - 50px);
+  }
+
   .md\:w-full {
     width: 100%;
   }
 
   .md\:w-\[95\%\] {
     width: 95%;
-  }
-
-  .md\:w-\[\] {
-    width: ;
-  }
-
-  .md\:w-\[calc\(100\)\] {
-    width: calc(100);
-  }
-
-  .md\:w-\[calc\(100\%\)\] {
-    width: calc(100%);
-  }
-
-  .md\:w-\[calc\(100\%-50px\)\] {
-    width: calc(100% - 50px);
   }
 
   .md\:flex-\[80\%\] {
@@ -4533,30 +4517,6 @@ input:checked~.dot {
     width: 100%;
   }
 
-  .sm\:w-\[c\] {
-    width: c;
-  }
-
-  .sm\:w-\[calc\] {
-    width: calc;
-  }
-
-  .sm\:w-\[calc\(100\)\] {
-    width: calc(100);
-  }
-
-  .sm\:w-\[calc\(100\%\)\] {
-    width: calc(100%);
-  }
-
-  .sm\:w-\[calc\(100\%-\)\] {
-    width: calc(100% - );
-  }
-
-  .sm\:w-\[calc\(100\%-100px\)\] {
-    width: calc(100% - 100px);
-  }
-
   .sm\:w-\[calc\(100\%-50px\)\] {
     width: calc(100% - 50px);
   }
@@ -4681,10 +4641,6 @@ input:checked~.dot {
 }
 
 @media (max-width: 250px) {
-  .xxsm\:w-full {
-    width: 100%;
-  }
-
   .xxsm\:text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;

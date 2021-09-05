@@ -17,7 +17,7 @@
             <div class="nav_main dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0  z-10">
                 <div class="w-full flex flex-row">
                     <p class="flex-[20%] w-full text-purple-800 dark:text-gray-200 text-xl p-4 font-bold mt-[1px]">Admin Dashboard</p>
-                    <div class="nav transition-all xl:bg-gray-200 xl:dark:bg-darkBlue-secondary md:shadow-xl flex w-full justify-end p-[10px] my:shadow-lg xl:fixed md:w-[calc(100%-50px)] my:right-0 my:h-screen my:flex-col my:justify-start my:hidden animate__animated animate__slideInRight">
+                    <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300"  class="nav transition-all xl:bg-gray-200 xl:dark:bg-darkBlue-secondary md:shadow-xl flex w-full justify-end p-[10px] my:shadow-lg xl:fixed md:w-[calc(100%-50px)] my:right-0 my:h-screen my:flex-col my:justify-start my:hidden">
                         <div class="my:flex justify-end hidden">
                             <i class="close_nav text-red-600 mr-3 mt-2 dark:text-gray-200 text-2xl cursor-pointer">
                                 <i class="fa fa-times-circle"></i>
@@ -72,30 +72,9 @@
             </div>
             <div class="mt-16">
                 <div class="elections w-full p-[10px]">
-                    <div class="container text-2xl mb-3 font-semibold dark:text-gray-300">Elections <span class="float-right font-normal">6</span></div>
-                    <div class="md:flex-col md:overflow-x-hidden flex-row flex w-full overflow-x-scroll pb-8 pt-4 md:pt-2 transition-all md:max-h-[90vh] md:overflow-y-scroll">
-                        <div class="card md:w-full md:mr-0 md:mb-3 md:last:mb-0 md:flex-col cursor-pointer flex flex-row shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl dark: mr-3 transition-all last:mr-0">
-                            <div class="img">
-                                <img class="icon_e_name md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[300px] h-full object-cover rounded-tl-2xl rounded-bl-2xl" alt="election_ic" src="/assets/image.jpg">
-                            </div>
-                            <div class="election_info p-8 w-80 md:w-full transition-all">
-                                <div class="container">
-                                    <p class="text-left text-lg font-medium text-purple-700 dark:text-purple-500 md:text-center">
-                                        Election Status</p>
-                                </div>
-                                <div class="container mt-4 transition-all">
-                                    <div class="container mt-3 dark:text-gray-400">Voters <span class="dark:text-gray-300 float-right font-semibold">0</span></div>
-                                    <div class="container mt-3 dark:text-gray-400">Active Voters <span class="dark:text-gray-300 float-right font-semibold">0</span></div>
-                                    <div class="container mt-3 dark:text-gray-400">Status <span class="dark:text-gray-300 float-right font-semibold">Not Yet Started</span>
-                                    </div>
-                                    <div class="container mt-3 dark:text-gray-400">Created <span class="dark:text-gray-300 float-right font-semibold">19hrs ago</span></div>
-                                </div>
-                                <div class="container mt-8 justify-center flex flex-row ">
-                                    <a class="more_e_settings rpl rpl-h dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-300 transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-purple-500"
-                                        href="elections/1">More Details</a>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="container text-2xl mb-3 font-semibold dark:text-gray-300">Elections <span class="float-right font-normal"><%- elections.length %></span></div>
+                    <div class="election_list flex">
+                        <%- include('forms/election_list', {elections: elections}) %>
                     </div>
                 </div>
                 <div class="voters mx-auto w-full p-[10px] mt-4">
@@ -123,13 +102,15 @@
     </div>
 </div>
     <!-- end main -->
-    <script src="/control/js/home.js "></script>
+        <script src="/control/js/home.js "></script>
         <script src="/js/scroll_div.js "></script>
         <script src="/js/time.js "></script>
         <script src="/js/avatar.js "></script>
         <script src="/js/theme.js "></script>
         <script src="/socket.io/socket.io.js"></script> 
         <script src="/control/js/io.js "></script>
+        <script src="/js/color.js"></script>
+        <script src="/js/avatar.js"></script>
         <script>
             $(".dark_mode ").click(function() {
                 const theme = localStorage.getItem('theme')

@@ -11,7 +11,19 @@ const xs = require('xss')
 const { v4: uuid } = require('uuid')
 const moment = require('moment')
 /*##################################################################################### */
-
+adminrouter.get('/control',limit, isadmin, async (req, res) => {
+    try {
+        let elections
+        //get all elections 
+        await election.find({}, (err, elecs) => {
+            if(err) throw new err 
+            elections = elecs
+        }) 
+        res.render('control/home', {elections: elections})
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
 //elections data 
 adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
     try {
@@ -162,7 +174,7 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
                                     created: true, 
                                     msg: "Election Created Successfully", 
                                     data: {
-                                        e_start: moment(start).startOf('hour').fromNow(),  
+                                        e_start: moment(start).startOf().fromNow(),  
                                         passcode: pass
                                     }
                                 })
@@ -211,8 +223,15 @@ adminrouter.get('/control/elections/id/:id', limit, isadmin, async (req, res) =>
     try {
         await election.find({_id: {$eq: xs(id)}}, (err, elecs) => {
             if(err) throw new err
+            const data = elecs.length === 0 ? '' : elecs[0]
+            //if election is already started set the started variable to true
+            const started = moment(data.start).fromNow().search("ago") != -1 ? true : false
+            const end = moment(data.end).fromNow().search("ago") != -1 ? true : false
             return res.render("control/forms/election_details", {
-                election: elecs.length === 0 ? '' : elecs[0]
+                election: elecs.length === 0 ? '' : elecs[0], 
+                started: started, 
+                end: end, 
+                endtime: moment(data.end).fromNow()
             })
         })
     } catch (e) {
