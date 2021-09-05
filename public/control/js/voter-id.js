@@ -22,34 +22,42 @@ $(document).ready( () => {
         ids()
     }, 2000) 
     async function ids() {
-        await $.post('ids/')
-            .done( async (res) => { 
-                $(".voters_id_all").html(res) 
+        try {
+            const res = await fetchtimeout('ids/', {
+                timeout: 10000, 
+                method: 'POST'
+            })
+            if(res.ok){
+                const data = await res.text()
+                $(".voters_id_all").html(data) 
                 Snackbar.show({ 
                     text: "All Voter ID's Fetch",
                     duration: 3000, 
                     actionText: 'Okay'
                 })
-            }).fail( (e) => {
-                Snackbar.show({ 
-                    text: 'Connection Error',
-                    actionText: 'Retry',
-                    duration: false, 
-                    onActionClick: () => {
-                        Snackbar.show({ 
-                            text: `
-                                <div class="flex justify-center items-center gap-2"> 
-                                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
-                                    <span>Retrying...</span>
-                                </div>
-                            `, 
-                            duration: false,
-                            showAction: false
-                        }) 
-                        ids()
-                    }
-                })
+            } else {
+                throw new Error(`${res.status} ${res.statusText}`)
+            }
+        } catch (e) {
+            Snackbar.show({ 
+                text: 'Connection Error',
+                actionText: 'Retry',
+                duration: false, 
+                onActionClick: () => {
+                    Snackbar.show({ 
+                        text: `
+                            <div class="flex justify-center items-center gap-2"> 
+                                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                                <span>Retrying...</span>
+                            </div>
+                        `, 
+                        duration: false,
+                        showAction: false
+                    }) 
+                    ids()
+                }
             })
+        }
     }
     $(".add_voter").click( () => {
         if($(".popup").hasClass("hidden")){

@@ -198,7 +198,7 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
     }
 })
 //all elections 
-adminrouter.get('/control/elections/election-list/', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/election-list/', limit, isadmin, async (req, res) => {
     //get all elections 
     await election.find({}, {passcode: 0}, (err, elecs) => {
         if(err) throw new err

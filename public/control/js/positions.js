@@ -18,35 +18,43 @@ $(document).ready(function () {
         pos_all()
     }, 2000)
     async function pos_all(){
-        await $.post('pos/')
-            .done( (res) => {
+        try {
+            const res = await fetchtimeout('pos/', {
+                timeout: 10000, 
+                method: 'POST'
+            })
+            if(res.ok){
+                const data = await res.text()
                 $(".positions_all").find(".pos_skeleton").remove() 
-                $(".positions_all").html(res)
+                $(".positions_all").html(data)
                 Snackbar.show({ 
                     text: 'All Positions Fetch',
                     duration: 3000, 
                     actionText: 'Okay'
                 })
-            }).fail( () => {
-                Snackbar.show({ 
-                    text: 'Connection Error',
-                    actionText: 'Retry',
-                    duration: false, 
-                    onActionClick: () => {
-                        Snackbar.show({ 
-                            text: `
-                                <div class="flex justify-center items-center gap-2"> 
-                                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
-                                    <span>Retrying...</span>
-                                </div>
-                            `, 
-                            duration: false,
-                            showAction: false
-                        }) 
-                        pos_all()
-                    }
-                })
+            } else {
+                throw new Error(`${res.status} ${res.statusText}`)
+            }
+        } catch (e) {
+            Snackbar.show({ 
+                text: 'Connection Error',
+                actionText: 'Retry',
+                duration: false, 
+                onActionClick: () => {
+                    Snackbar.show({ 
+                        text: `
+                            <div class="flex justify-center items-center gap-2"> 
+                                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                                <span>Retrying...</span>
+                            </div>
+                        `, 
+                        duration: false,
+                        showAction: false
+                    }) 
+                    pos_all()
+                }
             })
+        }
     }
 
     $(".add_pos_btn").click(() => {

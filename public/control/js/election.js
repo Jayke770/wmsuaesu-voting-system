@@ -370,42 +370,49 @@ $(document).ready(() => {
     setTimeout( () => {
         elections()
     }, 2000) 
-    function elections() {
-        $.get('election-list/')
-            .done( (res) => {
-                $(".election_list").html(res)
-                Snackbar.show({ 
-                    text: 'All Election Fetch',
-                    duration: 3000, 
-                    actionText: 'Okay'
-                })
+    async function elections() {
+        try {
+            const res = await fetchtimeout('election-list/', {
+                timeout: 10000, 
+                method: 'POST'
+            })
+            if(res.ok){
+                const data = await res.text()
+                $(".election_list").html(data)
                 setTimeout( () => {
                     $(".election_list").find(".icon_e_name").each( function() {
                         $(this).removeClass("skeleton-image")
                         $(this).attr("src", avatar($(this).attr("data"), "#fff", dark()) )
                     })
-                    activeVoters($(".election_list").find(".active_voters"))
                 }, 1000)
-            }).fail( (e) => {
                 Snackbar.show({ 
-                    text: 'Connection Error',
-                    actionText: 'Retry',
-                    duration: false, 
-                    onActionClick: () => {
-                        Snackbar.show({ 
-                            text: `
-                                <div class="flex justify-center items-center gap-2"> 
-                                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
-                                    <span>Retrying...</span>
-                                </div>
-                            `, 
-                            duration: false,
-                            showAction: false
-                        }) 
-                        elections()
-                    }
+                    text: 'All Election Fetch',
+                    duration: 3000, 
+                    actionText: 'Okay'
                 })
+            } else {
+                throw new Error(`${res.status} ${res.statusText}`)
+            }
+        } catch (e) {
+            Snackbar.show({ 
+                text: 'Connection Error',
+                actionText: 'Retry',
+                duration: false, 
+                onActionClick: () => {
+                    Snackbar.show({ 
+                        text: `
+                            <div class="flex justify-center items-center gap-2"> 
+                                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                                <span>Retrying...</span>
+                            </div>
+                        `, 
+                        duration: false,
+                        showAction: false
+                    }) 
+                    elections()
+                }
             })
+        }
     }
     //type writer effect
     var app = document.querySelector('#e_creating');
