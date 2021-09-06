@@ -7,6 +7,9 @@ const election = new mongoose.Schema({
     courses: {
         type: Array
     },
+    year: {
+        type: Array
+    },
     positions:{
         type: Array
     }, 

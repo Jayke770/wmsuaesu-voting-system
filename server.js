@@ -71,9 +71,9 @@ app.set('view engine', 'ejs')
 app.use(appsession)
 app.use(route) //all user req
 app.use(admin) //all admin req 
-    //http 404 req
-app.use(function(req, res, next) {
-    res.status(404).render('Error/index')
+//http 404 req
+app.use(function(req, res, next) { 
+    res.status(404).render('error/404')
 })
 
 //socket io session

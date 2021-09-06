@@ -28,14 +28,15 @@ adminrouter.get('/control',limit, isadmin, async (req, res) => {
 adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
     try {
         //get all courses, positions, & partylist 
-        data.find({}, {positions: 1, course: 1, year: 1, partylists: 1}, (err, d) => {
-            if(err) throw new err
+        data.find({}, {positions: 1, course: 1, year: 1, partylists: 1}).then( (d) => {
             return res.render("control/forms/elections", {
                 positions: d.length != 0 ? d[0].positions : [], 
                 course: d.length != 0 ? d[0].course : [], 
                 year: d.length != 0 ? d[0].year : [], 
                 partylists: d.length != 0 ? d[0].partylists : []
             })
+        }).catch( (e) => {
+            throw new Error(e)
         })
     } catch(e){
         return res.status(500).send()
@@ -158,6 +159,7 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
                             election_title: title, 
                             election_description: description, 
                             courses: crs, 
+                            year: yr,
                             positions: pos, 
                             candidates: [], 
                             partylist: pty, 
@@ -212,18 +214,29 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
 //all elections 
 adminrouter.post('/control/elections/election-list/', limit, isadmin, async (req, res) => {
     //get all elections 
-    await election.find({}, {passcode: 0}, (err, elecs) => {
-        if(err) throw new err
-        return res.render("control/forms/election_list", {elections: elecs})
-    })
+    try {
+        await election.find({}, {passcode: 0}).then( (elecs) => {
+            return res.render("control/forms/election_list", {elections: elecs, home: false})
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
 })
 //get elections by id
-adminrouter.get('/control/elections/id/:id', limit, isadmin, async (req, res) => {
-    const id = req.params.id
+adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, res) => {
+    const id = req.params.id, from = req.params.from
     try {
-        await election.find({_id: {$eq: xs(id)}}, (err, elecs) => {
-            if(err) throw new err
-            const data = elecs.length === 0 ? '' : elecs[0]
+        //get course & year 
+        let course, year
+        await data.find({}, {course: 1, year: 1}).then( (cy) =>{
+            course = cy.length === 0 ? [] : cy[0].course 
+            year = cy.length === 0 ? [] : cy[0].year 
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+        await election.find({_id: {$eq: xs(id)}}).then( (elecs) => {
             //if election is already started set the started variable to true
             const started = moment(data.start).fromNow().search("ago") != -1 ? true : false
             const end = moment(data.end).fromNow().search("ago") != -1 ? true : false
@@ -231,8 +244,13 @@ adminrouter.get('/control/elections/id/:id', limit, isadmin, async (req, res) =>
                 election: elecs.length === 0 ? '' : elecs[0], 
                 started: started, 
                 end: end, 
-                endtime: moment(data.end).fromNow()
+                endtime: moment(data.end).fromNow(), 
+                course: course, 
+                year: year,
+                link: xs(from) === "home" ? '/control/' : '/control/elections/'
             })
+        }).catch( (e) => {
+            throw new Error(e)
         })
     } catch (e) {
         return res.status(500).send()

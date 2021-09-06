@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 Internal Server Error</title>
+    <%- include('../cdn/_error') %>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+</head>
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased h-screen">
+    <div class="fixed top-0 w-full h-full">
+        <div class="flex justify-center items-center h-full w-full relative">
+            <div class="text-gray-300 font-bold text-[20rem] tracking-widest">500</div>
+            <div class="text-gray-300 text-5xl absolute top-1/2 bg-teal-600 py-2 px-3 rounded-md">Internal Server Error</div>
+        </div>
+    </div>
+    <script src="/js/theme.js"></script>
+</body>
+</html>

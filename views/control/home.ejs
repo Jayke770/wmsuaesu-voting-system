@@ -74,7 +74,7 @@
                 <div class="elections w-full p-[10px]">
                     <div class="container text-2xl mb-3 font-semibold dark:text-gray-300">Elections <span class="float-right font-normal"><%- elections.length %></span></div>
                     <div class="election_list flex">
-                        <%- include('forms/election_list', {elections: elections}) %>
+                        <%- include('forms/election_list', {elections: elections, home: true}) %>
                     </div>
                 </div>
                 <div class="voters mx-auto w-full p-[10px] mt-4">

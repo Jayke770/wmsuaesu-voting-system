@@ -28,7 +28,7 @@ $(document).ready( () => {
                 $(this).parent().parent().parent().find("select, input[type='number']").prop("disabled", true)
                 //add new icon 
                 $(this).parent().html(`
-                    <a data="${selected}" class="removechip rpl cursor-pointer dark:text-red-500 text-2xl px-2 rounded-md">
+                    <a data="${selected}" class="removechip rpl cursor-pointer dark:text-red-500 text-red-600 text-2xl px-2 rounded-md">
                         <i class="fad fa-times-circle"></i>
                     </a>
                 `)
@@ -84,7 +84,7 @@ $(document).ready( () => {
                     </div>
                     <div class="chip-input-actions p-1">
                         <div class="flex flex-row gap-1 justify-center items-center h-full">
-                            <a class="addchip rpl cursor-pointer dark:text-green-600 text-2xl px-2 rounded-md">
+                            <a class="addchip rpl cursor-pointer dark:text-green-600 text-green-700 text-2xl px-2 rounded-md">
                                 <i class="fad fa-check-circle"></i>
                             </a>
                         </div>

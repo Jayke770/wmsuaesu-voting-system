@@ -243,10 +243,17 @@ input:checked~.dot {
     }
 }
 /*svg end */
+.dark .active-b-green{
+    border-width: .1px !important;
+    border-color: rgba(20, 184, 166, 0.6) !important;
+}
 .active-b-green{
     border-width: .1px !important;
     border-color: rgba(20, 184, 166, 0.6) !important;
 }
+.dark .active-e-btn{
+    background: #1d2936 !important;  
+}
 .active-e-btn{
-    background: #1d2936 !important;
+    @apply bg-purple-200/80;
 }

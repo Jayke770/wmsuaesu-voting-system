@@ -15,7 +15,7 @@
         <div class="header fixed top-0 z-30 w-full flex flex-row p-1 items-center bg-gray-50 dark:bg-[#161b22] shadow-md">
             <div class="flex-[20%] xl:flex-[50%] md:flex-[80%]">
                 <div class="flex flex-row items-center transition-all">
-                    <a href="/control/elections/" class="return_main transition-all text-gray-700 dark:text-gray-50 text-2xl cursor-pointer ml-3 mr-2">
+                    <a href="<%- link %>" class="return_main transition-all text-gray-700 dark:text-gray-50 text-2xl cursor-pointer ml-3 mr-2">
                         <i class="fa fa-arrow-circle-left"></i>
                     </a>
                     <p class="m-0 p-3 text-lg font-medium cursor-pointer dark:text-gray-200">Election Settings</p>
@@ -53,7 +53,7 @@
         <div class="e_main_content w-full px-2 py-1 mt-16 transition-all">
             <div class="container">
                 <div class="grid grid-cols-2 xl:grid-cols-none transition-all">
-                    <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all gap-2 flex flex-col">
+                    <div class="shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all gap-2 flex flex-col">
                         <div class="container flex">
                             <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">
                                 <%- started && !end ? 'Election will end in' : started && end ? `Election ended ${endtime}` : `Election will begin in` %>
@@ -70,50 +70,44 @@
                     <p class="font-medium text-2xl text-indigo-700 dark:text-gray-300">Details</p>
                 </div>
                 <div class="grid md:flex md:flex-col grid-cols-4 x p-2 gap-3 xl:grid-cols-3 md:grid-cols-2 xl:gap-4 transition-all">
-                    <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all">
+                    <div class="shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all">
                         <div class="container p-1">
                             <p class="font-medium m-0 dark:text-gray-50 dark:font-normal">Election Title</p>
                         </div>
-                        <div class="container mt-2 px-2">
-                            <div class="text-main">
-                                <div class="text-icon-left text-purple-600">
-                                    <i class="fa fa-info text-xl"></i>
-                                </div>
-                                <input value="SSG Election" type="text" class="text-main-input rounded-lg focus:border-none focus:ring-2 ring-indigo-400 pl-8 pr-12 py-3 text-base font-medium dark:bg-transparent dark:text-gray-200" autocomplete="off" required>
-                                <div class="text-icon-right text-gray-100 bg-green-500 dark:bg-green-700 dark:hover:bg-green-600 transition-colors py-2 px-3 rounded-tr-lg rounded-br-lg">
-                                    <i class="fas fa-check text-xl"></i>
-                                </div>
-                            </div>
+                        <div class="container flex flex-col justify-center items-center mt-2 px-2">
+                            <p class="text-center font-normal text-bluegray-900 dark:text-gray-300"><%- election.election_title %></p>
                         </div>
                     </div>
-                    <div data-color="#bdbdbd" class="rpl shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all">
+                    <div class="shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all">
                         <div class="container flex">
                             <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Eligible Courses</span>
                         </div>
                         <div class="courses p-1 flex flex-wrap gap-2">
-                            <div class="border border-purple-700 p-1 px-2 rounded-full cursor-pointer">
-                                <span class="text-gray-900 dark:text-gray-300 font-medium">BSCS</span>
-                                <button class="ml-1">
-                                    <i class="fas fa-times-circle text-red-600"></i>
-                                </button>
-                            </div>
-                            <div class="border border-green-700 p-1 px-2 rounded-full cursor-pointer">
-                                <span class="text-gray-900 dark:text-gray-300 font-medium">GEN ED</span>
-                                <button class="ml-1">
-                                    <i class="fas fa-times-circle text-red-600"></i>
-                                </button>
-                            </div>
-                            <div class="border border-red-700 p-1 px-2 rounded-full cursor-pointer">
-                                <span class="text-gray-900 dark:text-gray-300 font-medium">BSED</span>
-                                <button class="ml-1">
-                                    <i class="fas fa-times-circle text-red-600"></i>
-                                </button>
-                            </div>
-                            <div class="add_course flex justify-center items-center">
-                                <button type="button" class="cursor-pointer px-1 outline-none">
-                                    <i class="fas fa-plus-circle text-indigo-900"></i>
-                                </button>
-                            </div>
+                            <% for(let i = 0; i < election.courses.length; i++){ 
+                                for(let c = 0; c < course.length; c++){
+                                    if(election.courses[i] === course[c].id){ %>
+                                        <div class="border border-green-700 p-1 px-3 rounded-full cursor-pointer">
+                                            <span class="text-gray-900 dark:text-gray-300 font-medium"><%- course[c].type %></span>
+                                        </div>  
+                                    <% }
+                                }
+                             } %>
+                        </div>
+                    </div>
+                    <div class="shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all">
+                        <div class="container flex">
+                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Eligible Year</span>
+                        </div>
+                        <div class="courses p-1 flex flex-wrap gap-2">
+                            <% for(let i = 0; i < election.year.length; i++){ 
+                                for(let y = 0; y < year.length; y++){
+                                    if(election.year[i] === year[y].id){ %>
+                                        <div class="border border-green-700 p-1 px-3 rounded-full cursor-pointer">
+                                            <span class="text-gray-900 dark:text-gray-300 font-medium"><%- year[y].type %></span>
+                                        </div>  
+                                    <% }
+                                }
+                             } %>
                         </div>
                     </div>
                 </div>
