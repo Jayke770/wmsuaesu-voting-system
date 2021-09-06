@@ -15,16 +15,17 @@ adminrouter.get('/control',limit, isadmin, async (req, res) => {
     try {
         let elections
         //get all elections 
-        await election.find({}, (err, elecs) => {
-            if(err) throw new err 
+        await election.find({}).then( (elecs) => {
             elections = elecs
-        }) 
-        res.render('control/home', {elections: elections})
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+        return res.render('control/home', {elections: elections})
     } catch (e) {
         return res.status(500).send()
     }
 })
-//elections data 
+//elections
 adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
     try {
         //get all courses, positions, & partylist 
@@ -227,26 +228,27 @@ adminrouter.post('/control/elections/election-list/', limit, isadmin, async (req
 //get elections by id
 adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, res) => {
     const id = req.params.id, from = req.params.from
+    let crs, yr
     try {
-        //get course & year 
-        let course, year
-        await data.find({}, {course: 1, year: 1}).then( (cy) =>{
-            course = cy.length === 0 ? [] : cy[0].course 
-            year = cy.length === 0 ? [] : cy[0].year 
+        await data.find({}, {course: 1, year:1}).then( (cy) => {
+            crs = cy.length === 0 ? [] : cy[0].course
+            yr = cy.length === 0 ? [] : cy[0].year
         }).catch( (e) => {
             throw new Error(e)
         })
-        await election.find({_id: {$eq: xs(id)}}).then( (elecs) => {
+        await election.find({_id: {$eq: xs(id)}}).then( async (elecs) => {
+            const data = elecs.length === 0 ? '' : elecs[0]
             //if election is already started set the started variable to true
             const started = moment(data.start).fromNow().search("ago") != -1 ? true : false
             const end = moment(data.end).fromNow().search("ago") != -1 ? true : false
+            console.log(data)
             return res.render("control/forms/election_details", {
                 election: elecs.length === 0 ? '' : elecs[0], 
                 started: started, 
-                end: end, 
-                endtime: moment(data.end).fromNow(), 
-                course: course, 
-                year: year,
+                end: end,
+                course: crs, 
+                year: yr,
+                endtime: moment(data.end).fromNow(),
                 link: xs(from) === "home" ? '/control/' : '/control/elections/'
             })
         }).catch( (e) => {

@@ -1,9 +1,11 @@
 const user = require('../models/user')
 const admin = require('../models/admin')
+const data = require('../models/data')
 const objectid = require('mongodb').ObjectID
 const { v4: uuid } = require('uuid');
 const ftp = require('basic-ftp')
 const bcrypt = require('bcrypt')
+const xs = require('xss')
 module.exports = {
     toUppercase: function (val) {
         const str = val.charAt(0).toUpperCase() + val.slice(1)

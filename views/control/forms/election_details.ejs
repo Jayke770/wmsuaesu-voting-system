@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" class="theme-color" content="#991b1b">
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
-    <title>Election Title</title>
+    <title><%- election.election_title %></title>
     <%- include('../cdn/_home') %>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
 </head>
@@ -18,7 +18,7 @@
                     <a href="<%- link %>" class="return_main transition-all text-gray-700 dark:text-gray-50 text-2xl cursor-pointer ml-3 mr-2">
                         <i class="fa fa-arrow-circle-left"></i>
                     </a>
-                    <p class="m-0 p-3 text-lg font-medium cursor-pointer dark:text-gray-200">Election Settings</p>
+                    <p class="m-0 p-3 text-lg font-medium cursor-pointer dark:text-gray-200"><%- election.election_title %></p>
                 </div>
             </div>
             <div class="flex-[80%] xl:flex-[50%] md:flex-[20%]">
@@ -65,73 +65,25 @@
                     </div>
                 </div>
             </div>
-            <div class="container">
-                <div class="text w-full flex justify-start sm:justify-center items-center px-3 py-2 transition-all">
-                    <p class="font-medium text-2xl text-indigo-700 dark:text-gray-300">Details</p>
-                </div>
-                <div class="grid md:flex md:flex-col grid-cols-4 x p-2 gap-3 xl:grid-cols-3 md:grid-cols-2 xl:gap-4 transition-all">
-                    <div class="shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all">
-                        <div class="container p-1">
-                            <p class="font-medium m-0 dark:text-gray-50 dark:font-normal">Election Title</p>
-                        </div>
-                        <div class="container flex flex-col justify-center items-center mt-2 px-2">
-                            <p class="text-center font-normal text-bluegray-900 dark:text-gray-300"><%- election.election_title %></p>
-                        </div>
-                    </div>
+            <div class="container mt-6">
+                <div class="grid md:flex md:flex-col grid-cols-4 gap-3 xl:grid-cols-3 md:grid-cols-2 xl:gap-4 transition-all">
                     <div class="shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all">
                         <div class="container flex">
                             <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Eligible Courses</span>
                         </div>
-                        <div class="courses p-1 flex flex-wrap gap-2">
-                            <% for(let i = 0; i < election.courses.length; i++){ 
-                                for(let c = 0; c < course.length; c++){
-                                    if(election.courses[i] === course[c].id){ %>
-                                        <div class="border border-green-700 p-1 px-3 rounded-full cursor-pointer">
-                                            <span class="text-gray-900 dark:text-gray-300 font-medium"><%- course[c].type %></span>
-                                        </div>  
-                                    <% }
-                                }
-                             } %>
-                        </div>
+                        <div class="course p-1 flex flex-wrap gap-2" default='<%- JSON.stringify(course) %>' data="<%- election.courses %>"></div>
                     </div>
                     <div class="shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all">
                         <div class="container flex">
                             <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Eligible Year</span>
                         </div>
-                        <div class="courses p-1 flex flex-wrap gap-2">
-                            <% for(let i = 0; i < election.year.length; i++){ 
-                                for(let y = 0; y < year.length; y++){
-                                    if(election.year[i] === year[y].id){ %>
-                                        <div class="border border-green-700 p-1 px-3 rounded-full cursor-pointer">
-                                            <span class="text-gray-900 dark:text-gray-300 font-medium"><%- year[y].type %></span>
-                                        </div>  
-                                    <% }
-                                }
-                             } %>
-                        </div>
+                        <div class="year p-1 flex flex-wrap gap-2" default='<%- JSON.stringify(year) %>' data="<%- election.year %>"></div>
                     </div>
                 </div>
             </div>
-            <div class="container">
-                <div class="text w-full flex justify-start sm:justify-center items-center px-3 py-2 transition-all">
-                    <p class="font-medium text-2xl text-indigo-700 dark:text-gray-300">Security</p>
-                </div>
-                <div class="grid md:flex md:flex-col grid-cols-4 x p-2 gap-3 xl:grid-cols-3 md:grid-cols-2 xl:gap-4 transition-all">
-                    <div data-color="#bdbdbd" class=" dark:bg-[#161b22] shadow-md bg-gray-50 rounded-md p-4 transition-all">
-                        <div class="container">
-                            <span class="font-medium dark:text-gray-100 dark:font-normal">Election Passcode</span>
-                        </div>
-                        <form class="mt-3 px-2 flex flex-col gap-2">
-                            <input type="text" value="gh77" name="passcode" class="text-input dark:bg-transparent dark:text-gray-200 focus:ring-indigo-800 transition-all focus:border-gray-300 w-full text-center py-2 px-3 my-ring-2 rounded-md border-gray-400 border" placeholder="Passcode" required>
-                            <button class="button-input-active  dark:bg-green-700 dark:hover:bg-green-600 rpl" type="submit">Change</button>
-                        </form>
-                    </div>
-                </div>
-                <div class="container ">
-                    <div class="text w-full flex justify-start sm:justify-center items-center px-3 py-2 transition-all ">
-                        <p class="font-medium text-2xl text-indigo-700 ">Summary</p>
-                    </div>
-                    <div class="grid grid-cols-3 p-2 gap-3 xl:grid-cols-none xl:grid-rows-3 xl:gap-4 transition-all ">
+            <div class="container mt-6">
+                <div class="container mt-6">
+                    <div class="grid grid-cols-3 gap-3 xl:grid-cols-none xl:grid-rows-3 xl:gap-4 transition-all ">
                         <div data-color="#bdbdbd " class="rpl dark:bg-[#161b22] shadow-md bg-gray-50 rounded-md p-4 transition-all ">
                             <div class="flex flex-row gap-3 sm:flex-col transition-all ">
                                 <div class="flex flex-row gap-2 sm:justify-center transition-all ">
@@ -140,7 +92,7 @@
                                     </div>
                                     <div class="text flex flex-col ml-3 mt-1 ">
                                         <span class="font-normal text-md tracking-wide dark:text-gray-300">Voters</span>
-                                        <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100">300</div>
+                                        <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.voters.length %></div>
                                     </div>
                                 </div>
                                 <div class="flex w-full ">
@@ -159,7 +111,7 @@
                                     </div>
                                     <div class="text flex flex-col ml-3 mt-1 ">
                                         <span class="font-normal text-md tracking-wide dark:text-gray-300">Partylist</span>
-                                        <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100">3</div>
+                                        <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.partylist.length %></div>
                                     </div>
                                 </div>
                                 <div class="flex w-full ">
@@ -178,7 +130,7 @@
                                     </div>
                                     <div class="text flex flex-col ml-3 mt-1 ">
                                         <span class="font-normal text-md tracking-wide dark:text-gray-300">Candidates</span>
-                                        <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100">50</div>
+                                        <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.candidates.length %></div>
                                     </div>
                                 </div>
                                 <div class="flex w-full ">
