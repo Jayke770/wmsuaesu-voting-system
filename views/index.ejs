@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#991b1b">
     <meta name="keywords" content="wmsu, online voting system, voting system, wmsu auora, auora, voting">
-    <title>OVS Dashboard</title>
+    <title><%- `${data.fname} ${data.mname} ${data.lname}` %></title>
     <meta name="description" content="New and upgraded version of voting system">
     <meta property="og:title" content="Online Voting System">
     <meta property="og:description" content="New and upgraded version of voting system">
@@ -18,184 +18,91 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:url" content="https://voting-system-jayke.herokuapp.com/">
     <%- include('cdn/_index') %>
-    <!--  -->
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
-    <link rel="stylesheet" type="text/css" href="/css/index.css">
-    <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
 </head>
 
 <body class="bg-gray-300 dark:bg-[#090c10]">
-    <div class="conn">Connecting to server <span class="dot"></span></div>
-    <!-- custom popup start -->
-    <div class="my_popup"></div>
-    <!-- end of custom popup -->
-    <div class="main">
-        <div class="main_nav bg-red-800 dark:bg-[#161b22] w-full p-[10px]">
-            <i class="font-black p-[10px] pt-[8px] mt-[-2px] text-gray-50 cursor-pointer text-xl fa fa-bars open_nav"></i>
-            <a class="rounded text-gray-50 main_btn_nav bg-[#d23030] dark:bg-red-900/50 dark:hover:bg-red-600/80 transition-all fa fa-sign-out-alt right " href="../logout"></a>
-            <div class="nav_actions right">
-                <div class="nty_nav">
-                    <i class="nty_nav_btn text-xl text-gray-50 p-2 mr-2 cursor-pointer fa fa-bell"><span class="nav_nty_cnt"></span></i>
-                </div>
-            </div>
-            <div class="nav_actions right">
-                <div class="msg_nav">
-                    <i class="msg_ic text-xl text-gray-50 p-2 mr-2 cursor-pointer fa fa-comment"><span class="nav_msg_cnt"></span></i>
-                </div>
-            </div>
-        </div>
-        <div class="nav hidden animate__animated animate__slideInLeft w-[350px] xsm:w-[98%] h-screen fixed bg-gray-300 dark:bg-[#161b22] transition-all shadow-2xl border-b-8 border-red-800 dark:border-indigo-900">
-            <i class="cls_nav fa fa-times-circle text-red-700 dark:text-gray-200 text-2xl pr-2 float-right cursor-pointer mt-3 mr-3"></i>
-            <div class="logo_img p-3">
-                <img class="mt-6 mb-5 w-[100px] h-[100px] object-cover" alt="logo" src="/assets/logo.png">
-            </div>
-            <div class="nav_btn p-[15px] mt-3 flex-col flex">   
-                <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav" href="../../">Home <i class="fas fa-home float-right mt-[2px] text-green-500"></i></a>
-                <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav" href="../home/profile/?id=<%- data._id %>">Profile <i class="fas fa-user float-right mt-[2px] text-purple-500"></i></a>
-                <% if (!join_election) { %>
-                    <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav join_elec">Join Election <i class="fas fa-plus float-right mt-[2px] text-pink-500"></i></a>
-                <% } %>
-                <% if (join_election) { %>
-                    <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav e_btn" data="file_candidacy" href="#file_candidacy">File for Candidacy</a>
-                    <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav e_btn" data="candidates" href="#candidates">Candidates</a>
-                    <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav leave_elec">Leave Election</a>
-                <% } %>
-                <a class="theme bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav">Change Theme <i class="fas fa-moon float-right mt-[2px] text-yellow-500 dark:text-gray-500"></i></a>
-                <a class="bg-gray-200 dark:text-[#cccbcb] dark:hover:bg-[#253547] dark:bg-[#242c35] dark:hover:text-gray-50 w-full mb-3 rounded-md cursor-pointer hover:shadow-md hover:-translate-y-1 hover:bg-gray-50 hover:border-indigo-600 hover:tracking-wider transition-all  p-[14px] text-gray-900 font-medium  btn_nav" href="#">Settings <i class="fas fa-cog float-right mt-[2px] text-red-500"></i></a>
-            </div>
-        </div>
-        <!--popups-->
-        <div class="nty_main hidden xsm:w-[98%] border-b-8 border-red-800 dark:border-indigo-900 fixed bg-gray-300 dark:bg-[#0d1117] shadow-2xl h-screen w-[390px] right-0 animate__animated animate__slideInRight transition-all">
-            <div class="nty_t container">
-                <i class="close_nty_ fa fa-arrow-circle-right float-right text-red-700 text-2xl cursor-pointer pr-3 pt-3 dark:text-[#cccbcb]"></i>
-                <p class="t_nty text-3xl p-4 m-0 text-red-800 font-bold dark:text-[#f2f2f2]">Notifications</p>
-            </div>
-            <div class="nty flex flex-col p-4 overflow-auto h[80%]">
-                <div class="container mb-3 shadow-md bg-gray-200 dark:bg-[#161b22] dark:border-gray-800 dark:hover:bg-[#1e252e] dark:border rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl transition-all cursor-pointer">
-                    <a class="" href="#">
-                        <div class="flex container flex-row p-4">
-                            <i class="text-3xl text-green-700 fa fa-comment-dots"></i>
-                            <div class="break-words px-3 text-sm font-medium dark:text-[#c2c2c2]">
-                                Jake Peregrino Velasco commented on your profile
-                            </div>
-                            <div class="time text-sm p-2 dark:text-[#c2c2c2]">19hrs</div>
-                        </div>
+    <div class="dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0 z-10">
+        <div class="nav fixed bg-darkBlue-primary/70 h-screen hidden w-full z-20">
+            <div class="nav_main dark:bg-darkBlue-secondary w-96 h-full sm:w-[calc(100vw-100px)]" animate-in="animate__animated animate__fadeInLeft ms-300" animate-out="animate__animated animate__fadeOutLeft ms-300">
+                <div class="px-2 py-5 dark_border_b">
+                    <a class="cls_nav float-right text-red-600 mr-2 dark:text-gray-200 text-2xl cursor-pointer">
+                        <i class="fas fa-times-circle"></i>
                     </a>
-                </div>
-                <!-- <%- include('notification/_nty', {nty: data.notifications}) %> -->
-            </div>
-        </div>
-        <div class="msgs hidden xsm:w-[98%] border-b-8 border-red-800 dark:border-indigo-900 fixed bg-gray-300 dark:bg-[#0d1117] shadow-2xl h-screen w-[390px] right-0 animate__animated animate__slideInRight transition-all">
-            <div class="t_msg">
-                <div class="m">
-                    <div class="container">
-                        <div class="float-right p-3 pt-5 pb-1"> 
-                            <i class="close_msg_ fa fa-arrow-circle-right text-red-700 text-2xl cursor-pointer dark:text-[#cccbcb]"></i>
-                        </div>
-                        <p class="t_m text-3xl p-4 m-0 text-red-800 font-bold dark:text-[#f2f2f2]">Messages</p>
-                    </div>
-                    <div class="p-2 w-full px-4">
-                        <input type="text" autocomplete="off" placeholder="Search. . ." class="search_user dark:bg-transparent placeholder-gray-600 shadow-md bg-gray-200 border-2 transition-all dark:border-gray-700 dark:text-gray-200 border-gray-200 rounded-lg w-full p-3 text-gray-700 leading-tight focus:outline-none focus:bg-gray-100 focus:border-blue-500 dark:focus:border-blue-500" name="search_use">
+                    <div class="flex h-full pl-4">
+                        <p class="text-2xl text-center dark:text-gray-300 font-medium tracking-wider">WMSU- AESU</p>
                     </div>
                 </div>
-            </div>
-            <div class="data_msg h-[80%] overflow-x-auto">
-                <div class="user_msg_search p-4 w-full text-center hidden">
-                    <div class="msg msg_s_loading text-gray-900" text="Searching . . ."></div>
-                </div>
-                <div class="w-full flex-col p-4 hidden">
-                    <a class="chat_user dark:bg-[#161b22] dark:border-gray-800 dark:hover:bg-[#1e252e] dark:border mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl transition-all cursor-pointer">
-                        <div class="container flex flex-row p-2">
-                            <img class="img_user w-14 h-14 object-cover rounded-full" alt="img_user" src="/assets/static.png">
-                            <p class="user_nm container break-words p-2 text-gray-900 px-3 text-lg text-left mt-1 dark:text-gray-300">Jake Peregrino Velasco</p>
-                            <div class="bg-green-600 h-[22px] w-8 rounded-full mt-4 mr-2"></div>
-                        </div>
+                <div class="flex flex-col gap-2 mt-2">
+                    <a class="cursor-pointer py-2 px-4 flex flex-row items-center rpl">
+                        <i class="ic dark:text-amber-600 w-9 text-xl">
+                            <i class="fad fa-home"></i>
+                        </i>
+                        <span class="dark:text-gray-300 font-medium">Home</span>
                     </a>
-                </div>
-                <div class="msg_main flex flex-col p-4">
-                    <a class="chat_user dark:bg-[#161b22] dark:border-gray-800 dark:hover:bg-[#1e252e] dark:border mb-3 shadow-md bg-gray-200 rounded-xl hover:bg-gray-100 hover:-translate-y-1 transform hover:shadow-xl transition-all cursor-pointer">
-                        <div class="container flex flex-row p-2">
-                            <img class="img_user w-14 h-14 object-cover rounded-full" alt="img_user" src="/assets/static.png">
-                            <div class="container p-2 pt-1">
-                                <span class="text-base ml-1 text-gray-900 dark:text-gray-300">Election Bot</span>
-                                <br>
-                                <span class="text-sm ml-2 mt-5 text-gray-700 dark:text-gray-400/90">Chat with Election Bot</span>
-                            </div>
-                        </div>
+                    <a class="cursor-pointer py-2 px-4 flex flex-row items-center rpl">
+                        <i class="ic dark:text-teal-600 w-9 text-xl">
+                            <i class="fad fa-user"></i>
+                        </i>
+                        <span class="dark:text-gray-300 font-medium">My Profile</span>
                     </a>
-                    <!-- <%- include('messages/_list_messages', {msg: data.messages, userid: data._id}) %> -->
+                    <a class="cursor-pointer py-2 px-4 flex flex-row items-center rpl">
+                        <i class="ic dark:text-gray-400 w-9 text-xl">
+                            <i class="fad fa-cog"></i>
+                        </i>
+                        <span class="dark:text-gray-300 font-medium">Settings</span>
+                    </a>
+                    <a class="cursor-pointer py-2 px-4 flex flex-row items-center rpl">
+                        <i class="ic dark:text-orange-600 w-9 text-xl">
+                            <i class="fad fa-palette"></i>
+                        </i>
+                        <span class="dark:text-gray-300 font-medium">Themes</span>
+                    </a>
                 </div>
             </div>
         </div>
-        <!--end of popups-->
-        <div class="elections">
-            <% if (join_election) { %>
-                <div class="e_data">
-                    <div class="e_tab_main">
-                        <div class="e_t" style="display: none;">
-                            <div class="e_title">
-                                <%- election_data.e_title %>
-                            </div>
-                            <div class="e_status">Status :  <%- election_data.e_status %></div>
-                        </div>
-                        <div class="e_main">
-
-                        </div>
-                    </div>
+        <div class="w-full">
+           <div class="float-left">
+                <div class="flex flex-row justify-center items-center px-3">
+                    <a class="open_nav rpl rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-xl cursor-pointer mr-1 last:mr-0">
+                        <i class="fas fa-bars"></i>
+                    </a>
+                    <p class="flex-[20%] w-full text-purple-800 dark:text-gray-300 text-xl p-4 font-bold mt-[1px]"><%- `Hi, ${data.fname}` %></p>
                 </div>
-                <% } else { %>
-                    <%- include('main/_e_not_joined', {fname: data.firstname}) %>
-                <% } %>
-        </div>
-    </div>
-    <div class="msg_msg">
-        <% if(chat){ %>
-            <%- include('messages/_float_messenger', {msg}) %>
-            <div class="pre">
-                <script>
-                    setTimeout( () => {
-                        //get chats 
-                        $.post('/chats', (res) => {
-                            if(!res.ischat){
-                                $(".chats").html("")
-                                $(".chats").html(res)
-                                $(".pre").remove()
-                            }
-                        })
-                    }, 500)
-                </script>
+           </div>
+           <div class="float-right h-full">
+                <div class="flex flex-row gap-4 mr-1 justify-center items-center px-3 h-full">
+                    <a class="rounded-lg transition-all p-[6px] text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
+                        <i class="far fa-bell"></i>
+                    </a>
+                    <a class="rounded-lg transition-all peer p-[8px] text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
+                        <i class="far fa-comment-lines"></i>
+                    </a>
+                </div>
             </div>
-        <% } %>
+        </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/index.js"></script>
     <script src="/js/audio.js"></script>
     <script src="/js/toast.js"></script>
     <script src="/js/audio_file.js"></script>
-    <script src="/js/scroll_div.js"></script>
     <script src="/js/avatar.js"></script>
     <script src="/js/time.js"></script>
     <script src="/js/theme.js"></script>
     <script>
-        $(".theme").click(function(){
-            const sweetalert_dark = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.min.css"
-            const sweetalert_defaut = "//cdn.jsdelivr.net/npm/@sweetalert2/theme-default@4/default.min.css"
-            const theme = localStorage.getItem('theme') 
-            if(theme == null || theme == "default"){
-                localStorage.setItem('theme', 'dark')
-                $('html').removeClass("default")
-                $('html').addClass("dark")
-                $("meta[name='theme-color']").attr("content", "#161b22")
-                $(".sweetalert-link").attr("href", sweetalert_dark)
-            }
-            else{
-                localStorage.setItem('theme', 'default')
-                $('html').addClass("default")
-                $('html').removeClass("dark")
-                $("meta[name='theme-color']").attr("content", "#991b1b")
-                $(".sweetalert-link").attr("href", sweetalert_defaut)
-            }
-        })
+        $.ripple(".rpl", {
+                debug: false,
+                on: 'mousedown',
+                opacity: 0.3,
+                color: "auto",
+                multi: false,
+                duration: 0.7,
+                rate: function(pxPerSecond) {
+                    return pxPerSecond;
+                },
+                easing: 'linear'
+            })
     </script>
 </body>
 </html>

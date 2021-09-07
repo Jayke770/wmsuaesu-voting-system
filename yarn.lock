@@ -79,6 +79,15 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
+"@socket.io/admin-ui@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@socket.io/admin-ui/-/admin-ui-0.2.0.tgz#8376db1b739543f3f896ecee6d4f5051ab026209"
+  integrity sha512-dAjJRIDoKZAuuwUYeQ0qgpJj0hoK170AKYoOCSbN6RK2Kf39LZc+O66ZnYgEUFFFqgOxh2MakTXEezarXSXTNQ==
+  dependencies:
+    "@types/bcrypt" "~3.0.0"
+    bcrypt "~5.0.1"
+    debug "~4.3.1"
+
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@szmarczak/http-timer/-/http-timer-1.1.2.tgz#b1665e2c461a2cd92f4c1bbf50d5454de0d4b421"
@@ -179,6 +188,11 @@
     core-js "3"
     regenerator-runtime "^0.13.5"
     yargs "^16.0.3"
+
+"@types/bcrypt@~3.0.0":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/bcrypt/-/bcrypt-3.0.1.tgz#9c767594e31aa1c4ce78d23aa4351984403ca28f"
+  integrity sha512-SwBrq5wb6jXP0o3O3jStdPWbKpimTImfdFD/OZE3uW+jhGpds/l5wMX9lfYOTDOa5Bod2QmOgo9ln+tMp2XP/w==
 
 "@types/bson@*":
   version "4.0.3"
@@ -471,7 +485,7 @@ basic-ftp@^4.6.6:
   resolved "https://registry.yarnpkg.com/basic-ftp/-/basic-ftp-4.6.6.tgz#c37abae3b3bffa131027adb6a5b60938d9109501"
   integrity sha512-5nTclY5mVxjeFoq9cBTzgQvcM1UfeGTd4hCCvb8AgC88wHMDQCD4UX5hZo2jaiSh96Nf+gFy1joNI9iH639bvQ==
 
-bcrypt@^5.0.1:
+bcrypt@^5.0.1, bcrypt@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/bcrypt/-/bcrypt-5.0.1.tgz#f1a2c20f208e2ccdceea4433df0c8b2c54ecdf71"
   integrity sha512-9BTgmrhZM2t1bNuDtrtIMVSmmxZBrJ71n8Wg+YgdjHuIWYF7SjjmCPZFB+/5i/o/PIeRpwVJR3P+NrpIItUjqw==

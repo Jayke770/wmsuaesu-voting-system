@@ -357,7 +357,7 @@ $(document).ready( () => {
                         let data = new FormData() 
                         data.append("srt", "default")
                         $.ajax({
-                            url: 'voter-id/sort-voter-id/', 
+                            url: 'sort-voter-id/', 
                             method: 'POST', 
                             cache: false, 
                             processData: false, 

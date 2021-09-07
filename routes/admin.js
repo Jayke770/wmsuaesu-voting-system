@@ -241,7 +241,6 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             //if election is already started set the started variable to true
             const started = moment(data.start).fromNow().search("ago") != -1 ? true : false
             const end = moment(data.end).fromNow().search("ago") != -1 ? true : false
-            console.log(data)
             return res.render("control/forms/election_details", {
                 election: elecs.length === 0 ? '' : elecs[0], 
                 started: started, 

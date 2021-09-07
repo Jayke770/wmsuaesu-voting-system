@@ -3,9 +3,6 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const express = require('express')
 const app = express()
-const route = require('./routes/index')
-const admin = require('./routes/admin')
-const {ftp: ftp} = require('./routes/functions')
 const port = process.env.PORT || 8989
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
@@ -23,13 +20,17 @@ const { v4: uuidv4 } = require('uuid')
 const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
 const adminSocket = require('./routes/adminSocket')
+const route = require('./routes/index')
+const admin = require('./routes/admin')
+const {ftp: ftp} = require('./routes/functions') 
+
 mongoose.connect(process.env.db_url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
 const store = new mongodbstore({
     uri: process.env.db_url,
-    collection: 'voting-sessions'
+    collection: 'sessions'
 })
 
 store.on('error', (err) => {

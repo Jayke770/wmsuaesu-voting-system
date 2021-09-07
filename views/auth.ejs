@@ -29,27 +29,12 @@
         </script>
 </head>
 
-<body class="bg-gray-200 dark:bg-[#090c10]">
+<body class="bg-gray-200 dark:bg-[#090c10] wmsu:bg-current">
     <div class="loading flex justify-center w-screen h-screen items-center">
         <%- include('lazy/loading') %>
     </div>
     <div class="h-screen w-full flex flex-col">
-        <div class="wl_page flex w-full h-full bg-purple-200 dark:bg-purple-400 items-center justify-center transition-all"
-            animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInDown">
-            <div class="flex z-10 w-full flex-col items-center gap-3">
-                <div
-                    class="animate__animated animate__fadeInDown uppercase text-8xl md:text-6xl xsm:text-4xl xxsm:text-2xl font-bold text-purple-700 dark:text-purple-900">
-                    wmsu - aesu</div>
-                <div class="animate__animated animate__fadeInUp text-2xl xsm:text-xl xxsm:text-base text-bluegray-900 ">
-                    Online Voting System</div>
-                <a next="login_page" parent="wl_page"
-                    class="next_page animate__animated animate__fadeInLeft cursor-pointer py-2 text-3xl mt-4 transition-all text-purple-700 dark:text-purple-900">
-                    <i class="transition-all fad fa-arrow-circle-right"></i>
-                </a>
-            </div>
-        </div>
-        <div class="login_page z-10  w-full h-full hidden" animate-out="animate__animated animate__fadeOutDown ms-500"
-            animate-in="animate__animated animate__fadeInDown ms-500">
+        <div class="login_page z-10  w-full h-full flex">
             <div class="flex justify-center w-full items-center">
                 <div
                     class="login gap-4 px-12 py-20 sm:px-5 sm:py-6 grid grid-cols-2 sm:grid-cols-none  transition-all p-4 rounded-xl bg-gray-50 dark:border dark:border-gray-800 dark:bg-[#0d1117] shadow-2xl md:w-[90%]">
@@ -123,7 +108,7 @@
                     <div class="flex">
                         <input autocomplete="off" required
                             class="dark:border-gray-800 px-3 py-[11px] placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none focus:ring-2 ring-purple-400 transition-all w-full"
-                            placeholder="Enter Student ID" name="id" type="text">
+                            placeholder="Enter Student ID" name="id" type="text" autocapitalize="characters">
                     </div>
                     <div class="flex justify-end">
                         <button type="submit"
@@ -174,32 +159,31 @@
                                         name="lname" type="text" placeholder="Lastname">
                                 </div>
                                 <div class="flex gap-2 mt-2">
-                                    <input autocomplete="off" list="crs" required
-                                        class="dark:bg-transparent dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
-                                        name="course" type="text" placeholder="Course">
-                                    <datalist id="crs">
-                                        <option value="BSCS"></option>
-                                        <option value="BSED"></option>
-                                        <option value="GEN ED"></option>
-                                    </datalist>
-                                    <input autocomplete="off" list="yr" required
-                                        class="dark:bg-transparent dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
-                                        name="yr" type="text" placeholder="Year">
-                                    <datalist id="yr">
-                                        <option value="1"></option>
-                                        <option value="2"></option>
-                                        <option value="3"></option>
-                                        <option value="4"></option>
-                                    </datalist>
+                                    <select required
+                                        class="dark:bg-[#0d1117] dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
+                                        name="course">
+                                        <option value="">Select Course</option>
+                                        <% for (let i = 0; i < course.length; i++) { %>
+                                            <option value="<%- course[i].id  %>"><%- course[i].type %></option>
+                                        <% } %>
+                                    </select>
+                                    <select required
+                                        class="dark:bg-[#0d1117] dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
+                                        name="yr" >
+                                        <option value="">Select Year</option>
+                                        <% for (let i = 0; i < year.length; i++) { %>
+                                            <option value="<%- year[i].id  %>"><%- year[i].type %></option>
+                                        <% } %>
+                                    </select>
                                 </div>
                                 <div class="mt-2">
-                                    <input autocomplete="off" list="type" required
-                                        class="dark:bg-transparent dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
-                                        name="type" type="text" placeholder="User Type">
-                                    <datalist id="type">
-                                        <option value="Candidate"></option>
-                                        <option value="Voter"></option>
-                                    </datalist>
+                                    <select required
+                                        class="dark:bg-[#0d1117] dark_border dark:text-gray-200 text-input w-full p-[10px] border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 transition-all rounded-lg"
+                                        name="type">
+                                        <option value="">User Type</option>
+                                        <option value="Candidate">Candidate</option>
+                                        <option value="Voter">Voter</option>
+                                    </select>
                                 </div>
                                 <div>
                                     <button next="cred" parent="basic_info" type="button"
@@ -255,7 +239,7 @@
                 </form>
             </div>
         </div>
-        <div class="animate__animated animate__fadeInUp ms-500 pointer-events-none custom-shape-divider-bottom-1629532818">
+        <div class="pointer-events-none custom-shape-divider-bottom-1629532818">
             <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
                 preserveAspectRatio="none">
                 <path

@@ -224,7 +224,7 @@ input:checked~.dot {
 }
 
 .custom-shape-divider-bottom-1629532818 .shape-fill {
-    @apply dark:fill-[#6B21A8] fill-[#7a22c2];
+    @apply dark:fill-[#6B21A8] fill-[#5a3f70] wmsu:fill-[#be123c];
 }
 
 /** For tablet devices **/

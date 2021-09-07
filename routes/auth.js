@@ -22,13 +22,8 @@ module.exports = {
         return res.redirect('/logout')
     },
     isloggedin: (req, res, next) => { //detect if user is login 
-        if (req.session.islogin && !req.session.take_photo) {
-            if (req.session.user_type != "admin") {
-                return next()
-            }
-        }
-        if (req.session.islogin && req.session.take_photo) {
-            return res.redirect('/register_face')
+        if(req.session.islogin && req.session.user_type !== "admin"){
+            return next()
         }
         return res.redirect('/logout')
     },

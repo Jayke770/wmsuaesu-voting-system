@@ -1,16 +1,5 @@
 $(document).ready(function () {
-    $(".next_page").click( function (e) {
-        e.preventDefault() 
-        const next_page = `.${$(this).attr("next")}`
-        const parent = `.${$(this).attr("parent")}`
-        $(parent).css("background-color", "rgba(168, 85, 247, 0.5)")
-        $(parent).addClass($(parent).attr("animate-out"))
-        setTimeout( () => {
-            $(parent).addClass('hidden')
-            $(next_page).addClass(`flex ${$(next_page).attr("animate-in")}`)
-            $(next_page).removeClass("hidden")
-        }, 300)
-    })
+
     //login
     $(".auth_login").submit(function (e) {
         e.preventDefault();
@@ -168,6 +157,17 @@ $(document).ready(function () {
                                 $(".check_id").attr("disabled", false)
                                 $("input[name='id']").val('')
                             })
+                        } else {
+                            Swal.fire({
+                                icon: 'info', 
+                                title: 'Connection Error',
+                                html: 'Please check your internet connection',
+                                backdrop: true, 
+                                allowOutsideClick: false,
+                            }).then( () => {
+                                $(".check_id").attr("disabled", false)
+                                $("input[name='id']").val('')
+                            })
                         }
                     }
                 })
@@ -266,6 +266,7 @@ $(document).ready(function () {
                             Swal.fire({
                                 icon: 'info', 
                                 title: res.msg, 
+                                html: res.text,
                                 backdrop: true,
                                 allowOutsideClick: false
                             })
@@ -295,9 +296,9 @@ $(document).ready(function () {
             $("input[name='fname'").val(),
             $("input[name='mname'").val(),
             $("input[name='lname'").val(),
-            $("input[name='course'").val(),
-            $("input[name='yr'").val(),
-            $("input[name='type'").val()
+            $("select[name='course'").val(),
+            $("select[name='yr'").val(),
+            $("select[name='type'").val()
         ]
         for(let i = 0; i < inputs.length; i++){
             if(!inputs[i]){

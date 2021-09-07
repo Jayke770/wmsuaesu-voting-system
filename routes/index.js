@@ -7,10 +7,10 @@ const router = express.Router()
 const bcrypt = require('bcrypt')
 const user = require('../models/user')
 const admin = require('../models/admin')
-const elections = require('../models/election')
+const data = require('../models/data')
 const { authenticated, isadmin, isloggedin, take_photo, get_face } = require('./auth')
 const { toUppercase, chat, bot, new_msg, new_nty } = require('./functions')
-const {normal_limit} = require('./rate-limit')
+const { normal_limit } = require('./rate-limit')
 const election = require('../models/election')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
@@ -111,355 +111,224 @@ router.post('/register-face', take_photo, async (req, res, next) => {
         })
     }
 })
-router.get('/', authenticated, get_face, async (req, res) => {
-    res.render('auth')
-})
-
-router.get('/home', isloggedin, chat, get_face, async (req, res) => {
-    //if user logged data is save 
-    const user_id = req.session.myid
-    var chatting = false
-    var msg
-    if (req.session.my_ka_chat && req.session.msg) {
-        chatting = true
-        msg = req.session.msg
+//welcome page  contains login page ang registration
+router.get('/', authenticated, normal_limit, async (req, res) => {
+    try {
+        await data.find({}, { course: 1, year: 1 }).then((cy) => {
+            return res.render('auth', {
+                course: cy.length === 0 ? [] : cy[0].course,
+                year: cy.length === 0 ? [] : cy[0].year
+            })
+        }).catch((e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
     }
-    //check if the user joined an election before
-    await election.find({}, { positions: 1, partylist: 1, courses: 1, voters: 1, _id: 1, election_title: 1, status: 1 }, (err, e_find) => {
-        //search userid of user if exist
-        var e_join_before = false //to determine if the joined election before
-        var e_data
-        for (var i = 0; i < e_find.length; i++) {
-            for (var u in e_find[i].voters) {
-                if (e_find[i].voters[u].id.toString() == user_id.toString()) {
-                    req.session.election_id = e_find[i]._id
-                    req.session.join_election = true
-                    e_join_before = true
-                    e_data = {
-                        e_title: e_find[i].election_title,
-                        e_status: e_find[i].status,
-                        crs: e_find[i].courses,
-                        prty: e_find[i].partylist,
-                        ps: e_find[i].positions
-                    }
-                    break
-                }
-            }
-        }
-        //condition
-        if (e_join_before) {
-            //get user data
-            user.find({ _id: user_id }, { socket_id: 0, username: 0, password: 0, _v: 0 }, { limit: 1 }, (err, result) => {
-                if (result.length == 1) {
-                    res.render('index', { election_data: e_data, join_election: true, data: result[0], chat: chatting, msg: msg })
-                } else {
-                    res.redirect('/logout')
-                }
-            })
-        }
-        else {
-            //get user data
-            user.find({ _id: user_id }, { socket_id: 0, username: 0, password: 0, _v: 0 }, { limit: 1 }, (err, result) => {
-                if (result.length == 1) {
-                    res.render('index', { join_election: false, data: result[0], chat: chatting, msg: msg })
-                } else {
-                    res.redirect('/logout')
-                }
-            })
-        }
-    })
 })
-router.get('/logout', (req, res) => {
-    req.session.destroy()
-    res.redirect('/')
+//homepage
+router.get('/home', normal_limit, isloggedin, async (req, res) => {
+    const {data} = req.session
+    try {
+        return res.render('index', {
+            data: data
+        })
+        
+    } catch (e) {
+        return res.status(500).send()
+    }
 })
-//profile
-router.get('/home/profile/', isloggedin, async (req, res) => {
-    res.send("Route Is Not Available Right Now")
-    // var { id, notification_id, read } = req.query
-    // var user_id = req.session.myid
-
-    // //check if query is from notifications 
-    // if (typeof id != "undefined" && typeof notification_id != "undefined" && typeof read != "undefined") {
-    //     //update notification 
-    //     if (read == 0) {
-    //         await user.updateOne({ _id: user_id, "notifications.nty_id": notification_id }, { $set: { "notifications.$.read": 1 } })
-    //     }
-    // }
-
-    // //means the user is visited other profile or his/her profile
-    // if (typeof id != "undefined") {
-    //     //check if the user visited his/her own profle
-    //     if (user_id == id) {
-    //         //check if the id is exist in database
-    //         await user.find({ _id: id }, { username: 0, password: 0, socket_id: 0, student_id: 0 }, (err, is_userfound) => {
-    //             if (err) {
-    //                 //todo send an html
-    //                 res.status(404).render('Error/index')
-    //             }
-    //             else {
-    //                 if (is_userfound.length != 0) {
-    //                     req.session.visited_id = is_userfound[0]._id //can be used to comment profile
-    //                     return res.render('profile', { profile: true, data: is_userfound })
-    //                 }
-    //                 else {
-    //                     //todo send an not found html
-    //                     res.status(404).render('Error/index')
-    //                 }
-    //             }
-    //         })
-    //     }
-    //     //means the user is visited other profile
-    //     if (user_id != id) {
-    //         //if not the same id means the user is try to visit another profile
-    //         await user.find({ _id: id }, { username: 0, password: 0, socket_id: 0, student_id: 0, notifications: 0 }, (err, is_userfound) => {
-    //             if (err) {
-    //                 //todo send an html
-    //                 res.status(404).render('Error/index')
-    //             }
-    //             else {
-    //                 if (is_userfound.length != 0) {
-    //                     //add the userid of visitor to user he/she currently visit
-    //                     user.updateOne({ _id: id }, { $pull: { visitors: user_id } }, (err, ok) => {
-    //                         //remove first the user id if exist
-    //                         if (!err) {
-    //                             user.updateOne({ _id: id }, { $push: { visitors: user_id } }, (err, ok2) => {
-    //                                 //remove first the user id if exist
-    //                                 if (!err) {
-    //                                     //get the notifications of the user who visited  other profile 
-    //                                     user.find({ _id: user_id }, { notifications: 1 }, (err, nty) => {
-    //                                         if (!err) {
-    //                                             req.session.visited_id = is_userfound[0]._id
-    //                                             return res.render('profile', { profile: false, data: is_userfound, nty: nty[0].notifications })
-    //                                         }
-    //                                     })
-    //                                 }
-    //                             })
-    //                         }
-    //                     })
-    //                 }
-    //                 else {
-    //                     //todo send an not found html
-    //                     res.status(404).render('Error/index')
-    //                 }
-    //             }
-    //         })
-    //     }
-    // }
+router.get('/logout', normal_limit, async (req, res) => {
+    await req.session.destroy()
+    return res.redirect('/')
 })
 //post
 router.post('/verify', normal_limit, async (req, res) => {
     const { id } = req.body
-    if (id != "") {
-        await id_db.find({ student_id: id }, function (err, doc) {
-            if (doc.length == 1) {
-                //check if the id is already enabled 
-                if (!doc[0].enabled) {
-                    return res.send({
-                        isvalid: true,
-                        msg: "Student ID Is Valid",
-                        id: doc[0].student_id
-                    })
-                }
-                if (doc[0].enabled) {
-                    return res.send({
-                        isvalid: false,
-                        msg: "Student ID Is Already Registered"
-                    })
-                }
-            }
+    try {
+        await data.find({ "voterId.enabled": { $eq: false }, "voterId.student_id": { $eq: xs(id) } }).then((res_id) => {
             return res.send({
-                isvalid: null,
-                msg: "Cannot Find Student ID"
+                isvalid: res_id.length === 0 ? false : true,
+                id: xs(id),
+                msg: "Student Id is valid!"
             })
+        }).catch((e) => {
+            throw new Error(e)
         })
+    } catch (e) {
+        return res.status(500).send()
     }
 })
 router.post('/login', async (req, res) => {
-    const { auth_usr, auth_pass } = req.body
-    if (auth_usr.trim() != "" && auth_pass.trim() != "") {
-        if (auth_usr == process.env.admin_username && auth_pass == process.env.admin_password) {
-            //session
-            await admin.find({}, (err, doc) => {
-                if (doc.length == 0) {
-                    admin.create({
-                        socket_id: "Waiting For Socket",
-                        type: "admin"
-                    }, (err, doc) => {
-                        req.session.myid = doc._id
+    const { auth_usr, auth_pass } = req.body 
+    try {
+        if(xs(auth_usr) !== "" && xs(auth_pass) !== ""){
+
+            if (auth_usr == process.env.admin_username && auth_pass == process.env.admin_password) {
+                await admin.find({}, (err, doc) => {
+                    if (doc.length == 0) {
+                        admin.create({
+                            socket_id: "Waiting For Socket",
+                            type: "admin"
+                        }, (err, doc) => {
+                            req.session.myid = doc._id
+                            req.session.islogin = "okay"
+                            req.session.user_type = doc.type
+                            return res.send({
+                                islogin: true,
+                                msg: "Welcome Admin"
+                            })
+                        })
+                    }
+                    else {
+                        req.session.myid = doc[0]._id
                         req.session.islogin = "okay"
-                        req.session.user_type = doc.type
+                        req.session.user_type = doc[0].type
                         return res.send({
                             islogin: true,
                             msg: "Welcome Admin"
                         })
-                    })
-                }
-                else {
-                    req.session.myid = doc[0]._id
-                    req.session.islogin = "okay"
-                    req.session.user_type = doc[0].type
-                    return res.send({
-                        islogin: true,
-                        msg: "Welcome Admin"
-                    })
-                }
-            })
-        } else {
-            //user is not admin
-            //check user in database
-            user.find({ username: auth_usr }, async (err, result) => {
-                if (result.length == 0) {
-                    return res.send({
-                        islogin: false,
-                        msg: "Account Not Found"
-                    })
-                }
-                for (var i = 0; i < result.length; i++) {
-                    const match_password = await bcrypt.compare(auth_pass, result[i].password)
-                    if (match_password) {
-                        //get all the basic data except the username, password, student_id, _id, and socket_id
-                        const data = {
-                            fname: result[i].firstname,
-                            mname: result[i].middlename,
-                            lname: result[i].lastname,
-                            course: result[i].course,
-                            year: result[i].year,
-                            type: result[i].type
-                        }
-
-                        //session
-                        req.session.islogin = true // determine if logged
-                        req.session.user_type = result[i].type // user type
-                        req.session.myid = result[i]._id // user id
-                        req.session.data = data //all user data
-
-                        return res.send({
-                            islogin: true,
-                            msg: "Welcome " + result[i].firstname
-                        })
-                    } else {
+                    }
+                })
+            } else {
+                user.find({ username: auth_usr }, async (err, result) => {
+                    if (result.length == 0) {
                         return res.send({
                             islogin: false,
-                            msg: "Incorrect Password!"
+                            msg: "Account Not Found"
                         })
                     }
-                }
+                    for (var i = 0; i < result.length; i++) {
+                        const match_password = await bcrypt.compare(auth_pass, result[i].password)
+                        if (match_password) {
+                            //get all the basic data except the username, password, student_id, _id, and socket_id
+                            const data = {
+                                fname: result[i].firstname,
+                                mname: result[i].middlename,
+                                lname: result[i].lastname,
+                                course: result[i].course,
+                                year: result[i].year,
+                                type: result[i].type
+                            }
+    
+                            //session
+                            req.session.islogin = true // determine if logged
+                            req.session.user_type = result[i].type // user type
+                            req.session.myid = result[i]._id // user id
+                            req.session.data = data //all user data
+    
+                            return res.send({
+                                islogin: true,
+                                msg: "Welcome " + result[i].firstname
+                            })
+                        } else {
+                            return res.send({
+                                islogin: false,
+                                msg: "Incorrect Password!"
+                            })
+                        }
+                    }
+                })
+            }
+            
+        } else {
+            return res.send({
+                islogin: false,
+                msg: "Please provide username & password"
             })
         }
+    } catch (e) {
+        return res.status(500).send()
     }
 })
+//register
 router.post('/register', async (req, res) => {
     const { student_id, fname, mname, lname, course, yr, type, usr, pass } = req.body
-    const hash_password = await bcrypt.hash(pass, 10)
+    const hash_password = await bcrypt.hash(xs(pass), 10)
     //check if all feilds is not empty
-    if (fname != "" && mname != "" && lname != "" && course != "" && yr != "" && type != "") {
-        //check student id in student_ids collection if not enabled or not deleted
-        await id_db.find({ student_id: student_id, course: course, year: yr, enabled: false }, (err, okay) => {
-            if (okay.length == 1) {
-                //check if the username is valid
-                user.find({ username: {$eq: usr} }, (err, found) => {
-                    if (found.length != 0) {
-                        return res.send({
-                            islogin: false,
-                            msg: "Username is already taken"
-                        })
-                    }
-                    else {
-                        //check student id
-                        user.find({ student_id: {$eq: student_id} }, (err, result) => {
-                            if (err) {
+    try {
+        if (fname != "" && mname != "" && lname != "" && course != "" && yr != "" && type != "") {
+            //re-check voter id 
+            await data.find(
+                {
+                    "voterId.student_id": {$eq: xs(student_id)}, 
+                    "voterId.course": {$eq: xs(course)}, 
+                    "voterId.year": {$eq: xs(yr)}, 
+                    "voterId.enabled": {$eq: false}
+                }
+            ).then( async (v) => { 
+                if(v.length !== 0){
+                    //check if the username is not taken
+                    await user.find({username: {$eq: xs(usr)}}).then( async (u) => {
+                        if(u.length !== 0){
+                            return res.send({
+                                islogin: false,
+                                msg: "Username is already taken"
+                            })
+                        }
+                        //check if the student id is not registered 
+                        await user.find({student_id: {$eq: xs(student_id)}}).then( async (s) => {
+                            if(s.length !== 0){
                                 return res.send({
-                                    islogin: false,
-                                    msg: "Internal Error!",
-                                    line: 79
+                                    islogin: false, 
+                                    msg: "Student ID already registered"
                                 })
                             }
-                            if (result.length == 0) {
-                                //if the data sent to server is not  the same is not match any data inside the database
-                                user.create({
-                                    student_id: student_id,
-                                    firstname: toUppercase(fname),
-                                    middlename: toUppercase(mname),
-                                    lastname: toUppercase(lname),
-                                    course: course,
-                                    year: yr,
-                                    type: type,
-                                    socket_id: 'Waiting For Student',
-                                    username: usr,
-                                    password: hash_password
-                                }, (err, doc) => {
-                                    if (err) {
-                                        return res.send({
-                                            islogin: false,
-                                            msg: "Failed To Register",
-                                            line: 84
-                                        })
-                                    }
+                            //if the student id is not registered 
+                            //save the new data 
+                            await user.create({
+                                student_id: xs(student_id),
+                                firstname: xs(toUppercase(fname)),
+                                middlename: xs(toUppercase(mname)),
+                                lastname: xs(toUppercase(lname)),
+                                course: xs(course),
+                                year: xs(yr),
+                                type: xs(type),
+                                socket_id: 'Waiting For Student',
+                                username: xs(usr),
+                                password: hash_password
+                            }).then( async (c) => {
+                                 //sessions
+                                 req.session.myid = c._id //session for student
+                                 req.session.islogin = true // to determine that user is now logged in
+                                 req.session.user_type = xs(type) //to determine the user type
 
-                                    //update student-ids and set the current id to enabled = true
-                                    id_db.updateOne({ student_id: {$eq: student_id} }, { $set: { enabled: true } }, (err, status) => {
-                                        if (err) {
-                                            return res.send({
-                                                islogin: false,
-                                                msg: "Internal Error",
-                                                line: 146
-                                            })
-                                        }
+                                //update the voter id and set enabled to true 
+                                await data.updateOne({"voterId.student_id": {$eq: xs(student_id)}}, {$set: {"voterId.$.enabled": true}}).then( (vu) => {
+                                    return res.send({
+                                        islogin: true, 
+                                        msg: `Welcome ${xs(toUppercase(fname))}`
                                     })
-                                    //get all the basic data except the username, password, student_id, _id, and socket_id
-                                    const data = {
-                                        fname: fname,
-                                        mname: mname,
-                                        lname: lname,
-                                        course: course,
-                                        year: yr,
-                                        type: type
-                                    }
-
-                                    //sessions
-                                    req.session.myid = doc._id //session for student
-                                    req.session.islogin = true // to determine that user is now logged in
-                                    req.session.user_type = type //to determine the user type
-                                    req.session.data = data //all user data
-
-                                    //add election bot to user messages feild
-                                    user.updateOne({ _id: doc._id }, { $push: { messages: bot() } }, (err, ok) => {
-                                        if (!err) {
-                                            req.session.take_photo = true //session for taking picture
-                                            return res.send({
-                                                islogin: true,
-                                                msg: "Welcome " + toUppercase(fname)
-                                            })
-                                        }
-                                    })
+                                }).catch( (e) => {
+                                    throw new Error(e)
                                 })
-                            }
-                            else {
-                                // means the data sent to server is match the data inside the database
-                                return res.send({
-                                    islogin: false,
-                                    msg: "Student ID Is Already Registered"
-                                })
-                            }
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
                         })
-                    }
-                })
-            }
-            //if data not match
-            if (okay.length == 0) {
-                return res.send({
-                    islogin: false,
-                    msg: "Check your Course & Year"
-                })
-            }
-        })
-    }
-    else {
-        return res.send({
-            islogin: false,
-            msg: 'All Feilds Is Required'
-        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                } else {
+                    return res.send({
+                        islogin: false,
+                        msg: "Invalid Course / Year", 
+                        text: "Please re-check your Course & Year"
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            return res.send({
+                islogin: false,
+                msg: 'All Feilds Is Required'
+            })
+        }
+    } catch(e) {
+        return res.status(500).send()
     }
 })
 //join election
@@ -926,7 +795,7 @@ router.post('/chat-user', isloggedin, async (req, res) => {
                         //nag chat na sla before
                         if (naa.length != 0) {
                             //get previuos chats 
-                            user.find({ _id: {$eq: data} }, { socket_id: 1, firstname: 1, middlename: 1, lastname: 1 }, (err, data_msg) => {
+                            user.find({ _id: { $eq: data } }, { socket_id: 1, firstname: 1, middlename: 1, lastname: 1 }, (err, data_msg) => {
                                 if (err) {
                                     return res.send({
                                         ischat: false,
@@ -948,7 +817,7 @@ router.post('/chat-user', isloggedin, async (req, res) => {
                         //else wala sila nag chat before
                         else {
                             //get the fullname of user they want to chat 
-                            user.find({ _id:{$eq: data} }, { firstname: 1, middlename: 1, lastname: 1 }, (err, fl_name) => {
+                            user.find({ _id: { $eq: data } }, { firstname: 1, middlename: 1, lastname: 1 }, (err, fl_name) => {
                                 if (!err) {
                                     //construct data for chats
                                     const new_chat = {
@@ -968,7 +837,7 @@ router.post('/chat-user', isloggedin, async (req, res) => {
                                         }
                                         else {
 
-                                            user.find({ _id: {$eq: data} }, { socket_id: 1, firstname: 1, middlename: 1, lastname: 1 }, (err, data_msg) => {
+                                            user.find({ _id: { $eq: data } }, { socket_id: 1, firstname: 1, middlename: 1, lastname: 1 }, (err, data_msg) => {
                                                 if (err) {
                                                     return res.send({
                                                         ischat: false,
