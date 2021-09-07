@@ -128,12 +128,8 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 })
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
-    const {data} = req.session
-console.log(data)
     try {
-        return res.render('index', {
-            data: data
-        })
+        return res.render('index')
         
     } catch (e) {
         return res.status(500).send()
