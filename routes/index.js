@@ -147,10 +147,15 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
     try {
+<<<<<<< HEAD
         return res.render('index', {
             is_join_election: req.session.electionID ? true : false, 
             data: req.session.data
         })
+=======
+        return res.render('index')
+        
+>>>>>>> 8c0acf14e851f67b0fca5a61e649e50243cb4f12
     } catch (e) {
         return res.status(500).send()
     }
