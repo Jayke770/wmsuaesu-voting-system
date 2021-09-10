@@ -89,21 +89,22 @@ io.of('/user').use(sharedsession(appsession, {
 }))
 start()
 async function start() {
-    if (process.env.NODE_ENV !== 'production') {
-        http.listen(port, console.log('Server Started on port ' + port))
-    }
-    else{
-        console.log("Connecting to FTP Server \n")
-        if (await ftp()) {
-            http.listen(port, console.log('Server Started on port ' + port))
-            console.log("Connected to FTP Server \n")
-        } else {
-            //retry to connect 
-            console.log("Can't connect to FTP Server \n")
-            console.log("Reconnecting \n")
-            http.listen(port, console.log('Server Started on port ' + port))
-        }
-    }
+    http.listen(port, console.log('Server Started on port ' + port))
+    // if (process.env.NODE_ENV !== 'production') {
+    //     http.listen(port, console.log('Server Started on port ' + port))
+    // }
+    // else{
+    //     console.log("Connecting to FTP Server \n")
+    //     if (await ftp()) {
+    //         http.listen(port, console.log('Server Started on port ' + port))
+    //         console.log("Connected to FTP Server \n")
+    //     } else {
+    //         //retry to connect 
+    //         console.log("Can't connect to FTP Server \n")
+    //         console.log("Reconnecting \n")
+    //         http.listen(port, console.log('Server Started on port ' + port))
+    //     }
+    // }
 }
 
 //socket.io admin namespace 
