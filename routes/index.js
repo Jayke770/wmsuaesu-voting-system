@@ -9,7 +9,7 @@ const user = require('../models/user')
 const admin = require('../models/admin')
 const data = require('../models/data')
 const { authenticated, isadmin, isloggedin, take_photo, get_face } = require('./auth')
-const { toUppercase, chat, bot, new_msg, new_nty, hash} = require('./functions')
+const { toUppercase, chat, bot, new_msg, new_nty, hash } = require('./functions')
 const { normal_limit } = require('./rate-limit')
 const election = require('../models/election')
 const { v4: uuidv4 } = require('uuid')
@@ -22,17 +22,17 @@ var base64ToImage = require('base64-to-image')
 const ftp = require('basic-ftp')
 //profile 
 router.get('/profile/:id', normal_limit, isloggedin, async (req, res) => {
-    const id = req.params.id 
+    const id = req.params.id
     try {
-        await user.find({_id: {$eq: xs(id)}}).then( (p) => {
-            if(p.length === 0){
+        await user.find({ _id: { $eq: xs(id) } }).then((p) => {
+            if (p.length === 0) {
                 return res.status(404).render('error/404')
             } else {
                 return res.render('profile/profile', {
                     data: p[0]
                 })
             }
-        }).catch( (e) => {
+        }).catch((e) => {
             throw new Error(e)
         })
     } catch (e) {
@@ -147,15 +147,12 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
     try {
-<<<<<<< HEAD
         return res.render('index', {
-            is_join_election: req.session.electionID ? true : false, 
+            is_join_election: req.session.electionID ? true : false,
             data: req.session.data
         })
-=======
         return res.render('index')
-        
->>>>>>> 8c0acf14e851f67b0fca5a61e649e50243cb4f12
+
     } catch (e) {
         return res.status(500).send()
     }
@@ -182,9 +179,9 @@ router.post('/verify', normal_limit, async (req, res) => {
     }
 })
 router.post('/login', async (req, res) => {
-    const { auth_usr, auth_pass } = req.body 
+    const { auth_usr, auth_pass } = req.body
     try {
-        if(xs(auth_usr) !== "" && xs(auth_pass) !== ""){
+        if (xs(auth_usr) !== "" && xs(auth_pass) !== "") {
 
             if (auth_usr == process.env.admin_username && auth_pass == process.env.admin_password) {
                 await admin.find({}, (err, doc) => {
@@ -242,7 +239,7 @@ router.post('/login', async (req, res) => {
                     }
                 })
             }
-            
+
         } else {
             return res.send({
                 islogin: false,
@@ -263,26 +260,26 @@ router.post('/register', async (req, res) => {
             //re-check voter id 
             await data.find(
                 {
-                    "voterId.student_id": {$eq: xs(student_id)}, 
-                    "voterId.course": {$eq: xs(course)}, 
-                    "voterId.year": {$eq: xs(yr)}, 
-                    "voterId.enabled": {$eq: false}
+                    "voterId.student_id": { $eq: xs(student_id) },
+                    "voterId.course": { $eq: xs(course) },
+                    "voterId.year": { $eq: xs(yr) },
+                    "voterId.enabled": { $eq: false }
                 }
-            ).then( async (v) => { 
-                if(v.length !== 0){
+            ).then(async (v) => {
+                if (v.length !== 0) {
                     //check if the username is not taken
-                    await user.find({username: {$eq: xs(usr)}}).then( async (u) => {
-                        if(u.length !== 0){
+                    await user.find({ username: { $eq: xs(usr) } }).then(async (u) => {
+                        if (u.length !== 0) {
                             return res.send({
                                 islogin: false,
                                 msg: "Username is already taken"
                             })
                         }
                         //check if the student id is not registered 
-                        await user.find({student_id: {$eq: xs(student_id)}}).then( async (s) => {
-                            if(s.length !== 0){
+                        await user.find({ student_id: { $eq: xs(student_id) } }).then(async (s) => {
+                            if (s.length !== 0) {
                                 return res.send({
-                                    islogin: false, 
+                                    islogin: false,
                                     msg: "Student ID already registered"
                                 })
                             }
@@ -299,38 +296,38 @@ router.post('/register', async (req, res) => {
                                 socket_id: 'Waiting For Student',
                                 username: xs(usr),
                                 password: hash_password
-                            }).then( async (c) => {
-                                 //sessions
-                                 req.session.myid = c._id //session for student
-                                 req.session.islogin = true // to determine that user is now logged in
-                                 req.session.user_type = xs(type) //to determine the user type
-                                 req.session.data = c
+                            }).then(async (c) => {
+                                //sessions
+                                req.session.myid = c._id //session for student
+                                req.session.islogin = true // to determine that user is now logged in
+                                req.session.user_type = xs(type) //to determine the user type
+                                req.session.data = c
                                 //update the voter id and set enabled to true 
-                                await data.updateOne({"voterId.student_id": {$eq: xs(student_id)}}, {$set: {"voterId.$.enabled": true}}).then( (vu) => {
+                                await data.updateOne({ "voterId.student_id": { $eq: xs(student_id) } }, { $set: { "voterId.$.enabled": true } }).then((vu) => {
                                     return res.send({
-                                        islogin: true, 
+                                        islogin: true,
                                         msg: `Welcome ${xs(toUppercase(fname))}`
                                     })
-                                }).catch( (e) => {
+                                }).catch((e) => {
                                     throw new Error(e)
                                 })
-                            }).catch( (e) => {
+                            }).catch((e) => {
                                 throw new Error(e)
                             })
-                        }).catch( (e) => {
+                        }).catch((e) => {
                             throw new Error(e)
                         })
-                    }).catch( (e) => {
+                    }).catch((e) => {
                         throw new Error(e)
                     })
                 } else {
                     return res.send({
                         islogin: false,
-                        msg: "Invalid Course / Year", 
+                        msg: "Invalid Course / Year",
                         text: "Please re-check your Course & Year"
                     })
                 }
-            }).catch( (e) => {
+            }).catch((e) => {
                 throw new Error(e)
             })
         } else {
@@ -339,94 +336,94 @@ router.post('/register', async (req, res) => {
                 msg: 'All Feilds Is Required'
             })
         }
-    } catch(e) {
+    } catch (e) {
         return res.status(500).send()
     }
 })
 //join election
 router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
-   const {code} = req.body 
-   const id = req.session.myid
-   let electionID, joined = false, e_title
-   try{
-       await election.find({}).then( async (elec) => {
-           if(elec.length !== 0){
-               for(let i = 0; i < elec.length; i++){
+    const { code } = req.body
+    const id = req.session.myid
+    let electionID, joined = false, e_title
+    try {
+        await election.find({}).then(async (elec) => {
+            if (elec.length !== 0) {
+                for (let i = 0; i < elec.length; i++) {
                     const passcode = await bcrypt.compare(code, elec[i].passcode)
-                    if(passcode){
+                    if (passcode) {
                         electionID = elec[i]._id
                         e_title = elec[i].election_title
                         break
                     }
-               }
-               //check  if the election id is not empty
-               if(electionID){
-                   try {
-                       await election.find({_id: {$eq: xs(electionID)}}, {voters: 1}).then( async (v) => {
-                           if(v.length !== 0){
-                               //check if the voter did not join the election before  
-                               for(let i = 0; i < v[0].voters.length; i++){
-                                   if(v[0].voters[i].toString() === id.toString()){
-                                       joined = true 
-                                       break
-                                   }
-                               }
-                               if(!joined){
-                                    await election.updateOne({_id: {$eq: xs(electionID)}}, {$push: {voters: id}}).then( () => {
-                                        req.session.electionID = xs(electionID) 
+                }
+                //check  if the election id is not empty
+                if (electionID) {
+                    try {
+                        await election.find({ _id: { $eq: xs(electionID) } }, { voters: 1 }).then(async (v) => {
+                            if (v.length !== 0) {
+                                //check if the voter did not join the election before  
+                                for (let i = 0; i < v[0].voters.length; i++) {
+                                    if (v[0].voters[i].toString() === id.toString()) {
+                                        joined = true
+                                        break
+                                    }
+                                }
+                                if (!joined) {
+                                    await election.updateOne({ _id: { $eq: xs(electionID) } }, { $push: { voters: id } }).then(() => {
+                                        req.session.electionID = xs(electionID)
                                         return res.send({
                                             joined: true,
                                             msg: `Welcome to ${e_title}`,
                                             text: ""
                                         })
-                                    }).catch( (e) => {
+                                    }).catch((e) => {
                                         throw new Error(e)
                                     })
-                               } else {
-                                req.session.electionID = xs(electionID) 
-                                return res.send({
-                                    joined: false,
-                                    msg: "You already joined the election",
-                                    text: "Please restart your browser"
-                                })
-                               }
-                           } else {
+                                } else {
+                                    req.session.electionID = xs(electionID)
+                                    return res.send({
+                                        joined: false,
+                                        msg: "You already joined the election",
+                                        text: "Please restart your browser"
+                                    })
+                                }
+                            } else {
                                 return res.send({
                                     joined: false,
                                     msg: "Something went wrong",
                                     text: "Please try again later"
                                 })
-                           }
-                       }).catch( (e) => {
-                           throw new Error(e)
-                       })
-                   } catch (e) {
-                       throw new Error(e)
-                   }
-               } else {
+                            }
+                        }).catch((e) => {
+                            throw new Error(e)
+                        })
+                    } catch (e) {
+                        throw new Error(e)
+                    }
+                } else {
                     return res.send({
                         joined: false,
                         msg: "Election not found",
                         text: "Please check the election passcode"
                     })
-               }
-           } else {
+                }
+            } else {
                 return res.send({
                     joined: false,
                     msg: "Election not found",
                     text: "Please check the election passcode"
                 })
-           }
-       }).catch( (e) => {
-           throw new Error(e)
-       })
-   } catch (e) {
-       return res.status(500).send()
-   }
+            }
+        }).catch((e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
 })
 //leave election
 router.post('/leave-election', isloggedin, async (req, res) => {
-    
+
 })
 //election info
 router.post('/election-info', isloggedin, async (req, res) => {
