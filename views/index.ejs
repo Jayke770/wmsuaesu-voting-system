@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#991b1b">
     <meta name="keywords" content="wmsu, online voting system, voting system, wmsu auora, auora, voting">
-    <title><%- `${data.fname} ${data.mname} ${data.lname}` %></title>
+    <title>WMSU - AESU</title>
     <meta name="description" content="New and upgraded version of voting system">
     <meta property="og:title" content="Online Voting System">
     <meta property="og:description" content="New and upgraded version of voting system">
@@ -34,30 +34,10 @@
                     </div>
                 </div>
                 <div class="flex flex-col gap-2 mt-2">
-                    <a class="cursor-pointer py-2 px-4 flex flex-row items-center rpl">
-                        <i class="ic dark:text-amber-600 w-9 text-xl">
-                            <i class="fad fa-home"></i>
-                        </i>
-                        <span class="dark:text-gray-300 font-medium">Home</span>
-                    </a>
-                    <a class="cursor-pointer py-2 px-4 flex flex-row items-center rpl">
-                        <i class="ic dark:text-teal-600 w-9 text-xl">
-                            <i class="fad fa-user"></i>
-                        </i>
-                        <span class="dark:text-gray-300 font-medium">My Profile</span>
-                    </a>
-                    <a class="cursor-pointer py-2 px-4 flex flex-row items-center rpl">
-                        <i class="ic dark:text-gray-400 w-9 text-xl">
-                            <i class="fad fa-cog"></i>
-                        </i>
-                        <span class="dark:text-gray-300 font-medium">Settings</span>
-                    </a>
-                    <a class="cursor-pointer py-2 px-4 flex flex-row items-center rpl">
-                        <i class="ic dark:text-orange-600 w-9 text-xl">
-                            <i class="fad fa-palette"></i>
-                        </i>
-                        <span class="dark:text-gray-300 font-medium">Themes</span>
-                    </a>
+                    <%- include('election/side_menu', {
+                        election: is_join_election, 
+                        id: data._id
+                    }) %>
                 </div>
             </div>
         </div>
@@ -67,7 +47,7 @@
                     <a class="open_nav rpl rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-xl cursor-pointer mr-1 last:mr-0">
                         <i class="fas fa-bars"></i>
                     </a>
-                    <p class="flex-[20%] w-full text-purple-800 dark:text-gray-300 text-xl p-4 font-bold mt-[1px]"><%- `Hi, ${data.fname}` %></p>
+                    <p class="flex-[20%] w-full text-purple-800 dark:text-gray-300 text-xl p-4 font-bold mt-[1px]">OVS</p>
                 </div>
            </div>
            <div class="float-right h-full">
@@ -90,6 +70,7 @@
     <script src="/js/avatar.js"></script>
     <script src="/js/time.js"></script>
     <script src="/js/theme.js"></script>
+    <script src="/js/fetch.js"></script>
     <script>
         $.ripple(".rpl", {
                 debug: false,

@@ -9,7 +9,7 @@ const user = require('../models/user')
 const admin = require('../models/admin')
 const data = require('../models/data')
 const { authenticated, isadmin, isloggedin, take_photo, get_face } = require('./auth')
-const { toUppercase, chat, bot, new_msg, new_nty } = require('./functions')
+const { toUppercase, chat, bot, new_msg, new_nty, hash} = require('./functions')
 const { normal_limit } = require('./rate-limit')
 const election = require('../models/election')
 const { v4: uuidv4 } = require('uuid')
@@ -20,7 +20,25 @@ const path = require('path')
 const fs = require('fs-extra')
 var base64ToImage = require('base64-to-image')
 const ftp = require('basic-ftp')
-//get
+//profile 
+router.get('/profile/:id', normal_limit, isloggedin, async (req, res) => {
+    const id = req.params.id 
+    try {
+        await user.find({_id: {$eq: xs(id)}}).then( (p) => {
+            if(p.length === 0){
+                return res.status(404).render('error/404')
+            } else {
+                return res.render('profile/profile', {
+                    data: p[0]
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
 //face recognination 
 router.get('/security', async (req, res) => {
     // img2base64(`${process.cwd()}/images/Sharine/1.jpg`).then((data) => {
@@ -128,12 +146,11 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 })
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
-    const {data} = req.session
     try {
         return res.render('index', {
-            data: data
+            is_join_election: req.session.electionID ? true : false, 
+            data: req.session.data
         })
-        
     } catch (e) {
         return res.status(500).send()
     }
@@ -174,6 +191,7 @@ router.post('/login', async (req, res) => {
                             req.session.myid = doc._id
                             req.session.islogin = "okay"
                             req.session.user_type = doc.type
+                            req.session.data = doc
                             return res.send({
                                 islogin: true,
                                 msg: "Welcome Admin"
@@ -201,22 +219,11 @@ router.post('/login', async (req, res) => {
                     for (var i = 0; i < result.length; i++) {
                         const match_password = await bcrypt.compare(auth_pass, result[i].password)
                         if (match_password) {
-                            //get all the basic data except the username, password, student_id, _id, and socket_id
-                            const data = {
-                                fname: result[i].firstname,
-                                mname: result[i].middlename,
-                                lname: result[i].lastname,
-                                course: result[i].course,
-                                year: result[i].year,
-                                type: result[i].type
-                            }
-    
                             //session
                             req.session.islogin = true // determine if logged
                             req.session.user_type = result[i].type // user type
                             req.session.myid = result[i]._id // user id
-                            req.session.data = data //all user data
-    
+                            req.session.data = result[i]
                             return res.send({
                                 islogin: true,
                                 msg: "Welcome " + result[i].firstname
@@ -292,7 +299,7 @@ router.post('/register', async (req, res) => {
                                  req.session.myid = c._id //session for student
                                  req.session.islogin = true // to determine that user is now logged in
                                  req.session.user_type = xs(type) //to determine the user type
-
+                                 req.session.data = c
                                 //update the voter id and set enabled to true 
                                 await data.updateOne({"voterId.student_id": {$eq: xs(student_id)}}, {$set: {"voterId.$.enabled": true}}).then( (vu) => {
                                     return res.send({
@@ -332,127 +339,89 @@ router.post('/register', async (req, res) => {
     }
 })
 //join election
-router.post('/join-election', isloggedin, async (req, res) => {
-    const { code } = req.body
-    const f_code = xs(code)
-    await election.find({ passcode: f_code }, { passcode: 1, voters: 1 }, (err, elec_res) => {
-        //if election if found
-        if (elec_res.length != 0) {
-            const election_data = elec_res[0]
-            if (election_data.voters.length != 0) {
-                var isjoined = false
-                //check if the user id already joined
-                for (var i = 0; i < election_data.voters.length; i++) {
-                    if (req.session.myid.toString() == election_data.voters[i].id.toString()) {
-                        //if the user already joined before
-                        isjoined = true
+router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
+   const {code} = req.body 
+   const id = req.session.myid
+   let electionID, joined = false, e_title
+   try{
+       await election.find({}).then( async (elec) => {
+           if(elec.length !== 0){
+               for(let i = 0; i < elec.length; i++){
+                    const passcode = await bcrypt.compare(code, elec[i].passcode)
+                    if(passcode){
+                        electionID = elec[i]._id
+                        e_title = elec[i].election_title
                         break
                     }
-                }
-                if (isjoined) {
-                    //send response
-                    req.session.election_id = elec_res[0]._id
-                    req.session.join_election = true
+               }
+               //check  if the election id is not empty
+               if(electionID){
+                   try {
+                       await election.find({_id: {$eq: xs(electionID)}}, {voters: 1}).then( async (v) => {
+                           if(v.length !== 0){
+                               //check if the voter did not join the election before  
+                               for(let i = 0; i < v[0].voters.length; i++){
+                                   if(v[0].voters[i].toString() === id.toString()){
+                                       joined = true 
+                                       break
+                                   }
+                               }
+                               if(!joined){
+                                    await election.updateOne({_id: {$eq: xs(electionID)}}, {$push: {voters: id}}).then( () => {
+                                        req.session.electionID = xs(electionID) 
+                                        return res.send({
+                                            joined: true,
+                                            msg: `Welcome to ${e_title}`,
+                                            text: ""
+                                        })
+                                    }).catch( (e) => {
+                                        throw new Error(e)
+                                    })
+                               } else {
+                                req.session.electionID = xs(electionID) 
+                                return res.send({
+                                    joined: false,
+                                    msg: "You already joined the election",
+                                    text: "Please restart your browser"
+                                })
+                               }
+                           } else {
+                                return res.send({
+                                    joined: false,
+                                    msg: "Something went wrong",
+                                    text: "Please try again later"
+                                })
+                           }
+                       }).catch( (e) => {
+                           throw new Error(e)
+                       })
+                   } catch (e) {
+                       throw new Error(e)
+                   }
+               } else {
                     return res.send({
-                        isvalid: true,
-                        joined_before: true
+                        joined: false,
+                        msg: "Election not found",
+                        text: "Please check the election passcode"
                     })
-                }
-                else {
-                    //if voters array is not empty but the user is not joined
-                    const new_voter = { id: req.session.myid, joined: Date.now() }
-                    election.updateOne({ _id: elec_res[0]._id }, { $push: { voters: new_voter } }, (err, up) => {
-                        if (err) {
-                            return res.send({
-                                isvalid: false,
-                            })
-                        }
-                        else {
-                            //send response 
-                            req.session.election_id = elec_res[0]._id
-                            req.session.join_election = true
-                            return res.send({
-                                isvalid: true,
-                                id: req.session.election_id,
-                                joined_before: false
-                            })
-                        }
-                    })
-                }
-            }
-            else {
-                //if voters is empty
-                const new_voter = { id: req.session.myid, joined: Date.now() }
-                election.updateOne({ _id: elec_res[0]._id }, { $push: { voters: new_voter } }, (err, up) => {
-                    if (up.nModified == 1) {
-                        //send response
-                        req.session.election_id = elec_res[0]._id
-                        req.session.join_election = true
-                        return res.send({
-                            isvalid: true
-                        })
-                    }
+               }
+           } else {
+                return res.send({
+                    joined: false,
+                    msg: "Election not found",
+                    text: "Please check the election passcode"
                 })
-            }
-        }
-        else {
-            return res.send({
-                isvalid: false
-            })
-        }
-    })
+           }
+       }).catch( (e) => {
+           throw new Error(e)
+       })
+   } catch (e) {
+       return res.status(500).send()
+   }
 })
 //leave election
 router.post('/leave-election', isloggedin, async (req, res) => {
-    const e_id = req.session.election_id
-    const user_id = req.session.myid
-
-    //check if user is exists in the db
-    await election.find({ _id: e_id }, { voters: 1 }, (err, find) => {
-        var isfind = false
-        if (err) {
-            return res.send({
-                isleave: false,
-                line: 318
-            })
-        }
-        else {
-            //check if voters array is not empty 
-            if (find.length != 0) {
-                for (var i = 0; i < find[0].voters.length; i++) {
-                    if (find[0].voters[i].id.toString() == user_id.toString()) {
-                        isfind = true
-                        break
-                    }
-                }
-                //if user found in db 
-                if (isfind) {
-                    //remove the user from drp_btn
-                    election.updateOne({ _id: e_id }, { $pull: { voters: { id: user_id } } }, (err, del) => {
-                        if (err) {
-                            return res.send({
-                                isleave: false,
-                                line: 382
-                            })
-                        }
-                        else {
-                            delete req.session.election_id
-                            req.session.join_election = false
-                            return res.send({
-                                isleave: true
-                            })
-                        }
-                    })
-                }
-            }
-            else {
-                return res.send({
-                    isleave: null,
-                    line: 465
-                })
-            }
-        }
-    })
+    
 })
 //election info
 router.post('/election-info', isloggedin, async (req, res) => {

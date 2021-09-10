@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%- `${data.firstname} ${data.middlename} ${data.lastname}` %></title>
+    <%- include('../cdn/_profile') %>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+</head>
+<body class="bg-gray-300 dark:bg-[#090c10]">
+    <div class="flex w-full justify-center h-[70vh]">
+        <div class="w-4/5 sm:w-[95%] h-full relative transition-all">
+            <img class="absolute -bottom-16 left-4 rounded-full object-cover w-[150px]" alt="profile" src="/assets/logo.png">
+            <img class="w-full h-full object-cover rounded-b-2xl" alt="image" src="/assets/image.jpg">
+        </div>
+    </div>
+    <div class="mt-28 flex flex-col items-center justify-center">
+        <div class="w-4/5 sm:w-[95%]">
+            <h1 class="dark:text-gray-300 text-2xl">Visitors</h1>
+        </div>
+        <div class="w-4/5 sm:w-[95%] flex flex-row gap-2 py-3 overflow-y-auto">
+            <% for (let i = 0; i < 50; i++) { %>
+                <img class="rounded-full object-cover w-16 h-16" alt="profile" src="/assets/logo.png">
+            <% } %>
+        </div>
+        <div class="mt-10 w-4/5 sm:w-[95%] py-3 transition-all">
+            <div class="grid grid-cols-3 md:grid-cols-none gap-2 transition-all">
+                <div class="flex flex-col gap-4">
+                    <div class="p-2 rounded-md dark:bg-darkBlue-secondary shadow-xl">
+                        <p class="font-normal px-2 text-xl dark:text-purple-600">Bio</p>
+                        <div class="p-2 dark:text-gray-400 h-48 overflow-x-auto break-words">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut illo necessitatibus officiis, sint reprehenderit error optio minima, quo fuga ducimus iste dicta quia obcaecati maiores, animi sit facere quae tempore.
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos perferendis eos excepturi maxime unde recusandae, ut numquam. Velit excepturi, eveniet quis quisquam eaque ducimus pariatur odit deserunt nemo sequi nam!
+                        </div>
+                    </div>
+                    <div class="p-2 rounded-md dark:bg-darkBlue-secondary shadow-xl">
+                        <p class="font-normal px-2 text-xl dark:text-purple-600">Course & Year</p>
+                        <div class="p-2 dark:text-gray-400">
+                            BSCS 1st
+                        </div>
+                    </div>
+                    <div class="p-2 rounded-md dark:bg-darkBlue-secondary shadow-xl">
+                        <p class="font-normal px-2 text-xl dark:text-purple-600">Account Created</p>
+                        <div class="p-2 dark:text-gray-400 time" data="<%- data.created %>">...</div>
+                    </div>
+                </div>
+                <div class="col-span-2">fsaf</div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/theme.js"></script>
+    <script src="/js/fetch.js"></script>
+    <script src="/js/time.js"></script>
+</body>
+</html>
