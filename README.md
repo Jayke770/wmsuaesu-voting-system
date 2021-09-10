@@ -7,7 +7,7 @@
 <hr>
 <br>
 <p align="center"> 
-  <a href="https://voting-system-jayke.herokuapp.com"> 
+  <a href="https://wmsu-aesu-voting-system.herokuapp.com/"> 
      <img src="https://img.shields.io/website?down_message=Offline&label=Production%20website&style=for-the-badge&up_message=Online&url=https%3A%2F%2Fvoting-system-jayke.herokuapp.com">
    </a>
   <a href="https://github.com/Jayke770/wmsuaesu-voting-system/issues> 
