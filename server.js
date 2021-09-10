@@ -87,6 +87,8 @@ io.of('/admin').use(sharedsession(appsession, {
 io.of('/user').use(sharedsession(appsession, {
     autoSave: true
 }))
+//socket.io admin namespace 
+io.of("/admin").on("connection", adminSocket)
 start()
 async function start() {
     http.listen(port, console.log('Server Started on port ' + port))
@@ -106,6 +108,3 @@ async function start() {
     //     }
     // }
 }
-
-//socket.io admin namespace 
-io.of("/admin").on("connection", adminSocket)
