@@ -3459,11 +3459,6 @@ input:checked~.dot {
   background-color: rgba(159, 18, 57, var(--tw-bg-opacity));
 }
 
-.dark .dark\:bg-\[\#b8b8b8\] {
-  --tw-bg-opacity: 1;
-  background-color: rgba(184, 184, 184, var(--tw-bg-opacity));
-}
-
 .dark .dark\:font-medium {
   font-weight: 500;
 }
@@ -3837,16 +3832,16 @@ input:checked~.dot {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
-  .xl\:grid-cols-none {
-    grid-template-columns: none;
-  }
-
   .xl\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .xl\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .xl\:grid-cols-none {
+    grid-template-columns: none;
   }
 
   .xl\:grid-rows-2 {

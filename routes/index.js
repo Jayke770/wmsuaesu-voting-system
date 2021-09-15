@@ -18,7 +18,7 @@ const nl2br = require("nl2br")
 const img2base64 = require('image-to-base64')
 const path = require('path')
 const fs = require('fs-extra')
-var base64ToImage = require('base64-to-image')
+const base64ToImage = require('base64-to-image')
 const ftp = require('basic-ftp')
 const moment = require('moment')
 //profile 

@@ -16,6 +16,9 @@ const uploader = multer()
 const helmet = require('helmet')
 const cors = require('cors')
 const xs = require('xss')
+const csrf = require('csurf')
+const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const { v4: uuidv4 } = require('uuid')
 const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
@@ -37,11 +40,6 @@ store.on('error', (err) => {
     console.log(err)
 })
 const dir = path.join(__dirname, './public')
-app.use(
-    helmet({
-        contentSecurityPolicy: false,
-    })
-)
 const log_stream = rfs.createStream('logs.log', {
     interval: '1d',
     path: path.join(__dirname, 'log')
@@ -51,10 +49,12 @@ const appsession = session({
     secret: process.env.session_secret,
     expires: 1000 * 60 * 60 * 24,
     cookie: {
-       maxAge: 1000 * 60 * 60 * 24 * 1 
+       maxAge: 1000 * 60 * 60 * 24 * 1, 
+       httpOnly: true, 
+       sameSite: 'strict'
     },
     store: store,
-    resave: false,
+    resave: true,
     saveUninitialized: true,
     connectionOptions: {
         useNewUrlParser: true,
@@ -62,13 +62,23 @@ const appsession = session({
         serverSelectionTimeoutMS: 10000
     }
 })
+app.use(
+    helmet({
+        contentSecurityPolicy: false,
+    })
+)
 app.use(morgan(':status :remote-addr :method :url :response-time ms', { stream: log_stream }))
 app.use(express.static(dir))
-app.use(express.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.json()) // json 
 app.use(uploader.array())
 app.use(cors())
 app.set('view engine', 'ejs')
+if(app.get('env') === 'production'){
+    app.set('trust proxy', 1)
+} 
+app.use(cookieParser())
+app.use(csrf({cookie: true}))
 app.use(appsession)
 app.use(route) //all user req
 app.use(admin) //all admin req 
