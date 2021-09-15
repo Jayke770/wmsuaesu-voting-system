@@ -20,6 +20,7 @@ const path = require('path')
 const fs = require('fs-extra')
 var base64ToImage = require('base64-to-image')
 const ftp = require('basic-ftp')
+const moment = require('moment')
 //profile 
 router.get('/profile/:id', normal_limit, isloggedin, async (req, res) => {
     const id = req.params.id
@@ -146,14 +147,29 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 })
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
+    const {myid} = req.session
     try {
-        return res.render('index', {
-            is_join_election: req.session.electionID ? true : false,
-            data: req.session.data
+        await election.find(
+            {"voters.id": {$eq: objectid(xs(myid))}}, 
+            {election_title: 1, election_description: 1, status: 1, start: 1, end: 1, created: 1, candidates: 1}
+        ).then( (el) => { 
+            req.session.electionID = el.length === 0 ? '' : el[0]._id
+            const data = el.length === 0 ? '' : el[0]
+            const started = moment(data.start).fromNow().search("ago") != -1 ? true : false
+            const end = moment(data.end).fromNow().search("ago") != -1 ? true : false
+            return res.render('index', {
+                is_join_election: el.length === 0 ? false : true,
+                data: req.session.data, 
+                election: el.length === 0 ? null : el[0], 
+                started: started,
+                end: end, 
+                endtime: moment(data.end).fromNow()
+            })
+        }).catch( (e) => {
+            throw new Error(e)
         })
-        return res.render('index')
-
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })
@@ -344,8 +360,39 @@ router.post('/register', async (req, res) => {
 router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
     const { code } = req.body
     const id = req.session.myid
+    const {firstname, middlename, lastname, course, year} = req.session.data
     let electionID, joined = false, e_title
+    let new_voter = {
+        id: id, 
+        fullname: `${firstname} ${middlename} ${lastname}`,
+        course: '', 
+        year: '',
+        status: 'Pending',
+        created: moment().format()
+    } 
     try {
+        //get course & year 
+        await data.find({}, {
+            course: 1, 
+            year: 1
+        }).then( (cy) => {
+            if(cy.length !== 0){
+                for(let i = 0; i < cy[0].course.length; i++){
+                    if(course === cy[0].course[i].id){
+                        new_voter.course = cy[0].course[i].type 
+                        break
+                    }
+                }
+                for(let i = 0; i < cy[0].year.length; i++){
+                    if(year === cy[0].year[i].id){
+                        new_voter.year = cy[0].year[i].type 
+                        break
+                    }
+                }
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
         await election.find({}).then(async (elec) => {
             if (elec.length !== 0) {
                 for (let i = 0; i < elec.length; i++) {
@@ -369,7 +416,7 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
                                     }
                                 }
                                 if (!joined) {
-                                    await election.updateOne({ _id: { $eq: xs(electionID) } }, { $push: { voters: id } }).then(() => {
+                                    await election.updateOne({ _id: { $eq: xs(electionID) } }, { $push: { voters: new_voter } }).then(() => {
                                         req.session.electionID = xs(electionID)
                                         return res.send({
                                             joined: true,
@@ -422,8 +469,45 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
     }
 })
 //leave election
-router.post('/leave-election', isloggedin, async (req, res) => {
-
+router.post('/leave-election', normal_limit, isloggedin, async (req, res) => {
+    const e_id = req.session.electionID
+    console.log(e_id)
+    const userID = req.session.myid 
+    try {
+        await election.find({
+            _id: {$eq: xs(e_id)}, 
+            "voters.id": {$eq: objectid(xs(userID))}
+        }, {voters: 1}).then( async (v) => {
+            if(v.length != 0){
+                await election.updateOne({
+                    _id: {$eq: xs(e_id)}
+                }, {$pull: {
+                    voters: {
+                        id: {$eq: objectid(xs(userID))}
+                    }}
+                }).then( (b) => {
+                    delete req.session.electionID
+                    console.log(b)
+                    return res.send({
+                        leave: true, 
+                        msg: 'Successfully left!'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    leave: false, 
+                    msg: 'Something went wrong'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
 })
 //election info
 router.post('/election-info', isloggedin, async (req, res) => {

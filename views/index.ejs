@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#991b1b">
     <meta name="keywords" content="wmsu, online voting system, voting system, wmsu auora, auora, voting">
-    <title>WMSU - AESU</title>
+    <title><%- election ? election.election_title : 'WMSU-AESU' %></title>
     <meta name="description" content="New and upgraded version of voting system">
     <meta property="og:title" content="Online Voting System">
     <meta property="og:description" content="New and upgraded version of voting system">
@@ -30,7 +30,7 @@
                         <i class="fas fa-times-circle"></i>
                     </a>
                     <div class="flex h-full pl-4">
-                        <p class="text-2xl text-center dark:text-gray-300 font-medium tracking-wider">WMSU- AESU</p>
+                        <p class="text-2xl text-center dark:text-gray-300 font-medium tracking-wider"><%- election ? election.election_title : 'WMSU-AESU' %></p>
                     </div>
                 </div>
                 <div class="flex flex-col gap-2 mt-2">
@@ -41,13 +41,12 @@
                 </div>
             </div>
         </div>
-        <div class="w-full">
+        <div class="w-full py-2">
            <div class="float-left">
                 <div class="flex flex-row justify-center items-center px-3">
                     <a class="open_nav rpl rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-xl cursor-pointer mr-1 last:mr-0">
                         <i class="fas fa-bars"></i>
                     </a>
-                    <p class="flex-[20%] w-full text-purple-800 dark:text-gray-300 text-xl p-4 font-bold mt-[1px]">OVS</p>
                 </div>
            </div>
            <div class="float-right h-full">
@@ -62,6 +61,7 @@
             </div>
         </div>
     </div>
+    <%- include('election/main', {election: election, is_join_election: is_join_election}) %>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/index.js"></script>
     <script src="/js/audio.js"></script>

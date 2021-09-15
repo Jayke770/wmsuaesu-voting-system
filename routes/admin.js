@@ -228,25 +228,28 @@ adminrouter.post('/control/elections/election-list/', limit, isadmin, async (req
 //get elections by id
 adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, res) => {
     const id = req.params.id, from = req.params.from
-    let crs, yr
+    let crs, yr, pos
     try {
-        await data.find({}, {course: 1, year:1}).then( (cy) => {
+        await data.find({}, {course: 1, year:1, positions: 1}).then( (cy) => {
             crs = cy.length === 0 ? [] : cy[0].course
             yr = cy.length === 0 ? [] : cy[0].year
+            pos = cy.length === 0 ? [] : cy[0].positions
         }).catch( (e) => {
             throw new Error(e)
         })
         await election.find({_id: {$eq: xs(id)}}).then( async (elecs) => {
-            const data = elecs.length === 0 ? '' : elecs[0]
+            const e_data = elecs.length === 0 ? '' : elecs[0] 
             //if election is already started set the started variable to true
-            const started = moment(data.start).fromNow().search("ago") != -1 ? true : false
-            const end = moment(data.end).fromNow().search("ago") != -1 ? true : false
+            const started = moment(e_data.start).fromNow().search("ago") != -1 ? true : false
+            const end = moment(e_data.end).fromNow().search("ago") != -1 ? true : false
+            console.log(pos)
             return res.render("control/forms/election_details", {
                 election: elecs.length === 0 ? '' : elecs[0], 
                 started: started, 
                 end: end,
                 course: crs, 
                 year: yr,
+                positions: pos,
                 endtime: moment(data.end).fromNow(),
                 link: xs(from) === "home" ? '/control/' : '/control/elections/'
             })
@@ -254,6 +257,45 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             throw new Error(e)
         })
     } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//get all accepted voters in current election 
+adminrouter.post("/control/elections/accepted-voters/", limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    try {
+        await election.find({
+            _id: {$eq: xs(id)}, 
+            "voters.status": {$eq: "Accepted"}
+        }, {voters: 1}).then( (elecs) => {
+            return res.render("control/forms/accepted-voters", {
+                voters: elecs.length === 0 ? [] : elecs[0].voters
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//get all pending voters in current election 
+adminrouter.post("/control/elections/pending-voters/", limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    try {
+        await election.find({
+            _id: {$eq: xs(id)}, 
+            "voters.status": {$eq: "Pending"}
+        }, {voters: 1}).then( (elecs) => {
+            return res.render("control/forms/pending-voters", {
+                voters: elecs.length === 0 ? [] : elecs[0].voters
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })

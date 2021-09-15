@@ -5,13 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%- `${data.firstname} ${data.middlename} ${data.lastname}` %></title>
-    <%- include('../cdn/_profile') %>
+    <%- include('../local_cdn/_profile') %>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
 </head>
 <body class="bg-gray-300 dark:bg-[#090c10]">
-    <div class="flex w-full justify-center h-[70vh]">
-        <div class="w-4/5 sm:w-[95%] h-full relative transition-all">
-            <img class="absolute -bottom-16 left-4 rounded-full object-cover w-[150px]" alt="profile" src="/assets/logo.png">
+    <div class="flex w-full justify-center h-[70vh] sm:h-[50vh]">
+        <div class="w-4/5 sm:w-full h-full relative transition-all">
+            <div class="z-0 absolute -bottom-16 px-3 w-full sm:flex sm:justify-center">
+                <img class="rounded-full object-cover w-[150px]" alt="profile" src="/assets/logo.png">
+            </div>
+            <div class="absolute flex flex-row justify-center right-1 bottom-1 p-2 z-20">
+                <a class="text-2xl cursor-pointer text-rose-600">
+                    <i class="fas fa-heart"></i>
+                </a>
+            </div>
             <img class="w-full h-full object-cover rounded-b-2xl" alt="image" src="/assets/image.jpg">
         </div>
     </div>

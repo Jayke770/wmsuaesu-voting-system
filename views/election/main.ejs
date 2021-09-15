@@ -1,0 +1,31 @@
+<% if(is_join_election) { %>
+    <div class="pt-16 w-full h-screen">
+        <div class="p-1 grid grid-rows-2 w-full h-full">
+            <div class="flex flex-col gap-3 justify-center items-center">
+                <div style="animation-delay: .150s;" class="dark:text-purple-600 text-5xl font-bold text-center sm:text-3xl animate__animated animate__fadeInUp"><%- election.election_title %></div>
+                <div style="animation-delay: .650s;" class="dark:text-purple-400 text-base animate__animated animate__fadeInDown"><%- election.election_title %></div>
+            </div>
+            <div class="mt-5 flex flex-col justify-center items-center">
+                <p style="animation-delay: .150s;" class="dark:text-purple-600 text-xl font-semibold animate__animated animate__fadeInUp">
+                    <%- started && !end ? 'Election will end in' : started && end ? `Election ended ${endtime}` : `Election will begin in` %>
+                </p>
+                <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInDown" data="<%- election.start %>"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        //get the election starting time  
+        let e_start = (new Date($("#e_time").attr("data")).getTime() / 1000)
+        let flipdown = new FlipDown(e_start, "e_time")
+        flipdown.start()
+        flipdown.ifEnded(() => {
+            
+        })
+        //set the theme of flipdown 
+        const themer = localStorage.getItem('theme') === "dark" ? true : false
+        $("#e_time").removeClass(themer ? 'flipdown__theme-dark' : 'flipdown__theme-light')
+        $("#e_time").addClass(themer ? 'flipdown__theme-light' : 'flipdown__theme-dark')
+    </script>
+<% } else { %>
+    
+<% } %>

@@ -1,4 +1,4 @@
-$(document).ready( () => {
+$(document).ready( () => { 
     //open navigation 
     $(".open_nav").click( () => {
         const parent = $(".nav") 
@@ -107,6 +107,63 @@ $(document).ready( () => {
                         }
                     })
                 }
+            }
+        })
+    })
+    //leave election 
+    $(".e_left_election").click( function (e) {
+        e.preventDefault() 
+        Swal.fire({
+            icon: 'question', 
+            title: 'Are you sure you want to leave?', 
+            backdrop: true, 
+            showDenyButton: true, 
+            cancelButtonText: 'No',
+            confirmButtonText: 'Yes', 
+        }).then( (res) => {
+            if(res.isConfirmed){
+                Swal.fire({
+                    title: 'Leaving election', 
+                    html: 'Please wait...', 
+                    backdrop: true, 
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: async () => {
+                        Swal.showLoading() 
+                        try {
+                            const leave = await fetchtimeout('/leave-election', {
+                                timeout: 10000, 
+                                method: 'POST'
+                            })
+                            if(leave.ok){
+                                const res = await leave.json()
+                                if(res.leave){
+                                    Swal.fire({
+                                        icon: 'success', 
+                                        title: res.msg, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false
+                                    }).then( () => {
+                                        window.location.assign('')
+                                    })
+                                } else {
+                                    Swal.fire({
+                                        icon: 'info', 
+                                        title: res.msg, 
+                                    })
+                                }
+                            } else {
+                                throw new Error(`${leave.status} ${leave.statusText}`)
+                            }
+                        } catch (e) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Connection Error', 
+                                html: e.message
+                            })
+                        }
+                    }
+                })
             }
         })
     })
