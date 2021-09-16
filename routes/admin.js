@@ -346,7 +346,7 @@ adminrouter.post('/control/elections/accept-voter', limit, isadmin, async (req, 
 
 //positions 
 adminrouter.get('/control/elections/positions/', isadmin, normal_limit, async (req, res, next) => {
-    return res.render('control/forms/positions')
+    return res.render('control/forms/positions', {csrf: req.csrfToken()})
 })
 //all positions
 adminrouter.post('/control/elections/positions/pos/', isadmin, normal_limit, async (req, res, next) => {
@@ -527,7 +527,8 @@ adminrouter.get('/control/elections/voter-id/', normal_limit, isadmin, async (re
             if(err) throw new err
             return res.render('control/forms/voter-id', { 
                 course: data.length == 0 ? [] : data[0].course, 
-                year:  data.length == 0 ? [] : data[0].year
+                year:  data.length == 0 ? [] : data[0].year, 
+                csrf: req.csrfToken()
             })
         })
     } catch(e) {
@@ -905,7 +906,7 @@ adminrouter.post('/control/elections/voter-id/update-voter-id/', limit, isadmin,
 
 //course & year 
 adminrouter.get('/control/elections/course&year/', limit, isadmin, async (req, res) => {
-    return res.render('control/forms/cy')
+    return res.render('control/forms/cy', {csrf: req.csrfToken()})
 })
 //course
 adminrouter.post('/control/elections/course&year/course/', limit, isadmin, async (req, res) => {
@@ -1339,7 +1340,7 @@ adminrouter.post('/control/elections/course&year/up_y/', normal_limit, isadmin, 
 
 //partylist 
 adminrouter.get('/control/elections/partylist/', normal_limit, isadmin, async (req, res) => {
-    return res.render("control/forms/partylist")
+    return res.render("control/forms/partylist", {csrf: req.csrfToken()})
 })
 //partylist all 
 adminrouter.post('/control/elections/partylist/pty/', normal_limit, isadmin, async (reeq, res) => {

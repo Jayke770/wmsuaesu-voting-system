@@ -3,6 +3,9 @@ $(document).ready(function () {
     //set timeout for all ajax requests 
     $.ajaxSetup({
         timeout: 10000,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     })
     Snackbar.show({ 
         text: `
