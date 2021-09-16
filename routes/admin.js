@@ -34,7 +34,8 @@ adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
                 positions: d.length != 0 ? d[0].positions : [], 
                 course: d.length != 0 ? d[0].course : [], 
                 year: d.length != 0 ? d[0].year : [], 
-                partylists: d.length != 0 ? d[0].partylists : []
+                partylists: d.length != 0 ? d[0].partylists : [], 
+                csrf: req.csrfToken()
             })
         }).catch( (e) => {
             throw new Error(e)
@@ -242,7 +243,8 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             //if election is already started set the started variable to true
             const started = moment(e_data.start).fromNow().search("ago") != -1 ? true : false
             const end = moment(e_data.end).fromNow().search("ago") != -1 ? true : false
-            console.log(pos)
+            //save election id to session 
+            req.session.currentElection = xs(id)
             return res.render("control/forms/election_details", {
                 election: elecs.length === 0 ? '' : elecs[0], 
                 started: started, 
@@ -251,7 +253,8 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
                 year: yr,
                 positions: pos,
                 endtime: moment(data.end).fromNow(),
-                link: xs(from) === "home" ? '/control/' : '/control/elections/'
+                link: xs(from) === "home" ? '/control/' : '/control/elections/',
+                csrf: req.csrfToken()
             })
         }).catch( (e) => {
             throw new Error(e)
@@ -296,6 +299,46 @@ adminrouter.post("/control/elections/pending-voters/", limit, isadmin, async (re
         })
     } catch (e) {
         console.log(e)
+        return res.status(500).send()
+    }
+})
+//accept pending voters 
+adminrouter.post('/control/elections/accept-voter', limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const electionID = req.session.currentElection 
+    try {
+        // get election
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }, {voters: 1}).then( async (elec) => {
+            const e_data = elec.length === 0 ? [] : elec[0].voters 
+            if(e_data.length !== 0){
+                for(let i = 0; i < e_data.length; i++){
+                    if(id.toString() === e_data[i].id.toString()){
+                        await election.updateOne({
+                            _id: {$eq: xs(electionID)}, 
+                            "voters.id": {$eq: e_data[i].id}
+                        }, { $set: {"voters.$.status": 'Accepted'}}).then( (v) => {
+                            return res.send({
+                                status: true, 
+                                msg: "Voter Accepted Successfully"
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    }
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Something went wrong"
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e.message)
         return res.status(500).send()
     }
 })

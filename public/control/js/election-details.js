@@ -43,7 +43,7 @@ $(document).ready(() => {
         setTimeout(() => {
             child.removeClass(child.attr("animate-in"))
             voters("/control/elections/accepted-voters/", $("html").attr("data"))
-        }, 700)
+        }, 300)
     })
     $(".e_ac").click( () => {
         voters("/control/elections/accepted-voters/", $("html").attr("data"))
@@ -58,42 +58,84 @@ $(document).ready(() => {
             $(".voters_").addClass("hidden")
             $(".voters_").removeClass("flex")
             $(".voters_main").removeClass($(".voters_main").attr("animate-out"))
-        }, 500)
+            $(".acp_voters").find(".acp_voters_skeleton").show()
+            $(".acp_voters").find(".voters").remove()
+        }, 300)
     })
-    //courses 
-    const courses = JSON.parse($(".e_main_content").find(".course").attr("default"))
-    const year = JSON.parse($(".e_main_content").find(".year").attr("default"))
-    const e_crs = $(".e_main_content").find(".course").attr("data").split(',')
-    const e_yr = $(".e_main_content").find(".year").attr("data").split(',')
-    for (let i = 0; i < e_crs.length; i++) {
-        $(".e_main_content").find(".course").append(`
-            <div style="border-color: rgba(126, 34, 206, 1)" class="border p-1 px-3 rounded-full cursor-pointer">
-                <span class="text-gray-900 dark:text-gray-300 font-medium">${c(e_crs[i])}</span>
-            </div> 
-        `)
-    }
-    for (let i = 0; i < e_yr.length; i++) {
-        $(".e_main_content").find(".year").append(`
-            <div style="border-color: rgba(126, 34, 206, 1)" class="border p-1 px-3 rounded-full cursor-pointer">
-                <span class="text-gray-900 dark:text-gray-300 font-medium">${y(e_yr[i])}</span>
-            </div> 
-        `)
-    }
+    $(".voters_").click( function (e) {
+        if($(e.target).hasClass("voters_")){
+            $(".voters_main").addClass($(".voters_main").attr("animate-out"))
+            setTimeout(() => {
+                $(".voters_").addClass("hidden")
+                $(".voters_").removeClass("flex")
+                $(".voters_main").removeClass($(".voters_main").attr("animate-out"))
+                $(".acp_voters").find(".acp_voters_skeleton").show()
+                $(".acp_voters").find(".voters").remove()
+            }, 300)
+        }
+    })
+    // pending voters
+    let ac_v = false 
+    $(".acp_voters").delegate(".accept_voter", "click", async function (e) {
+        e.preventDefault() 
+        const data = new FormData()
+        const def = $(this).html()  
+        data.append("id", $(this).attr("data"))
+        if(!ac_v){
+            ac_v = true
+            $(this).html('<i class="fad animate-spin fa-spinner-third"></i>')
+            try {
+                const accept = await fetchtimeout('/control/elections/accept-voter/', {
+                    timeout: 10000, 
+                    method: 'POST', 
+                    body: data
+                })
+                if(accept.ok){
+                    const res = await accept.json() 
+                    ac_v = false
+                    $(this).html(def)
+                    if(res.status){
+                        toast.fire({
+                            title: res.msg, 
+                            icon: 'success', 
+                            timer: 3000
+                        }).then( () => {
+                            $(`.voters[data='${ $(this).attr("data")}']`).remove() 
+                        })
+                    } else {
+                        toast.fire({
+                            title: res.msg, 
+                            icon: 'info', 
+                            timer: 3000
+                        })
+                    }
+                } else {
+                    ac_v = false
+                    throw new Error(`${accept.status} ${accept.statusText}`)
+                }
+            } catch (e) {
+                ac_v = false
+                $(this).html(def)
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: rgb(225, 29, 72)" class="fad fa-times-circle"></i>
+                            <span>Error : ${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })  
+            }
+        } else {
+            Snackbar.show({ 
+                text: 'Please Wait', 
+                duration: 3000,
+                showAction: false
+            })  
+        }
+    })
     //functions 
-    function c(val) {
-        for (let c = 0; c < courses.length; c++) {
-            if (val === courses[c].id) {
-                return courses[c].type
-            }
-        }
-    }
-    function y(val) {
-        for (let c = 0; c < year.length; c++) {
-            if (val === year[c].id) {
-                return year[c].type
-            }
-        }
-    }
     async function voters(link, id){
         const data = new FormData() 
         data.append("id", id)
@@ -105,12 +147,23 @@ $(document).ready(() => {
             })
             if(ac.ok){
                 const res = await ac.text() 
-                $(".acp_voters").html(res)
+                $(".acp_voters").find(".acp_voters_skeleton").hide()
+                $(".acp_voters").find(".voters").remove()
+                $(".acp_voters").append(res)
             } else {
                 throw new Error(`${ac.status} ${ac.statusText}`)
             }
         } catch (e) {
-            console.warn(e.message)  
+            Snackbar.show({ 
+                text: `
+                    <div class="flex justify-center items-center gap-2"> 
+                        <i style="font-size: 1.25rem; color: rgb(225, 29, 72)" class="fad fa-times-circle"></i>
+                        <span>Error : ${e.message}</span>
+                    </div>
+                `, 
+                duration: 3000,
+                showAction: false
+            })  
         }
     }
 })

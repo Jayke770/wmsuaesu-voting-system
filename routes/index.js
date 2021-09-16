@@ -136,7 +136,8 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
         await data.find({}, { course: 1, year: 1 }).then((cy) => {
             return res.render('auth', {
                 course: cy.length === 0 ? [] : cy[0].course,
-                year: cy.length === 0 ? [] : cy[0].year
+                year: cy.length === 0 ? [] : cy[0].year,
+                csrf: req.csrfToken()
             })
         }).catch((e) => {
             throw new Error(e)
@@ -148,11 +149,21 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
     const {myid} = req.session
+    let voter_data
     try {
         await election.find(
             {"voters.id": {$eq: objectid(xs(myid))}}, 
-            {election_title: 1, election_description: 1, status: 1, start: 1, end: 1, created: 1, candidates: 1}
+            {election_title: 1, election_description: 1, status: 1, start: 1, end: 1, created: 1, candidates: 1, voters: 1}
         ).then( (el) => { 
+            const voters = el.length === 0 ? [] : el[0].voters 
+            if(voters.length !== 0){
+                for(let i = 0; i < voters.length; i++){
+                    if(myid.toString() === voters[i].id.toString()){
+                        voter_data = voters[i]
+                        break
+                    }
+                }
+            }
             req.session.electionID = el.length === 0 ? '' : el[0]._id
             const data = el.length === 0 ? '' : el[0]
             const started = moment(data.start).fromNow().search("ago") != -1 ? true : false
@@ -163,7 +174,9 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                 election: el.length === 0 ? null : el[0], 
                 started: started,
                 end: end, 
-                endtime: moment(data.end).fromNow()
+                endtime: moment(data.end).fromNow(), 
+                voterStatus: voter_data,
+                csrf: req.csrfToken()
             })
         }).catch( (e) => {
             throw new Error(e)

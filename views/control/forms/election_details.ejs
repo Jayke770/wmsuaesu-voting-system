@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%- csrf %>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" class="theme-color" content="#991b1b">
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
@@ -115,22 +116,63 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="w-full dark:bg-violet-700/50 shadow-md bg-gray-50 rounded-md p-4 transition-all ">
+                            <div class="grid grid-cols-2 transition-all ">
+                                <div class="text flex flex-col ml-3 mt-1 gap-3">
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.positions.length %></div>
+                                    <span class="font-normal text-md tracking-wide dark:text-gray-300">Positions</span>
+                                </div>
+                                <div class="ic flex items-center justify-end">
+                                    <i class="fad fa-list-ol text-6xl text-violet-500 "></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="container mt-6">
+                <% 
+                    function c(val) {
+                        for (let c = 0; c < course.length; c++) {
+                            if (val === course[c].id) {
+                                return course[c].type
+                            }
+                        }
+                    }
+                    function y(val) {
+                        for (let c = 0; c < year.length; c++) {
+                            if (val === year[c].id) {
+                                return year[c].type
+                            }
+                        }
+                    }
+                %>
                 <div class="grid md:flex md:flex-col grid-cols-4 gap-3 xl:grid-cols-3 md:grid-cols-2 xl:gap-4 transition-all">
                     <div class="shadow-md bg-gray-50 dark:bg-emerald-700/50 rounded-md p-3 transition-all">
                         <div class="container flex">
                             <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Eligible Courses</span>
                         </div>
-                        <div class="course p-1 flex flex-wrap gap-2" default='<%- JSON.stringify(course) %>' data="<%- election.courses %>"></div>
+                        <div class="p-1 flex flex-wrap gap-2">
+                            <% const e_crs = election.courses %>
+                            <% for (let i = 0; i < e_crs.length; i++) { %>
+                                <div style="border-color: rgba(126, 34, 206, 1)" class="border p-1 px-3 rounded-full cursor-pointer">
+                                    <span class="text-gray-900 dark:text-gray-300 font-medium"><%- c(e_crs[i]) %></span>
+                                </div> 
+                            <% } %>
+                        </div>
                     </div>
-                    <div class="shadow-md bg-gray-50 dark:bg-amber-700/50 rounded-md p-3 transition-all">
+                    <div class="shadow-md bg-gray-50 dark:bg-pink-700/50 rounded-md p-3 transition-all">
                         <div class="container flex">
                             <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Eligible Year</span>
                         </div>
-                        <div class="year p-1 flex flex-wrap gap-2" default='<%- JSON.stringify(year) %>' data="<%- election.year %>"></div>
+                        <div class="p-1 flex flex-wrap gap-2">
+                            <% const e_yr = election.year %>
+                            <% for (let i = 0; i < e_yr.length; i++) { %>
+                                <div style="border-color: rgba(126, 34, 206, 1)" class="border p-1 px-3 rounded-full cursor-pointer">
+                                    <span class="text-gray-900 dark:text-gray-300 font-medium"><%- y(e_yr[i]) %></span>
+                                </div> 
+                            <% } %>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -138,8 +180,8 @@
                 <%- include('votes-tally', {e_positions: election.positions, positions: positions}) %>
             </div>
         </div>
-        <div class="voters_ fixed justify-center items-center hidden z-40 dark:bg-darkBlue-primary/90 top-0 w-full h-full">
-            <div class="voters_main dark:bg-darkBlue-secondary rounded-lg dark_border w-[80%] h-[90%] sm:w-[95%] sm:h-[95%]" animate-in="animate__animated animate__fadeInUp ms-700" animate-out="animate__animated animate__fadeOutDown ms-500">
+        <div class="voters_ fixed justify-end items-center hidden z-40 dark:bg-darkBlue-primary/60 top-0 w-full h-full p-2">
+            <div class="voters_main dark:bg-darkBlue-secondary rounded-lg dark_border w-96 sm:w-full h-full" animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300">
                 <div class="container px-2">
                     <a class="close_voters rpl float-right rounded-full mt-2  p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600">
                         <i class="fad fa-times-circle"></i>
@@ -156,9 +198,16 @@
                         <span class="text-base dark:text-gray-300 sm:hidden">Pending Voters</span>
                     </a>
                 </div>
-                <div class="acp_voters grid grid-cols-3 xl:grid-cols-2 md:grid-cols-none transition-all gap-3 py-2 px-3 h-[calc(100%-110px)] overflow-y-auto">
+                <div class="flex flex-row w-full">
+                    <form class="search_voter w-full">
+                        <div class="container px-3">
+                            <input type="search" name="text-input" placeholder="Search Voter by ID, Name, Course or Year" class="w-full outline-none dark_border dark:bg-transparent py-2 px-4 dark:text-gray-300 rounded-lg dark:focus:border-purple-700 transition-all">
+                        </div>
+                    </form>
+                </div>
+                <div class="acp_voters pt-5 grid transition-all gap-3 py-2 px-3 h-[calc(100%-150px)] overflow-y-auto">
                     <% for (let i = 0; i < 20; i++) { %>
-                        <div style="animation-delay: <%- i * .150 %>s;" class="animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
+                        <div style="animation-delay: <%- i * .150 %>s;" class="acp_voters_skeleton animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
                             <div class="flex flex-row w-full">
                                 <div class="relative">
                                     <div class="h-[60px] w-[60px] rounded-full object-cover skeleton-image"></div>
@@ -166,8 +215,8 @@
                                 </div>
                                 <div class="grid grid-flow-col flex-[80%]">
                                     <div class="justify-center gap-1 w-full flex flex-col pl-3">
-                                        <span class="text-base dark:text-gray-400 skeleton"></span>
-                                        <span class="text-sm dark:text-gray-400 skeleton"></span>
+                                        <span class="text-base dark:text-gray-400 skeleton w-40"></span>
+                                        <span class="text-sm dark:text-gray-400 skeleton w-32"></span>
                                     </div>
                                     <div class="w-full flex-row justify-end items-center flex">
                                         <a class="skeleton rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-lg dark:text-cyan-600"></a>
@@ -183,6 +232,7 @@
     <script src="/js/theme.js "></script>
     <script src="/js/fetch.js "></script>
     <script src="/js/time.js "></script>
+    <script src="/js/toast.js "></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/control/js/io.js "></script>
     <script src="/control/js/election-details.js"></script>

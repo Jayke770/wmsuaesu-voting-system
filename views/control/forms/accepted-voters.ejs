@@ -1,6 +1,6 @@
 <% if(voters.length !== 0) { 
     for (let i = 0; i < voters.length; i++) { %>
-        <div data="<%- voters[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
+        <div data="<%- voters[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="voters animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
             <div class="flex flex-row w-full">
                 <div class="relative">
                     <img class="h-[60px] w-[60px] rounded-full object-cover" src="/assets/image.jpg" alt="user profile">
@@ -21,7 +21,7 @@
         </div>
     <% }
 } else { %>
-    <div style="animation-delay: .150s;" class="col-span-3 animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
+    <div style="animation-delay: .150s;" class="voters col-span-3 animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
         <div class="flex w-full justify-center items-center">
             <span class="dark:text-gray-300 text-lg">No voters yet</span>
         </div>

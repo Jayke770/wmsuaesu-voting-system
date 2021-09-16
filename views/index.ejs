@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%- csrf %>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#991b1b">
     <meta name="keywords" content="wmsu, online voting system, voting system, wmsu auora, auora, voting">
@@ -35,6 +36,7 @@
                 </div>
                 <div class="flex flex-col gap-2 mt-2">
                     <%- include('election/side_menu', {
+                        voterStatus: voterStatus,
                         election: is_join_election, 
                         id: data._id
                     }) %>
@@ -61,7 +63,11 @@
             </div>
         </div>
     </div>
-    <%- include('election/main', {election: election, is_join_election: is_join_election}) %>
+    <%- include('election/main', {
+        election: election, 
+        is_join_election: is_join_election, 
+        voterStatus: voterStatus
+    }) %>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/index.js"></script>
     <script src="/js/audio.js"></script>

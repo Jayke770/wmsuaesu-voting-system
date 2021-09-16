@@ -7,6 +7,9 @@ async function fetchtimeout(source, options = {}){
     }, timeout)
     const response  = await fetch(source, {
         ...options, 
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
         signal: controller.signal
     })
     clearTimeout(i) 

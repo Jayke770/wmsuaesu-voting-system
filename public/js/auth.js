@@ -1,5 +1,10 @@
 $(document).ready(function () {
-
+    $.ajaxSetup({
+        timeout: 10000,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    })
     //login
     $(".auth_login").submit(function (e) {
         e.preventDefault();
@@ -15,7 +20,6 @@ $(document).ready(function () {
                     url: '/login',
                     method: 'POST',
                     cache: false,
-                    timeout: 10000,
                     contentType: false,
                     processData: false,
                     data: new FormData(this),
@@ -30,7 +34,7 @@ $(document).ready(function () {
                                 willOpen: () => {
                                     Swal.showLoading()
                                     setTimeout( () => {
-                                        window.location.reload(true)
+                                        window.location.assign('')
                                     }, 1000)
                                 }
                             })
@@ -86,7 +90,6 @@ $(document).ready(function () {
                     url: '/verify',
                     method: 'POST', 
                     cache: false, 
-                    timeout: 10000,
                     contentType: false, 
                     processData: false, 
                     data: new FormData(this), 
@@ -247,7 +250,6 @@ $(document).ready(function () {
                     contentType: false,
                     cache: false,
                     processData: false,
-                    timeout: 10000,
                     data: new FormData(this),
                     success: (res) => {
                         if(res.islogin){
