@@ -42,7 +42,9 @@ $(document).ready(() => {
         parent.removeClass("hidden")
         setTimeout(() => {
             child.removeClass(child.attr("animate-in"))
-            voters("/control/elections/accepted-voters/", $("html").attr("data"))
+            if($(this).attr("data") === "voters"){   
+                voters("/control/elections/accepted-voters/", $("html").attr("data"))
+            }
         }, 300)
     })
     $(".e_ac").click( () => {
@@ -86,7 +88,9 @@ $(document).ready(() => {
             $(this).html('<i class="fad animate-spin fa-spinner-third"></i>')
             try {
                 const accept = await fetchtimeout('/control/elections/accept-voter/', {
-                    timeout: 10000, 
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }, 
                     method: 'POST', 
                     body: data
                 })
@@ -135,13 +139,99 @@ $(document).ready(() => {
             })  
         }
     })
+    //add more partylists 
+    let add_pty_e = false
+    $(".partylist_, .close_partylist").click( function(e) {
+        if($(e.target).hasClass("partylist_")){
+            $(".partylist_main").addClass($(".partylist_main").attr("animate-out"))
+            setTimeout(() => {
+                $(".partylist_").addClass("hidden")
+                $(".partylist_").removeClass("flex")
+                $(".partylist_main").removeClass($(".partylist_main").attr("animate-out"))
+            }, 300)
+        }
+    })
+    $(".close_partylist").click( () => {
+        $(".partylist_main").addClass($(".partylist_main").attr("animate-out"))
+        setTimeout(() => {
+            $(".partylist_").addClass("hidden")
+            $(".partylist_").removeClass("flex")
+            $(".partylist_main").removeClass($(".partylist_main").attr("animate-out"))
+        }, 300)
+    })
+    $(".add_pty_e").submit( async function(e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html() 
+        if(!add_pty_e){
+            try {
+                add_pty_e = true
+                $(this).find("button[type='submit']").html('<i class="fad animate-spin fa-spinner-third"></i>')
+                const add = await fetchtimeout('/control/elections/e-add-pty/', {
+                    method: 'POST',
+                    body: new FormData(this), 
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
+                if(add.ok){
+                    const res = await add.json()
+                    if(res.add){
+                        toast.fire({
+                            title: res.msg,
+                            icon: 'success', 
+                            timer: 3000
+                        }).then( () => {
+                            add_pty_e = false
+                            $(this).find("button[type='submit']").html(def)
+                            $(".e_partylist_list").append(`
+                                <div data="partylist-${res.id}" class="animate__animated animate__fadeInUp  dark_border grid grid-cols-2 justify-center items-center dark:bg-darkBlue-secondary shadow-lg dark:text-gray-400 px-3 py-2 rounded-lg">
+                                    <span>${partylist(res.id)}</span>
+                                    <div class="flex justify-end items-center">
+                                        <a data="${res.id}" class="e_remove_partylist rpl rounded-md cursor-pointer text-xl dark:text-red-600">
+                                            <i class="fad fa-times-circle"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            `)
+                        })
+                    } else {
+                        toast.fire({
+                            title: res.msg,
+                            icon: 'info', 
+                            timer: 3000
+                        }).then( () => {
+                            add_pty_e = false
+                            $(this).find("button[type='submit']").html(def)
+                        })
+                    }
+                } else {
+                    throw new Error(`${add.status} ${add.statusText}`)
+                }
+            } catch (e) {
+                add_pty_e = false
+                $(this).find("button[type='submit']").html(def)
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: rgb(225, 29, 72)" class="fad fa-times-circle"></i>
+                            <span>Error : ${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })  
+            }
+        }
+    })
     //functions 
     async function voters(link, id){
         const data = new FormData() 
         data.append("id", id)
         try {
             const ac = await fetchtimeout(link, {
-                timeout: 10000, 
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }, 
                 method: 'POST', 
                 body: data
             })
@@ -164,6 +254,14 @@ $(document).ready(() => {
                 duration: 3000,
                 showAction: false
             })  
+        }
+    }
+    function partylist(id){
+        const pty = JSON.parse($("body").find(".partylist").val())
+        for(let i = 0; i < pty.length; i++){
+            if(id === pty[i].id){
+                return pty[i].type
+            }
         }
     }
 })

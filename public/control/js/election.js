@@ -3,7 +3,7 @@ $(document).ready(() => {
     let req = false, courses = [], year = [], partylist = []
     //set timeout for all ajax requests 
     $.ajaxSetup({
-        timeout: 10000,
+        timeout: 30000,
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }   
@@ -376,7 +376,9 @@ $(document).ready(() => {
     async function elections() {
         try {
             const res = await fetchtimeout('election-list/', {
-                timeout: 10000, 
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 method: 'POST'
             })
             if(res.ok){

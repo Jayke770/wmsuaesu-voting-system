@@ -1,11 +1,11 @@
 <div class="transition-all w-full grid grid-cols-2 xl:grid-cols-1 xl:px-52 lg:px-20 md:px-2 gap-4 place-items-center p-2">
     <% if(elections.length === 0) { %>
         <div class="flex w-full justify-center items-center col-span-2">
-        <div style="animation-delay: .200s;" class="p-2 px-4 w-96 lg:w-full animate__animated animate__fadeInUp cursor-pointer shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-xl transition-all">
-            <div class="flex flex-col gap-4 py-3">
-                <p class="font-semibold text-center py-3 text-xl dark:text-gray-300">Nothing to fetch</p>
+            <div style="animation-delay: .200s;" class="p-2 px-4 w-96 lg:w-full animate__animated animate__fadeInUp cursor-pointer shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-xl transition-all">
+                <div class="flex flex-col gap-4 py-3">
+                    <p class="font-semibold text-center py-3 text-xl dark:text-gray-300">Nothing to fetch</p>
+                </div>
             </div>
-        </div>
         </div>
     <% } else { %>
         <% elections.forEach((election, i) => { %>
@@ -26,7 +26,7 @@
                     </div>
                     <div class="container mt-8 justify-center flex flex-row ">
                         <a class="more_e_settings rpl rpl-h dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-300 transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-purple-500"
-                        href="/control/elections/id/<%- election._id %>/<%- home ? 'home': 'elections_home' %>">More Details</a>
+                        href="/control/elections/id/<%- election._id %>/elections_home">More Details</a>
                     </div>
                 </div>
             </div>

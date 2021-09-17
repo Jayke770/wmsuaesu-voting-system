@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $.ajaxSetup({
-        timeout: 10000,
+        timeout: 30000,
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }

@@ -27,26 +27,29 @@
                 <div class="flex flex-row justify-end items-center gap-2 px-2">
                     <select name="sort"
                         class="sort_voter_id dark_border border focus:border-purple-500 dark:focus:border-purple-500 rounded-md dark:bg-transparent dark:focus:bg-darkBlue-secondary outline-none dark:text-gray-300 dark:border-gray-600 transition-all border-gray-50 bg-gray-200 focus:ring-opacity-50 w-40 md:w-full p-[10px] py-2">
-                        <option value="" class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">-
-                            Sort by</option>
-                        <option value="default">Default</option>
-                        <option value="used">Used</option>
-                        <option value="not used">Not Used</option>
-                        <option value="" class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">-
-                            Sort by course</option>
-                        <% if(course.length !=0) { for(let i=0; i < course.length; i++) { %>
-                            <option value='<%- JSON.stringify({course: course[i].id}) %>'>
-                                <%- course[i].type %>
-                            </option>
-                            <% } } %>
-                                <option value=""
-                                    class="dark:bg-yellow-900 bg-yellow-500 text-gray-900 dark:text-truegray-200">- Sort
-                                    by year</option>
-                                <% if(year.length !=0) { for(let i=0; i < year.length; i++) { %>
+                        <optgroup label="Sort by">
+                            <option value="default">Default</option>
+                            <option value="used">Used</option>
+                            <option value="not used">Not Used</option>
+                        </optgroup>
+                        <optgroup label="Sort by course">
+                            <% if(course.length !=0){ %> 
+                                <% for(let i=0; i < course.length; i++) { %>
+                                    <option value='<%- JSON.stringify({course: course[i].id}) %>'>
+                                        <%- course[i].type %>
+                                    </option>
+                                <% } 
+                            } %>
+                        </optgroup>
+                        <optgroup label="Sort by year">
+                            <% if(year.length !=0) { %> 
+                                <% for(let i=0; i < year.length; i++) { %>
                                     <option value='<%- JSON.stringify({year: year[i].id}) %>'>
                                         <%- year[i].type %>
                                     </option>
-                                    <% } } %>
+                                <% } 
+                            } %>
+                        </optgroup>
                     </select>
                     <div class="btn flex items-center">
                         <button

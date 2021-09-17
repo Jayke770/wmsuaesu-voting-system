@@ -35,10 +35,13 @@
                         </i>
                     </div>
                     <div class="center_btns flex flex-row items-center justify-center mr-2 border-red-800 border-r-2 xl:pb-3 xl:border-r-0 xl:border-b-2 xl:flex xl:flex-col xl:w-full xl:gap-2 xl:justify-start xl:items-start xl:px-2 xl:mt-4 transition-all">
-                        <a data="election_details" class="election_btn rpl nav_btn dark:text-gray-300">Home</a>
-                        <a data="voters" class="election_btn rpl nav_btn dark:text-gray-300">Voters</a>
+                        <a data="voters" class="election_btn relative rpl nav_btn dark:text-gray-300">Voters
+                            <% if(pending !== 0){ %>
+                                <div class="e_pend_count absolute right-[-2px] top-[-2px] dark:bg-purple-700 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending %></div>
+                            <% } %>
+                        </a>
                         <a class="election_btn rpl nav_btn dark:text-gray-300">Candidates</a>
-                        <a class="election_btn rpl nav_btn dark:text-gray-300">Partylist</a>
+                        <a data="partylist" class="election_btn rpl nav_btn dark:text-gray-300">Partylist</a>
                         <a class="election_btn rpl nav_btn dark:text-gray-300">Results</a>
                         <a class="election_btn e_settings rpl nav_btn dark:text-gray-300">Settings</a>
                     </div>
@@ -72,10 +75,10 @@
                 </div>
                 <div class="container mt-6">
                     <div class="gap-3 grid grid-cols-4 xl:gap-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all ">
-                        <div class="cursor-pointer w-full  dark:bg-green-700/50 shadow-md bg-gray-50 rounded-md p-4 transition-all ">
+                        <div data="voters" class="election_btn cursor-pointer w-full rpl dark:bg-green-700/50 shadow-md bg-gray-50 rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.voters.length %></div>
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- accepted %></div>
                                     <span class="font-normal text-sm tracking-wide dark:text-gray-300">No. of Voters</span>
                                 </div>
                                 <div class="ic flex items-center w-full justify-end">
@@ -83,11 +86,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="cursor-pointer w-full  dark:bg-yellow-700/50 shadow-md bg-gray-50 rounded-md p-4 transition-all ">
+                        <div data="partylist" class="election_btn cursor-pointer w-full rpl dark:bg-yellow-700/50 shadow-md bg-gray-50 rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">  
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
                                     <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.partylist.length %></div>
-                                    <span class="font-normal text-sm tracking-wide dark:text-gray-300">Partylist</span>
+                                    <span class="font-normal text-sm tracking-wide dark:text-gray-300">No. of Partylist</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
                                     <i class="fad fa-balance-scale text-6xl text-yellow-500"></i>
@@ -98,7 +101,7 @@
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
                                     <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.candidates.length %></div>
-                                    <span class="font-normal text-md tracking-wide dark:text-gray-300">Candidates</span>
+                                    <span class="font-normal text-md tracking-wide dark:text-gray-300">No. of Candidates</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
                                     <i class="fad fa-poll-people text-6xl text-purple-500 "></i>
@@ -109,7 +112,7 @@
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
                                     <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.candidates.length %></div>
-                                    <span class="font-normal text-md tracking-wide dark:text-gray-300">Voted</span>
+                                    <span class="font-normal text-md tracking-wide dark:text-gray-300">Voters voted</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
                                     <i class="fad fa-edit text-6xl text-rose-500 "></i>
@@ -120,7 +123,7 @@
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
                                     <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.positions.length %></div>
-                                    <span class="font-normal text-md tracking-wide dark:text-gray-300">Positions</span>
+                                    <span class="font-normal text-md tracking-wide dark:text-gray-300">No. of Positions</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
                                     <i class="fad fa-list-ol text-6xl text-violet-500 "></i>
@@ -180,54 +183,10 @@
                 <%- include('votes-tally', {e_positions: election.positions, positions: positions}) %>
             </div>
         </div>
-        <div class="voters_ fixed justify-end items-center hidden z-40 dark:bg-darkBlue-primary/60 top-0 w-full h-full p-2">
-            <div class="voters_main dark:bg-darkBlue-secondary rounded-lg dark_border w-96 sm:w-full h-full" animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300">
-                <div class="container px-2">
-                    <a class="close_voters rpl float-right rounded-full mt-2  p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600">
-                        <i class="fad fa-times-circle"></i>
-                    </a>
-                    <h1 class="font-bold dark:text-purple-500 text-2xl p-2">Voters</h1>
-                </div>
-                <div class="grid gap-2 grid-cols-2 py-2 px-3">
-                    <a class="e_ac rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-teal-600">
-                        <i class="fad fa-user-check"></i>
-                        <span class="text-base dark:text-gray-300 sm:hidden">Accepted Voters</span>
-                    </a>
-                    <a class="e_pend rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-amber-600">
-                        <i class="fad fa-users"></i>
-                        <span class="text-base dark:text-gray-300 sm:hidden">Pending Voters</span>
-                    </a>
-                </div>
-                <div class="flex flex-row w-full">
-                    <form class="search_voter w-full">
-                        <div class="container px-3">
-                            <input type="search" name="text-input" placeholder="Search Voter by ID, Name, Course or Year" class="w-full outline-none dark_border dark:bg-transparent py-2 px-4 dark:text-gray-300 rounded-lg dark:focus:border-purple-700 transition-all">
-                        </div>
-                    </form>
-                </div>
-                <div class="acp_voters pt-5 grid transition-all gap-3 py-2 px-3 h-[calc(100%-150px)] overflow-y-auto">
-                    <% for (let i = 0; i < 20; i++) { %>
-                        <div style="animation-delay: <%- i * .150 %>s;" class="acp_voters_skeleton animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
-                            <div class="flex flex-row w-full">
-                                <div class="relative">
-                                    <div class="h-[60px] w-[60px] rounded-full object-cover skeleton-image"></div>
-                                    <div class="absolute h-[15px] w-[15px] rounded-full skeleton right-[1px] bottom-1"></div>
-                                </div>
-                                <div class="grid grid-flow-col flex-[80%]">
-                                    <div class="justify-center gap-1 w-full flex flex-col pl-3">
-                                        <span class="text-base dark:text-gray-400 skeleton w-40"></span>
-                                        <span class="text-sm dark:text-gray-400 skeleton w-32"></span>
-                                    </div>
-                                    <div class="w-full flex-row justify-end items-center flex">
-                                        <a class="skeleton rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-lg dark:text-cyan-600"></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <% } %>
-                </div>
-            </div>
-        </div>
+        <!-- election voters -->
+        <%- include('election_voters', {pending: pending}) %>
+         <!-- election partylist -->
+         <%- include('election_partylist', {election_partylist: election.partylist, partylists: partylist}) %>
     </div>
     <script src="/js/theme.js "></script>
     <script src="/js/fetch.js "></script>

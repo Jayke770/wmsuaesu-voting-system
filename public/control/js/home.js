@@ -9,7 +9,7 @@ $(document).ready(() => {
     $(".open_nav").click(function () {
         const nav = $(".nav")
         nav.addClass(nav.attr("animate-in"))
-        nav.removeClass("my:hidden")
+        nav.removeClass("xl:hidden")
         setTimeout(() => {
             nav.removeClass(nav.attr("animate-in"))
         }, 300)
@@ -18,7 +18,7 @@ $(document).ready(() => {
         const nav = $(".nav")
         nav.addClass(nav.attr("animate-out"))
         setTimeout(() => {
-            nav.addClass("my:hidden")
+            nav.addClass("xl:hidden")
             nav.removeClass(nav.attr("animate-out"))
         }, 300)
     })

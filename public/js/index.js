@@ -62,7 +62,9 @@ $(document).ready( () => {
                             Swal.showLoading()
                             try {
                                 const join = await fetchtimeout('join-election/', {
-                                    timeout: 10000, 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    },
                                     method: 'POST', 
                                     body: data
                                 })
@@ -132,7 +134,9 @@ $(document).ready( () => {
                         Swal.showLoading() 
                         try {
                             const leave = await fetchtimeout('/leave-election', {
-                                timeout: 10000, 
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                }, 
                                 method: 'POST'
                             })
                             if(leave.ok){

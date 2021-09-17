@@ -229,12 +229,13 @@ adminrouter.post('/control/elections/election-list/', limit, isadmin, async (req
 //get elections by id
 adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, res) => {
     const id = req.params.id, from = req.params.from
-    let crs, yr, pos
+    let crs, yr, pos, pty, pending = 0, accepted = 0
     try {
-        await data.find({}, {course: 1, year:1, positions: 1}).then( (cy) => {
+        await data.find({}, {course: 1, year:1, positions: 1, partylists: 1}).then( (cy) => {
             crs = cy.length === 0 ? [] : cy[0].course
             yr = cy.length === 0 ? [] : cy[0].year
             pos = cy.length === 0 ? [] : cy[0].positions
+            pty = cy.length === 0 ? [] : cy[0].partylists
         }).catch( (e) => {
             throw new Error(e)
         })
@@ -245,6 +246,15 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             const end = moment(e_data.end).fromNow().search("ago") != -1 ? true : false
             //save election id to session 
             req.session.currentElection = xs(id)
+            //get all the pending voters 
+            for(let i = 0; i < e_data.voters.length; i++){
+                if(e_data.voters[i].status === 'Pending'){
+                    pending += 1 
+                }
+                if(e_data.voters[i].status === 'Accepted'){
+                    accepted += 1 
+                }
+            }
             return res.render("control/forms/election_details", {
                 election: elecs.length === 0 ? '' : elecs[0], 
                 started: started, 
@@ -252,6 +262,9 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
                 course: crs, 
                 year: yr,
                 positions: pos,
+                partylist: pty,
+                pending: pending,
+                accepted: accepted,
                 endtime: moment(data.end).fromNow(),
                 link: xs(from) === "home" ? '/control/' : '/control/elections/',
                 csrf: req.csrfToken()
@@ -260,7 +273,6 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -303,7 +315,7 @@ adminrouter.post("/control/elections/pending-voters/", limit, isadmin, async (re
     }
 })
 //accept pending voters 
-adminrouter.post('/control/elections/accept-voter', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/accept-voter/', limit, isadmin, async (req, res) => {
     const {id} = req.body 
     const electionID = req.session.currentElection 
     try {
@@ -339,6 +351,48 @@ adminrouter.post('/control/elections/accept-voter', limit, isadmin, async (req, 
         })
     } catch (e) {
         console.log(e.message)
+        return res.status(500).send()
+    }
+})
+//add partylist in election 
+adminrouter.post('/control/elections/e-add-pty/', limit, isadmin, async (req, res) => {
+    const {pty} = req.body 
+    const electionID = req.session.currentElection  
+    let is_exists = false
+    try {
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }, {partylist: 1}).then( async (e_pty) => {
+            const p = e_pty.length === 0 ? [] : e_pty[0].partylist 
+            for(let i = 0; i < p.length; i++){
+                if(pty === p[i]){
+                    is_exists = true 
+                    break
+                }
+            }
+            if(is_exists){
+                return res.send({
+                    add: false, 
+                    msg: 'Partylist already exists'
+                })
+            } else {
+                await election.updateOne({
+                    _id: {$eq: xs(electionID)}
+                }, {$push: {partylist: xs(pty)}}).then( (ad) => {
+                    return res.send({
+                        add: true, 
+                        msg: 'Partylist added successfully', 
+                        id: xs(pty)
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })

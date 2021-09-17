@@ -381,6 +381,7 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
         course: '', 
         year: '',
         status: 'Pending',
+        voted: false,
         created: moment().format()
     } 
     try {

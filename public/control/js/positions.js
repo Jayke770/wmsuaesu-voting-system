@@ -2,7 +2,7 @@
 $(document).ready(function () {
     //set timeout for all ajax requests 
     $.ajaxSetup({
-        timeout: 10000,
+        timeout: 30000,
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
@@ -23,7 +23,9 @@ $(document).ready(function () {
     async function pos_all(){
         try {
             const res = await fetchtimeout('pos/', {
-                timeout: 10000, 
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 method: 'POST'
             })
             if(res.ok){
