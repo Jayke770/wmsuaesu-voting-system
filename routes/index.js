@@ -373,10 +373,11 @@ router.post('/register', async (req, res) => {
 router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
     const { code } = req.body
     const id = req.session.myid
-    const {firstname, middlename, lastname, course, year} = req.session.data
+    const {firstname, middlename, lastname, course, year, student_id} = req.session.data
     let electionID, joined = false, e_title
     let new_voter = {
         id: id, 
+        student_id: student_id,
         fullname: `${firstname} ${middlename} ${lastname}`,
         course: '', 
         year: '',

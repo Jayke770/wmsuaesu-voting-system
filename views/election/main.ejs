@@ -2,11 +2,11 @@
     <div class="pt-16 w-full h-screen">
         <div class="p-1 grid grid-rows-3 w-full h-full">
             <div class="flex flex-col gap-3 justify-center items-center">
-                <div style="animation-delay: .150s;" class="dark:text-purple-600 text-6xl font-bold text-center sm:text-3xl animate__animated animate__fadeInUp"><%- election.election_title %></div>
-                <div style="animation-delay: .650s;" class="dark:text-purple-400 text-base animate__animated animate__fadeInDown"><%- election.election_description %></div>
+                <div style="animation-delay: .150s;" class="dark:text-purple-600 text-purple-700 text-6xl font-bold text-center sm:text-3xl animate__animated animate__fadeInUp"><%- election.election_title %></div>
+                <div style="animation-delay: .650s;" class="dark:text-purple-400 text-purple-500 text-base animate__animated animate__fadeInDown"><%- election.election_description %></div>
             </div>
             <div class="mt-5 flex flex-col justify-center items-center">
-                <p style="animation-delay: .150s;" class="dark:text-purple-600 text-xl font-semibold animate__animated animate__fadeInUp">
+                <p style="animation-delay: .150s;" class="dark:text-purple-600 text-purple-700 text-xl font-semibold animate__animated animate__fadeInUp">
                     <%- started && !end ? 'Election will end in' : started && end ? `Election ended ${endtime}` : `Election will begin in` %>
                 </p>
                 <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInUp" data="<%- election.start %>"></div>
@@ -15,9 +15,9 @@
                 <div class="flex flex-row gap-2 items-center justify-center">
                     <span class="dark:text-gray-400">Request Status : </span>
                     <% if(voterStatus.status === 'Pending') { %>
-                        <span class="dark:bg-amber-700/50 dark:text-amber-500 px-3 p-y-2 rounded-lg animate-pulse"><%- voterStatus.status %></span>
+                        <span class="dark:bg-amber-700/50 bg-amber-600 dark:text-amber-500 px-3 p-y-2 rounded-lg animate-pulse"><%- voterStatus.status %></span>
                     <% } else if(voterStatus.status === 'Accepted') { %>
-                        <span class="dark:bg-teal-700/50 dark:text-teal-500 px-3 p-y-2 rounded-lg"><%- voterStatus.status %></span>
+                        <span class="dark:bg-teal-700/50 bg-teal-600 dark:text-teal-500 px-3 p-y-2 rounded-lg"><%- voterStatus.status %></span>
                     <% } %>
                 </div>
             </div>

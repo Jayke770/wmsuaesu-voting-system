@@ -1,0 +1,40 @@
+<% 
+    const data = {
+        pos: (val) => {
+            for(let i = 0; i < positions.length; i++){
+                if(val === positions[i].id){
+                    return positions[i].type
+                }
+            }
+        }
+    }
+%>
+<div class="positions_ fixed top-0 z-30 bg-darkBlue-primary/60 w-full h-full p-2 hidden justify-end items-center">
+    <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="positions_main h-full w-96 sm:w-full dark_border dark:bg-darkBlue-secondary bg-gray-100 rounded-lg">
+        <div class="w-full py-[10px] px-2 dark_border_b">
+            <a class="close_positions rpl float-right rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600 text-rose-700">
+                <i class="fad fa-times-circle"></i>
+            </a>
+            <span class="font-bold dark:text-purple-500 text-purple-700 text-2xl p-1 pl-2">Positions</span>
+        </div>
+        <div class="flex flex-col h-[calc(100%-53px)]">
+            <div class="flex-row flex p-2 mt-1">
+                <select class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+                    <option value="">Add positions</option>
+                </select>
+            </div>
+            <div class="px-3 h-full flex flex-col gap-3 py-3 overflow-y-auto">
+                <% for (let i = 0; i < e_positions.length; i++) { %>
+                    <div style="animation-delay: <%- i * .150 %>s;" data="position-<%- e_positions[i].id %>" class="rpl cursor-pointer animate__animated animate__fadeInUp dark_border grid grid-cols-2 justify-center items-center dark:bg-darkBlue-secondary shadow-lg dark:text-gray-400 px-3 py-2 rounded-lg">
+                        <span><%- data.pos(e_positions[i].id) %></span>
+                        <div class="flex justify-end items-center">
+                            <a data="<%- e_positions[i].id %>" class="rpl rounded-md cursor-pointer text-xl dark:text-red-600 text-red-500">
+                                <i class="fad fa-times-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>

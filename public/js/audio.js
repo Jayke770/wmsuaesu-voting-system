@@ -1,9 +1,8 @@
 function nty() {
     const nty = localStorage.getItem('nty')
-    $("body").click()
     var sound = new Howl({
         src: [nty],
-        volume: 1
+        volume: 0.1
     })
     sound.play()
 }
@@ -15,11 +14,11 @@ function sent() {
     })
     sound.play()
 }
-function new_() {
+function new_(vol) {
     const msg  = localStorage.getItem('msg')
     var sound = new Howl({
         src: [msg], 
-        volume: 1
+        volume: vol
     })
     sound.play()
 }

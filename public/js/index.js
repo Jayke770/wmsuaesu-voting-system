@@ -38,6 +38,7 @@ $(document).ready( () => {
             icon: 'question',
             title: 'Enter election passcode',  
             backdrop: true, 
+            confirmButtonText: 'Join',
             allowOutsideClick: false, 
             input: 'text',
             inputPlaceholder: 'Passcode',
@@ -47,7 +48,8 @@ $(document).ready( () => {
                 autocomplete: 'off',
                 required: 'true'
             },
-            showCancelButton: true,
+            showDenyButton: true,
+            denyButtonText: 'Cancel',
             inputValidator: (val) => {
                 if(val){
                     data.append("code", val)

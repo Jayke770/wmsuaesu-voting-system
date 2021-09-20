@@ -1,34 +1,40 @@
-<div class="voters_ fixed justify-end items-center hidden z-40 dark:bg-darkBlue-primary/60 top-0 w-full h-full p-2">
-    <div class="voters_main dark:bg-darkBlue-secondary rounded-lg dark_border w-96 sm:w-full h-full" animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300">
+<div class="voters_ fixed justify-end items-center hidden z-40 bg-darkBlue-primary/60  top-0 w-full h-full p-2">
+    <div class="voters_main dark:bg-darkBlue-secondary bg-gray-100 rounded-lg dark_border w-96 sm:w-full h-full" animate-in="animate__animated animate__fadeInRight ms-500" animate-out="animate__animated animate__fadeOutRight ms-500">
         <div class="container px-2 dark_border_b py-[10px]">
-            <a class="close_voters rpl float-right rounded-full mt-2  p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600">
+            <a class="close_voters rpl float-right rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600 text-rose-700">
                 <i class="fad fa-times-circle"></i>
             </a>
-            <h1 class="font-bold dark:text-purple-500 text-2xl p-2">Voters</h1>
+            <span class="font-bold dark:text-purple-500 text-purple-700 text-2xl p-1 pl-2">Voters</span>
         </div>
         <div class="grid gap-2 grid-cols-2 py-2 px-3">
-            <a class="e_ac rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-teal-600">
+            <a class="e_ac rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-teal-600 text-teal-500">
                 <i class="fad fa-user-check"></i>
-                <span class="text-base dark:text-gray-300 sm:hidden">Accepted Voters</span>
+                <span class="text-base dark:text-gray-300 text-bluegray-900 sm:hidden">Accepted Voters</span>
             </a>
-            <a class="e_pend relative rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-amber-600">
+            <a class="e_pend relative rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-amber-600 text-amber-500">
                 <i class="fad fa-users"></i>
-                <span class="text-base dark:text-gray-300 sm:hidden">Pending Voters</span>
+                <span class="text-base dark:text-gray-300 text-bluegray-900 sm:hidden">Pending Voters</span>
                 <% if(pending !== 0){ %>
-                    <div class="e_pend_count absolute right-0 top-[-2px] dark:bg-purple-700 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending %></div>
+                    <div class="e_pend_count absolute right-0 top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending %></div>
                 <% } %>
             </a>
         </div>
         <div class="flex flex-row w-full">
-            <form class="search_voter w-full">
-                <div class="container px-3">
-                    <input type="search" name="text-input" placeholder="Search Voter by ID, Name, Course or Year" class="w-full outline-none dark_border dark:bg-transparent py-2 px-4 dark:text-gray-300 rounded-lg dark:focus:border-purple-700 transition-all">
+            <div class="w-full">
+                <div class="container px-3 flex flex-row">
+                    <select class="search-voter-by dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg rounded-r-none focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+                        <option selected value="sid">Student ID</option>
+                        <option value="name">Name</option>
+                        <option value="course">Course</option>
+                        <option value="year">Year</option>
+                    </select>
+                    <input type="search" placeholder="Search" class="search-voter w-full outline-none dark_border dark:bg-transparent py-2 px-4 dark:text-gray-300 rounded-lg rounded-l-none focus:border-purple-500 dark:focus:border-purple-700 transition-all">
                 </div>
-            </form>
+            </div>
         </div>
-        <div class="acp_voters pt-5 grid transition-all gap-3 py-2 px-3 h-[calc(100%-150px)] overflow-y-auto">
+        <div class="acp_voters pt-5 flex flex-col transition-all gap-3 py-2 px-3 h-[calc(100%-175px)] overflow-y-auto">
             <% for (let i = 0; i < 20; i++) { %>
-                <div style="animation-delay: <%- i * .150 %>s;" class="acp_voters_skeleton animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
+                <div style="animation-delay: <%- i * .250 %>s;" class="acp_voters_skeleton animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
                     <div class="flex flex-row w-full">
                         <div class="relative">
                             <div class="h-[60px] w-[60px] rounded-full object-cover skeleton-image"></div>

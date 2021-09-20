@@ -12,6 +12,8 @@ const { v4: uuid } = require('uuid')
 const moment = require('moment')
 /*##################################################################################### */
 adminrouter.get('/control',limit, isadmin, async (req, res) => {
+    //delete the current election session 
+    delete req.session.currentElection 
     try {
         let elections
         //get all elections 
@@ -27,6 +29,8 @@ adminrouter.get('/control',limit, isadmin, async (req, res) => {
 })
 //elections
 adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
+    //delete the current election session 
+    delete req.session.currentElection 
     try {
         //get all courses, positions, & partylist 
         data.find({}, {positions: 1, course: 1, year: 1, partylists: 1}).then( (d) => {
@@ -281,11 +285,17 @@ adminrouter.post("/control/elections/accepted-voters/", limit, isadmin, async (r
     const {id} = req.body 
     try {
         await election.find({
-            _id: {$eq: xs(id)}, 
-            "voters.status": {$eq: "Accepted"}
+            _id: {$eq: xs(id)}
         }, {voters: 1}).then( (elecs) => {
+            const e_voters = elecs.length === 0 ? [] : elecs[0].voters
+            let voters = []
+            for(let i = 0; i < e_voters.length; i++){
+                if(e_voters[i].status === 'Accepted'){
+                    voters.push(e_voters[i])
+                }
+            }
             return res.render("control/forms/accepted-voters", {
-                voters: elecs.length === 0 ? [] : elecs[0].voters
+                voters: voters
             })
         }).catch( (e) => {
             throw new Error(e)
@@ -300,11 +310,17 @@ adminrouter.post("/control/elections/pending-voters/", limit, isadmin, async (re
     const {id} = req.body 
     try {
         await election.find({
-            _id: {$eq: xs(id)}, 
-            "voters.status": {$eq: "Pending"}
+            _id: {$eq: xs(id)}
         }, {voters: 1}).then( (elecs) => {
+            const e_voters = elecs.length === 0 ? [] : elecs[0].voters
+            let voters = []
+            for(let i = 0; i < e_voters.length; i++){
+                if(e_voters[i].status === 'Pending'){
+                    voters.push(e_voters[i])
+                }
+            }
             return res.render("control/forms/pending-voters", {
-                voters: elecs.length === 0 ? [] : elecs[0].voters
+                voters: voters
             })
         }).catch( (e) => {
             throw new Error(e)
@@ -394,6 +410,79 @@ adminrouter.post('/control/elections/e-add-pty/', limit, isadmin, async (req, re
     } catch (e) {
         console.log(e)
         return res.status(500).send()
+    }
+})
+//remove partylist in election 
+adminrouter.post('/control/elections/e-remove-partylist/', limit, isadmin, async (req, res) => {
+    const {pty} = req.body 
+    const electionID = req.session.currentElection 
+    let pty_found = false
+    try {
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }, {partylist: 1}).then( async (el) => {
+            const e_data = el.length === 0 ? [] : el[0].partylist 
+            for(let i = 0; i < e_data.length; i++){
+                if(pty === e_data[i]){
+                    pty_found = true 
+                    break
+                }
+            }
+            if(pty_found){
+                //remove partylist from election
+                await election.updateOne({
+                    _id: {$eq: xs(electionID)}
+                }, {$pull: {partylist: xs(pty)}}).then( (p) => {
+                    return res.send({
+                        removed: true, 
+                        msg: 'Successfully removed'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    removed: false, 
+                    msg: 'Something went wrong'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//search voter in election 
+adminrouter.post('/control/elections/search-voter/', limit, isadmin, async (req, res) => {
+    const {search, search_by} = req.body 
+    const electionID = req.session.currentElection
+    console.log(search, search_by)
+    if(search !== '' && search_by !== ''){
+        try {
+            if(search_by === 'sid'){
+                console.log('fa')
+                await election.find({
+                    _id: {$eq: xs(electionID)}, 
+                    voters: { $elemMatch: { student_id: {$regex: '^' + xs(search), $options: 'm'}}}
+                }, { voters: { $elemMatch: { student_id: {$regex: '^' + xs(search), $options: 'm'}}}}).then( (v) => {
+                    console.log(v[0])
+                    return res.send({
+                        d: 'f'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    } else {
+        console.log('empty')
+        return res.send({
+            f: 'fasf'
+        })
     }
 })
 /*##################################################################################### */

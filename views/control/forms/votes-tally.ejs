@@ -14,9 +14,9 @@
     <div class="grid grid-cols-2 gap-3 md:grid-cols-none transition-all">
         <% if(e_positions.length !== 0){ %>
             <% for (let i = 0; i < e_positions.length; i++) { %>
-                <div class="w-full dark:bg-darkBlue-secondary shadow-md bg-gray-50 rounded-md  transition-all">
+                <div class="w-full dark:bg-darkBlue-secondary shadow-md bg-gray-200 rounded-md  transition-all">
                     <div class="p-2">
-                        <span class="p-2 dark:text-gray-300 text-xl"><%- pos(e_positions[i].id) %></span>
+                        <span class="p-2 dark:text-gray-300 text-purple-700 text-xl"><%- pos(e_positions[i].id) %></span>
                     </div>
                     <div class="container p-1">
                         <canvas id="<%- `chart-${i}-${e_positions[i].id}` %>"></canvas>

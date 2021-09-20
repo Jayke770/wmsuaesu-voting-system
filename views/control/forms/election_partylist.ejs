@@ -8,22 +8,22 @@
         }
     }
 %> 
-<div class="partylist_ fixed top-0 z-30 w-full h-full dark:bg-darkBlue-primary/50 hidden items-center justify-end p-2">
+<div class="partylist_ fixed top-0 z-30 w-full h-full bg-darkBlue-primary/50 hidden items-center justify-end p-2">
     <input type="hidden" class="partylist" value='<%- JSON.stringify(partylists) %>'>
-    <div class="partylist_main dark_border h-full w-96 dark:bg-darkBlue-secondary rounded-lg" animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300">
+    <div class="partylist_main dark_border h-full w-96 sm:w-full dark:bg-darkBlue-secondary bg-gray-100 rounded-lg" animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300">
         <div class="dark_border_b p-2 py-3">
-            <a class="close_partylist rpl float-right rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600">
+            <a class="close_partylist rpl float-right rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600 text-rose-500">
                 <i class="fad fa-times-circle"></i>
             </a>
-            <span class="dark:text-purple-600 font-bold text-2xl ml-2">Partylist</span>
+            <span class="dark:text-purple-600 text-purple-700 font-bold text-2xl ml-2">Partylist</span>
         </div>
         <div class="h-[calc(100%-57px)] flex flex-col">
             <div class="flex-[80%] flex p-2 gap-3 flex-col pt-5 e_partylist_list">
                 <% for (let p = 0; p < election_partylist.length; p++) { %>
-                    <div style="animation-delay: <%- p * .150 %>s;" data="partylist-<%- election_partylist[p] %>" class="animate__animated animate__fadeInUp dark_border grid grid-cols-2 justify-center items-center dark:bg-darkBlue-secondary shadow-lg dark:text-gray-400 px-3 py-2 rounded-lg">
+                    <div style="animation-delay: <%- p * .150 %>s;" data="partylist-<%- election_partylist[p] %>" class="rpl animate__animated animate__fadeInUp dark_border grid grid-cols-2 justify-center items-center dark:bg-darkBlue-secondary shadow-lg dark:text-gray-400 px-3 py-2 rounded-lg">
                         <span><%- partylist(election_partylist[p]) %></span>
                         <div class="flex justify-end items-center">
-                            <a data="<%- election_partylist[p] %>" class="e_remove_partylistrpl rounded-md cursor-pointer text-xl dark:text-red-600">
+                            <a data="<%- election_partylist[p] %>" class="e_remove_partylist rpl rounded-md cursor-pointer text-xl dark:text-red-600 text-red-500">
                                 <i class="fad fa-times-circle"></i>
                             </a>
                         </div>
@@ -37,7 +37,7 @@
                         <option value="<%- partylists[i].id %>"><%- partylists[i].type %></option>
                     <% } %>
                 </select>
-                <button type="submit" class="ml-2 px-3 rounded-md ring-0 border-0 outline-none transition-all dark:text-green-500 text-xl">
+                <button type="submit" class="ml-2 px-3 rounded-md ring-0 border-0 outline-none transition-all dark:text-green-500 text-green-600 text-xl">
                     <i class="fad fa-check-circle"></i>
                 </button>
             </form>

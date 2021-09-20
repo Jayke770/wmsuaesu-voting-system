@@ -5,13 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="<%- csrf %>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" class="theme-color" content="#991b1b">
+    <meta name="theme-color" class="theme-color" content="#6b21a8">
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
     <title><%- election.election_title %></title>
     <%- include('../cdn/_home') %>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <script>
+        document.onreadystatechange = () => {
+            setTimeout( () => {
+                $("body").removeClass("hidden")
+            }, 1000)
+        }
+    </script>
 </head>
-<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all hidden antialiased">
     <div class="election_details">
         <div class="header fixed top-0 z-30 w-full flex flex-row p-1 items-center bg-gray-50 dark:bg-[#161b22] shadow-md">
             <div class="flex-[20%] xl:flex-[50%] md:flex-[80%]">
@@ -37,13 +44,14 @@
                     <div class="center_btns flex flex-row items-center justify-center mr-2 border-red-800 border-r-2 xl:pb-3 xl:border-r-0 xl:border-b-2 xl:flex xl:flex-col xl:w-full xl:gap-2 xl:justify-start xl:items-start xl:px-2 xl:mt-4 transition-all">
                         <a data="voters" class="election_btn relative rpl nav_btn dark:text-gray-300">Voters
                             <% if(pending !== 0){ %>
-                                <div class="e_pend_count absolute right-[-2px] top-[-2px] dark:bg-purple-700 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending %></div>
+                                <div class="e_pend_count absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending %></div>
                             <% } %>
                         </a>
-                        <a class="election_btn rpl nav_btn dark:text-gray-300">Candidates</a>
+                        <a data="candidates" class="election_btn rpl nav_btn dark:text-gray-300">Candidates</a>
                         <a data="partylist" class="election_btn rpl nav_btn dark:text-gray-300">Partylist</a>
+                        <a data="positions" class="election_btn rpl nav_btn dark:text-gray-300">Positions</a>
                         <a class="election_btn rpl nav_btn dark:text-gray-300">Results</a>
-                        <a class="election_btn e_settings rpl nav_btn dark:text-gray-300">Settings</a>
+                        <a data="settings" class="election_btn rpl nav_btn dark:text-gray-300">Settings</a>
                     </div>
                     <div class="xl:flex xl:justify-center xl:w-full xl:h-full xl:items-end xl:pb-2">
                         <div class="flex flex-row items-center justify-center mr-1">
@@ -56,10 +64,10 @@
         </div>
         <div class="e_main_content w-full px-2 py-1 mt-16 transition-all">
             <div class="container">
-                <div class="flex justify-center transition-all">
-                    <div class="shadow-md bg-gray-50 dark:bg-[#161b22] rounded-md p-3 transition-all gap-2 flex flex-col">
+                <div class="flex md:block justify-center transition-all">
+                    <div class="shadow-md bg-gray-100 dark:bg-[#161b22] rounded-md p-3 transition-all gap-2 flex flex-col">
                         <div class="container flex">
-                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">
+                            <span class="font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal">
                                 <%- started && !end ? 'Election will end in' : started && end ? `Election ended ${endtime}` : `Election will begin in` %>
                             </span>
                         </div>
@@ -75,58 +83,58 @@
                 </div>
                 <div class="container mt-6">
                     <div class="gap-3 grid grid-cols-4 xl:gap-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all ">
-                        <div data="voters" class="election_btn cursor-pointer w-full rpl dark:bg-green-700/50 shadow-md bg-gray-50 rounded-md p-4 transition-all ">
+                        <div data="voters" class="election_btn cursor-pointer w-full rpl dark:bg-green-700/50 bg-green-600/70 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- accepted %></div>
-                                    <span class="font-normal text-sm tracking-wide dark:text-gray-300">No. of Voters</span>
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white"><%- accepted %></div>
+                                    <span class="font-normal text-sm tracking-wide dark:text-gray-300 text-white">No. of Voters</span>
                                 </div>
                                 <div class="ic flex items-center w-full justify-end">
-                                    <i class="fad fa-users text-6xl text-green-500"></i>
+                                    <i class="fad fa-users text-6xl dark:text-green-500 text-green-700"></i>
                                 </div>
                             </div>
                         </div>
-                        <div data="partylist" class="election_btn cursor-pointer w-full rpl dark:bg-yellow-700/50 shadow-md bg-gray-50 rounded-md p-4 transition-all ">
+                        <div data="partylist" class="election_btn cursor-pointer w-full rpl dark:bg-yellow-700/50 bg-yellow-600/50 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">  
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.partylist.length %></div>
-                                    <span class="font-normal text-sm tracking-wide dark:text-gray-300">No. of Partylist</span>
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white"><%- election.partylist.length %></div>
+                                    <span class="font-normal text-sm tracking-wide dark:text-gray-300 text-white">No. of Partylist</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
-                                    <i class="fad fa-balance-scale text-6xl text-yellow-500"></i>
+                                    <i class="fad fa-balance-scale text-6xl dark:text-yellow-500 text-yellow-700"></i>
                                 </div>
                             </div>
                         </div>
-                        <div class="w-full  dark:bg-purple-700/50 shadow-md bg-gray-50 rounded-md p-4 transition-all ">
+                        <div data="candidates" class="w-full election_btn rpl cursor-pointer dark:bg-purple-700/50 bg-purple-600/50 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.candidates.length %></div>
-                                    <span class="font-normal text-md tracking-wide dark:text-gray-300">No. of Candidates</span>
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white"><%- election.candidates.length %></div>
+                                    <span class="font-normal text-md tracking-wide dark:text-gray-300 text-white">No. of Candidates</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
-                                    <i class="fad fa-poll-people text-6xl text-purple-500 "></i>
+                                    <i class="fad fa-poll-people text-6xl dark:text-purple-500 text-purple-700"></i>
                                 </div>
                             </div>
                         </div>
-                        <div class="w-full  dark:bg-rose-700/50 shadow-md bg-gray-50 rounded-md p-4 transition-all ">
+                        <div class="w-full election_btn dark:bg-rose-700/50 bg-rose-600/50 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.candidates.length %></div>
-                                    <span class="font-normal text-md tracking-wide dark:text-gray-300">Voters voted</span>
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white"><%- election.candidates.length %></div>
+                                    <span class="font-normal text-md tracking-wide dark:text-gray-300 text-white">Voters voted</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
-                                    <i class="fad fa-edit text-6xl text-rose-500 "></i>
+                                    <i class="fad fa-edit text-6xl dark:text-rose-500 text-rose-700"></i>
                                 </div>
                             </div>
                         </div>
-                        <div class="w-full dark:bg-violet-700/50 shadow-md bg-gray-50 rounded-md p-4 transition-all ">
+                        <div data="positions" class="w-full rpl cursor-pointer election_btn dark:bg-violet-700/50 shadow-md bg-violet-600/70 rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100"><%- election.positions.length %></div>
-                                    <span class="font-normal text-md tracking-wide dark:text-gray-300">No. of Positions</span>
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white"><%- election.positions.length %></div>
+                                    <span class="font-normal text-md tracking-wide dark:text-gray-300 text-white">No. of Positions</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
-                                    <i class="fad fa-list-ol text-6xl text-violet-500 "></i>
+                                    <i class="fad fa-list-ol text-6xl dark:text-violet-500 text-violet-700"></i>
                                 </div>
                             </div>
                         </div>
@@ -151,28 +159,28 @@
                     }
                 %>
                 <div class="grid md:flex md:flex-col grid-cols-4 gap-3 xl:grid-cols-3 md:grid-cols-2 xl:gap-4 transition-all">
-                    <div class="shadow-md bg-gray-50 dark:bg-emerald-700/50 rounded-md p-3 transition-all">
+                    <div class="shadow-md bg-gray-50 dark:bg-emerald-700/50 bg-emerald-600/50 rounded-md p-3 transition-all">
                         <div class="container flex">
-                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Eligible Courses</span>
+                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal text-white">Eligible Courses</span>
                         </div>
                         <div class="p-1 flex flex-wrap gap-2">
                             <% const e_crs = election.courses %>
                             <% for (let i = 0; i < e_crs.length; i++) { %>
                                 <div style="border-color: rgba(126, 34, 206, 1)" class="border p-1 px-3 rounded-full cursor-pointer">
-                                    <span class="text-gray-900 dark:text-gray-300 font-medium"><%- c(e_crs[i]) %></span>
+                                    <span class="dark:text-gray-300 font-medium text-gray-100"><%- c(e_crs[i]) %></span>
                                 </div> 
                             <% } %>
                         </div>
                     </div>
-                    <div class="shadow-md bg-gray-50 dark:bg-pink-700/50 rounded-md p-3 transition-all">
+                    <div class="shadow-md bg-gray-50 dark:bg-pink-700/50 bg-pink-600/50 rounded-md p-3 transition-all">
                         <div class="container flex">
-                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal">Eligible Year</span>
+                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal text-white">Eligible Year</span>
                         </div>
                         <div class="p-1 flex flex-wrap gap-2">
                             <% const e_yr = election.year %>
                             <% for (let i = 0; i < e_yr.length; i++) { %>
                                 <div style="border-color: rgba(126, 34, 206, 1)" class="border p-1 px-3 rounded-full cursor-pointer">
-                                    <span class="text-gray-900 dark:text-gray-300 font-medium"><%- y(e_yr[i]) %></span>
+                                    <span class="text-gray-100 dark:text-gray-300 font-medium"><%- y(e_yr[i]) %></span>
                                 </div> 
                             <% } %>
                         </div>
@@ -180,18 +188,48 @@
                 </div>
             </div>
             <div class="container mt-6">
-                <%- include('votes-tally', {e_positions: election.positions, positions: positions}) %>
+                <%- include('votes-tally', {
+                    e_positions: election.positions, 
+                    positions: positions
+                }) %>
             </div>
         </div>
         <!-- election voters -->
-        <%- include('election_voters', {pending: pending}) %>
-         <!-- election partylist -->
-         <%- include('election_partylist', {election_partylist: election.partylist, partylists: partylist}) %>
+        <%- include('election_voters', {
+            pending: pending
+        }) %>
+        <!-- election partylist -->
+        <%- include('election_partylist', {
+            election_partylist: election.partylist, 
+            partylists: partylist
+        }) %> 
+        <!-- election candidates -->
+        <%- include('election-candidates', {
+            course: course, 
+            year: year, 
+            e_courses: election.courses, 
+            e_year: election.year, 
+            e_partylist: election.partylist, 
+            partylists: partylist, 
+            e_position: election.positions, 
+            positions: positions
+        }) %>
+        <!-- election positions -->
+        <%- include('election-positions', {
+            e_positions: election.positions, 
+            positions: positions
+        }) %>
+        <!-- election settings -->
+        <%- include('election-settings', {
+
+        }) %>
     </div>
     <script src="/js/theme.js "></script>
     <script src="/js/fetch.js "></script>
     <script src="/js/time.js "></script>
     <script src="/js/toast.js "></script>
+    <script src="/js/audio_file.js "></script>
+    <script src="/js/audio.js "></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/control/js/io.js "></script>
     <script src="/control/js/election-details.js"></script>

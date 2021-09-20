@@ -1,57 +1,57 @@
-<a class="cursor-pointer dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
-    <i class="ic dark:text-amber-600 w-9 text-xl">
+<a class="cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+    <i class="ic dark:text-amber-600 w-9 text-xl text-amber-500">
         <i class="fad fa-home"></i>
     </i>
-    <span class="dark:text-gray-300 font-medium">Home</span>
+    <span class="dark:text-gray-300 text-purple-800 font-medium">Home</span>
 </a>
-<a href="/profile/<%- id %>" class="cursor-pointer dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
-    <i class="ic dark:text-teal-600 w-9 text-xl">
+<a href="/profile/<%- id %>" class="cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+    <i class="ic dark:text-teal-600 w-9 text-xl text-teal-500">
         <i class="fad fa-user"></i>
     </i>
-    <span class="dark:text-gray-300 font-medium">My Profile</span>
+    <span class="dark:text-gray-300 text-purple-800  font-medium">My Profile</span>
 </a>
 <% if(election) { %>
-    <a class="<%- voterStatus.status !== 'Pending' ? 'cursor-pointer rpl dark:hover:bg-bluegray-800/70' : 'cursor-not-allowed opacity-50' %> transition-all py-2 px-4 flex flex-row items-center">
-        <i class="ic dark:text-cyan-400 w-9 text-xl">
+    <a class="<%- voterStatus.status !== 'Pending' ? 'cursor-pointer rpl  hover:bg-gray-300/80dark:hover:bg-bluegray-800/70' : 'cursor-not-allowed opacity-50' %> transition-all py-2 px-4 flex flex-row items-center">
+        <i class="ic dark:text-blue-400 w-9 text-xl text-blue-500">
             <i class="fad fa-ballot-check"></i>
         </i>
-        <span class="dark:text-gray-300 font-medium">File for candidacy</span>
+        <span class="dark:text-gray-300 text-purple-800  font-medium">File for candidacy</span>
     </a>
-    <a class="<%- voterStatus.status !== 'Pending' ? 'cursor-pointer rpl dark:hover:bg-bluegray-800/70' : 'cursor-not-allowed opacity-50' %> transition-all py-2 px-4 flex flex-row items-center">
-        <i class="ic dark:text-cyan-400 w-9 text-xl">
+    <a class="<%- voterStatus.status !== 'Pending' ? 'cursor-pointer rpl  hover:bg-gray-300/80dark:hover:bg-bluegray-800/70' : 'cursor-not-allowed opacity-50' %> transition-all py-2 px-4 flex flex-row items-center">
+        <i class="ic dark:text-violet-400 w-9 text-xl text-violet-500">
             <i class="fad fa-list-ol"></i>
         </i>
-        <span class="dark:text-gray-300 font-medium">Candidates</span>
+        <span class="dark:text-gray-300 text-purple-800  font-medium">Candidates</span>
     </a>
-    <a class="e_left_election cursor-pointer dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
-        <i class="ic dark:text-rose-700 w-9 text-xl">
+    <a class="e_left_election cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+        <i class="ic dark:text-rose-700 w-9 text-xl text-rose-500">
             <i class="fad fa-sign-out-alt"></i>
         </i>
-        <span class="dark:text-gray-300 font-medium">Leave Election</span>
+        <span class="dark:text-gray-300 text-purple-800  font-medium">Leave Election</span>
     </a>
 <% } else { %>
-    <a class="e_join_election cursor-pointer dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
-        <i class="ic dark:text-green-400 w-9 text-xl">
+    <a class="e_join_election cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+        <i class="ic dark:text-green-400 w-9 text-xl text-green-500">
             <i class="fad fa-sign-in-alt"></i>
         </i>
-        <span class="dark:text-gray-300 font-medium">Join Election</span>
+        <span class="dark:text-gray-300 text-purple-800  font-medium">Join Election</span>
     </a>
 <% } %>
-<a class="cursor-pointer dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
-    <i class="ic dark:text-gray-400 w-9 text-xl">
+<a class="cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+    <i class="ic dark:text-gray-400 w-9 text-xl text-gray-700">
         <i class="fad fa-cog"></i>
     </i>
-    <span class="dark:text-gray-300 font-medium">Settings</span>
+    <span class="dark:text-gray-300 text-purple-800  font-medium">Settings</span>
 </a>
-<a class="cursor-pointer dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
-    <i class="ic dark:text-orange-600 w-9 text-xl">
+<a class="cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+    <i class="ic dark:text-orange-600 w-9 text-xl text-orange-600">
         <i class="fad fa-palette"></i>
     </i>
-    <span class="dark:text-gray-300 font-medium">Themes</span>
+    <span class="dark:text-gray-300 text-purple-800  font-medium">Themes</span>
 </a>
-<a href="/logout" class="cursor-pointer dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
-    <i class="ic dark:text-red-600 w-9 text-xl">
+<a href="/logout" class="cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+    <i class="ic dark:text-red-600 w-9 text-xl text-red-500">
         <i class="fad fa-sign-out-alt"></i>
     </i>
-    <span class="dark:text-gray-300 font-medium">Sign out</span>
+    <span class="dark:text-gray-300 text-purple-800 font-medium">Sign out</span>
 </a>

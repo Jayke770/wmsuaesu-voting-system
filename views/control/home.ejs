@@ -10,8 +10,15 @@
     <title>Admin Dashboard</title>
     <%- include('cdn/_home') %>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <script>
+        document.onreadystatechange = () => {
+            setTimeout( () => {
+                $("body").removeClass("hidden")
+            }, 1000)
+        }
+    </script>
 </head>
-<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all hidden antialiased">
     <div class="body_main_content">
         <div class="main_admin">
             <div class="nav_main dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0  z-10">
@@ -71,9 +78,9 @@
                 </div>
             </div>
             <div class="mt-16">
-                <div class="elections w-full p-[10px]">
+                <div class="elections w-full p-2">
                     <div class="container text-2xl mb-3 font-semibold dark:text-gray-300">Elections <span class="float-right font-normal"><%- elections.length %></span></div>
-                    <div class="election_list transition-all grid grid-cols-3 xl:grid-cols-2  md:grid-cols-none gap-3">
+                    <div class="election_list px-1 transition-all grid grid-cols-3 xl:grid-cols-2 md:grid-cols-none gap-3">
                         <%- include('forms/elections_chart', {elections: elections}) %>
                     </div>
                 </div>
@@ -111,6 +118,8 @@
         <script src="/control/js/io.js "></script>
         <script src="/js/color.js"></script>
         <script src="/js/avatar.js"></script>
+        <script src="/js/audio_file.js "></script>
+        <script src="/js/audio.js "></script>
         <script>
             $(".dark_mode ").click(function() {
                 const theme = localStorage.getItem('theme')
@@ -127,7 +136,7 @@
                     localStorage.setItem('theme', 'default')
                     $('html').addClass("default")
                     $('html').removeClass("dark")
-                    $(".theme-color").attr("content", "#991b1b")
+                    $(".theme-color").attr("content", "#6b21a8")
                 }
             })
             $.ripple(".rpl", {

@@ -42,15 +42,21 @@ $(document).ready(() => {
         parent.removeClass("hidden")
         setTimeout(() => {
             child.removeClass(child.attr("animate-in"))
+        }, 500)
+        setTimeout( () => {
             if($(this).attr("data") === "voters"){   
                 voters("/control/elections/accepted-voters/", $("html").attr("data"))
-            }
-        }, 300)
+            }   
+        }, 2000)
     })
     $(".e_ac").click( () => {
+        $(".acp_voters").find(".acp_voters_skeleton").show()
+        $(".acp_voters").find(".voters").remove()
         voters("/control/elections/accepted-voters/", $("html").attr("data"))
     })
     $(".e_pend").click( () => {
+        $(".acp_voters").find(".acp_voters_skeleton").show()
+        $(".acp_voters").find(".voters").remove()
         voters("/control/elections/pending-voters/", $("html").attr("data"))
     })
     //close voters pop up 
@@ -102,7 +108,7 @@ $(document).ready(() => {
                         toast.fire({
                             title: res.msg, 
                             icon: 'success', 
-                            timer: 3000
+                            timer: 2000
                         }).then( () => {
                             $(`.voters[data='${ $(this).attr("data")}']`).remove() 
                         })
@@ -110,7 +116,7 @@ $(document).ready(() => {
                         toast.fire({
                             title: res.msg, 
                             icon: 'info', 
-                            timer: 3000
+                            timer: 2000
                         })
                     }
                 } else {
@@ -141,7 +147,7 @@ $(document).ready(() => {
     })
     //add more partylists 
     let add_pty_e = false
-    $(".partylist_, .close_partylist").click( function(e) {
+    $(".partylist_").click( function(e) {
         if($(e.target).hasClass("partylist_")){
             $(".partylist_main").addClass($(".partylist_main").attr("animate-out"))
             setTimeout(() => {
@@ -176,10 +182,12 @@ $(document).ready(() => {
                 if(add.ok){
                     const res = await add.json()
                     if(res.add){
+                        //send event to websocket that the election is updated
+                        new_partylist(res.id)
                         toast.fire({
                             title: res.msg,
                             icon: 'success', 
-                            timer: 3000
+                            timer: 2000
                         }).then( () => {
                             add_pty_e = false
                             $(this).find("button[type='submit']").html(def)
@@ -187,7 +195,7 @@ $(document).ready(() => {
                                 <div data="partylist-${res.id}" class="animate__animated animate__fadeInUp  dark_border grid grid-cols-2 justify-center items-center dark:bg-darkBlue-secondary shadow-lg dark:text-gray-400 px-3 py-2 rounded-lg">
                                     <span>${partylist(res.id)}</span>
                                     <div class="flex justify-end items-center">
-                                        <a data="${res.id}" class="e_remove_partylist rpl rounded-md cursor-pointer text-xl dark:text-red-600">
+                                        <a data="${res.id}" class="e_remove_partylist rpl rounded-md cursor-pointer text-xl dark:text-red-600 text-red-500">
                                             <i class="fad fa-times-circle"></i>
                                         </a>
                                     </div>
@@ -198,7 +206,7 @@ $(document).ready(() => {
                         toast.fire({
                             title: res.msg,
                             icon: 'info', 
-                            timer: 3000
+                            timer: 2000
                         }).then( () => {
                             add_pty_e = false
                             $(this).find("button[type='submit']").html(def)
@@ -217,11 +225,155 @@ $(document).ready(() => {
                             <span>Error : ${e.message}</span>
                         </div>
                     `, 
+                    duration: 2000,
+                    showAction: false
+                })  
+            }
+        }
+    })
+    //remove partylists 
+    let e_remove_pty = false
+    $(".partylist_").delegate(".e_remove_partylist", "click", async function (e) {
+        e.preventDefault() 
+        const data = new FormData()
+        const def = $(this).html() 
+        data.append("pty", $(this).attr("data")) 
+        if(!e_remove_pty){
+            try {
+                e_remove_pty = true
+                $(this).html('<i class="fad animate-spin fa-spinner-third"></i>')
+                const remove_pty = await fetchtimeout("/control/elections/e-remove-partylist/", {
+                    method: 'POST',
+                    body: data, 
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                }) 
+                if(remove_pty.ok){
+                    const res = await remove_pty.json() 
+                    if(res.removed){
+                        toast.fire({
+                            title: res.msg, 
+                            icon: 'success', 
+                            timer: 2000
+                        }).then( () => {
+                            e_remove_pty = false
+                            $(`div[data='partylist-${$(this).attr("data")}']`).remove()
+                        })
+                    } else {
+                        toast.fire({
+                            title: res.msg, 
+                            icon: 'info', 
+                            timer: 2000
+                        }).then( () => {
+                            e_remove_pty = false
+                            $(this).html(def)
+                        })
+                    }
+                } else {
+                    throw new Error(`${remove_pty.status} ${remove_pty.statusText}`)
+                }
+            } catch (e) {
+                e_remove_pty = false
+                $(this).html(def)
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: rgb(225, 29, 72)" class="fad fa-times-circle"></i>
+                            <span>Error : ${e.message}</span>
+                        </div>
+                    `, 
                     duration: 3000,
                     showAction: false
                 })  
             }
         }
+    })
+    //search voter 
+    let searching = false
+    $(".search-voter").keyup( async function () {
+        let data = new FormData() 
+        data.append("search", $(this).val())
+        data.append("search_by", $(this).prev().val())
+        if(!searching && $(this).val !== ''){
+            searching = true
+            try {
+                const search = await fetchtimeout('/control/elections/search-voter/', {
+                    method: 'POST', 
+                    body: data, 
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
+                if(search.ok){
+                    const res = await search.json()
+                    searching = false
+                    console.log(res)
+                } else {
+                    throw new Error(`${search.status} ${search.statusText}`)
+                }
+            } catch (e) {
+                searching = false
+                console.log(e.message)
+            }
+        }
+    })
+    //candidates 
+    $(".candidates_").click( function(e) {
+        if($(e.target).hasClass("candidates_")){
+            $(".candidates_main").addClass($(".candidates_main").attr("animate-out"))
+            setTimeout(() => {
+                $(".candidates_").addClass("hidden")
+                $(".candidates_").removeClass("flex")
+                $(".candidates_main").removeClass($(".candidates_main").attr("animate-out"))
+            }, 300)
+        }
+    })
+    $(".close_candidates").click( () => {
+        $(".candidates_main").addClass($(".candidates_main").attr("animate-out"))
+        setTimeout(() => {
+            $(".candidates_").addClass("hidden")
+            $(".candidates_").removeClass("flex")
+            $(".candidates_main").removeClass($(".candidates_main").attr("animate-out"))
+        }, 300)
+    })
+    //positions 
+    $(".positions_").click( function(e) {
+        if($(e.target).hasClass("positions_")){
+            $(".positions_main").addClass($(".positions_main").attr("animate-out"))
+            setTimeout(() => {
+                $(".positions_").addClass("hidden")
+                $(".positions_").removeClass("flex")
+                $(".positions_main").removeClass($(".positions_main").attr("animate-out"))
+            }, 300)
+        }
+    })
+    $(".close_positions").click( () => {
+        $(".positions_main").addClass($(".positions_main").attr("animate-out"))
+        setTimeout(() => {
+            $(".positions_").addClass("hidden")
+            $(".positions_").removeClass("flex")
+            $(".positions_main").removeClass($(".positions_main").attr("animate-out"))
+        }, 300)
+    })
+    //settings
+    $(".settings_").click( function(e) {
+        if($(e.target).hasClass("settings_")){
+            $(".settings_main").addClass($(".settings_main").attr("animate-out"))
+            setTimeout(() => {
+                $(".settings_").addClass("hidden")
+                $(".settings_").removeClass("flex")
+                $(".settings_main").removeClass($(".settings_main").attr("animate-out"))
+            }, 300)
+        }
+    })
+    $(".close_settings").click( () => {
+        $(".settings_main").addClass($(".settings_main").attr("animate-out"))
+        setTimeout(() => {
+            $(".settings_").addClass("hidden")
+            $(".settings_").removeClass("flex")
+            $(".settings_main").removeClass($(".settings_main").attr("animate-out"))
+        }, 300)
     })
     //functions 
     async function voters(link, id){
