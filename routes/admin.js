@@ -250,6 +250,7 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             const end = moment(e_data.end).fromNow().search("ago") != -1 ? true : false
             //save election id to session 
             req.session.currentElection = xs(id)
+            req.session.electionData = e_data
             //get all the pending voters 
             for(let i = 0; i < e_data.voters.length; i++){
                 if(e_data.voters[i].status === 'Pending'){
@@ -261,6 +262,11 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             }
             return res.render("control/forms/election_details", {
                 election: elecs.length === 0 ? '' : elecs[0], 
+                str: {
+                    start: moment(e_data.start).format('MMMM DD YYYY, h:mm a'),
+                    end: moment(e_data.end).format('MMMM DD YYYY, h:mm a'),
+                    created: moment(e_data.created).format('MMMM DD YYYY, h:mm a'),
+                },
                 started: started, 
                 end: end,
                 course: crs, 
@@ -483,6 +489,74 @@ adminrouter.post('/control/elections/search-voter/', limit, isadmin, async (req,
         return res.send({
             f: 'fasf'
         })
+    }
+})
+//election settings 
+adminrouter.post('/control/elections/settings/:settings', limit, isadmin, async (req, res) => {
+    const {settings} = req.params
+    const electionData = req.session.electionData
+    return res.render(`control/forms/${settings}`, {election: electionData})
+})  
+//change election title 
+adminrouter.post('/control/election/change-title', limit, isadmin, async (req, res) => {
+    const {e_title} = req.body 
+    const electionID = req.session.currentElection
+    try {
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }, {_id: 1, election_title: 1}).then( async (elec) => {
+            //check if the elction is exists
+            if(elec.length !== 0){
+                //if exists 
+                //check the new title if not the same with the current title 
+                if(elec[0].election_title !== xs(e_title)){
+                    //if not the same 
+                    //check if the new title is not the same in other elections 
+                    await election.find({
+                        election_title: {$eq: xs(e_title)}
+                    }).then( async (e_res) => {
+                        if(e_res.length !== 0){
+                            return res.send({
+                                status: false, 
+                                txt: 'Invalid title', 
+                                msg: 'Election title is already in used in other election'
+                            })
+                        } else {
+                            //update the election title 
+                            await election.updateOne({
+                                _id: {$eq: xs(electionID)}
+                            }, {$set: {election_title: xs(e_title)}}).then( (up) => {
+                                return res.send({
+                                    status: true, 
+                                    txt: 'Successfully changed!'
+                                })
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        }
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                } else {
+                    return res.send({
+                        status: false, 
+                        txt: 'Invalid election title',
+                        msg: 'New title cannot be the same in current title'
+                    })
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Something went wrong!', 
+                    msg: 'Election not found in database'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e.message)
+        return res.status(500).send()
     }
 })
 /*##################################################################################### */

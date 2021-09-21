@@ -13,20 +13,20 @@
     <script>
         document.onreadystatechange = () => {
             setTimeout( () => {
-                $("body").removeClass("hidden")
+                $(".election_details").removeClass("hidden")
             }, 1000)
         }
     </script>
 </head>
-<body class="bg-gray-300 dark:bg-[#090c10] transition-all hidden antialiased">
-    <div class="election_details">
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <div class="election_details hidden animate__animated animate__fadeIn ms-500">
         <div class="header fixed top-0 z-30 w-full flex flex-row p-1 items-center bg-gray-50 dark:bg-[#161b22] shadow-md">
             <div class="flex-[20%] xl:flex-[50%] md:flex-[80%]">
                 <div class="flex flex-row items-center transition-all">
                     <a href="<%- link %>" class="return_main transition-all text-gray-700 dark:text-gray-50 text-2xl cursor-pointer ml-3 mr-2">
                         <i class="fa fa-arrow-circle-left"></i>
                     </a>
-                    <p class="m-0 p-3 text-lg font-medium cursor-pointer dark:text-gray-200"><%- election.election_title %></p>
+                    <p class="m-0 p-3 text-lg font-medium cursor-pointer dark:text-gray-200" id="election_title"><%- election.election_title %></p>
                 </div>
             </div>
             <div class="flex-[80%] xl:flex-[50%] md:flex-[20%]">
@@ -221,7 +221,8 @@
         }) %>
         <!-- election settings -->
         <%- include('election-settings', {
-
+            election: election, 
+            str: str
         }) %>
     </div>
     <script src="/js/theme.js "></script>

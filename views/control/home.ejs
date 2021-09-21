@@ -13,13 +13,17 @@
     <script>
         document.onreadystatechange = () => {
             setTimeout( () => {
-                $("body").removeClass("hidden")
+                $(".loading").remove()
+                $(".body_main_content").removeClass("hidden")
             }, 1000)
         }
     </script>
 </head>
-<body class="bg-gray-300 dark:bg-[#090c10] transition-all hidden antialiased">
-    <div class="body_main_content">
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <div class="loading flex justify-center w-screen h-screen items-center">
+        <%- include('../lazy/loading') %>
+    </div>
+    <div class="body_main_content hidden animate__animated animate__fadeIn ms-500 transition-all">
         <div class="main_admin">
             <div class="nav_main dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0  z-10">
                 <div class="w-full flex flex-row">

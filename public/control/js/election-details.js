@@ -45,19 +45,19 @@ $(document).ready(() => {
         }, 500)
         setTimeout( () => {
             if($(this).attr("data") === "voters"){   
-                voters("/control/elections/accepted-voters/", $("html").attr("data"))
+                election.voters("/control/elections/accepted-voters/", $("html").attr("data"))
             }   
         }, 2000)
     })
     $(".e_ac").click( () => {
         $(".acp_voters").find(".acp_voters_skeleton").show()
         $(".acp_voters").find(".voters").remove()
-        voters("/control/elections/accepted-voters/", $("html").attr("data"))
+        election.voters("/control/elections/accepted-voters/", $("html").attr("data"))
     })
     $(".e_pend").click( () => {
         $(".acp_voters").find(".acp_voters_skeleton").show()
         $(".acp_voters").find(".voters").remove()
-        voters("/control/elections/pending-voters/", $("html").attr("data"))
+        election.voters("/control/elections/pending-voters/", $("html").attr("data"))
     })
     //close voters pop up 
     $(".close_voters").click(() => {
@@ -193,7 +193,7 @@ $(document).ready(() => {
                             $(this).find("button[type='submit']").html(def)
                             $(".e_partylist_list").append(`
                                 <div data="partylist-${res.id}" class="animate__animated animate__fadeInUp  dark_border grid grid-cols-2 justify-center items-center dark:bg-darkBlue-secondary shadow-lg dark:text-gray-400 px-3 py-2 rounded-lg">
-                                    <span>${partylist(res.id)}</span>
+                                    <span>${election.partylist(res.id)}</span>
                                     <div class="flex justify-end items-center">
                                         <a data="${res.id}" class="e_remove_partylist rpl rounded-md cursor-pointer text-xl dark:text-red-600 text-red-500">
                                             <i class="fad fa-times-circle"></i>
@@ -375,45 +375,135 @@ $(document).ready(() => {
             $(".settings_main").removeClass($(".settings_main").attr("animate-out"))
         }, 300)
     })
-    //functions 
-    async function voters(link, id){
-        const data = new FormData() 
-        data.append("id", id)
-        try {
-            const ac = await fetchtimeout(link, {
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }, 
-                method: 'POST', 
-                body: data
-            })
-            if(ac.ok){
-                const res = await ac.text() 
-                $(".acp_voters").find(".acp_voters_skeleton").hide()
-                $(".acp_voters").find(".voters").remove()
-                $(".acp_voters").append(res)
-            } else {
-                throw new Error(`${ac.status} ${ac.statusText}`)
+    $(".back_settings").click( function() {
+        $(".card_settings_form").html('')
+        $(this).hide() 
+        $('.card_settings').show(500)
+    })
+    let settings = false
+    $(".election_settings_btn").click( async function() {
+        const def = $(this).find(".settings_ic").html() 
+        if(!settings){
+            settings = true 
+            $(this).find(".settings_ic").html(election.loader())
+            try {
+                const req = await fetchtimeout(`/control/elections/settings/${$(this).attr("data")}`, {
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    method: 'POST'
+                })
+                if(req.ok){
+                    settings = false 
+                    $(this).find(".settings_ic").html(def)
+                    const res = await req.text() 
+                    $(".card_settings").hide()
+                    $(".back_settings, .card_settings_form").fadeIn(500) 
+                    $(".card_settings_form").html(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                settings = false
+                $(this).find(".settings_ic").html(def)
+                toast.fire({
+                    icon: 'error', 
+                    title: e.message, 
+                    timer: 2000
+                })
             }
-        } catch (e) {
-            Snackbar.show({ 
-                text: `
-                    <div class="flex justify-center items-center gap-2"> 
-                        <i style="font-size: 1.25rem; color: rgb(225, 29, 72)" class="fad fa-times-circle"></i>
-                        <span>Error : ${e.message}</span>
-                    </div>
-                `, 
-                duration: 3000,
-                showAction: false
-            })  
         }
-    }
-    function partylist(id){
-        const pty = JSON.parse($("body").find(".partylist").val())
-        for(let i = 0; i < pty.length; i++){
-            if(id === pty[i].id){
-                return pty[i].type
+    })
+    //chnage electin title
+    let e_change_title = false
+    $(".card_settings_form").delegate(".edit_election_title", "submit", async function(e) {
+        e.preventDefault()
+        const def = $(this).find("button[type='submit']").html()
+        if(!e_change_title){
+            try {
+                e_change_title = true 
+                $(this).find("button[type='submit']").html(election.loader())
+                const req = await fetchtimeout('/control/election/change-title/', {
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    method: 'POST',
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json()
+                    e_change_title = false
+                    $(this).find("button[type='submit']").html(def)
+                    Swal.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.txt,
+                        html: res.msg
+                    }).then( () => {
+                        election.title($(this).find("input[name='e_title']").val())
+                        $(this).find("input[name='e_title']").attr("placeholder", $(this).find("input[name='e_title']").val())
+                        $(this).find("button[type='reset']").click()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                e_change_title = false
+                $(this).find("button[type='submit']").html(def)
+                toast.fire({
+                    timer: 2000, 
+                    icon: 'error', 
+                    title: e.message
+                })
             }
+        }
+    })
+    //functions 
+    const election = {
+        voters: async (link, id) => {
+            const data = new FormData() 
+            data.append("id", id)
+            try {
+                const ac = await fetchtimeout(link, {
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }, 
+                    method: 'POST', 
+                    body: data
+                })
+                if(ac.ok){
+                    const res = await ac.text() 
+                    $(".acp_voters").find(".acp_voters_skeleton").hide()
+                    $(".acp_voters").find(".voters").remove()
+                    $(".acp_voters").append(res)
+                } else {
+                    throw new Error(`${ac.status} ${ac.statusText}`)
+                }
+            } catch (e) {
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: rgb(225, 29, 72)" class="fad fa-times-circle"></i>
+                            <span>Error : ${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })  
+            }
+        }, 
+        partylist: (id) => {
+            const pty = JSON.parse($("body").find(".partylist").val())
+            for(let i = 0; i < pty.length; i++){
+                if(id === pty[i].id){
+                    return pty[i].type
+                }
+            }
+        }, 
+        loader: () => {
+            return '<i class="fad animate-spin fa-spinner-third"></i>'
+        }, 
+        title: (title) => {
+            $("body").find("p#election_title").text(title)
         }
     }
 })

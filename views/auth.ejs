@@ -24,17 +24,20 @@
         <link rel="stylesheet" type="text/css" href="/css/custom/custom.css">
         <script>
             document.onreadystatechange = function () {
-                $(".bg-main").removeClass("hidden")
-                $(".loading").remove()
+                setTimeout( () => {
+                    $(".loading").remove() 
+                    $(".main").removeClass("hidden")
+                    $(".main").addClass("flex")
+                }, 1000)
             }
         </script>
 </head>
 
-<body class="bg-gray-200 dark:bg-[#090c10] wmsu:bg-current">
+<body class="bg-gray-200 dark:bg-[#090c10]">
     <div class="loading flex justify-center w-screen h-screen items-center">
         <%- include('lazy/loading') %>
     </div>
-    <div class="h-screen w-full flex flex-col">
+    <div class="main hidden h-screen w-full flex-col transition-all animate__animated animate__fadeIn ms-500">
         <div class="login_page z-10  w-full h-full flex">
             <div class="flex justify-center w-full items-center">
                 <div
