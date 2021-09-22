@@ -387,7 +387,7 @@ $(document).ready(() => {
             settings = true 
             $(this).find(".settings_ic").html(election.loader())
             try {
-                const req = await fetchtimeout(`/control/elections/settings/${$(this).attr("data")}`, {
+                const req = await fetchtimeout(`/control/elections/settings/${$(this).attr("data")}/`, {
                     headers: {
                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
                     }, 
@@ -414,7 +414,7 @@ $(document).ready(() => {
             }
         }
     })
-    //chnage electin title
+    //chnage election title
     let e_change_title = false
     $(".card_settings_form").delegate(".edit_election_title", "submit", async function(e) {
         e.preventDefault()
@@ -423,7 +423,7 @@ $(document).ready(() => {
             try {
                 e_change_title = true 
                 $(this).find("button[type='submit']").html(election.loader())
-                const req = await fetchtimeout('/control/election/change-title/', {
+                const req = await fetchtimeout('/control/election/settings/change-title/', {
                     headers: {
                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
                     }, 
@@ -457,6 +457,92 @@ $(document).ready(() => {
             }
         }
     })
+    //change election description
+    let e_change_description = false 
+    $(".card_settings_form").delegate(".edit_election_description", "submit", async function(e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html()
+        if(!e_change_description){ 
+            try {
+                e_change_description = true
+                $(this).find("button[type='submit']").html(election.loader())
+                const req = await fetchtimeout('/control/election/settings/change-description/', {
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    method: 'POST',
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    e_change_description = false
+                    $(this).find("button[type='submit']").html(def)
+                    Swal.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.txt,
+                        html: res.msg
+                    }).then( () => {
+                        election.description($(this).find("textarea[name='election_description']").val())
+                        $(this).find("textarea[name='election_description']").attr("placeholder", $(this).find("textarea[name='election_description']").val())
+                        $(this).find("button[type='reset']").click()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                e_change_description = false 
+                $(this).find("button[type='submit']").html(def)
+                toast.fire({
+                    timer: 2000, 
+                    icon: 'error', 
+                    title: e.message
+                })
+            }
+        }
+    })
+    //change election passcode
+    let e_change_passcode = false
+    $(".card_settings_form").delegate(".edit_election_passcode", "submit", async function(e) {
+        e.preventDefault()
+        const def = $(this).find("button[type='submit']").html()
+        if(!e_change_passcode){ 
+            try {
+                e_change_passcode = true
+                $(this).find("button[type='submit']").html(election.loader())
+                const req = await fetchtimeout('/control/election/settings/change-passcode/', {
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    method: 'POST',
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    e_change_passcode = false
+                    $(this).find("button[type='submit']").html(def)
+                    Swal.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.txt,
+                        html: res.msg
+                    }).then( () => {
+                        $(this).find("input[name='e_passcode']").attr("placeholder", $(this).find("input[name='e_passcode']").val())
+                        $(this).find("button[type='reset']").click()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                e_change_passcode = false 
+                $(this).find("button[type='submit']").html(def)
+                toast.fire({
+                    timer: 2000, 
+                    icon: 'error', 
+                    title: e.message
+                })
+            }
+        }
+    })
+
     //functions 
     const election = {
         voters: async (link, id) => {
@@ -503,7 +589,10 @@ $(document).ready(() => {
             return '<i class="fad animate-spin fa-spinner-third"></i>'
         }, 
         title: (title) => {
-            $("body").find("p#election_title").text(title)
+            $("html").find("p#election_title, title").text(title)
+        }, 
+        description: (descrip) => {
+            $("html").find("p#election_description").text(descrip)
         }
     }
 })

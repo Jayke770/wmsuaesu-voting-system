@@ -10,310 +10,323 @@
     <title>Elections</title>
     <%- include('../cdn/_home') %>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <script>
+        document.onreadystatechange = () => {
+            setTimeout( () => {
+                $(".loading").remove()
+                $(".elections_main").removeClass("hidden")
+            }, 500)
+        }
+    </script>
 </head>
 <body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
-    <div class="main">
-        <div class="w-full z-10 bg-gray-100 dark:bg-darkBlue-secondary shadow-lg grid grid-cols-2 fixed top-0 p-2 px-0 transition-all">
-            <div class="flex justify-start items-center">
-                <a href="/control" class="rpl ml-2 transition-all dark:text-gray-200 text-bluegray-600 text-2xl px-2 cursor-pointer mr-2">
-                    <i class="fa fa-arrow-circle-left"></i>
-                </a>
-                <span class="font-semibold text-purple-800 dark:text-purple-500 text-xl">Elections</span>
-            </div>
-            <div class="flex items-center justify-end">
-                <a class="create_election_btn flex flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
-                    <span class="text-purple-700 dark:text-purple-500">
-                        <i class="fas fa-plus-circle"></i>
-                    </span>
-                    <span class="sm:hidden text-[17px] dark:text-purple-500 text-purple-700 font-normal">Create Election</span>
-                </a>
-                <a class="open_settings rpl mr-3 px-3 py-2 cursor-pointer text-xl rounded-md dark:text-gray-200">
-                    <i class="fas fa-bars"></i>
-                </a>
-            </div>
-            <div class="settings bg-gray-900/60 transition-all fixed top-0 w-full h-full hidden justify-end items-center">
-                <div animate-out="animate__animated animate__fadeOutRight ms-500" animate-in="animate__animated animate__fadeInRight ms-500" class="settings_main w-96 sm:w-[calc(100%-50px)] bg-gray-100 dark:bg-darkBlue-secondary h-full">
-                    <div class="p-4 flex justify-start items-center dark_border_b border-b-[.1px] border-gray-300">
-                        <span class="font-semibold text-2xl text-purple-600">Settings</span>
-                    </div>
-                    <div class="grid grid-rows-2 h-[calc(100%-65px)]">
-                        <div class="flex flex-col w-full px-3 py-2 gap-2">
-                            <a href="course&year/" title="View, Add, & Update Courses" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
-                                <span class="text-base">Courses & Year</span>
-                                <i class="ic flex justify-end items-center w-full text-rose-700 dark:text-rose-600 text-xl">
-                                    <i class="fal fa-list-alt"></i>
-                                </i>
-                            </a>
-                            <a href="positions/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
-                                <span class="text-base">Positions </span>
-                                <i class="ic flex justify-end items-center w-full text-green-700 dark:text-green-600 text-xl">
-                                    <i class="fas fa-list-ol"></i>
-                                </i>
-                            </a>
-                            <a href="voter-id/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
-                                <span class="text-base">Voter ID </span>
-                                <i class="ic flex justify-end items-center w-full text-fuchsia-700 dark:text-fuchsia-600 text-xl">
-                                    <i class="fas fa-id-card"></i>
-                                </i>
-                            </a>
-                            <a href="partylist/" title="View, Add, & Update Partylist" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
-                                <span class="text-base">Partylist </span>
-                                <i class="ic flex justify-end items-center w-full text-amber-700 dark:text-amber-600 text-xl">
-                                    <i class="fas fa-ballot"></i>
-                                </i>
-                            </a>
-                        </div>
-                        <div class="flex justify-center items-end p-2 px-4">
-                            <a class="close_settings border w-full border-red-500 rpl cursor-pointer text-center rounded-md p-[7px] text-red-700 dark:text-red-500 font-medium">Close</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="election_list container mt-[4.5rem]">
-            <div class="transition-all w-full grid grid-cols-2 xl:grid-cols-1 xl:px-52 lg:px-20 md:px-2 gap-4 place-items-center p-2">
-                <% for (let i = 0; i < 10; i++) { %> 
-                    <div style="animation-delay: <%- i * .150%>s" class="animate__animated animate__fadeInUp w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
-                        <div class="flex w-full">
-                            <div class="md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[325px] h-full object-cover rounded-tl-2xl rounded-bl-2xl skeleton-image"></div>
-                        </div>
-                        <div class="p-8 flex flex-col w-full transition-all">
-                            <div class="container py-3">
-                                <p class="w-[45%!important] skeleton"></p>
-                            </div>
-                            <div class="container flex flex-col gap-4 mt-4 transition-all">
-                                <div class="w-[60%] skeleton"></div>
-                                <div class="w-[70%] skeleton"></div>
-                                <div class="w-[80%] skeleton"></div>
-                                <div class="w-full skeleton"></div>
-                            </div>
-                            <div class="container mt-8 justify-center flex flex-row ">
-                                <a class="skeleton w-full"></a>
-                            </div>
-                        </div>
-                    </div>
-                <% } %>
-            </div>
-        </div>
+    <div class="loading flex justify-center w-screen h-screen items-center">
+        <%- include('../../lazy/loading') %>
     </div>
-    <div class="create_election z-20 dark:bg-darkBlue-primary/60 bg-gray-900/60 hidden justify-center items-center fixed top-0 w-full h-full">
-        <input type="hidden" name="default-course" value='<%- JSON.stringify(course) %>'>
-        <input type="hidden" name="default-year" value='<%- JSON.stringify(year) %>'>
-        <input type="hidden" name="default-pos" value='<%- JSON.stringify(positions) %>'>
-        <input type="hidden" name="default-pty" value='<%- JSON.stringify(partylists) %>'>
-        <div class="create_election_main ms-500 p-2 w-[70%] h-[90%] lg:w-[85%] md:w-[95%] md:h-[95%] bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl" animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp">
-            <div class="flex flex-row w-full">
-                <div class="w-[95%] flex flex-col">
-                    <p class="font-medium transition-all relative text-purple-600 dark:text-purple-500 text-3xl xsm:text-xl py-2 px-3 after:absolute after:bottom-0 after:left-3 after:bg-purple-600 dark:after:bg-purple-700 after:w-6/12 after:h-[3px]">Create Election</p>
+    <div class="elections_main hidden animate__animated animate__fadeIn ms-500">
+        <div class="main">
+            <div class="w-full z-10 bg-gray-100 dark:bg-darkBlue-secondary shadow-lg grid grid-cols-2 fixed top-0 p-2 px-0 transition-all">
+                <div class="flex justify-start items-center">
+                    <a href="/control" class="rpl ml-2 transition-all dark:text-gray-200 text-bluegray-600 text-2xl px-2 cursor-pointer mr-2">
+                        <i class="fa fa-arrow-circle-left"></i>
+                    </a>
+                    <span class="font-semibold text-purple-800 dark:text-purple-500 text-xl">Elections</span>
                 </div>
-                <div class="flex justify-end items-center">
-                    <a class="close_e_create cursor-pointer text-red-500 dark:text-red-500 text-xl py-1 rounded-md rpl px-3">
-                        <i class="fas fa-times-circle"></i>
+                <div class="flex items-center justify-end">
+                    <a class="create_election_btn flex flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
+                        <span class="text-purple-700 dark:text-purple-500">
+                            <i class="fas fa-plus-circle"></i>
+                        </span>
+                        <span class="sm:hidden text-[17px] dark:text-purple-500 text-purple-700 font-normal">Create Election</span>
+                    </a>
+                    <a class="open_settings rpl mr-3 px-3 py-2 cursor-pointer text-xl rounded-md dark:text-gray-200">
+                        <i class="fas fa-bars"></i>
                     </a>
                 </div>
+                <div class="settings bg-gray-900/60 transition-all fixed top-0 w-full h-full hidden justify-end items-center">
+                    <div animate-out="animate__animated animate__fadeOutRight ms-500" animate-in="animate__animated animate__fadeInRight ms-500" class="settings_main w-96 sm:w-[calc(100%-50px)] bg-gray-100 dark:bg-darkBlue-secondary h-full">
+                        <div class="p-4 flex justify-start items-center dark_border_b border-b-[.1px] border-gray-300">
+                            <span class="font-semibold text-2xl text-purple-600">Settings</span>
+                        </div>
+                        <div class="grid grid-rows-2 h-[calc(100%-65px)]">
+                            <div class="flex flex-col w-full px-3 py-2 gap-2">
+                                <a href="course&year/" title="View, Add, & Update Courses" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                    <span class="text-base">Courses & Year</span>
+                                    <i class="ic flex justify-end items-center w-full text-rose-700 dark:text-rose-600 text-xl">
+                                        <i class="fal fa-list-alt"></i>
+                                    </i>
+                                </a>
+                                <a href="positions/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                    <span class="text-base">Positions </span>
+                                    <i class="ic flex justify-end items-center w-full text-green-700 dark:text-green-600 text-xl">
+                                        <i class="fas fa-list-ol"></i>
+                                    </i>
+                                </a>
+                                <a href="voter-id/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                    <span class="text-base">Voter ID </span>
+                                    <i class="ic flex justify-end items-center w-full text-fuchsia-700 dark:text-fuchsia-600 text-xl">
+                                        <i class="fas fa-id-card"></i>
+                                    </i>
+                                </a>
+                                <a href="partylist/" title="View, Add, & Update Partylist" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:rounded-md hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                    <span class="text-base">Partylist </span>
+                                    <i class="ic flex justify-end items-center w-full text-amber-700 dark:text-amber-600 text-xl">
+                                        <i class="fas fa-ballot"></i>
+                                    </i>
+                                </a>
+                            </div>
+                            <div class="flex justify-center items-end p-2 px-4">
+                                <a class="close_settings border w-full border-red-500 rpl cursor-pointer text-center rounded-md p-[7px] text-red-700 dark:text-red-500 font-medium">Close</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="w-full h-[calc(100%-54px)] p-2 py-3">
-                <div class="w-full h-full flex flex-row md:flex-col">
-                    <div class="transition-all w-60 md:w-full md:grid md:grid-cols-5 md:dark:border-b-[.1px] md:dark:border-r-0 md:p-1 flex flex-col gap-1 p-2 dark:border-r-[.1px] dark:border-gray-600">
-                        <a data=".e_info" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
-                            <span class="md:hidden">Information</span>
-                            <i class="hidden md:block text-xl text-teal-500">
-                                <i class="fad fa-info-circle"></i>
-                            </i>
-                        </a>
-                        <a data=".e_courses" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
-                            <span class="md:hidden">Courses & Year</span>
-                            <i class="hidden md:block text-xl text-purple-500">
-                                <i class="fad fa-list-alt"></i>
-                            </i>
-                        </a>
-                        <a data=".e_positions" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
-                            <span class="md:hidden">Postions</span>
-                            <i class="hidden md:block text-xl text-amber-500">
-                                <i class="fad fa-list-ol"></i>
-                            </i>
-                        </a>
-                        <a data=".e_partylist" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
-                            <span class="md:hidden">Partylist</span>
-                            <i class="hidden md:block text-xl text-amber-500">
-                                <i class="fad fa-th-list"></i>
-                            </i>
-                        </a>
-                        <a data=".e_submit" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
-                            <span class="md:hidden">Finish</span>
-                            <i class="hidden md:block text-xl text-lime-600">
-                                <i class="fad fa-check-circle"></i>
-                            </i>
+            <div class="election_list container mt-[4.5rem]">
+                <div class="transition-all w-full grid grid-cols-2 xl:grid-cols-1 xl:px-52 lg:px-20 md:px-2 gap-4 place-items-center p-2">
+                    <% for (let i = 0; i < 10; i++) { %> 
+                        <div style="animation-delay: <%- i * .150%>s" class="animate__animated animate__fadeInUp w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
+                            <div class="flex w-full">
+                                <div class="md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[325px] h-full object-cover rounded-tl-2xl rounded-bl-2xl skeleton-image"></div>
+                            </div>
+                            <div class="p-8 flex flex-col w-full transition-all">
+                                <div class="container py-3">
+                                    <p class="w-[45%!important] skeleton"></p>
+                                </div>
+                                <div class="container flex flex-col gap-4 mt-4 transition-all">
+                                    <div class="w-[60%] skeleton"></div>
+                                    <div class="w-[70%] skeleton"></div>
+                                    <div class="w-[80%] skeleton"></div>
+                                    <div class="w-full skeleton"></div>
+                                </div>
+                                <div class="container mt-8 justify-center flex flex-row ">
+                                    <a class="skeleton w-full"></a>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <div class="create_election z-20 dark:bg-darkBlue-primary/60 bg-gray-900/60 hidden justify-center items-center fixed top-0 w-full h-full">
+            <input type="hidden" name="default-course" value='<%- JSON.stringify(course) %>'>
+            <input type="hidden" name="default-year" value='<%- JSON.stringify(year) %>'>
+            <input type="hidden" name="default-pos" value='<%- JSON.stringify(positions) %>'>
+            <input type="hidden" name="default-pty" value='<%- JSON.stringify(partylists) %>'>
+            <div class="create_election_main ms-500 p-2 w-[70%] h-[90%] lg:w-[85%] md:w-[95%] md:h-[95%] bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl" animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp">
+                <div class="flex flex-row w-full">
+                    <div class="w-[95%] flex flex-col">
+                        <p class="font-medium transition-all relative text-purple-600 dark:text-purple-500 text-3xl xsm:text-xl py-2 px-3 after:absolute after:bottom-0 after:left-3 after:bg-purple-600 dark:after:bg-purple-700 after:w-6/12 after:h-[3px]">Create Election</p>
+                    </div>
+                    <div class="flex justify-end items-center">
+                        <a class="close_e_create cursor-pointer text-red-500 dark:text-red-500 text-xl py-1 rounded-md rpl px-3">
+                            <i class="fas fa-times-circle"></i>
                         </a>
                     </div>
-                    <form class="create_election_form w-[calc(100%-15rem)] md:h-full md:w-full overflow-x-hidden overflow-hidden">
-                        <div class="e_info  h-full pl-3 md:pl-0">
-                            <div class="flex flex-col py-3 gap-5 h-full">
-                                <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-2/5 lg:w-10/12 md:w-full px-4 ">
-                                    <label for="e_title" class="dark:text-gray-300 text-base">Election Title</label>
-                                    <input required type="text" name="e_title" placeholder="e.g SSG Election" autocomplete="off" class="text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
-                                </div>
-                                <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-10/12 md:w-full px-4 ">
-                                    <label for="e_title" class="dark:text-gray-300 text-base">Description</label>
-                                    <textarea rows="5" name="e_description" placeholder="Optional" autocomplete="off" class="text-input resize-none w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg"></textarea>
-                                </div>
-                                <div class="grid grid-rows-2 gap-4 px-4 w-full">
-                                    <div style="animation-delay: .350s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
-                                        <label for="e_start" class="dark:text-gray-300 text-base">Start Date & Time</label>
-                                        <input required placeholder="Starting Date & Time" type="text" name="e_start" autocomplete="off" class="dt text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
-                                    </div>
-                                    <div style="animation-delay: .450s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
-                                        <label for="e_end" class="dark:text-gray-300 text-base">End Date & Time</label>
-                                        <input required placeholder="Ending Date & Time" type="text" name="e_end" autocomplete="off" class="dt text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
-                                    </div>
-                                </div>
-                            </div>
+                </div>
+                <div class="w-full h-[calc(100%-54px)] p-2 py-3">
+                    <div class="w-full h-full flex flex-row md:flex-col">
+                        <div class="transition-all w-60 md:w-full md:grid md:grid-cols-5 md:dark:border-b-[.1px] md:dark:border-r-0 md:p-1 flex flex-col gap-1 p-2 dark:border-r-[.1px] dark:border-gray-600">
+                            <a data=".e_info" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                                <span class="md:hidden">Information</span>
+                                <i class="hidden md:block text-xl text-teal-500">
+                                    <i class="fad fa-info-circle"></i>
+                                </i>
+                            </a>
+                            <a data=".e_courses" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                                <span class="md:hidden">Courses & Year</span>
+                                <i class="hidden md:block text-xl text-purple-500">
+                                    <i class="fad fa-list-alt"></i>
+                                </i>
+                            </a>
+                            <a data=".e_positions" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                                <span class="md:hidden">Postions</span>
+                                <i class="hidden md:block text-xl text-amber-500">
+                                    <i class="fad fa-list-ol"></i>
+                                </i>
+                            </a>
+                            <a data=".e_partylist" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                                <span class="md:hidden">Partylist</span>
+                                <i class="hidden md:block text-xl text-amber-500">
+                                    <i class="fad fa-th-list"></i>
+                                </i>
+                            </a>
+                            <a data=".e_submit" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
+                                <span class="md:hidden">Finish</span>
+                                <i class="hidden md:block text-xl text-lime-600">
+                                    <i class="fad fa-check-circle"></i>
+                                </i>
+                            </a>
                         </div>
-                        <div class="e_courses hidden h-full pl-3 md:pl-0">
-                            <div class="flex flex-col mt-2 gap-2 h-full md:grid-cols-1 overflow-hidden">
-                                <div class="flex flex-row w-full">
-                                    <div class="c_list_e py-3 rounded-l-md dark:bg-bluegray-800 dark:text-gray-300 w-full flex justify-center items-center cursor-pointer rpl">
-                                        <span>Courses</span>
+                        <form class="create_election_form w-[calc(100%-15rem)] md:h-full md:w-full overflow-x-hidden overflow-hidden">
+                            <div class="e_info  h-full pl-3 md:pl-0">
+                                <div class="flex flex-col py-3 gap-5 h-full">
+                                    <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-2/5 lg:w-10/12 md:w-full px-4 ">
+                                        <label for="e_title" class="dark:text-gray-300 text-base">Election Title</label>
+                                        <input required type="text" name="e_title" placeholder="e.g SSG Election" autocomplete="off" class="text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
                                     </div>
-                                    <div class="y_list_e py-3 rounded-r-md dark:bg-bluegray-800 dark:text-gray-300 w-full flex justify-center items-center cursor-pointer rpl">
-                                        <span>Year</span>
+                                    <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-10/12 md:w-full px-4 ">
+                                        <label for="e_title" class="dark:text-gray-300 text-base">Description</label>
+                                        <textarea rows="5" name="e_description" placeholder="Optional" autocomplete="off" class="text-input resize-none w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg"></textarea>
                                     </div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-1 md:grid-cols-1 transition-all overflow-y-auto h-full">
-                                    <div class="courses">
-                                        <input required type="hidden" name="courses">
-                                        <div class="px-3 py-2 flex flex-col gap-2">
-                                            <% if(course.length != 0) { 
-                                                for( let i = 0; i < course.length; i++ ) { %>
-                                                    <div data="<%- course[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="course_select transition-all animate__animated animate__fadeInUp ms-500 w-auto grid grid-cols-2 px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800 bg-purple-200">
-                                                        <span class="chip-title dark:text-gray-300"><%- course[i].type %></span>
-                                                        <div class="flex justify-end items-center">
-                                                            <a class="course_select_ic cursor-pointer rpl outline-none px-3 pr-1 dark:text-teal-500 text-teal-700"></a>
-                                                        </div>
-                                                    </div>
-                                                <% }
-                                            } else { %> 
-                                                <div style="animation-delay: .150s;" class="chip animate__animated animate__fadeInUp ms-500 w-auto flex justify-center items-center  px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
-                                                    <span class="dark:text-gray-300">Nothing To Fetch</span>
-                                                </div>
-                                            <% } %>
+                                    <div class="grid grid-rows-2 gap-4 px-4 w-full">
+                                        <div style="animation-delay: .350s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
+                                            <label for="e_start" class="dark:text-gray-300 text-base">Start Date & Time</label>
+                                            <input required placeholder="Starting Date & Time" type="text" name="e_start" autocomplete="off" class="dt text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
                                         </div>
-                                    </div>
-                                    <div class="year md:hidden transition-all">
-                                        <input type="hidden" name="year">
-                                        <div class="px-3 py-2 flex flex-col gap-2">
-                                            <% if(year.length != 0) { 
-                                                for( let i = 0; i < year.length; i++ ) { %>
-                                                    <div data="<%- year[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="year_select animate__animated animate__fadeInUp ms-500 w-auto grid grid-cols-2 px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800 bg-purple-200">
-                                                        <span class="chip-title dark:text-gray-300"><%- year[i].type %></span>
-                                                        <div class="flex justify-end items-center">
-                                                            <a class="year_select_ic cursor-pointer rpl outline-none px-3 pr-1 dark:text-teal-500 text-teal-700"></a>
-                                                        </div>
-                                                    </div>
-                                                <% }
-                                            } else { %> 
-                                                <div style="animation-delay: .150s;" class="chip animate__animated animate__fadeInUp ms-500 w-auto flex justify-center items-center  px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
-                                                    <span class="dark:text-gray-300">Nothing To Fetch</span>
-                                                </div>
-                                            <% } %>
+                                        <div style="animation-delay: .450s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
+                                            <label for="e_end" class="dark:text-gray-300 text-base">End Date & Time</label>
+                                            <input required placeholder="Ending Date & Time" type="text" name="e_end" autocomplete="off" class="dt text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="e_positions hidden h-full pl-3 md:pl-0">
-                            <div class="w-full flex flex-col items-center p-2">
-                                <p class="dark:text-gray-300 text-2xl">Select Positions</p>
-                            </div>
-                            <input required type="hidden" name="positions">
-                            <div class="flex flex-col gap-2 mt-2" chip='<%- JSON.stringify(positions) %>'>
-                                <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 w-auto flex justify-center items-center px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800 bg-purple-200">
-                                    <span class="dark:text-gray-300">Nothing To Fetch</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="e_partylist hidden h-full pl-3 md:pl-0">
-                            <div class="w-full h-full items-center flex flex-col gap-3 py-2 overflow-x-hidden">
-                                <p class="text-2xl dark:text-gray-300">Select Partylist</p>
-                                <div class="partylists w-full flex flex-col items-center gap-2 p-2">
-                                    <input required type="hidden" name="partylists">
-                                    <% if(partylists.length != 0) { 
-                                        for (let i = 0; i < partylists.length; i++) { %> 
-                                            <div data="<%- partylists[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="partylist_select w-[200px] animate__animated animate__fadeInUp sm:w-full ms-500 grid grid-cols-2 px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800 bg-purple-200">
-                                                <span class="chip-title dark:text-gray-300"><%- partylists[i].type %></span>
-                                                <div class="flex justify-end items-center">
-                                                    <a class="partylist_select_ic cursor-pointer rpl outline-none px-3 pr-1 dark:text-teal-500 text-teal-700"></a>
-                                                </div>
+                            <div class="e_courses hidden h-full pl-3 md:pl-0">
+                                <div class="flex flex-col mt-2 gap-2 h-full md:grid-cols-1 overflow-hidden">
+                                    <div class="flex flex-row w-full">
+                                        <div class="c_list_e py-3 rounded-l-md dark:bg-bluegray-800 dark:text-gray-300 w-full flex justify-center items-center cursor-pointer rpl">
+                                            <span>Courses</span>
+                                        </div>
+                                        <div class="y_list_e py-3 rounded-r-md dark:bg-bluegray-800 dark:text-gray-300 w-full flex justify-center items-center cursor-pointer rpl">
+                                            <span>Year</span>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-1 md:grid-cols-1 transition-all overflow-y-auto h-full">
+                                        <div class="courses">
+                                            <input required type="hidden" name="courses">
+                                            <div class="px-3 py-2 flex flex-col gap-2">
+                                                <% if(course.length != 0) { 
+                                                    for( let i = 0; i < course.length; i++ ) { %>
+                                                        <div data="<%- course[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="course_select transition-all animate__animated animate__fadeInUp ms-500 w-auto grid grid-cols-2 px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800 bg-purple-200">
+                                                            <span class="chip-title dark:text-gray-300"><%- course[i].type %></span>
+                                                            <div class="flex justify-end items-center">
+                                                                <a class="course_select_ic cursor-pointer rpl outline-none px-3 pr-1 dark:text-teal-500 text-teal-700"></a>
+                                                            </div>
+                                                        </div>
+                                                    <% }
+                                                } else { %> 
+                                                    <div style="animation-delay: .150s;" class="chip animate__animated animate__fadeInUp ms-500 w-auto flex justify-center items-center  px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
+                                                        <span class="dark:text-gray-300">Nothing To Fetch</span>
+                                                    </div>
+                                                <% } %>
                                             </div>
-                                        <% } 
-                                    } else { %>
-                                        <div class="chip w-[60%] sm:w-full animate__animated animate__fadeInUp mt-5 flex justify-center ms-500 px-3 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
-                                            <span class="chip-title dark:text-gray-300 break-all">No Partylist To Fetch</span>
                                         </div>
-                                    <% } %>
+                                        <div class="year md:hidden transition-all">
+                                            <input type="hidden" name="year">
+                                            <div class="px-3 py-2 flex flex-col gap-2">
+                                                <% if(year.length != 0) { 
+                                                    for( let i = 0; i < year.length; i++ ) { %>
+                                                        <div data="<%- year[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="year_select animate__animated animate__fadeInUp ms-500 w-auto grid grid-cols-2 px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800 bg-purple-200">
+                                                            <span class="chip-title dark:text-gray-300"><%- year[i].type %></span>
+                                                            <div class="flex justify-end items-center">
+                                                                <a class="year_select_ic cursor-pointer rpl outline-none px-3 pr-1 dark:text-teal-500 text-teal-700"></a>
+                                                            </div>
+                                                        </div>
+                                                    <% }
+                                                } else { %> 
+                                                    <div style="animation-delay: .150s;" class="chip animate__animated animate__fadeInUp ms-500 w-auto flex justify-center items-center  px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
+                                                        <span class="dark:text-gray-300">Nothing To Fetch</span>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="e_submit hidden h-full pl-3 md:pl-0">
-                            <div class="e_submit_summary  w-full h-full grid p-2 overflow-y-auto">
-                                <div class="">
-                                    <div class="w-full mb-2 grid grid-cols-2 sm:grid-cols-none gap-2">
-                                        <div class="grid grid-row-3 gap-2">
-                                            <fieldset style="animation-delay: .150s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-[max-content]">
-                                                <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Election Title</legend>
-                                                <div class="e_submit_title p-3 dark:text-gray-300/80 text-base"></div>
-                                            </fieldset>
-                                            <fieldset style="animation-delay: .250s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-[max-content]">
-                                                <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Eligible Courses</legend>
-                                                <div class="e_submit_crs p-3 flex flex-wrap gap-2"></div>
-                                            </fieldset>
-                                            <fieldset style="animation-delay: .350s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-[max-content]">
-                                                <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Eligible Year</legend>
-                                                <div class="e_submit_yr p-3 flex flex-wrap gap-2"></div>
+                            <div class="e_positions hidden h-full pl-3 md:pl-0">
+                                <div class="w-full flex flex-col items-center p-2">
+                                    <p class="dark:text-gray-300 text-2xl">Select Positions</p>
+                                </div>
+                                <input required type="hidden" name="positions">
+                                <div class="flex flex-col gap-2 mt-2" chip='<%- JSON.stringify(positions) %>'>
+                                    <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 w-auto flex justify-center items-center px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800 bg-purple-200">
+                                        <span class="dark:text-gray-300">Nothing To Fetch</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="e_partylist hidden h-full pl-3 md:pl-0">
+                                <div class="w-full h-full items-center flex flex-col gap-3 py-2 overflow-x-hidden">
+                                    <p class="text-2xl dark:text-gray-300">Select Partylist</p>
+                                    <div class="partylists w-full flex flex-col items-center gap-2 p-2">
+                                        <input required type="hidden" name="partylists">
+                                        <% if(partylists.length != 0) { 
+                                            for (let i = 0; i < partylists.length; i++) { %> 
+                                                <div data="<%- partylists[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="partylist_select w-[200px] animate__animated animate__fadeInUp sm:w-full ms-500 grid grid-cols-2 px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800 bg-purple-200">
+                                                    <span class="chip-title dark:text-gray-300"><%- partylists[i].type %></span>
+                                                    <div class="flex justify-end items-center">
+                                                        <a class="partylist_select_ic cursor-pointer rpl outline-none px-3 pr-1 dark:text-teal-500 text-teal-700"></a>
+                                                    </div>
+                                                </div>
+                                            <% } 
+                                        } else { %>
+                                            <div class="chip w-[60%] sm:w-full animate__animated animate__fadeInUp mt-5 flex justify-center ms-500 px-3 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800">
+                                                <span class="chip-title dark:text-gray-300 break-all">No Partylist To Fetch</span>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="e_submit hidden h-full pl-3 md:pl-0">
+                                <div class="e_submit_summary  w-full h-full grid p-2 overflow-y-auto">
+                                    <div class="">
+                                        <div class="w-full mb-2 grid grid-cols-2 sm:grid-cols-none gap-2">
+                                            <div class="grid grid-row-3 gap-2">
+                                                <fieldset style="animation-delay: .150s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-[max-content]">
+                                                    <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Election Title</legend>
+                                                    <div class="e_submit_title p-3 dark:text-gray-300/80 text-base"></div>
+                                                </fieldset>
+                                                <fieldset style="animation-delay: .250s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-[max-content]">
+                                                    <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Eligible Courses</legend>
+                                                    <div class="e_submit_crs p-3 flex flex-wrap gap-2"></div>
+                                                </fieldset>
+                                                <fieldset style="animation-delay: .350s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-[max-content]">
+                                                    <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Eligible Year</legend>
+                                                    <div class="e_submit_yr p-3 flex flex-wrap gap-2"></div>
+                                                </fieldset>
+                                            </div>
+                                            <fieldset style="animation-delay: .450s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-64 overflow-x-auto">
+                                                <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Election Description</legend>
+                                                <div class="e_submit_description break-words p-3 dark:text-gray-300/80 text-base"></div>
                                             </fieldset>
                                         </div>
-                                        <fieldset style="animation-delay: .450s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-64 overflow-x-auto">
-                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Election Description</legend>
-                                            <div class="e_submit_description break-words p-3 dark:text-gray-300/80 text-base"></div>
-                                        </fieldset>
+                                        <div class="w-full mb-2 grid grid-cols-2 sm:grid-cols-none gap-2">
+                                            <fieldset style="animation-delay: .550s" class="animate__animated animate__fadeInUp ms-500 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-auto">
+                                                <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Positions</legend>
+                                                <div class="e_submit_pos p-3 flex flex-wrap gap-2"></div>
+                                            </fieldset>
+                                            <fieldset style="animation-delay: .650s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-auto">
+                                                <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Partylists</legend>
+                                                <div class="e_submit_pty p-3 flex flex-wrap gap-2"></div>
+                                            </fieldset>
+                                        </div>
                                     </div>
-                                    <div class="w-full mb-2 grid grid-cols-2 sm:grid-cols-none gap-2">
-                                        <fieldset style="animation-delay: .550s" class="animate__animated animate__fadeInUp ms-500 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-auto">
-                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Positions</legend>
-                                            <div class="e_submit_pos p-3 flex flex-wrap gap-2"></div>
-                                        </fieldset>
-                                        <fieldset style="animation-delay: .650s" class="animate__animated animate__fadeInUp ms-800 rounded-md border-[.1px] dark:border-gray-600 border-gray-400 p-1 h-auto">
-                                            <legend class="text-base ml-2 dark:text-gray-300/90 px-3">Partylists</legend>
-                                            <div class="e_submit_pty p-3 flex flex-wrap gap-2"></div>
-                                        </fieldset>
+                                    <div class="w-full flex flex-row justify-center items-end">
+                                        <button type="submit" class="rpl mb-2 sm:w-full w-2/4 text-lg transition-all text-center px-3 py-2 border border-transparent rounded-md shadow-sm text-white bg-purple-800 dark:hover:bg-purple-700 focus:outline-none dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-purple-800 dark:focus:ring-offset-darkBlue-secondary">
+                                            Submit Election
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="w-full flex flex-row justify-center items-end">
-                                    <button type="submit" class="rpl mb-2 sm:w-full w-2/4 text-lg transition-all text-center px-3 py-2 border border-transparent rounded-md shadow-sm text-white bg-purple-800 dark:hover:bg-purple-700 focus:outline-none dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-purple-800 dark:focus:ring-offset-darkBlue-secondary">
-                                        Submit Election
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="e_submit_loading w-full h-full hidden flex-col gap-2 p-2 justify-center items-center">
-                                <div class="e_submit_loading_x flex justify-center items-center gap-3 flex-col">
-                                    <div class="text-5xl text-purple-600">
-                                        <i class="fad fa-spinner-third animate-spin"></i>
-                                    </div>  
-                                    <p class="dark:text-gray-300 text-bluegray-900 text-xl" id="e_creating"></p>
-                                </div>
-                                <div class="e_submit_res flex-col hidden gap-2">
-                                    <div class="flex flex-col items-center gap-2 justify-center animate__animated animate__bounceIn">
-                                        <i class="dark:text-teal-600 text-teal-500 text-5xl fad fa-check-circle"></i>
-                                        <p class="dark:text-gray-300 text-xl e_submit_res_msg">fasfafaffaf</p>
+                                <div class="e_submit_loading w-full h-full hidden flex-col gap-2 p-2 justify-center items-center">
+                                    <div class="e_submit_loading_x flex justify-center items-center gap-3 flex-col">
+                                        <div class="text-5xl text-purple-600">
+                                            <i class="fad fa-spinner-third animate-spin"></i>
+                                        </div>  
+                                        <p class="dark:text-gray-300 text-bluegray-900 text-xl" id="e_creating"></p>
                                     </div>
-                                    <div class="mt-5 flex flex-col gap-2 animate__animated animate__fadeInUp items-center">
-                                        <p class="dark:text-gray-400 text-bluegray-600 text-base">Election will start <span class="dark:text-gray-300 text-bluegray-900 e_submit_res_start">...</span></p>
-                                        <p class="dark:text-gray-400 text-bluegray-600 text-base">Election passcode <span class="dark:text-gray-300 text-bluegray-900 e_submit_res_pass">...</span></p>
+                                    <div class="e_submit_res flex-col hidden gap-2">
+                                        <div class="flex flex-col items-center gap-2 justify-center animate__animated animate__bounceIn">
+                                            <i class="dark:text-teal-600 text-teal-500 text-5xl fad fa-check-circle"></i>
+                                            <p class="dark:text-gray-300 text-xl e_submit_res_msg">fasfafaffaf</p>
+                                        </div>
+                                        <div class="mt-5 flex flex-col gap-2 animate__animated animate__fadeInUp items-center">
+                                            <p class="dark:text-gray-400 text-bluegray-600 text-base">Election will start <span class="dark:text-gray-300 text-bluegray-900 e_submit_res_start">...</span></p>
+                                            <p class="dark:text-gray-400 text-bluegray-600 text-base">Election passcode <span class="dark:text-gray-300 text-bluegray-900 e_submit_res_pass">...</span></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

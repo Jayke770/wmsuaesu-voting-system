@@ -1,0 +1,13 @@
+<div class="flex flex-col py-1 gap-3 h-full animate__animated animate__fadeInRight ms-500">
+    <form class="edit_election_passcode flex flex-col gap-2 px-3">
+        <button type="reset"></button>
+        <div class="container flex flex-col gap-2">
+            <label class="text-bluegray-900 dark:text-gray-300" for="e_title">Election passcode</label>
+            <input value="<%- election.passcode %>" disabled type="password" class="disabled:text-gray-600 disabled:border-purple-700  w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+            <input name="e_passcode" required placeholder="Enter new passcode" type="text" class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+        </div>
+        <div class="container flex justify-center items-center">
+            <button type="submit" class="w-full rpl dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-200 transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary focus:ring-purple-600 dark:focus:ring-purple-800">Change</button>
+        </div>
+    </form>
+</div>

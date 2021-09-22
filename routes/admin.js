@@ -250,7 +250,6 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             const end = moment(e_data.end).fromNow().search("ago") != -1 ? true : false
             //save election id to session 
             req.session.currentElection = xs(id)
-            req.session.electionData = e_data
             //get all the pending voters 
             for(let i = 0; i < e_data.voters.length; i++){
                 if(e_data.voters[i].status === 'Pending'){
@@ -492,13 +491,21 @@ adminrouter.post('/control/elections/search-voter/', limit, isadmin, async (req,
     }
 })
 //election settings 
-adminrouter.post('/control/elections/settings/:settings', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/settings/:settings/', limit, isadmin, async (req, res) => {
     const {settings} = req.params
-    const electionData = req.session.electionData
-    return res.render(`control/forms/${settings}`, {election: electionData})
+    const electionID = req.session.currentElection 
+    try {
+        await election.find({_id: {$eq: xs(electionID)}}).then( (elec) => {
+            return res.render(`control/forms/${settings}`, {election: elec.length !== 0 ? elec[0] : []})
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
 })  
 //change election title 
-adminrouter.post('/control/election/change-title', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/election/settings/change-title/', limit, isadmin, async (req, res) => {
     const {e_title} = req.body 
     const electionID = req.session.currentElection
     try {
@@ -528,7 +535,7 @@ adminrouter.post('/control/election/change-title', limit, isadmin, async (req, r
                             }, {$set: {election_title: xs(e_title)}}).then( (up) => {
                                 return res.send({
                                     status: true, 
-                                    txt: 'Successfully changed!'
+                                    txt: 'Title successfully changed!'
                                 })
                             }).catch( (e) => {
                                 throw new Error(e)
@@ -556,6 +563,71 @@ adminrouter.post('/control/election/change-title', limit, isadmin, async (req, r
         })
     } catch (e) {
         console.log(e.message)
+        return res.status(500).send()
+    }
+})
+//change election description 
+adminrouter.post('/control/election/settings/change-description/', limit, isadmin, async (req, res) => {
+    const {election_description} = req.body 
+    const electionID = req.session.currentElection 
+    try {
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }, {election_description: 1}).then( async (d) => {
+            if(d.length !== 0){
+                await election.updateOne({
+                    _id: {$eq: xs(electionID)}
+                }, {$set: {election_description: xs(election_description)}}).then( (upd) => {
+                    return res.send({
+                        status: true, 
+                        txt: 'Description successfully changed!'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Election not found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+//change elction passcode
+adminrouter.post('/control/election/settings/change-passcode', limit, isadmin, async (req, res) => {
+    const {e_passcode} = req.body 
+    const electionID = req.session.currentElection
+    try {
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }, {passcode: 1}).then( async (ps) => {
+            if(ps.length !== 0){
+                const passcode = await hash(xs(e_passcode), 10)
+                await election.updateOne({
+                    _id: {$eq: xs(electionID)}
+                }, {$set: {passcode: passcode}}).then( (up_e) =>{
+                    return res.send({
+                        status: true, 
+                        txt: 'Passcode successfully changed!'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Election not found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
         return res.status(500).send()
     }
 })

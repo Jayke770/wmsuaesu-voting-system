@@ -13,12 +13,16 @@
     <script>
         document.onreadystatechange = () => {
             setTimeout( () => {
+                $(".loading").remove()
                 $(".election_details").removeClass("hidden")
-            }, 1000)
+            }, 500)
         }
     </script>
 </head>
 <body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <div class="loading flex justify-center w-screen h-screen items-center">
+        <%- include('../../lazy/loading') %>
+    </div>
     <div class="election_details hidden animate__animated animate__fadeIn ms-500">
         <div class="header fixed top-0 z-30 w-full flex flex-row p-1 items-center bg-gray-50 dark:bg-[#161b22] shadow-md">
             <div class="flex-[20%] xl:flex-[50%] md:flex-[80%]">

@@ -35,10 +35,6 @@ const user =  new mongoose.Schema({
         type: String
     }, 
     socket_id: {
-        type: String, 
-        required: true
-    },
-    ip: {
         type: String,
     },
     messages:{
@@ -56,11 +52,14 @@ const user =  new mongoose.Schema({
     visitors:{
         type: Array,
     },
-    face: {
-        type: Boolean,
-    },
     notifications:{
         type: Array,
+    },
+    devices: {
+        type: Boolean,
+    },
+    ip: {
+        type: String,
     },
     created: {
         type: Date, 

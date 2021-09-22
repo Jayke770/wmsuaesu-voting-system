@@ -32,6 +32,7 @@ const election = new mongoose.Schema({
     },
     start: {}, 
     end: {}, 
+    link: {},
     created:{}
 })
 module.exports = mongoose.model('elections', election)
