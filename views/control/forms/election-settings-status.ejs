@@ -1,0 +1,23 @@
+<div class="flex flex-col py-1 gap-3 h-full animate__animated animate__fadeInRight ms-500">
+    <div class="grid grid-cols-2 dark_border shadow-lg p-2 rounded-lg cursor-pointer rpl">
+        <div class="flex flex-row items-center">
+            <p class="dark:text-gray-300 text-bluegray-900"><%- election.status === 'Not Started' ? 'Start' : 'Terminate' %> Election</p>
+        </div>
+        <div class="flex flex-row justify-end items-center w-full">
+            <div class="flex items-center justify-end w-full">
+                <label for="toggle" class="flex items-center <%- election.status === 'Ended' ? ' cursor-not-allowed' : 'cursor-pointer' %>">
+                    <div class="relative">
+                        <input <%- election.status === 'Started' ? 'checked' : '' %> <%- election.status === 'Ended' ? 'disabled' : '' %> type="checkbox" id="toggle" class="election_status_toggle sr-only peer">
+                        <div class="block dark:bg-gray-700 w-10 h-6 rounded-full"></div>
+                        <div class="<%- election.status === 'Ended' ? 'bg-rose-500' : 'peer-checked:bg-purple-500' %> peer-checked:translate-x-[100%] absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all"></div>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </div>
+    <% if(election.status === 'Ended') { %>
+        <div class="flex break-words dark:text-gray-300/80 border-l-2 border-rose-600 px-3 py-2 text-sm text-bluegray-900 dark:bg-darkBlue-primary/50">
+            <p>Election is already ended, if would like to start it again you can edit the Ending Date & Time of this election.</p>
+        </div>
+    <% } %>
+</div>

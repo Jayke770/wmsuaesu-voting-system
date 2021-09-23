@@ -317,6 +317,7 @@ $(document).ready(() => {
             },
             success: (res) => {
                 if(res.created){
+                    $(this).find("input[type='reset']").click()
                     setTimeout( () => {
                         $(".e_submit_loading_x").removeClass("flex") 
                         $(".e_submit_loading_x").addClass("hidden")
@@ -342,7 +343,17 @@ $(document).ready(() => {
                 }
             }, 
             error: (e) => {
-
+                Swal.fire({
+                    title: 'Connection error',
+                    html: `${e.status} ${e.statusText}`,
+                    icon: 'error', 
+                    backdrop: true, 
+                    allowOutsideClick: false
+                }).then( () => {
+                    $(".e_submit_summary").slideDown(500)
+                    $(".e_submit_loading").removeClass("flex") 
+                    $(".e_submit_loading").addClass("hidden")
+                })
             }
         })
     })

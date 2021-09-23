@@ -1,3 +1,6 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
 const express = require('express')
 const adminrouter = express.Router()
 const {isadmin} = require('./auth')
@@ -49,6 +52,7 @@ adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
     }
 })
 //create election 
+// 1 bug here in starting and ending data/time of election
 adminrouter.post('/control/elections/create-election/', limit, isadmin, async (req, res) => {
     const {e_title, e_description, e_start, e_end, courses, year, positions, partylists} = req.body 
     //sanitize 
@@ -174,6 +178,7 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
                             status: "Not Started", 
                             start: start, 
                             end: end, 
+                            autoAccept: false,
                             created: moment().format()
                         }, (err, crtd) => {
                             if(err) throw new err 
@@ -274,8 +279,9 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
                 partylist: pty,
                 pending: pending,
                 accepted: accepted,
-                endtime: moment(data.end).fromNow(),
+                endtime: moment(e_data.end).fromNow(),
                 link: xs(from) === "home" ? '/control/' : '/control/elections/',
+                election_link: process.env.link,
                 csrf: req.csrfToken()
             })
         }).catch( (e) => {
@@ -598,8 +604,8 @@ adminrouter.post('/control/election/settings/change-description/', limit, isadmi
         return res.status(500).send()
     }
 })
-//change elction passcode
-adminrouter.post('/control/election/settings/change-passcode', limit, isadmin, async (req, res) => {
+//change election passcode
+adminrouter.post('/control/election/settings/change-passcode/', limit, isadmin, async (req, res) => {
     const {e_passcode} = req.body 
     const electionID = req.session.currentElection
     try {
@@ -628,6 +634,210 @@ adminrouter.post('/control/election/settings/change-passcode', limit, isadmin, a
             throw new Error(e)
         })
     } catch (e) {
+        return res.status(500).send()
+    }
+})
+//force to start election
+adminrouter.post('/control/election/settings/start-election/', limit, isadmin, async (req, res) => {
+    const electionID = req.session.currentElection 
+    try {
+        //get election details 
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }, {status: 1}).then( async (s) => {
+            if(s.length !== 0){
+                //check status
+                // if the election is not started then start the election
+                if(s[0].status === 'Not Started'){
+                    //start election 
+                    await election.updateOne({
+                        _id: {$eq: xs(electionID)}
+                    }, {$set: {
+                        status: 'Started',
+                        start: moment().format()
+                    }}).then( () => {
+                        return res.send({
+                            status: true, 
+                            e_status: true,
+                            msg: 'Election successfully started'
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                // if the election is already started
+                } else if(s[0].status === 'Started'){
+                    return res.send({
+                        status: false,
+                        e_status: true, 
+                        msg: 'Election is already started'
+                    })
+                // if the election is already ended
+                } else if(s[0].status === 'Ended'){
+                    return res.send({
+                        status: false,
+                        e_status: true, 
+                        msg: 'Election is already ended'
+                    })
+                } else {
+                    return res.send({
+                        status: false,
+                        e_status: false, 
+                        msg: 'Something went wrong'
+                    })
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    e_status: false,
+                    msg: 'Election not found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//force to stop election 
+adminrouter.post('/control/election/settings/stop-election/', limit, isadmin, async (req, res) => {
+    const electionID = req.session.currentElection  
+    try {
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }, {status: 1}).then( async (s) => {
+            if(s.length !== 0){
+                if(s[0].status === 'Started'){
+                    //update election and stop 
+                    await election.updateOne({
+                        _id: {$eq: xs(electionID)}
+                    }, {$set: {
+                        status: 'Ended', 
+                        end: moment().format()
+                    }}).then( () => {
+                        return res.send({
+                            status: true, 
+                            e_status: false,
+                            msg: 'Election terminated successfully'
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                } else if(s[0].status === 'Ended'){
+                    return res.send({
+                        status: false, 
+                        e_status: true,
+                        msg: 'Election already ended'
+                    })
+                } else {
+                    return res.send({
+                        status: false, 
+                        e_status: true,
+                        msg: 'Something went wrong'
+                    })
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    e_status: false,
+                    msg: 'Election not found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+// change election starting date & time 
+adminrouter.post('/control/election/settings/edit-starting-dt/', limit, isadmin, async (req, res) => {
+    const {time} = req.body 
+    const electionID = req.session.currentElection 
+    if(time !== ''){
+        try {
+            //get election details 
+            await election.find({
+                _id: {$eq: xs(electionID)}
+            }, {start: 1}).then( async (s) => {
+                //if election is not empty 
+                if(s.length !== 0){
+                    await election.updateOne({
+                        _id: {$eq: xs(electionID)}
+                    }, {$set: {
+                        start: xs(time)
+                    }}).then( () => {
+                        return res.send({
+                            status: true, 
+                            msg: "Starting Date & Time successfully changed!"
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                } else {
+                    return res.send({
+                        status: false, 
+                        msg: 'Election not found!'
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            console.log(e)
+            return res.status(500).send()
+        }
+    } else {
+        return res.send({
+            status: false, 
+            msg: 'Please enter valid date & time'
+        })
+    }
+})
+// election settings 
+adminrouter.post('/control/elections/status/settings/', limit, isadmin, async (req, res) => {
+    const electionID = req.session.currentElection 
+    try {
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }).then( (elec) => {
+            return res.render('control/forms/election-settings', {
+                election: elec[0], 
+                link: process.env.link,
+                str: {
+                    start: moment(elec[0].start).format('MMMM DD YYYY, h:mm a'),
+                    end: moment(elec[0].end).format('MMMM DD YYYY, h:mm a'),
+                    created: moment(elec[0].created).format('MMMM DD YYYY, h:mm a'),
+                },
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+// new election status 
+adminrouter.post('/control/elections/status/election-date-time/', limit, isadmin, async (req, res) => {
+    const electionID = req.session.currentElection 
+    try {
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }).then( (elec) => {
+            return res.render('control/forms/election-date-time', {
+                started:  moment(elec[0].start).fromNow().search("ago") != -1 ? true : false, 
+                end: moment(elec[0].end).fromNow().search("ago") != -1 ? true : false, 
+                endtime: moment(elec[0].end).fromNow(), 
+                election: elec[0]
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })

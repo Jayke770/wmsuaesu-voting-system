@@ -1,0 +1,31 @@
+<div class="flex md:block justify-center transition-all">
+    <div class="shadow-md bg-gray-100 dark:bg-[#161b22] rounded-md p-3 transition-all gap-2 flex flex-col">
+        <div class="container flex">
+            <span class="font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal">
+                <%- started && !end ? 'Election will end in' : started && end ? `Election ended ${endtime}` : `Election will begin in` %>
+            </span>
+        </div>
+        <div class="container flex flex-col justify-center items-center h-full p-2">
+            <div id="e_time" class="flipdown" data="<%- started ? election.end : election.start %>" started="<%- started ? 'true' : 'false' %>"></div>
+        </div>
+    </div>
+</div>
+<script> 
+    $(document).ready( () => {
+        //get the election starting time  
+        let e_start = (new Date($("#e_time").attr("data")).getTime() / 1000), start = false
+        let flipdown = new FlipDown(e_start, "e_time")
+        flipdown.start()
+        flipdown.ifEnded(() => {
+            //check if the flipDown started attr is = to true 
+            const status = $("#e_time").attr("started")
+            if (status !== "true") {
+                alert("fasfs")
+            }
+        })
+        //set the theme of flipdown 
+        const theme = localStorage.getItem('theme') === "dark" ? true : false
+        $("#e_time").removeClass(theme ? 'flipdown__theme-dark' : 'flipdown__theme-light')
+        $("#e_time").addClass(theme ? 'flipdown__theme-light' : 'flipdown__theme-dark')
+    })
+</script>

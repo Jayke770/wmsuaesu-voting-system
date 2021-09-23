@@ -5,7 +5,11 @@ async function fetchtimeout(source, options = {}){
     const i = setTimeout( () => { 
         controller.abort()  
     }, timeout)
-    console.log(source, options)
+    const log = {
+        link: source, 
+        options: options
+    }
+    console.log('Fetch with timeout\n', log)
     const response  = await fetch(source, {
         ...options, 
         signal: controller.signal

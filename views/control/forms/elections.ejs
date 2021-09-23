@@ -159,15 +159,16 @@
                             </a>
                         </div>
                         <form class="create_election_form w-[calc(100%-15rem)] md:h-full md:w-full overflow-x-hidden overflow-hidden">
-                            <div class="e_info  h-full pl-3 md:pl-0">
-                                <div class="flex flex-col py-3 gap-5 h-full">
+                            <input type="reset" class="hidden">
+                            <div class="e_info h-full pl-3 md:pl-0">
+                                <div class="flex flex-col sm:justify-center py-3 gap-5 h-full">
                                     <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-2/5 lg:w-10/12 md:w-full px-4 ">
                                         <label for="e_title" class="dark:text-gray-300 text-base">Election Title</label>
                                         <input required type="text" name="e_title" placeholder="e.g SSG Election" autocomplete="off" class="text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
                                     </div>
                                     <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-10/12 md:w-full px-4 ">
                                         <label for="e_title" class="dark:text-gray-300 text-base">Description</label>
-                                        <textarea rows="5" name="e_description" placeholder="Optional" autocomplete="off" class="text-input resize-none w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg"></textarea>
+                                        <textarea rows="5" name="e_description" placeholder="e.g, Connecting people" autocomplete="off" class="text-input resize-none w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg"></textarea>
                                     </div>
                                     <div class="grid grid-rows-2 gap-4 px-4 w-full">
                                         <div style="animation-delay: .350s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
@@ -337,6 +338,8 @@
     <script src="/js/color.js"></script>
     <script src="/js/avatar.js"></script>
     <script src="/js/fetch.js"></script>
+    <script src="/js/audio_file.js "></script>
+    <script src="/js/audio.js "></script>
     <script src="/control/js/election.js "></script>
     <script src="/control/js/position-add.js"></script>
     <script src="/socket.io/socket.io.js"></script>

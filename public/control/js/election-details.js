@@ -1,20 +1,4 @@
 $(document).ready(() => {
-    //get the election starting time  
-    let e_start = (new Date($("body").find("#e_time").attr("data")).getTime() / 1000), start = false
-    let flipdown = new FlipDown(e_start, "e_time")
-    flipdown.start()
-    flipdown.ifEnded(() => {
-        //check if the flipDown started attr is = to true 
-        const status = $("body").find("#e_time").attr("started")
-        if (status !== "true") {
-            alert("fasfs")
-        }
-    })
-    //set the theme of flipdown 
-    const theme = localStorage.getItem('theme') === "dark" ? true : false
-    $("body").find("#e_time").removeClass(theme ? 'flipdown__theme-dark' : 'flipdown__theme-light')
-    $("body").find("#e_time").addClass(theme ? 'flipdown__theme-light' : 'flipdown__theme-dark')
-
     //open navigation 
     $(".e_nav").click(() => {
         const nav = $(".e_nav_main")
@@ -357,31 +341,35 @@ $(document).ready(() => {
         }, 300)
     })
     //settings
-    $(".settings_").click( function(e) {
+    $("body").delegate('.settings_', 'click', function(e) {
         if($(e.target).hasClass("settings_")){
             $(".settings_main").addClass($(".settings_main").attr("animate-out"))
             setTimeout(() => {
                 $(".settings_").addClass("hidden")
                 $(".settings_").removeClass("flex")
                 $(".settings_main").removeClass($(".settings_main").attr("animate-out"))
+                $(".card_settings_form").html('')
+                $(".card_settings").show()
             }, 300)
         }
     })
-    $(".close_settings").click( () => {
+    $("body").delegate(".close_settings", "click", () => {
         $(".settings_main").addClass($(".settings_main").attr("animate-out"))
         setTimeout(() => {
             $(".settings_").addClass("hidden")
             $(".settings_").removeClass("flex")
             $(".settings_main").removeClass($(".settings_main").attr("animate-out"))
+            $(".card_settings_form").html('')
+            $(".card_settings").show()
         }, 300)
     })
-    $(".back_settings").click( function() {
+    $("body").delegate('.back_settings', 'click', function() {
         $(".card_settings_form").html('')
         $(this).hide() 
         $('.card_settings').show(500)
     })
     let settings = false
-    $(".election_settings_btn").click( async function() {
+    $("body").delegate(".election_settings_btn", "click", async function() {
         const def = $(this).find(".settings_ic").html() 
         if(!settings){
             settings = true 
@@ -416,7 +404,7 @@ $(document).ready(() => {
     })
     //chnage election title
     let e_change_title = false
-    $(".card_settings_form").delegate(".edit_election_title", "submit", async function(e) {
+    $("body").delegate(".edit_election_title", "submit", async function(e) {
         e.preventDefault()
         const def = $(this).find("button[type='submit']").html()
         if(!e_change_title){
@@ -459,7 +447,7 @@ $(document).ready(() => {
     })
     //change election description
     let e_change_description = false 
-    $(".card_settings_form").delegate(".edit_election_description", "submit", async function(e) {
+    $("body").delegate(".edit_election_description", "submit", async function(e) {
         e.preventDefault() 
         const def = $(this).find("button[type='submit']").html()
         if(!e_change_description){ 
@@ -502,7 +490,7 @@ $(document).ready(() => {
     })
     //change election passcode
     let e_change_passcode = false
-    $(".card_settings_form").delegate(".edit_election_passcode", "submit", async function(e) {
+    $("body").delegate(".edit_election_passcode", "submit", async function(e) {
         e.preventDefault()
         const def = $(this).find("button[type='submit']").html()
         if(!e_change_passcode){ 
@@ -542,7 +530,213 @@ $(document).ready(() => {
             }
         }
     })
-
+    //change election status 
+    let e_status = false
+    $("body").delegate(".election_status_toggle", "change", async function(e) {
+        e.preventDefault()
+        const toggle = $(this).prop("checked")
+        if(!e_status){
+            if(toggle){
+                //start election 
+                Swal.fire({
+                    icon: 'question', 
+                    title: 'Start election', 
+                    html: 'This will force to start the election',
+                    showDenyButton: true, 
+                    confirmButtonText: 'Start',
+                    denyButtonText: 'Cancel', 
+                    backdrop: true, 
+                    allowOutsideClick: false,
+                    willOpen: () => {
+                        $(this).prop("checked", toggle ? false : true)
+                    },
+                }).then( (res) => {
+                    if(res.isConfirmed){
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Starting election', 
+                            html: 'Please wait...', 
+                            backdrop: true, 
+                            showConfirmButton: false, 
+                            allowOutsideClick: false, 
+                            willOpen: async () => {
+                                Swal.showLoading()
+                                e_status = true
+                                try {
+                                    const req = await fetchtimeout('/control/election/settings/start-election/', {
+                                        headers: {
+                                            'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                        }, 
+                                        method: 'POST'
+                                    })
+                                    if(req.ok){
+                                        const res = await req.json() 
+                                        e_status = false 
+                                        if(res.status){
+                                            Swal.fire({
+                                                icon: 'success', 
+                                                title: res.msg,
+                                                backdrop: true, 
+                                                allowOutsideClick: false, 
+                                            }).then( async () => {
+                                                $(this).prop("checked", res.e_status)
+                                            })
+                                        } else {
+                                            Swal.fire({
+                                                icon: 'info', 
+                                                title: res.msg,
+                                                backdrop: true, 
+                                                allowOutsideClick: false, 
+                                            }).then( () => {
+                                                $(this).prop("checked", res.e_status)
+                                            })
+                                        }
+                                        //get election status
+                                        await election.status()
+                                        //get the election date & time 
+                                        await election.dt()
+                                        await election.settings()
+                                    } else {
+                                        throw new Error(`${req.status} ${req.statusText}`)
+                                    }
+                                } catch (e) {
+                                    e_status = false
+                                    toast.fire({
+                                        timer: 2000, 
+                                        icon: 'error', 
+                                        title: e.message
+                                    })
+                                }
+                            },
+                        })
+                    }
+                })
+            } else {
+                //start election 
+                Swal.fire({
+                    icon: 'question', 
+                    title: 'Terminate election', 
+                    html: 'This will force to terminate the election',
+                    showDenyButton: true, 
+                    confirmButtonText: 'Terminate',
+                    denyButtonText: 'Cancel', 
+                    backdrop: true, 
+                    allowOutsideClick: false,
+                    willOpen: () => {
+                        $(this).prop("checked", toggle ? false : true)
+                    },
+                }).then( (res) => {
+                    if(res.isConfirmed){
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Terminating election', 
+                            html: 'Please wait...', 
+                            backdrop: true, 
+                            showConfirmButton: false, 
+                            allowOutsideClick: false, 
+                            willOpen: async () => {
+                                Swal.showLoading()
+                                e_status = true
+                                try {
+                                    const req = await fetchtimeout('/control/election/settings/stop-election/', {
+                                        headers: {
+                                            'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                        }, 
+                                        method: 'POST'
+                                    })
+                                    if(req.ok){
+                                        const res = await req.json() 
+                                        e_status = false 
+                                        if(res.status){
+                                            Swal.fire({
+                                                icon: 'success', 
+                                                title: res.msg,
+                                                backdrop: true, 
+                                                allowOutsideClick: false, 
+                                            }).then( () => {
+                                                $(this).prop("checked", res.e_status)
+                                            })
+                                        } else {
+                                            $(this).prop("checked", )
+                                            Swal.fire({
+                                                icon: 'info', 
+                                                title: res.msg,
+                                                backdrop: true, 
+                                                allowOutsideClick: false, 
+                                            }).then( () => {
+                                                $(this).prop("checked", res.e_status)
+                                            })
+                                        }
+                                        //get election status
+                                        await election.status()
+                                        //get the election date & time 
+                                        await election.dt()
+                                        await election.settings()
+                                    } else {
+                                        throw new Error(`${req.status} ${req.statusText}`)
+                                    }
+                                } catch (e) {
+                                    e_status = false
+                                    toast.fire({
+                                        timer: 2000, 
+                                        icon: 'error', 
+                                        title: e.message
+                                    })
+                                }
+                            },
+                        })
+                    }
+                })
+            }
+        }
+    })
+    //change election starting date & time 
+    let e_start_dt = false
+    $("body").delegate(".edit_election_start-dt", "submit", async function(e) {
+        e.preventDefault() 
+        if(!e_start_dt){
+            e_start_dt = true 
+            try {
+                const req = await fetchtimeout('/control/election/settings/edit-starting-dt/', {
+                    body: new FormData(this),
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    e_start_dt = false
+                    if(res.status){
+                        Swal.fire({
+                            icon: 'success', 
+                            title: res.msg,
+                            backdrop: true, 
+                            allowOutsideClick: false, 
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'info', 
+                            title: res.msg,
+                            backdrop: true, 
+                            allowOutsideClick: false, 
+                        })
+                    }
+                    await election.dt()
+                    await election.settings()
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                e_start_dt = false
+                toast.fire({
+                    timer: 2000, 
+                    icon: 'error', 
+                    title: e.message
+                })
+            }
+        }
+    })
     //functions 
     const election = {
         voters: async (link, id) => {
@@ -593,6 +787,62 @@ $(document).ready(() => {
         }, 
         description: (descrip) => {
             $("html").find("p#election_description").text(descrip)
+        }, 
+        status: async () => {
+            try {
+                const req2 = await fetchtimeout(`/control/elections/settings/election-settings-status/`, {
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    method: 'POST'
+                })
+                if(req2.ok){
+                    const res = await req2.text() 
+                    $(".card_settings").hide()
+                    $(".back_settings, .card_settings_form").fadeIn(500) 
+                    $(".card_settings_form").html(res)
+                } else {
+                    throw new Error(`${req2.status} ${req2.statusText}`)
+                }
+            } catch (e) {
+                console.log(e.message)
+            }
+        }, 
+        dt: async () => {
+            try {
+                const req3 = await fetchtimeout('/control/elections/status/election-date-time/', {
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    method: 'POST'
+                })
+                if(req3.ok){
+                    const res = await req3.text() 
+                    $(".election-date-time").html(res)
+                } else {
+                    throw new Error(`${req3.status} ${req3.statusText}`)
+                }
+            } catch (e) {
+                console.log(e.message)
+            }
+        }, 
+        settings: async () => {
+            try {
+                const req = await fetchtimeout('/control/elections/status/settings/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    $(".election_settings").html(res)
+                } else {
+                    throw new Error(`${req3.status} ${req3.statusText}`)
+                }
+            } catch (e){
+                console.log(e.message)
+            }
         }
     }
 })

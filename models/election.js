@@ -32,7 +32,9 @@ const election = new mongoose.Schema({
     },
     start: {}, 
     end: {}, 
-    link: {},
+    autoAccept:{
+        type: Boolean,
+    },
     created:{}
 })
 module.exports = mongoose.model('elections', election)

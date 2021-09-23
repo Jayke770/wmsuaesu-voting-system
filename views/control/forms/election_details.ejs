@@ -67,19 +67,13 @@
             </div>
         </div>
         <div class="e_main_content w-full px-2 py-1 mt-16 transition-all">
-            <div class="container">
-                <div class="flex md:block justify-center transition-all">
-                    <div class="shadow-md bg-gray-100 dark:bg-[#161b22] rounded-md p-3 transition-all gap-2 flex flex-col">
-                        <div class="container flex">
-                            <span class="font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal">
-                                <%- started && !end ? 'Election will end in' : started && end ? `Election ended ${endtime}` : `Election will begin in` %>
-                            </span>
-                        </div>
-                        <div class="container flex flex-col justify-center items-center h-full p-2">
-                            <div id="e_time" class="flipdown" data="<%- started ? election.end : election.start %>" started="<%- started ? 'true' : 'false' %>"></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="container election-date-time">
+                <%- include('election-date-time', {
+                    started: started, 
+                    end: end, 
+                    endtime: endtime, 
+                    election: election
+                }) %>
             </div>
             <div class="container mt-6">
                 <div class="py-2">
@@ -224,10 +218,13 @@
             positions: positions
         }) %>
         <!-- election settings -->
-        <%- include('election-settings', {
-            election: election, 
-            str: str
-        }) %>
+        <div class="election_settings">
+            <%- include('election-settings', {
+                election: election, 
+                str: str,
+                link: election_link
+            }) %>
+        </div>
     </div>
     <script src="/js/theme.js "></script>
     <script src="/js/fetch.js "></script>

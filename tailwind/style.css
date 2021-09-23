@@ -105,11 +105,6 @@ html, body{
     transform: rotate(90deg);
 }
 
-input:checked~.dot {
-    transform: translateX(100%);
-    background-color: #48bb78;
-}
-
 .chat_sent {
     --animate-delay: 0.5s;
     animation: fadeInRight;
