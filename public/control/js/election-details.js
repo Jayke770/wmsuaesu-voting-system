@@ -694,8 +694,10 @@ $(document).ready(() => {
     let e_start_dt = false
     $("body").delegate(".edit_election_start-dt", "submit", async function(e) {
         e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html()
         if(!e_start_dt){
             e_start_dt = true 
+            $(this).find("button[type='submit']").html(election.loader())
             try {
                 const req = await fetchtimeout('/control/election/settings/edit-starting-dt/', {
                     body: new FormData(this),
@@ -707,6 +709,8 @@ $(document).ready(() => {
                 if(req.ok){
                     const res = await req.json() 
                     e_start_dt = false
+                    $(this).find("button[type='submit']").html(def)
+                    election.start($(this).find(".dt").val())
                     if(res.status){
                         Swal.fire({
                             icon: 'success', 
@@ -723,12 +727,63 @@ $(document).ready(() => {
                         })
                     }
                     await election.dt()
-                    await election.settings()
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
                 }
             } catch (e) {
                 e_start_dt = false
+                $(this).find("button[type='submit']").html(def)
+                toast.fire({
+                    timer: 2000, 
+                    icon: 'error', 
+                    title: e.message
+                })
+            }
+        }
+    })
+    //change election starting date & time 
+    let e_end_dt = false
+    $("body").delegate(".edit_election_end-dt", "submit", async function(e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html()
+        if(!e_end_dt){
+            e_end_dt = true 
+            $(this).find("button[type='submit']").html(election.loader())
+            try {
+                const req = await fetchtimeout('/control/election/settings/edit-ending-dt/', {
+                    body: new FormData(this),
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    e_end_dt = false
+                    $(this).find("button[type='submit']").html(def)
+                    election.end($(this).find(".dt").val())
+                    if(res.status){
+                        Swal.fire({
+                            icon: 'success', 
+                            title: res.msg,
+                            backdrop: true, 
+                            allowOutsideClick: false, 
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'info', 
+                            title: res.msg,
+                            backdrop: true, 
+                            allowOutsideClick: false, 
+                        })
+                    }
+                    await election.dt()
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                e_end_dt = false
+                $(this).find("button[type='submit']").html(def)
                 toast.fire({
                     timer: 2000, 
                     icon: 'error', 
@@ -843,6 +898,12 @@ $(document).ready(() => {
             } catch (e){
                 console.log(e.message)
             }
+        }, 
+        start: (dt) => {
+            $("p#e_start_status").text(moment(dt).format('MMMM DD YYYY, h:mm a'))
+        }, 
+        end: (dt) => {
+            $("p#e_end_status").text(moment(dt).format('MMMM DD YYYY, h:mm a'))
         }
     }
 })
