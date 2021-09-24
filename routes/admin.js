@@ -850,6 +850,82 @@ adminrouter.post('/control/election/settings/edit-ending-dt/', limit, isadmin, a
         return res.status(500).send()
     }
 })
+// change elextion autoAccept_voters 
+adminrouter.post('/control/election/settings/auto-accept-voters/', limit, isadmin, async (req, res) => {
+    const {ac_v} = req.body 
+    const electionID = req.session.currentElection 
+    let auto_ac_v = ac_v === 'true' ? true : false
+    try {
+        //check if election is exists 
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }).then( async (elec) => {
+            if(elec.length !== 0){
+                //update election 
+                await election.updateOne({
+                    _id: {$eq: xs(electionID)}
+                }, {$set: {autoAccept_voters: auto_ac_v}}).then( () => {
+                    return res.send({
+                        status: true, 
+                        autoAccept: auto_ac_v,
+                        txt: 'Updated successfully', 
+                        msg: auto_ac_v ? 'All voters want join will be accepted automatically' : 'All voters want join will be not accepted automatically'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                }) 
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: 'Election not found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+// change elextion autoAccept_candidates 
+adminrouter.post('/control/election/settings/auto-accept-candidates/', limit, isadmin, async (req, res) => {
+    const {ac_c} = req.body 
+    const electionID = req.session.currentElection 
+    let auto_ac_c = ac_c === 'true' ? true : false
+    try {
+        //check if election is exists 
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }).then( async (elec) => {
+            if(elec.length !== 0){
+                //update election 
+                await election.updateOne({
+                    _id: {$eq: xs(electionID)}
+                }, {$set: {autoAccept_candidates: auto_ac_c}}).then( () => {
+                    return res.send({
+                        status: true, 
+                        autoAccept: auto_ac_c,
+                        txt: 'Updated successfully', 
+                        msg: auto_ac_c ? 'All candidates want join will be accepted automatically' : 'All candidates want join will be not accepted automatically'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: 'Election not found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
 // election settings 
 adminrouter.post('/control/elections/status/settings/', limit, isadmin, async (req, res) => {
     const electionID = req.session.currentElection 
@@ -857,6 +933,7 @@ adminrouter.post('/control/elections/status/settings/', limit, isadmin, async (r
         await election.find({
             _id: {$eq: xs(electionID)}
         }).then( (elec) => {
+            console.log(elec)
             return res.render('control/forms/election-settings', {
                 election: elec[0], 
                 link: process.env.link,

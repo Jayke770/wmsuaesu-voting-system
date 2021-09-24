@@ -363,7 +363,8 @@ $(document).ready(() => {
             $(".card_settings").show()
         }, 300)
     })
-    $("body").delegate('.back_settings', 'click', function() {
+    $("body").delegate('.back_settings', 'click', async function() {
+        await election.settings()
         $(".card_settings_form").html('')
         $(this).hide() 
         $('.card_settings').show(500)
@@ -595,7 +596,6 @@ $(document).ready(() => {
                                         await election.status()
                                         //get the election date & time 
                                         await election.dt()
-                                        await election.settings()
                                     } else {
                                         throw new Error(`${req.status} ${req.statusText}`)
                                     }
@@ -612,7 +612,7 @@ $(document).ready(() => {
                     }
                 })
             } else {
-                //start election 
+                //terminate election 
                 Swal.fire({
                     icon: 'question', 
                     title: 'Terminate election', 
@@ -671,7 +671,6 @@ $(document).ready(() => {
                                         await election.status()
                                         //get the election date & time 
                                         await election.dt()
-                                        await election.settings()
                                     } else {
                                         throw new Error(`${req.status} ${req.statusText}`)
                                     }
@@ -792,6 +791,160 @@ $(document).ready(() => {
             }
         }
     })
+    //change election autoAccept voters 
+    let auto_ac_v = false
+    $("body").delegate(".auto_accept_voters", "change", async function(e) {
+        e.preventDefault() 
+        const toggle = $(this).prop("checked")
+        if(!auto_ac_v){
+            Swal.fire({
+                title: 'Are you sure', 
+                html: toggle ? 'You want to enable auto accept voters feature with this election' : 'You want to disable auto accept voters feature with this election',
+                icon: 'question', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                confirmButtonText: 'Yes', 
+                showDenyButton: true, 
+                denyButtonText: 'No',
+                willOpen: () => {
+                    $(this).prop("checked", toggle ? false : true)
+                }
+            }).then( (r) => {
+                if(r.isConfirmed){
+                    let data = new FormData() 
+                    data.append("ac_v", toggle)
+                    auto_ac_v = true
+                    Swal.fire({
+                        html: 'Please wait...',
+                        title: 'Updating election', 
+                        icon: 'info',
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            try {
+                                const req = await fetchtimeout('/control/election/settings/auto-accept-voters/', {
+                                    method: 'POST', 
+                                    body: data,
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }
+                                })
+                                if(req.ok) {
+                                    const res = await req.json() 
+                                    auto_ac_v = false
+                                    $(this).prop("checked", res.autoAccept)
+                                    if(res.status){
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.txt,
+                                            html: res.msg,
+                                            backdrop: true, 
+                                            allowOutsideClick: false, 
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.msg,
+                                            backdrop: true, 
+                                            allowOutsideClick: false, 
+                                        })
+                                    }
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                auto_ac_v = false
+                                toast.fire({
+                                    timer: 2000, 
+                                    icon: 'error', 
+                                    title: e.message
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+    //change election autoAccept candidates 
+    let auto_ac_c = false
+    $("body").delegate(".auto_accept_candidates", "change", async function(e) {
+        e.preventDefault() 
+        const toggle = $(this).prop("checked")
+        if(!auto_ac_c){
+            Swal.fire({
+                title: 'Are you sure', 
+                html: toggle ? 'You want to enable auto accept cadidates feature with this election' : 'You want to disable auto accept candidates feature with this election',
+                icon: 'question', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                confirmButtonText: 'Yes', 
+                showDenyButton: true, 
+                denyButtonText: 'No',
+                willOpen: () => {
+                    $(this).prop("checked", toggle ? false : true)
+                }
+            }).then( (r) => {
+                if(r.isConfirmed){
+                    let data = new FormData() 
+                    data.append("ac_c", toggle)
+                    auto_ac_c = true
+                    Swal.fire({
+                        html: 'Please wait...',
+                        title: 'Updating election', 
+                        icon: 'info',
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            try {
+                                const req = await fetchtimeout('/control/election/settings/auto-accept-candidates/', {
+                                    method: 'POST', 
+                                    body: data,
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }
+                                })
+                                if(req.ok) {
+                                    const res = await req.json() 
+                                    auto_ac_c = false
+                                    $(this).prop("checked", res.autoAccept)
+                                    if(res.status){
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.txt,
+                                            html: res.msg,
+                                            backdrop: true, 
+                                            allowOutsideClick: false, 
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.msg,
+                                            backdrop: true, 
+                                            allowOutsideClick: false, 
+                                        })
+                                    }
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                auto_ac_c = false
+                                toast.fire({
+                                    timer: 2000, 
+                                    icon: 'error', 
+                                    title: e.message
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
     //functions 
     const election = {
         voters: async (link, id) => {
@@ -882,6 +1035,8 @@ $(document).ready(() => {
             }
         }, 
         settings: async () => {
+            const card = $(".card_settings").css("display") === 'none'
+            const form = $('.card_settings_form').html()
             try {
                 const req = await fetchtimeout('/control/elections/status/settings/', {
                     method: 'POST', 
@@ -891,7 +1046,9 @@ $(document).ready(() => {
                 })
                 if(req.ok){
                     const res = await req.text() 
-                    $(".election_settings").html(res)
+                    $(".election_settings").html(res) 
+                    card ? $(".card_settings").css("display", "none") : ''
+                    $('.card_settings_form').html(form)
                 } else {
                     throw new Error(`${req3.status} ${req3.statusText}`)
                 }

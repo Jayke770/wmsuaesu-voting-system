@@ -32,7 +32,10 @@ const election = new mongoose.Schema({
     },
     start: {}, 
     end: {}, 
-    autoAccept:{
+    autoAccept_voters:{
+        type: Boolean,
+    },
+    autoAccept_candidates:{
         type: Boolean,
     },
     created:{}
