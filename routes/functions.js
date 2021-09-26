@@ -113,7 +113,91 @@ module.exports = {
     hash: async (data, n) => {
         return await bcrypt.hash(data, n)
     }, 
+    //socket functions
     isadminSocket: async (type) => {
         return type === "admin" ? true : false
+    },
+    isuserSocket: async (id) => {
+        let res = false
+        await user.find({_id: {$eq: objectid(xs(id))}}).then( (s) => {
+            res = s.length === 0 ? false : true
+        }).catch( (e) => {
+            res = false
+        })
+        return res
+    }, 
+    //user data 
+    user_data: async function (id) {
+        let result
+        try {
+            await user.find({
+                _id: {$eq: xs(id)}
+            }, {messages: 0, hearts: 0, comments: 0, visitors: 0, notifications: 0, password: 0, username: 0}).then( (data) => {
+                result = data.length === 0 ? [] : data[0]
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            return false
+        }
+        //return user data 
+        return result
+    },
+    //elections 
+    course: async () => {
+        let result
+        try {
+            await data.find({}, {course: 1}).then( (c) =>{
+                result =  c.length === 0 ? [] : c[0].course
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            return []
+        }
+        //return courses 
+        return result
+    }, 
+    year: async () => {
+        let result
+        try {
+            await data.find({}, {year: 1}).then( (c) =>{
+                result =  c.length === 0 ? [] : c[0].year
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            return []
+        }
+        //return year
+        return result
+    }, 
+    partylists: async () => {
+        let result
+        try {
+            await data.find({}, {partylists: 1}).then( (c) =>{
+                result =  c.length === 0 ? [] : c[0].partylists
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            return []
+        }
+        //return partylists
+        return result
+    },
+    positions: async () => {
+        let result
+        try {
+            await data.find({}, {positions: 1}).then( (c) =>{
+                result =  c.length === 0 ? [] : c[0].positions
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            return []
+        }
+        //return positions
+        return result
     }
 }

@@ -9,7 +9,7 @@
         </div>
     <% } else { %>
         <% elections.forEach((election, i) => { %>
-            <div data="<%- election._id %>" style="animation-delay: <%- i * .200 %>s;" class="animate__animated animate__fadeInUp card w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
+            <div data="<%- election._id %>" style="animation-delay: <%- i * .200 %>s;" class="<%- election.status === 'Pending for deletion' ? 'animate-pulse ring-2 ring-rose-500 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary' : '' %> animate__animated animate__fadeInUp card w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
                 <div class="img flex w-full">
                     <img class="icon_e_name md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[325px] h-full object-cover rounded-tl-2xl rounded-bl-2xl skeleton-image" data="<%- election.election_title.split(" ").length >= 2 ? `${election.election_title.split(" ")[0].charAt(0).toUpperCase()} ${election.election_title.split(" ")[1].charAt(0).toUpperCase()}` : election.election_title.split(" ")[0].charAt(0).toUpperCase() %>">
                 </div>

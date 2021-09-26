@@ -22,6 +22,7 @@ const cookieParser = require('cookie-parser')
 const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
 const adminSocket = require('./routes/adminSocket')
+const userSocket = require('./routes/userSocket')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
 const {ftp: ftp} = require('./routes/functions') 
@@ -87,17 +88,18 @@ app.use(function(req, res, next) {
 })
 
 //socket io session
-io.use(sharedsession(appsession, {
-    autoSave: true
-}))
-io.of('/admin').use(sharedsession(appsession, {
-    autoSave: true
-}))
-io.of('/user').use(sharedsession(appsession, {
-    autoSave: true
-}))
 //socket.io admin namespace 
-io.of("/admin").on("connection", adminSocket)
+const admin_socket = io.of("/admin").on("connection", (socket) => {adminSocket(io, socket)})
+admin_socket.use(sharedsession(appsession, {
+    autoSave: true,
+    resave: true
+}))
+//socket.io users namespace 
+const users_socket = io.of("/users").on("connection", (socket) => {userSocket(io, socket)})
+users_socket.use(sharedsession(appsession, {
+    autoSave: true,
+    resave: true
+}))
 start()
 async function start() {
     http.listen(port, console.log('Server Started on port ' + port))

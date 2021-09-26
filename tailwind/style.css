@@ -32,7 +32,7 @@ html, body{
     @apply rounded-lg dark:bg-transparent dark:text-gray-200 border-gray-500 transition-all;
 }
 .swal2-popup {
-    @apply dark:bg-darkBlue-secondary rounded-2xl dark:ring-1 dark:ring-amber-600;
+    @apply dark:bg-darkBlue-secondary rounded-2xl dark:ring-1 dark:ring-purple-600/40;
 }
 .swal2-title{
     @apply dark:text-gray-200;
@@ -58,7 +58,7 @@ html, body{
 /* Handle */
 
 ::-webkit-scrollbar-thumb {
-	@apply dark:bg-purple-900 bg-gray-500;
+	@apply dark:bg-purple-900 bg-gray-500 rounded-full cursor-pointer;
 }
 
 /* animate.css duration */

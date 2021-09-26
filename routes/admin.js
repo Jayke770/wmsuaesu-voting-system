@@ -341,7 +341,7 @@ adminrouter.post("/control/elections/pending-voters/", limit, isadmin, async (re
         return res.status(500).send()
     }
 })
-//accept pending voters 
+//accept voter request
 adminrouter.post('/control/elections/accept-voter/', limit, isadmin, async (req, res) => {
     const {id} = req.body 
     const electionID = req.session.currentElection 
@@ -361,6 +361,46 @@ adminrouter.post('/control/elections/accept-voter/', limit, isadmin, async (req,
                             return res.send({
                                 status: true, 
                                 msg: "Voter Accepted Successfully"
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    }
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Something went wrong"
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e.message)
+        return res.status(500).send()
+    }
+})
+//delete voter request
+adminrouter.post('/control/elections/deny-voter/', limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const electionID = req.session.currentElection 
+    try {
+        // get election
+        await election.find({
+            _id: {$eq: xs(electionID)}
+        }, {voters: 1}).then( async (elec) => {
+            const e_data = elec.length === 0 ? [] : elec[0].voters 
+            if(e_data.length !== 0){
+                for(let i = 0; i < e_data.length; i++){
+                    if(id.toString() === e_data[i].id.toString()){
+                        await election.updateOne({
+                            _id: {$eq: xs(electionID)}, 
+                            "voters.id": {$eq: e_data[i].id}
+                        }, { $set: {"voters.$.status": 'Deleted'}}).then( (v) => {
+                            return res.send({
+                                status: true, 
+                                msg: "Voter successfully deleted"
                             })
                         }).catch( (e) => {
                             throw new Error(e)
@@ -467,33 +507,76 @@ adminrouter.post('/control/elections/e-remove-partylist/', limit, isadmin, async
 })
 //search voter in election 
 adminrouter.post('/control/elections/search-voter/', limit, isadmin, async (req, res) => {
-    const {search, search_by} = req.body 
+    const {search, search_by, tab} = req.body 
     const electionID = req.session.currentElection
-    console.log(search, search_by)
+    const status = tab === 'ac' ? 'Accepted' : 'Pending'
+    let result = []
     if(search !== '' && search_by !== ''){
         try {
-            if(search_by === 'sid'){
-                console.log('fa')
-                await election.find({
-                    _id: {$eq: xs(electionID)}, 
-                    voters: { $elemMatch: { student_id: {$regex: '^' + xs(search), $options: 'm'}}}
-                }, { voters: { $elemMatch: { student_id: {$regex: '^' + xs(search), $options: 'm'}}}}).then( (v) => {
-                    console.log(v[0])
-                    return res.send({
-                        d: 'f'
+            //get all voters 
+            await election.find({
+                _id: {$eq: xs(electionID)}
+            }, {voters: 1}).then( (v) => {
+                if(v.length !== 0){
+                    const voters = v.length === 0 ? [] : v[0].voters
+                    if(voters.length !== 0){
+                        if(search_by === 'sid'){
+                            for(let i = 0; i < voters.length; i++){
+                                if(voters[i].status !== 'Deleted' && voters[i].status === status){
+                                    if(voters[i].student_id.search(search.toUpperCase()) !== -1 || voters[i].student_id === search.toUpperCase()){
+                                        result.push(voters[i])
+                                    }
+                                }
+                            }
+                        } else if(search_by === 'name'){
+                            for(let i = 0; i < voters.length; i++){
+                                if(voters[i].status !== 'Deleted' && voters[i].status === status){
+                                    if(voters[i].fullname.search(search) !== -1 || voters[i].fullname === search){
+                                        result.push(voters[i])
+                                    }
+                                }
+                            }
+                        } else if(search_by === 'course'){
+                            for(let i = 0; i < voters.length; i++){
+                                if(voters[i].status !== 'Deleted' && voters[i].status === status){
+                                    if(voters[i].course.search(search.toUpperCase()) !== -1 || voters[i].course === search){
+                                        result.push(voters[i])
+                                    }
+                                }
+                            }
+                        } else if(search_by === 'year'){
+                            for(let i = 0; i < voters.length; i++){
+                                if(voters[i].status !== 'Deleted' && voters[i].status === status){
+                                    if(voters[i].year.search(search) !== -1 || voters[i].year === search){
+                                        result.push(voters[i])
+                                    }
+                                }
+                            }
+                        } else {
+                            throw new Error('Something went wrong')
+                        }
+                        //render the results 
+                        return res.render(status === 'Accepted' ? "control/forms/accepted-voters" : "control/forms/pending-voters", {
+                            voters: result
+                        })
+                    } else {
+                        return res.render("control/forms/accepted-voters", {
+                            voters: []
+                        })
+                    }
+                } else {
+                    return res.render("control/forms/accepted-voters", {
+                        voters: []
                     })
-                }).catch( (e) => {
-                    throw new Error(e)
-                })
-            }
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
         } catch (e) {
-            console.log(e)
+            return res.status(500).send()
         }
     } else {
-        console.log('empty')
-        return res.send({
-            f: 'fasf'
-        })
+        return res.status(500).send()
     }
 })
 //election settings 
@@ -828,7 +911,8 @@ adminrouter.post('/control/election/settings/edit-ending-dt/', limit, isadmin, a
                     await election.updateOne({
                         _id: {$eq: xs(electionID)}
                     }, {$set: {
-                        end: xs(time)
+                        end: xs(time), 
+                        status: e_end_time ? 'Ended' : e_st[0].status
                     }}).then( (t) => {
                         return res.send({
                             status: true, 
@@ -970,6 +1054,59 @@ adminrouter.post('/control/elections/status/election-date-time/', limit, isadmin
         })
     } catch (e) {
         console.log(e)
+        return res.status(500).send()
+    }
+})
+// delete election 
+adminrouter.post('/control/election/settings/delete-election/', limit, isadmin, async (req, res) => {
+    const electionID = req.session.currentElection 
+    try {
+        await election.find({_id: {$eq: xs(electionID)}}).then( async (elec) => {
+            const status = elec[0].status 
+            //check if election is started 
+            if(status === 'Started'){
+                return res.send({
+                    status: false, 
+                    txt: "Can't delete election", 
+                    msg: "When election is started you cant delete the election"
+                })
+            } else {
+                //flagged this election for deletion interval 1 day 
+                await election.updateOne({
+                    _id: {$eq: xs(electionID)}
+                }, {$set: {
+                    deletion_status: moment().format(), 
+                    status: 'Pending for deletion'
+                }}).then( (u) => {
+                    return res.send({
+                        status: true, 
+                        txt: 'Election successfully updated',
+                        msg: 'Election will be deleted one day from now'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+// election status 
+adminrouter.post('/control/election/status/', limit, isadmin, async (req, res) => {
+    const electionID = req.session.currentElection 
+    try {
+        await election.find({_id: {$eq: xs(electionID)}}, {status: 1}).then( (elec) => {
+            return res.render('control/forms/election-status', {
+                election: elec[0]
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
         return res.status(500).send()
     }
 })

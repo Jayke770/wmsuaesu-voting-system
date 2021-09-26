@@ -1,3 +1,22 @@
+ <!-- backend -->
+ <% 
+    const user_data = {
+        course: (id) => {
+            for(let i = 0; i < course.length; i++){
+                if(id === course[i].id){
+                    return course[i].type
+                }
+            }
+        }, 
+        year: (id) => {
+            for(let i = 0; i < year.length; i++){
+                if(id === year[i].id){
+                    return year[i].type
+                }
+            }
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,13 +25,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%- `${data.firstname} ${data.middlename} ${data.lastname}` %></title>
     <%- include('../cdn/_profile') %>
+    <link rel="shortcut icon" data="<%- `${data.firstname.split("")[0].toUpperCase()} ${data.lastname.split("")[0].toUpperCase()}` %>" class="profile-icon" href="" type="image/x-png">
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
 </head>
 <body class="bg-gray-300 dark:bg-[#090c10]">
     <div class="flex w-full justify-center h-[70vh] sm:h-[50vh]">
         <div class="w-4/5 sm:w-full h-full relative transition-all">
             <div class="z-0 absolute -bottom-16 px-3 w-full sm:flex sm:justify-center">
-                <img class="rounded-full object-cover w-[150px]" alt="profile" src="/assets/logo.png">
+                <img class="rounded-full object-cover w-[150px] profile-image" data="<%- `${data.firstname.split("")[0].toUpperCase()} ${data.lastname.split("")[0].toUpperCase()}` %>" alt="profile" src="">
             </div>
             <div class="absolute flex flex-row justify-center right-1 bottom-1 p-2 z-20">
                 <a class="text-2xl cursor-pointer text-rose-600">
@@ -34,18 +54,15 @@
         <div class="mt-10 w-4/5 sm:w-[95%] py-3 transition-all">
             <div class="grid grid-cols-3 md:grid-cols-none gap-2 transition-all">
                 <div class="flex flex-col gap-4">
-                    <div class="p-2 rounded-md dark:bg-darkBlue-secondary shadow-xl">
-                        <p class="font-normal px-2 text-xl dark:text-purple-600">Bio</p>
-                        <div class="p-2 dark:text-gray-400 h-48 overflow-x-auto break-words">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut illo necessitatibus officiis, sint reprehenderit error optio minima, quo fuga ducimus iste dicta quia obcaecati maiores, animi sit facere quae tempore.
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos perferendis eos excepturi maxime unde recusandae, ut numquam. Velit excepturi, eveniet quis quisquam eaque ducimus pariatur odit deserunt nemo sequi nam!
+                    <% if(data.bio !== "") { %> 
+                        <div class="p-2 rounded-md dark:bg-darkBlue-secondary shadow-xl">
+                            <p class="font-normal px-2 text-xl dark:text-purple-600">Bio</p>
+                            <div class="p-2 dark:text-gray-400 h-48 overflow-x-auto break-words"></div>
                         </div>
-                    </div>
+                    <% } %>
                     <div class="p-2 rounded-md dark:bg-darkBlue-secondary shadow-xl">
                         <p class="font-normal px-2 text-xl dark:text-purple-600">Course & Year</p>
-                        <div class="p-2 dark:text-gray-400">
-                            BSCS 1st
-                        </div>
+                        <div class="p-2 dark:text-gray-400"><%- `${user_data.course(data.course)} ${user_data.year(data.year)}` %></div>
                     </div>
                     <div class="p-2 rounded-md dark:bg-darkBlue-secondary shadow-xl">
                         <p class="font-normal px-2 text-xl dark:text-purple-600">Account Created</p>
@@ -59,5 +76,8 @@
     <script src="/js/theme.js"></script>
     <script src="/js/fetch.js"></script>
     <script src="/js/time.js"></script>
+    <script src="/js/profile.js"></script>
+    <script src="/js/avatar.js"></script>
+    <script src="/js/color.js"></script>
 </body>
 </html>

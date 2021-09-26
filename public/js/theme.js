@@ -21,3 +21,6 @@ if (theme == "dark") {
         $(".dark_mode").html(moon)
     }
 }
+function gettheme() {
+    return localStorage.getItem('theme')
+}

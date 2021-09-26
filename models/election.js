@@ -38,6 +38,7 @@ const election = new mongoose.Schema({
     autoAccept_candidates:{
         type: Boolean,
     },
+    deletion_status: {},
     created:{}
 })
 module.exports = mongoose.model('elections', election)

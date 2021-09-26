@@ -1,0 +1,12 @@
+<div class="flex flex-row items-center justify-center mr-1">
+    <span class="mr-2 dark:text-purple-300">Status :</span>
+    <% if(election.status === 'Not Started') { %>
+        <div class="dark:bg-yellow-600/50 bg-yellow-700 text-gray-100 dark:text-gray-300 py-1 text-sm px-2 rounded-lg "><%- election.status %></div>
+    <% } else if(election.status === 'Started') { %>
+        <div class="dark:bg-teal-600/50 bg-teal-700 text-gray-100 dark:text-gray-300 py-1 text-sm px-5 rounded-lg "><%- election.status %></div>
+    <% } else if(election.status === 'Ended') { %>
+        <div class="dark:bg-rose-600/50 bg-rose-700 text-gray-100 dark:text-gray-300 py-1 text-sm px-5 rounded-lg "><%- election.status %></div>
+    <% } else { %>
+        <div class="dark:bg-red-600/50 bg-red-700 animate-pulse text-gray-100 dark:text-gray-300 py-1 text-sm px-2 rounded-lg "><%- election.status %></div>
+    <% } %>
+</div>

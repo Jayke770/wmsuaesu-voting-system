@@ -1,19 +1,11 @@
 const { isadminSocket: admin } = require('./functions')
-const adminSocket = async (socket) => {
-    if (!admin(socket.handshake.session.user_type)) {
-        socket.disconnect()
-    }
-    //new election partylists added 
-    socket.on('new-election-partylist', async (data, res) => {
-        const {currentElection} = socket.handshake.session
+module.exports = async (io, socket) => {
+    //namespace 
+    const user_nsp = io.of('/users')
+    const admin_nsp = io.of('/admin')
+    console.log('Admin') 
+    
+    admin_nsp.on('from-user', (data, res) => {
         console.log(data)
-        await socket.broadcast.emit('new-election-partylist', {
-            id: currentElection,
-            partylist: data
-        })
-        res({
-            sent: true
-        })
     })
 }
-module.exports = adminSocket

@@ -54,14 +54,11 @@
                         <a data="candidates" class="election_btn rpl nav_btn dark:text-gray-300">Candidates</a>
                         <a data="partylist" class="election_btn rpl nav_btn dark:text-gray-300">Partylist</a>
                         <a data="positions" class="election_btn rpl nav_btn dark:text-gray-300">Positions</a>
-                        <a class="election_btn rpl nav_btn dark:text-gray-300">Results</a>
+                        <a href="/election/<%- election._id %>/results/" class="rpl nav_btn dark:text-gray-300">Results</a>
                         <a data="settings" class="election_btn rpl nav_btn dark:text-gray-300">Settings</a>
                     </div>
-                    <div class="xl:flex xl:justify-center xl:w-full xl:h-full xl:items-end xl:pb-2">
-                        <div class="flex flex-row items-center justify-center mr-1">
-                            <span class="mr-2 dark:text-purple-300">Status :</span>
-                            <div class="bg-yellow-500  py-1 text-sm px-2 rounded-lg "><%- election.status %></div>
-                        </div>
+                    <div class="election_status xl:flex xl:justify-center xl:w-full xl:h-full xl:items-end xl:pb-2">
+                        <%- include('election-status', {election: election}) %>
                     </div>
                 </div>
             </div>

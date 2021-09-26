@@ -1,12 +1,10 @@
 <div class="flex md:block justify-center transition-all">
     <div class="shadow-md bg-gray-100 dark:bg-[#161b22] rounded-md p-3 transition-all gap-2 flex flex-col">
         <div class="container flex">
-            <span class="font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal">
-                <%- started && !end ? 'Election will end in' : started && end ? `Election ended ${endtime}` : `Election will begin in` %>
-            </span>
+            <span data-text="<%- started && !end ? 'Election will end in' : started && end ? `Election ended ` : `Election will begin in` %>" data="<%- started ? election.end : election.start %>" class="time_txt skeleton w-52 font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal"></span>
         </div>
         <div class="container flex flex-col justify-center items-center h-full p-2">
-            <div id="e_time" class="flipdown w-full" data="<%- started ? election.end : election.start %>" started="<%- started ? 'true' : 'false' %>"></div>
+            <div id="e_time" class="flipdown w-full flex-row flex" data="<%- started ? election.end : election.start %>" started="<%- started ? 'true' : 'false' %>"></div>
         </div>
     </div>
 </div>
@@ -26,6 +24,13 @@
         //set the theme of flipdown 
         const theme = localStorage.getItem('theme') === "dark" ? true : false
         $("#e_time").removeClass(theme ? 'flipdown__theme-dark' : 'flipdown__theme-light')
-        $("#e_time").addClass(theme ? 'flipdown__theme-light' : 'flipdown__theme-dark')
+        $("#e_time").addClass(theme ? 'flipdown__theme-light' : 'flipdown__theme-dark') 
+
+        setTimeout( () => {
+            setInterval(() => {
+                $(".time_txt").removeClass("skeleton w-52")
+                $(".time_txt").text(`${$(".time_txt").attr("data-text")} ${moment($(".time_txt").attr("data")).fromNow()}`)
+            }, 1000);
+        }, 1000)
     })
 </script>

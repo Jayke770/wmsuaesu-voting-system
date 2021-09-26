@@ -1,4 +1,4 @@
-const socket = io('/admin') 
+var socket = io('/admin') 
 let runtime_disconnected = false
 //socket disconnect 
 socket.on('disconnect', () => {

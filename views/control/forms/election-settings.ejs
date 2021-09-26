@@ -1,4 +1,4 @@
-<div class="settings_ fixed top-0 z-30 bg-darkBlue-primary/60 h-full w-full p-2 <%- show ? 'flex' : 'flex' %> justify-end items-center">
+<div class="settings_ fixed top-0 z-30 bg-darkBlue-primary/60 h-full w-full p-2 <%- show ? 'flex' : 'hidden' %> justify-end items-center">
     <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="settings_main h-full w-96 sm:w-full bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-lg">
         <div class="w-full py-[10px] px-2 dark_border_b transform-all">
             <a class="close_settings rpl float-right rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600 text-rose-700">
@@ -16,37 +16,43 @@
                         <span class="dark:text-gray-300 text-lg">Details</span>
                     </div>
                     <div class="flex flex-col gap-3 py-2">
-                        <div data="election-settings-title" style="animation-delay: .250s;" class="election_settings_btn animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                        <div <%- election.status !== 'Pending for deletion' ? 'data="election-settings-title"' : '' %> style="animation-delay: .250s;" class="<%- election.status !== 'Pending for deletion' ? 'election_settings_btn' : '' %> animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                             <div class="flex flex-col col-span-2">
                                 <p class="dark:text-gray-300 text-bluegray-900">Title</p>
                                 <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" id="election_title"><%- election.election_title %></span>
                             </div>
                             <div class="flex items-center flex-row justify-end">
-                                <i class="settings_ic dark:text-purple-500 text-purple-600">
-                                    <i class="fad fa-chevron-circle-right"></i>
-                                </i>
+                                <% if(election.status !== 'Pending for deletion') { %>
+                                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                                        <i class="fad fa-chevron-circle-right"></i>
+                                    </i>
+                                <% } %> 
                             </div>
                         </div>
-                        <div data="election-settings-description" style="animation-delay: .300s;" class="election_settings_btn animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                        <div <%- election.status !== 'Pending for deletion' ?  'data="election-settings-description"' : '' %> style="animation-delay: .300s;" class="<%- election.status !== 'Pending for deletion' ? 'election_settings_btn' : '' %> animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                             <div class="flex flex-col col-span-2">
                                 <p class="dark:text-gray-300 text-bluegray-900">Description</p>
                                 <p class="dark:text-gray-400 max-h-52 overflow-y-auto text-bluegray-500 text-sm ml-1 mt-1" id="election_description"><%- election.election_description === "" ? 'No election description' : election.election_description %></p>
                             </div>
                             <div class="flex items-center flex-row justify-end">
-                                <i class="settings_ic dark:text-purple-500 text-purple-600">
-                                    <i class="fad fa-chevron-circle-right"></i>
-                                </i>
+                                <% if(election.status !== 'Pending for deletion') { %>
+                                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                                        <i class="fad fa-chevron-circle-right"></i>
+                                    </i>
+                                <% } %>
                             </div>
                         </div>
-                        <div data="election-settings-passcode" style="animation-delay: .350s;" class="election_settings_btn animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                        <div <%- election.status !== 'Pending for deletion' ? 'data="election-settings-passcode"' : '' %> style="animation-delay: .350s;" class="<%- election.status !== 'Pending for deletion' ? 'election_settings_btn' : '' %> animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                             <div class="flex flex-col col-span-2">
                                 <p class="dark:text-gray-300 text-bluegray-900">Passcode</p>
                                 <span class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1">**************</span>
                             </div>
                             <div class="flex items-center flex-row justify-end">
-                                <i class="settings_ic dark:text-purple-500 text-purple-600">
-                                    <i class="fad fa-chevron-circle-right"></i>
-                                </i>
+                                <% if(election.status !== 'Pending for deletion') { %>
+                                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                                        <i class="fad fa-chevron-circle-right"></i>
+                                    </i>
+                                <% } %>
                             </div>
                         </div>
                         <div style="animation-delay: .400s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
@@ -69,37 +75,43 @@
                         <span style="animation-delay: .500s;" class="animate__animated animate__fadeInUp ms-500 dark:text-gray-300 text-lg">Status</span>
                     </div>
                     <div class="flex flex-col gap-3 py-2">
-                        <div data="election-settings-status" style="animation-delay: .550s;" class="election_settings_btn animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                        <div <%- election.status !== 'Pending for deletion' ? 'data="election-settings-status"' : '' %> style="animation-delay: .550s;" class="<%- election.status !== 'Pending for deletion' ? 'election_settings_btn' : '' %> animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                             <div class="flex flex-col col-span-2">
                                 <p class="dark:text-gray-300 text-bluegray-900">Status</p>
                                 <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1">Election <%- election.status %></span>
                             </div>
                             <div class="flex items-center flex-row justify-end">
-                                <i class="settings_ic dark:text-purple-500 text-purple-600">
-                                    <i class="fad fa-chevron-circle-right"></i>
-                                </i>
+                                <% if(election.status !== 'Pending for deletion') { %>
+                                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                                        <i class="fad fa-chevron-circle-right"></i>
+                                    </i>
+                                <% } %>
                             </div>
                         </div>
-                        <div data="election-settings-start-dt" style="animation-delay: .600s;" class="election_settings_btn animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                        <div <%- election.status !== 'Pending for deletion' ? 'data="election-settings-start-dt"' : '' %> style="animation-delay: .600s;" class="<%= election.status !== 'Pending for deletion' ? 'election_settings_btn' : '' %> animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                             <div class="flex flex-col col-span-2">
                                 <p class="dark:text-gray-300 text-bluegray-900">Starting Date & Time</p>
                                 <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" id="e_start_status"><%- str.start %></p>
                             </div>
                             <div class="flex items-center flex-row justify-end">
-                                <i class="settings_ic dark:text-purple-500 text-purple-600">
-                                    <i class="fad fa-chevron-circle-right"></i>
-                                </i>
+                                <% if(election.status !== 'Pending for deletion') { %>
+                                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                                        <i class="fad fa-chevron-circle-right"></i>
+                                    </i>
+                                <% } %>
                             </div>
                         </div>
-                        <div data="election-settings-end-dt" style="animation-delay: .650s;" class="election_settings_btn animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                        <div <%- election.status !== 'Pending for deletion' ? 'data="election-settings-end-dt"' : '' %> style="animation-delay: .650s;" class="<%- election.status !== 'Pending for deletion' ? 'election_settings_btn' : '' %> animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                             <div class="flex flex-col col-span-2">
                                 <p class="dark:text-gray-300 text-bluegray-900">Ending Date & Time</p>
                                 <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" id="e_end_status"><%- str.end %></p>
                             </div>
                             <div class="flex items-center flex-row justify-end">
-                                <i class="settings_ic dark:text-purple-500 text-purple-600">
-                                    <i class="fad fa-chevron-circle-right"></i>
-                                </i>
+                                <% if(election.status !== 'Pending for deletion') { %>
+                                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                                        <i class="fad fa-chevron-circle-right"></i>
+                                    </i>
+                                <% } %>
                             </div>
                         </div>
                         <div style="animation-delay: .700s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
@@ -115,38 +127,44 @@
                         <span style="animation-delay: .750s;" class="animate__animated animate__fadeInUp ms-500 dark:text-gray-300 text-lg">Tools</span>
                     </div>
                     <div class="flex flex-col gap-3 py-2">
-                        <div data="election-settings-auto-accept-voters" style="animation-delay: .800s;" class="election_settings_btn animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                        <div <%- election.status !== 'Pending for deletion' ? 'data="election-settings-auto-accept-voters"' : '' %> style="animation-delay: .800s;" class="<%- election.status !== 'Pending for deletion' ? 'election_settings_btn' : '' %> animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                             <div class="flex flex-col col-span-2">
                                 <p class="dark:text-gray-300 text-bluegray-900">Voters</p>
                                 <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" >Auto accept <%- !election.autoAccept_voters ? 'disabled' : 'enabled' %></p>
                             </div>
                             <div class="flex items-center flex-row justify-end">
-                                <i class="settings_ic dark:text-purple-500 text-purple-600">
-                                    <i class="fad fa-chevron-circle-right"></i>
-                                </i>
+                                <% if(election.status !== 'Pending for deletion') { %>
+                                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                                        <i class="fad fa-chevron-circle-right"></i>
+                                    </i>
+                                <% } %>
                             </div>
                         </div>
-                        <div data="election-settings-auto-accept-candidates" style="animation-delay: .850s;" class="election_settings_btn animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                        <div <%- election.status !== 'Pending for deletion' ? 'data="election-settings-auto-accept-candidates"' : ''%> style="animation-delay: .850s;" class="<%- election.status !== 'Pending for deletion' ? 'election_settings_btn' : '' %> animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                             <div class="flex flex-col col-span-2">
                                 <p class="dark:text-gray-300 text-bluegray-900">Candidates</p>
                                 <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" >Auto accept <%- !election.autoAccept_candidates ? 'disabled' : 'enabled' %></p>
                             </div>
                             <div class="flex items-center flex-row justify-end">
-                                <i class="settings_ic dark:text-purple-500 text-purple-600">
-                                    <i class="fad fa-chevron-circle-right"></i>
-                                </i>
+                                <% if(election.status !== 'Pending for deletion') { %>
+                                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                                        <i class="fad fa-chevron-circle-right"></i>
+                                    </i>
+                                <% } %>
                             </div>
                         </div>
-                        <div data="" style="animation-delay: .900s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
-                            <div class="flex flex-col col-span-2">
-                                <p class="dark:text-gray-300 text-bluegray-900">Delete Election</p>
+                        <% if(election.status !== 'Pending for deletion') { %> 
+                            <div style="animation-delay: .900s;" class="election_settings_delete_election animate__animated animate__fadeInUp ms-500 grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-rose-500/40 rounded-lg shadow-lg">
+                                <div class="flex flex-col col-span-2">
+                                    <p class="dark:text-gray-300 text-bluegray-900">Delete Election</p>
+                                </div>
+                                <div class="flex items-center flex-row justify-end">
+                                    <i class="settings_ic dark:text-rose-500 text-rose-600">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </i>
+                                </div>
                             </div>
-                            <div class="flex items-center flex-row justify-end">
-                                <i class="settings_ic dark:text-rose-500 text-rose-600">
-                                    <i class="fas fa-trash-alt"></i>
-                                </i>
-                            </div>
-                        </div>
+                        <% } %>
                     </div>
                 </div>
             </div>

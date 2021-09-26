@@ -1,4 +1,4 @@
-function avatar(text, foregroundColor, backgroundColor) {
+function avatar(text, foregroundColor, backgroundColor, textsize) {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
 
@@ -10,7 +10,7 @@ function avatar(text, foregroundColor, backgroundColor) {
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw text
-    context.font = "bold 60px Assistant";
+    context.font = !textsize ? 'bold 60px Assistant' : textsize;
     context.fillStyle = foregroundColor;
     context.textAlign = "center";
     context.textBaseline = "middle";

@@ -8,10 +8,10 @@ const bcrypt = require('bcrypt')
 const user = require('../models/user')
 const admin = require('../models/admin')
 const data = require('../models/data')
-const { authenticated, isadmin, isloggedin, take_photo, get_face } = require('./auth')
-const { toUppercase, chat, bot, new_msg, new_nty, hash } = require('./functions')
-const { normal_limit } = require('./rate-limit')
 const election = require('../models/election')
+const { authenticated, isadmin, isloggedin, take_photo, get_face } = require('./auth')
+const { toUppercase, chat, bot, new_msg, new_nty, hash, course, year, partylists, positions, user_data} = require('./functions')
+const { normal_limit } = require('./rate-limit')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
 const nl2br = require("nl2br")
@@ -24,13 +24,23 @@ const moment = require('moment')
 //profile 
 router.get('/profile/:id', normal_limit, isloggedin, async (req, res) => {
     const id = req.params.id
+    let courses, year
     try {
+        //get courses & years 
+        await data.find({},{course: 1, year: 1}).then( (cy) => {
+            courses = cy[0].length === 0 ? [] : cy[0].course
+            year = cy[0].length === 0 ? [] : cy[0].year
+        }).catch( (e) => {
+            throw new Error(e)
+        })
         await user.find({ _id: { $eq: xs(id) } }).then((p) => {
             if (p.length === 0) {
                 return res.status(404).render('error/404')
             } else {
                 return res.render('profile/profile', {
-                    data: p[0]
+                    data: p[0], 
+                    course: courses, 
+                    year: year
                 })
             }
         }).catch((e) => {
@@ -154,7 +164,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
         await election.find(
             {"voters.id": {$eq: objectid(xs(myid))}}, 
             {election_title: 1, election_description: 1, status: 1, start: 1, end: 1, created: 1, candidates: 1, voters: 1}
-        ).then( (el) => { 
+        ).then( async (el) => { 
             const voters = el.length === 0 ? [] : el[0].voters 
             if(voters.length !== 0){
                 for(let i = 0; i < voters.length; i++){
@@ -170,7 +180,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
             const end = moment(data.end).fromNow().search("ago") != -1 ? true : false
             return res.render('index', {
                 is_join_election: el.length === 0 ? false : true,
-                data: req.session.data, 
+                data: await user_data(myid), 
                 election: el.length === 0 ? null : el[0], 
                 started: started,
                 end: end, 
@@ -524,126 +534,37 @@ router.post('/leave-election', normal_limit, isloggedin, async (req, res) => {
         return res.status(500).send()
     }
 })
-//election info
-router.post('/election-info', isloggedin, async (req, res) => {
-    const e_id = req.session.election_id
-    const userid = req.session.myid
-    if (e_id) {
-        await election.find({ _id: e_id }, { courses: 1, partylist: 1, positions: 1 }, (err, e_find) => {
-            //get user course 
-            if (e_find.length != 0) {
-                user.find({ _id: userid }, { course: 1 }, (err, user) => {
-                    return res.render('election/file_candidacy', {
-                        user_crs: user[0].course,
-                        positions: e_find[0].positions,
-                        courses: e_find[0].courses,
-                        partylist: e_find[0].partylist
-                    })
+//req for file candidancy form
+router.post('/election/file-candidacy-form/', normal_limit, isloggedin, async (req, res) => {
+    const {electionID, myid} =  req.session
+    try {
+        //check election 
+        await election.find({_id: {$eq: xs(electionID)}}).then( async (elec) => {
+            //if election is found 
+            if(elec.length !== 0){
+                //render the file candidacy form 
+                return res.render('election/file-candidacy-form', {
+                    user: await user_data(myid),
+                    data: {
+                        course: await course(), 
+                        year: await year(), 
+                        partylists: await partylists(), 
+                        positions: await positions(),
+                    }, 
+                    election: {
+                        partylists: elec[0].partylist,
+                        positions: elec[0].positions
+                    }
                 })
+            } else {
+                throw new Error('Election not found')
             }
+        }).catch( (e) => {
+            throw new Error(e)
         })
-    }
-})
-//file for candidancy
-router.post('/file-candidacy', isloggedin, async (req, res) => {
-    var { pos, pty, crs, platform } = req.body
-    const e_id = req.session.election_id
-    const user_id = req.session.myid
-    //escape html elements
-    pos = xs(pos, {
-        whiteList: [],
-        stripIgnoreTag: true,
-        stripIgnoreTagBody: ['script']
-    })
-    pty = xs(pty, {
-        whiteList: [],
-        stripIgnoreTag: true,
-        stripIgnoreTagBody: ['script']
-    })
-    crs = xs(crs, {
-        whiteList: [],
-        stripIgnoreTag: true,
-        stripIgnoreTagBody: ['script']
-    })
-    platform = xs(platform, {
-        whiteList: [],
-        stripIgnoreTag: true,
-        stripIgnoreTagBody: ['script']
-    })
-    if (e_id) {
-        //if not empty
-        if (pos && pty && crs && platform) {
-            //check the user is already filed as a candidate before
-            await election.find({ _id: e_id }, { candidates: 1 }, (err, find) => {
-                if (err) {
-                    return res.send({
-                        iscreated: false,
-                        msg: 'Cant Find Election'
-                    })
-                }
-                else {
-                    var isfound = false
-                    for (var i = 0; i < find.length; i++) {
-                        for (var ca in find[i].candidates) {
-                            if (find[i].candidates[ca].candidate.userid.toString() == user_id.toString()) {
-                                isfound = true
-                                break
-                            }
-                        }
-                    }
-
-                    //if user files already
-                    if (isfound) {
-                        return res.send({
-                            iscreated: false,
-                            msg: 'You are already a candidate'
-                        })
-                    }
-                    else {
-                        //update candidate feild
-                        const new_pos = {
-                            candidate: {
-                                partylist: pty,
-                                position: pos,
-                                userid: user_id,
-                                partylist: pty,
-                                course: crs,
-                                platform: platform,
-                                hearts: [], //for hearts
-                                comments: [] //for comments
-                            }
-                        }
-                        election.updateOne({ _id: e_id }, { $push: { candidates: new_pos } }, (err, created) => {
-                            if (err) {
-                                return res.send({
-                                    iscreated: false,
-                                    msg: 'Internal Error'
-                                })
-                            }
-                            else {
-                                //if successfully filed
-                                return res.send({
-                                    iscreated: true,
-                                    msg: 'Successfully Filed'
-                                })
-                            }
-                        })
-                    }
-                }
-            })
-        }
-        else {
-            return res.send({
-                iscreated: false,
-                msg: 'Some Feilds is empty'
-            })
-        }
-    }
-    else {
-        return res.send({
-            iscreated: false,
-            msg: 'Invalid Election'
-        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
     }
 })
 //get all candidates

@@ -1,4 +1,5 @@
 $(document).ready(() => {
+    let voters_tab = 'ac'
     //open navigation 
     $(".e_nav").click(() => {
         const nav = $(".e_nav_main")
@@ -34,11 +35,13 @@ $(document).ready(() => {
         }, 2000)
     })
     $(".e_ac").click( () => {
+        voters_tab = 'ac'
         $(".acp_voters").find(".acp_voters_skeleton").show()
         $(".acp_voters").find(".voters").remove()
         election.voters("/control/elections/accepted-voters/", $("html").attr("data"))
     })
     $(".e_pend").click( () => {
+        voters_tab = 'pend'
         $(".acp_voters").find(".acp_voters_skeleton").show()
         $(".acp_voters").find(".voters").remove()
         election.voters("/control/elections/pending-voters/", $("html").attr("data"))
@@ -66,7 +69,7 @@ $(document).ready(() => {
             }, 300)
         }
     })
-    // pending voters
+    // accept voter reqs
     let ac_v = false 
     $(".acp_voters").delegate(".accept_voter", "click", async function (e) {
         e.preventDefault() 
@@ -74,59 +77,164 @@ $(document).ready(() => {
         const def = $(this).html()  
         data.append("id", $(this).attr("data"))
         if(!ac_v){
-            ac_v = true
-            $(this).html('<i class="fad animate-spin fa-spinner-third"></i>')
-            try {
-                const accept = await fetchtimeout('/control/elections/accept-voter/', {
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }, 
-                    method: 'POST', 
-                    body: data
-                })
-                if(accept.ok){
-                    const res = await accept.json() 
-                    ac_v = false
-                    $(this).html(def)
-                    if(res.status){
-                        toast.fire({
-                            title: res.msg, 
-                            icon: 'success', 
-                            timer: 2000
-                        }).then( () => {
-                            $(`.voters[data='${ $(this).attr("data")}']`).remove() 
-                        })
-                    } else {
-                        toast.fire({
-                            title: res.msg, 
-                            icon: 'info', 
-                            timer: 2000
-                        })
-                    }
-                } else {
-                    ac_v = false
-                    throw new Error(`${accept.status} ${accept.statusText}`)
+            Swal.fire({
+                icon: 'question', 
+                title: 'Accept Voter', 
+                html: 'Are you sure you want to accept this voter?',
+                backdrop: true, 
+                allowOutsideClick: false,
+                showDenyButton: true, 
+                confirmButtonText: 'Accept',
+                denyButtonText: 'Cancel', 
+            }).then( (a) => {
+                if(a.isConfirmed) {
+                    Swal.fire({
+                        icon: 'info', 
+                        html: 'Please wait..', 
+                        title: 'Accepting voter', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false,
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            ac_v = true
+                            $(this).html('<i class="fad animate-spin fa-spinner-third"></i>')
+                            try {
+                                const accept = await fetchtimeout('/control/elections/accept-voter/', {
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    }, 
+                                    method: 'POST', 
+                                    body: data
+                                })
+                                if(accept.ok){
+                                    const res = await accept.json() 
+                                    ac_v = false
+                                    $(this).html(def)
+                                    if(res.status){
+                                        Swal.fire({
+                                            title: res.msg, 
+                                            icon: 'success', 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        }).then( () => {
+                                            const pending_count = parseInt($(".e_pend_count ").html())
+                                            $(`.voters[data='${ $(this).attr("data")}']`).remove() 
+                                            if(pending_count === 1){
+                                                $(".e_pend_count ").remove()
+                                            } else {
+                                                $(".e_pend_count ").html(pending_count + 1)
+                                            }
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            title: res.msg, 
+                                            icon: 'info', 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        })
+                                    }
+                                } else {
+                                    ac_v = false
+                                    throw new Error(`${accept.status} ${accept.statusText}`)
+                                }
+                            } catch (e) {
+                                ac_v = false
+                                $(this).html(def)
+                                toast.fire({
+                                    title: e.message, 
+                                    icon: 'error', 
+                                    timer: 2000
+                                })
+                            }
+                        }
+                    })
                 }
-            } catch (e) {
-                ac_v = false
-                $(this).html(def)
-                Snackbar.show({ 
-                    text: `
-                        <div class="flex justify-center items-center gap-2"> 
-                            <i style="font-size: 1.25rem; color: rgb(225, 29, 72)" class="fad fa-times-circle"></i>
-                            <span>Error : ${e.message}</span>
-                        </div>
-                    `, 
-                    duration: 3000,
-                    showAction: false
-                })  
-            }
-        } else {
-            Snackbar.show({ 
-                text: 'Please Wait', 
-                duration: 3000,
-                showAction: false
-            })  
+            })
+        }
+    })
+    // cancel voter reqs
+    let c_v = false 
+    $(".acp_voters").delegate(".deny_voter", "click", async function (e) {
+        e.preventDefault() 
+        const data = new FormData()
+        const def = $(this).html()  
+        data.append("id", $(this).attr("data"))
+        if(!c_v){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Delete voter request', 
+                html: 'Are you sure you want to delete voter request?',
+                backdrop: true, 
+                allowOutsideClick: false,
+                showDenyButton: true, 
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No', 
+            }).then( (a) => {
+                if(a.isConfirmed) {
+                    Swal.fire({
+                        icon: 'info', 
+                        html: 'Please wait', 
+                        title: 'Deleting voter request', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false,
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            c_v = true
+                            $(this).html('<i class="fad animate-spin fa-spinner-third"></i>')
+                            try {
+                                const accept = await fetchtimeout('/control/elections/deny-voter/', {
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    }, 
+                                    method: 'POST', 
+                                    body: data
+                                })
+                                if(accept.ok){
+                                    const res = await accept.json() 
+                                    c_v = false
+                                    $(this).html(def)
+                                    if(res.status){
+                                        Swal.fire({
+                                            title: res.msg, 
+                                            icon: 'success', 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        }).then( () => {
+                                            const pending_count = parseInt($(".e_pend_count ").html())
+                                            $(`.voters[data='${ $(this).attr("data")}']`).remove() 
+                                            if(pending_count === 1){
+                                                $(".e_pend_count ").remove()
+                                            } else {
+                                                $(".e_pend_count ").html(pending_count - 1)
+                                            }
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            title: res.msg, 
+                                            icon: 'info', 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        })
+                                    }
+                                } else {
+                                    ac_v = false
+                                    throw new Error(`${accept.status} ${accept.statusText}`)
+                                }
+                            } catch (e) {
+                                c_v = false
+                                $(this).html(def)
+                                toast.fire({
+                                    title: e.message, 
+                                    icon: 'error', 
+                                    timer: 2000
+                                })
+                            }
+                        }
+                    })
+                }
+            })
         }
     })
     //add more partylists 
@@ -279,7 +387,8 @@ $(document).ready(() => {
         let data = new FormData() 
         data.append("search", $(this).val())
         data.append("search_by", $(this).prev().val())
-        if(!searching && $(this).val !== ''){
+        data.append("tab", voters_tab)
+        if(!searching && $(this).val() !== ''){
             searching = true
             try {
                 const search = await fetchtimeout('/control/elections/search-voter/', {
@@ -290,15 +399,24 @@ $(document).ready(() => {
                     }
                 })
                 if(search.ok){
-                    const res = await search.json()
+                    const res = await search.text()
                     searching = false
-                    console.log(res)
+                    $(".acp_voters").html(res)
                 } else {
                     throw new Error(`${search.status} ${search.statusText}`)
                 }
             } catch (e) {
                 searching = false
-                console.log(e.message)
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: rgb(225, 29, 72)" class="fad fa-times-circle"></i>
+                            <span>Error : ${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })  
             }
         }
     })
@@ -596,6 +714,7 @@ $(document).ready(() => {
                                         await election.status()
                                         //get the election date & time 
                                         await election.dt()
+                                        await election.election_status()
                                     } else {
                                         throw new Error(`${req.status} ${req.statusText}`)
                                     }
@@ -671,6 +790,7 @@ $(document).ready(() => {
                                         await election.status()
                                         //get the election date & time 
                                         await election.dt()
+                                        await election.election_status()
                                     } else {
                                         throw new Error(`${req.status} ${req.statusText}`)
                                     }
@@ -726,6 +846,7 @@ $(document).ready(() => {
                         })
                     }
                     await election.dt()
+                    await election.election_status()
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
                 }
@@ -777,6 +898,7 @@ $(document).ready(() => {
                         })
                     }
                     await election.dt()
+                    await election.election_status()
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
                 }
@@ -945,6 +1067,80 @@ $(document).ready(() => {
             })
         }
     })
+    // delete election 
+    let delete_election = false
+    $("body").delegate(".election_settings_delete_election", "click", async () => {
+        const def = $(this).find(".settings_ic").html() 
+        if(!delete_election){
+            delete_election = true 
+            $(this).find(".settings_ic").html(election.loader())  
+            Swal.fire({
+                icon: 'question',
+                title: 'Delete Election', 
+                html: 'Are you sure you want to delete this election, <br> This process cannot be undone', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showDenyButton: true, 
+                showConfirmButton: true, 
+                confirmButtonText: 'Yes'
+            }).then( (rs) => {
+                if(rs.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Checking election', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            try {
+                                const req = await fetchtimeout('/control/election/settings/delete-election/', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }
+                                })
+                                if(req.ok) {
+                                    const res = await req.json() 
+                                    delete_election = false
+                                    $(this).find(".settings_ic").html(def)
+                                    if(res.status){
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.txt,
+                                            html: res.msg,
+                                            backdrop: true, 
+                                            allowOutsideClick: false, 
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.txt,
+                                            html: res.msg,
+                                            backdrop: true, 
+                                            allowOutsideClick: false, 
+                                        })
+                                    }
+                                    await election.election_status()
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                delete_election = false
+                                $(this).find(".settings_ic").html(def)
+                                toast.fire({
+                                    icon: 'error', 
+                                    title: e.message, 
+                                    timer: 2000
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
     //functions 
     const election = {
         voters: async (link, id) => {
@@ -1016,6 +1212,24 @@ $(document).ready(() => {
                 console.log(e.message)
             }
         }, 
+        election_status: async () => {
+            try {
+                const req = await fetchtimeout(`/control/election/status/`, {
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    method: 'POST'
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    $(".election_status").html(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                console.log(e.message)
+            }
+        },
         dt: async () => {
             try {
                 const req3 = await fetchtimeout('/control/elections/status/election-date-time/', {

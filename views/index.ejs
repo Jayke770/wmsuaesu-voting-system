@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="<%- csrf %>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#991b1b">
+    <meta name="theme-color" content="#6b21a8">
     <meta name="keywords" content="wmsu, online voting system, voting system, wmsu auora, auora, voting">
     <title><%- election ? election.election_title : 'WMSU-AESU' %></title>
     <meta name="description" content="New and upgraded version of voting system">
@@ -19,15 +19,16 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:url" content="https://voting-system-jayke.herokuapp.com/">
     <%- include('cdn/_index') %>
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
 </head>
 
 <body class="bg-gray-300 dark:bg-[#090c10]">
     <div class="dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0 z-10">
         <div class="nav fixed bg-darkBlue-primary/70 h-screen hidden w-full z-20">
-            <div class="nav_main dark:bg-darkBlue-secondary bg-gray-100 w-96 h-full sm:w-[calc(100vw-100px)]" animate-in="animate__animated animate__fadeInLeft ms-300" animate-out="animate__animated animate__fadeOutLeft ms-300">
+            <div class="nav_main dark:bg-darkBlue-secondary bg-gray-100 w-96 h-full sm:w-[calc(100vw-50px)]" animate-in="animate__animated animate__fadeInLeft ms-300" animate-out="animate__animated animate__fadeOutLeft ms-300">
                 <div class="px-2 py-5 dark_border_b">
-                    <a class="cls_nav float-right text-red-600 mr-2 dark:text-gray-200 text-2xl cursor-pointer">
+                    <a class="cls_nav float-right text-red-600 ml-4 mr-2 dark:text-gray-200 text-2xl cursor-pointer">
                         <i class="fas fa-times-circle"></i>
                     </a>
                     <div class="flex h-full pl-4">
@@ -35,10 +36,11 @@
                     </div>
                 </div>
                 <div class="flex flex-col gap-2 mt-2">
+                    <!-- election side menu -->
                     <%- include('election/side_menu', {
                         voterStatus: voterStatus,
                         election: is_join_election, 
-                        id: data._id
+                        data: data
                     }) %>
                 </div>
             </div>
@@ -63,12 +65,20 @@
             </div>
         </div>
     </div>
+    <!-- election main -->
     <%- include('election/main', {
         election: election, 
         is_join_election: is_join_election, 
         voterStatus: voterStatus
     }) %>
+    <!-- themes -->
+    <%- include('theme/theme') %>
+    <!-- file candidacy -->
+    <div class="file_candidacy">
+        <%- include('election/file-candidacy') %> 
+    </div>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/io.js"></script>
     <script src="/js/index.js"></script>
     <script src="/js/audio.js"></script>
     <script src="/js/toast.js"></script>
