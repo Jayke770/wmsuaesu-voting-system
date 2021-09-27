@@ -65,12 +65,15 @@ $(document).ready( () => {
     //opne candidacy form 
     $(".file_candidacy_open").click( async function (e) {
         e.preventDefault() 
+        let candidate = await election.candidacy_status()
         const parent = $(".file_candidacy_")
         const child = $(".file_candidacy_main")
         child.addClass(child.attr("animate-in")) 
         parent.removeClass("hidden") 
         parent.addClass("flex")
-        await election.file_candidacy()
+        if(!candidate){
+            await election.file_candidacy()
+        }
         setTimeout( () => {
             child.removeClass(child.attr("animate-in")) 
         }, 500)
@@ -106,6 +109,135 @@ $(document).ready( () => {
             $(".fl_candidacy_form").find('.loading_fl').removeClass("hidden")
             $(".fl_candidacy_form").find('.loading_fl').addClass("flex")
         }, 500)
+    })
+    //submit candidacy form 
+    let candidacy_form = false
+    $(".file_candidacy_").delegate(".fl_candidacy", "submit", async function (e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html()
+        if(!candidacy_form){
+            candidacy_form = true 
+            $(this).find("button[type='submit']").html(election.loader())
+            try {   
+                const req = await fetchtimeout('/election/submit-candidacy-form/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    candidacy_form = false
+                    $(this).find("button[type='submit']").html(def)
+                    if(res.status){
+                        await election.candidacy_status()
+                        Swal.fire({
+                            icon: 'success', 
+                            title: res.txt,
+                            html: res.msg, 
+                            backdrop: true, 
+                            allowOutsideClick: false,
+                        })
+                    } else {
+                        candidacy_form = false
+                        $(this).find("button[type='submit']").html(def)
+                        Swal.fire({
+                            icon: 'info', 
+                            title: res.txt,
+                            html: res.msg, 
+                            backdrop: true, 
+                            allowOutsideClick: false,
+                        })
+                    }
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                candidacy_form = false
+                $(this).find("button[type='submit']").html(def)
+                Swal.fire({
+                    icon: 'error', 
+                    title: 'Connection error',
+                    html: e.message, 
+                    backdrop: true, 
+                    allowOutsideClick: false,
+                })
+            }
+        }
+    })
+    let delete_my_candidacy = false 
+    $(".file_candidacy_").delegate(".delete_candidacy", "click", async function (e) {
+        e.preventDefault() 
+        let data = new FormData() 
+        data.append("candidateID", $(this).attr("data"))
+        if(!delete_my_candidacy){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Delete Candidacy', 
+                html: 'Are you sure would you like to delete your candidacy form', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showDenyButton: true, 
+                confirmButtonText: 'Yes'
+            }).then( (ad) => {
+                if(ad.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Deleting candidacy', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            delete_my_candidacy = true
+                            try {
+                                const req = await fetchtimeout('/election/delete-candidacy/', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    delete_my_candidacy = false 
+                                    if(res.status){
+                                        await election.file_candidacy()
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.msg,
+                                            backdrop: true, 
+                                            allowOutsideClick: false,
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.txt,
+                                            html: res.msg,
+                                            backdrop: true, 
+                                            allowOutsideClick: false,
+                                        })
+                                    }
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                delete_my_candidacy = false 
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message,
+                                    backdrop: true, 
+                                    allowOutsideClick: false,
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
     })
     //open themes 
     $(".theme_open").click( function (e) {
@@ -299,8 +431,10 @@ $(document).ready( () => {
                 })
                 if(req.ok) {
                     const res = await req.text() 
+                    $(".fl_candidacy_form").find(".fl_candidacy, .ca_status").remove()
                     $(".fl_candidacy_form").find(".loading_fl").addClass("hidden")
                     $(".fl_candidacy_form").find(".loading_fl").removeClass("flex")
+                    $(".fl_candidacy_form").find(".ca_status").remove()
                     $(".fl_candidacy_form").append(res)
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
@@ -317,6 +451,44 @@ $(document).ready( () => {
                     showAction: false
                 })
             }
+        }, 
+        candidacy_status: async () => {
+            try {
+                const req = await fetchtimeout('/election/candidacy-status/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }
+                })
+                if(req.ok) {
+                    const res = await req.text() 
+                    if(res !== 'false'){
+                        $(".fl_candidacy_form").find(".fl_candidacy, .ca_status").remove()
+                        $(".fl_candidacy_form").append(res) 
+                        $(".loading_fl").addClass("hidden")
+                        $(".loading_fl").removeClass("flex")
+                        return true
+                    } else {
+                        return false
+                    }
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        },
+        loader: () => {
+            return '<i class="fad animate-spin fa-spinner-third"></i>'
         }
     }
 })

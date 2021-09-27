@@ -1,0 +1,29 @@
+<div class="ca_status grid grid-rows-2 h-full overflow-x-hidden">
+    <div class="flex justify-center items-center flex-col gap-5">
+        <p class="dark:text-purple-500 text-bluegray-900 text-2xl mb-10 animate__animated animate__fadeInDown ms-500" style="animation-delay: .250s;">Candidacy Status</p>
+        <% if(candidacy.status === 'Pending') { %> 
+            <div class="dark:bg-yellow-700 bg-yellow-600 animate-pulse dark:text-gray-300 px-4 py-1 rounded-lg flex flex-row items-center gap-3">
+                <div class="cs_status">
+                    <i class="fad animate-spin fa-spinner-third"></i>
+                </div>
+                <span>Pending</span>
+            </div>
+        <% } %>
+    </div>
+    <div class="flex justify-center items-center">
+        <div class="grid grid-cols-2 sm:grid-cols-none gap-3 p-3 justify-center items-center">
+            <button data="<%- candidacy.id %>" style="animation-delay: .350s;" type="button" class="delete_candidacy animate__animated animate__fadeInLeft ms-500 flex flex-row gap-2 px-3 py-2 cursor-pointer rounded-md dark:bg-rose-700 transition-all dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-rose-700 rpl focus:outline-none">
+                <div class="ic">
+                   
+                </div>
+                <span class="dark:text-gray-200 text-bluegray-900 text-base">Delete my candidacy</span>
+            </button>
+            <button data="<%- candidacy.id %>" style="animation-delay: .450s;"  type="button" class="animate__animated animate__fadeInRight ms-500 flex flex-row gap-2 px-3 py-2 cursor-pointer rounded-md dark:bg-teal-700 transition-all dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-teal-700 rpl focus:outline-none">
+                <div class="ic">
+                   
+                </div>
+                <span class="dark:text-gray-200 text-bluegray-900 text-base">Edit my candidacy</span>
+            </button>
+        </div>
+    </div>
+</div>

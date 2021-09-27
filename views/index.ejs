@@ -21,9 +21,24 @@
     <%- include('cdn/_index') %>
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <script>
+        document.onreadystatechange = function () {
+            setTimeout( () => {
+                $(".loading").remove() 
+                $(".file_candidacy, .election__, .themes__").removeClass("hidden")
+            }, 500)
+        }
+    </script>
 </head>
 
-<body class="bg-gray-300 dark:bg-[#090c10]">
+<body class="bg-gray-300 dark:bg-[#090c10] h-full">
+    <!-- Lazy loading -->
+    <div class="loading flex justify-center w-screen h-screen items-center">
+        <%- include('lazy/loading') %>
+    </div>
+    <!-- Lazy progresbar -->
+    <%- include('lazy/loading-progress') %>
+    <!-- Navigation -->
     <div class="dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0 z-10">
         <div class="nav fixed bg-darkBlue-primary/70 h-screen hidden w-full z-20">
             <div class="nav_main dark:bg-darkBlue-secondary bg-gray-100 w-96 h-full sm:w-[calc(100vw-50px)]" animate-in="animate__animated animate__fadeInLeft ms-300" animate-out="animate__animated animate__fadeOutLeft ms-300">
@@ -65,16 +80,20 @@
             </div>
         </div>
     </div>
-    <!-- election main -->
-    <%- include('election/main', {
-        election: election, 
-        is_join_election: is_join_election, 
-        voterStatus: voterStatus
-    }) %>
+    <!-- Main -->
+    <div class="election__ hidden">
+        <%- include('election/main', {
+            election: election, 
+            is_join_election: is_join_election, 
+            voterStatus: voterStatus
+            }) %>
+    </div>
     <!-- themes -->
-    <%- include('theme/theme') %>
+    <div class="themes__ hidden">
+        <%- include('theme/theme') %>
+    </div>
     <!-- file candidacy -->
-    <div class="file_candidacy">
+    <div class="file_candidacy hidden">
         <%- include('election/file-candidacy') %> 
     </div>
     <script src="/socket.io/socket.io.js"></script>

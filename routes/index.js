@@ -567,6 +567,149 @@ router.post('/election/file-candidacy-form/', normal_limit, isloggedin, async (r
         return res.status(500).send()
     }
 })
+// submit candidacy form 
+router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async (req, res) => {
+    const {pty, pos, platform} = req.body 
+    const {myid, electionID} = req.session
+    const data = await user_data(xs(myid))
+    const new_candidate = {
+        id: uuidv4(), 
+        student_id: data.student_id,
+        fullname: `${data.firstname} ${data.middlename} ${data.lastname}`, 
+        course: data.course, 
+        year: data.year, 
+        partylist: xs(pty), 
+        position: xs(pos), 
+        platform: xs(platform),
+        status: 'Pending', 
+        created: moment().format()
+    }
+    try {
+        //user type if == Candidate 
+        if(data.type === 'Candidate'){
+            //check election if exists & the user is a voter of the election
+            await election.find({
+                _id: {$eq: xs(electionID)},
+                "voters.id": {$eq: objectid(xs(myid))}
+            }, {candidates: 1}).then( async (elec) => {
+                if(elec.length !== 0){
+                    //check the new candidate is not candidate 
+                    const candidates = elec[0].candidates 
+                    let iscandidate = false
+                    for(let i = 0; i < candidates.length; i++){
+                        if(data.student_id === candidates[i].student_id){
+                            iscandidate = true 
+                            break
+                        }
+                    }
+                    //if not candidate
+                    if(!iscandidate){
+                        //push the new candidate in election
+                        await election.updateOne({
+                            _id: {$eq: xs(electionID)}
+                        }, {$push: {candidates: new_candidate}}).then( (new_c) => {
+                            console.log(new_c)
+                            return res.send({
+                                status: true,
+                                txt: 'Form successfully submitted', 
+                                msg: 'Please wait for the admin to accept your candidacy form'
+                            })
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            txt: "You're already a candidate", 
+                            msg: 'Please wait for the admin to accept your candidacy form'
+                        })
+                    }
+                } else {
+                    return res.send({
+                        status: false, 
+                        txt: 'Something went wrong!', 
+                        msg: 'Invalid election / you are not a voter of this election'
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            return res.send({
+                status: false, 
+                txt: 'Something went wrong!', 
+                msg: 'Invalid user form cannot be submitted'
+            })
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+// check candidacy form 
+router.post('/election/candidacy-status/', normal_limit, isloggedin, async (req, res) => {
+    const {electionID, myid} = req.session
+    const userData = await user_data(myid) 
+    try {
+        // //check if election & candidate is exists 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            candidates: {$elemMatch: {student_id: userData.student_id}}
+        }, {candidates: {$elemMatch: {student_id: userData.student_id}}}).then( (v) => {
+            //check result 
+            if(v.length !== 0){
+                //if candidate was found 
+                return res.render('election/candidacy-status', {
+                    candidacy: v[0].candidates[0]
+                })
+            } else {
+                return res.send(false)
+            }   
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+// delete candidacy form in current user 
+router.post('/election/delete-candidacy/', normal_limit, isloggedin, async (req, res) => {
+    const {candidateID} = req.body
+    const {electionID} = req.session
+
+    try {
+        //check if candidate & election is exists 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            candidates: {$elemMatch: {id: xs(candidateID)}}
+        }, {candidates: {$elemMatch: {id: xs(candidateID)}}}).then( async (ca) => {
+            //if candidate is found 
+            if(ca.length !== 0){
+                //pull the candidate in election 
+                await election.updateOne({
+                    _id: {$eq: xs(electionID)}
+                }, {$pull: {candidates: {id: xs(candidateID)}}}).then( (ca_up) => {
+                    return res.send({
+                        status: true,
+                        msg: 'Candidacy deleted successfully!'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Candidate not found', 
+                    msg: 'Try to refresh the app'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+}) 
 //get all candidates
 router.post('/candidates', isloggedin, async (req, res) => {
     const e_id = req.session.election_id
