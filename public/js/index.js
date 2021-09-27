@@ -65,12 +65,12 @@ $(document).ready( () => {
     //opne candidacy form 
     $(".file_candidacy_open").click( async function (e) {
         e.preventDefault() 
-        let candidate = await election.candidacy_status()
         const parent = $(".file_candidacy_")
         const child = $(".file_candidacy_main")
         child.addClass(child.attr("animate-in")) 
         parent.removeClass("hidden") 
-        parent.addClass("flex")
+        parent.addClass("flex") 
+        let candidate = await election.candidacy_status()
         if(!candidate){
             await election.file_candidacy()
         }
