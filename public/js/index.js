@@ -137,7 +137,7 @@ $(document).ready( () => {
                             html: res.msg, 
                             backdrop: true, 
                             allowOutsideClick: false,
-                        }).then( () => { 
+                        }).then( async () => { 
 await election.candidacy_status()
 }) 
                     } else {
