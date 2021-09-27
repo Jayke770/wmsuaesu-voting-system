@@ -131,14 +131,15 @@ $(document).ready( () => {
                     candidacy_form = false
                     $(this).find("button[type='submit']").html(def)
                     if(res.status){
-                        await election.candidacy_status()
                         Swal.fire({
                             icon: 'success', 
                             title: res.txt,
                             html: res.msg, 
                             backdrop: true, 
                             allowOutsideClick: false,
-                        })
+                        }).then( () => { 
+await election.candidacy_status()
+}) 
                     } else {
                         candidacy_form = false
                         $(this).find("button[type='submit']").html(def)
