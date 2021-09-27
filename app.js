@@ -54,7 +54,7 @@ const appsession = session({
        sameSite: 'strict'
     },
     store: store,
-    resave: true,
+    resave: false,
     saveUninitialized: true,
     connectionOptions: {
         useNewUrlParser: true,
@@ -92,13 +92,13 @@ app.use(function(req, res, next) {
 const admin_socket = io.of("/admin").on("connection", (socket) => {adminSocket(io, socket)})
 admin_socket.use(sharedsession(appsession, {
     autoSave: true,
-    resave: true
+    resave: false
 }))
 //socket.io users namespace 
 const users_socket = io.of("/users").on("connection", (socket) => {userSocket(io, socket)})
 users_socket.use(sharedsession(appsession, {
     autoSave: true,
-    resave: true
+    resave: false
 }))
 start()
 async function start() {
