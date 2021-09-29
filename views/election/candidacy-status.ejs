@@ -9,21 +9,52 @@
                 <span>Pending</span>
             </div>
         <% } %>
+        <% if(candidacy.status === 'Accepted') { %> 
+            <div class="dark:bg-teal-700 bg-teal-600 dark:text-gray-300 px-4 py-1 rounded-lg flex flex-row items-center gap-3">
+                <div class="cs_status">
+                    <i class="fad fa-check-circle"></i>
+                </div>
+                <span>Accepted</span>
+            </div>
+        <% } %>
+        <% if(candidacy.status === 'Deleted') { %> 
+            <div class="dark:bg-rose-700 bg-rose-600 dark:text-gray-300 px-4 py-1 rounded-lg flex flex-row items-center gap-3">
+                <div class="cs_status">
+                    <i class="fad fa-trash-alt"></i>
+                </div>
+                <span>Candidacy form rejected</span> 
+            </div> 
+            <button data="<%- candidacy.id %>" style="animation-delay: .350s;" type="button" class="retry_candidacy mb-4 animate__animated animate__fadeInDown ms-500 flex flex-row gap-2 px-3 py-1 cursor-pointer rounded-md dark:bg-amber-800 transition-all dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-amber-800 rpl focus:outline-none">
+                <div class="ic dark:text-amber-500 text-amber-600">
+                    <i class="fad fa-redo-alt"></i>
+                </div>
+                <span class="dark:text-gray-200 text-bluegray-900 text-base">Submit again</span>
+            </button>
+        <% } %>
     </div>
     <div class="flex justify-center items-center">
-        <div class="grid grid-cols-2 sm:grid-cols-none gap-3 p-3 justify-center items-center">
-            <button data="<%- candidacy.id %>" style="animation-delay: .350s;" type="button" class="delete_candidacy animate__animated animate__fadeInLeft ms-500 flex flex-row gap-2 px-3 py-2 cursor-pointer rounded-md dark:bg-rose-700 transition-all dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-rose-700 rpl focus:outline-none">
-                <div class="ic">
-                   
+        <div class="grid <%- candidacy.status !== 'Accepted' ?  'grid-cols-2 sm:grid-cols-none gap-3' : '' %> p-3 justify-center items-center">
+            <% if(candidacy.status === 'Deleted') { %> 
+                <div class="flex flex-col gap-1 w-full justify-center items-center col-span-2 mt-10">
+                    <p class="dark:text-gray-300 text-bluegray-900 text-lg">Message</p>
+                    <div class="text-center break-words dark:text-coolgray-300/80 text-bluegray-900/80 text-base px-40 lg:px-20 md:px-10 sm:px-2"><%- candidacy.msg %></div>
                 </div>
-                <span class="dark:text-gray-200 text-bluegray-900 text-base">Delete my candidacy</span>
-            </button>
-            <button data="<%- candidacy.id %>" style="animation-delay: .450s;"  type="button" class="animate__animated animate__fadeInRight ms-500 flex flex-row gap-2 px-3 py-2 cursor-pointer rounded-md dark:bg-teal-700 transition-all dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-teal-700 rpl focus:outline-none">
-                <div class="ic">
-                   
-                </div>
-                <span class="dark:text-gray-200 text-bluegray-900 text-base">Edit my candidacy</span>
-            </button>
+            <% } else { %>
+                <% if(candidacy.status !== 'Accepted') { %> 
+                    <button data="<%- candidacy.id %>" style="animation-delay: .350s;" type="button" class="delete_candidacy animate__animated animate__fadeInLeft ms-500 flex flex-row gap-2 px-3 py-2 cursor-pointer rounded-md dark:bg-rose-700 transition-all dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-rose-700 rpl focus:outline-none">
+                        <div class="ic">
+                        
+                        </div>
+                        <span class="dark:text-gray-200 text-bluegray-900 text-base">Delete my candidacy</span>
+                    </button>
+                <% } %>
+                <button data="<%- candidacy.id %>" style="animation-delay: .450s;"  type="button" class="animate__animated animate__fadeInRight ms-500 flex flex-row gap-2 px-3 py-2 cursor-pointer rounded-md dark:bg-teal-700 transition-all dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-teal-700 rpl focus:outline-none">
+                    <div class="ic">
+                       
+                    </div>
+                    <span class="dark:text-gray-200 text-bluegray-900 text-base">Edit my candidacy</span>
+                </button>
+            <% } %>
         </div>
     </div>
 </div>

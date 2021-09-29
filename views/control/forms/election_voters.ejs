@@ -9,11 +9,11 @@
         <div class="grid gap-2 grid-cols-2 py-2 px-3">
             <a class="e_ac rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-teal-600 text-teal-500">
                 <i class="fad fa-user-check"></i>
-                <span class="text-base dark:text-gray-300 text-bluegray-900 sm:hidden">Accepted Voters</span>
+                <span class="text-base dark:text-gray-300 text-bluegray-900 sm:hidden">Accepted</span>
             </a>
             <a class="e_pend relative rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-amber-600 text-amber-500">
                 <i class="fad fa-users"></i>
-                <span class="text-base dark:text-gray-300 text-bluegray-900 sm:hidden">Pending Voters</span>
+                <span class="text-base dark:text-gray-300 text-bluegray-900 sm:hidden">Pending</span>
                 <% if(pending !== 0){ %>
                     <div class="e_pend_count absolute right-0 top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending %></div>
                 <% } %>

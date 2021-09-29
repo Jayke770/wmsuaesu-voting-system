@@ -47,11 +47,15 @@
                     </div>
                     <div class="center_btns flex flex-row items-center justify-center mr-2 border-red-800 border-r-2 xl:pb-3 xl:border-r-0 xl:border-b-2 xl:flex xl:flex-col xl:w-full xl:gap-2 xl:justify-start xl:items-start xl:px-2 xl:mt-4 transition-all">
                         <a data="voters" class="election_btn relative rpl nav_btn dark:text-gray-300">Voters
-                            <% if(pending !== 0){ %>
-                                <div class="e_pend_count absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending %></div>
+                            <% if(pending_voters !== 0){ %>
+                                <div class="e_pend_count absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending_voters %></div>
                             <% } %>
                         </a>
-                        <a data="candidates" class="election_btn rpl nav_btn dark:text-gray-300">Candidates</a>
+                        <a data="candidates" id="candidates_nav_count" class="election_btn relative rpl nav_btn dark:text-gray-300">Candidates
+                            <% if(pending_candidates !== 0){ %>
+                                <div class="e_pend_count_ca absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending_candidates %></div>
+                            <% } %>
+                        </a>
                         <a data="partylist" class="election_btn rpl nav_btn dark:text-gray-300">Partylist</a>
                         <a data="positions" class="election_btn rpl nav_btn dark:text-gray-300">Positions</a>
                         <a href="/election/<%- election._id %>/results/" class="rpl nav_btn dark:text-gray-300">Results</a>
@@ -78,11 +82,11 @@
                 </div>
                 <div class="container mt-6">
                     <div class="gap-3 grid grid-cols-4 xl:gap-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all ">
-                        <div data="voters" class="election_btn cursor-pointer w-full rpl dark:bg-green-700/50 bg-green-600/70 shadow-md rounded-md p-4 transition-all ">
+                        <div title="Total count of accepted voters" data="voters" class="election_btn cursor-pointer w-full rpl dark:bg-green-700/50 bg-green-600/70 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white"><%- accepted %></div>
-                                    <span class="font-normal text-sm tracking-wide dark:text-gray-300 text-white">No. of Voters</span>
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white" id="accepted_voter_count"><%- accepted_voters %></div>
+                                    <span class="font-normal text-sm tracking-wide dark:text-gray-300 text-white">No. of  Voters</span>
                                 </div>
                                 <div class="ic flex items-center w-full justify-end">
                                     <i class="fad fa-users text-6xl dark:text-green-500 text-green-700"></i>
@@ -92,7 +96,7 @@
                         <div data="partylist" class="election_btn cursor-pointer w-full rpl dark:bg-yellow-700/50 bg-yellow-600/50 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">  
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white"><%- election.partylist.length %></div>
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white" id="partylist_count"><%- election.partylist.length %></div>
                                     <span class="font-normal text-sm tracking-wide dark:text-gray-300 text-white">No. of Partylist</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
@@ -100,10 +104,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div data="candidates" class="w-full election_btn rpl cursor-pointer dark:bg-purple-700/50 bg-purple-600/50 shadow-md rounded-md p-4 transition-all ">
+                        <div title="Total count of accepted candidates" data="candidates" class="w-full election_btn rpl cursor-pointer dark:bg-purple-700/50 bg-purple-600/50 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white"><%- election.candidates.length %></div>
+                                    <div class="e_pend_count_ca text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white" id="accepted_candidates_count"><%- accepted_candidates %></div>
                                     <span class="font-normal text-md tracking-wide dark:text-gray-300 text-white">No. of Candidates</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
@@ -114,7 +118,7 @@
                         <div class="w-full election_btn dark:bg-rose-700/50 bg-rose-600/50 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white"><%- election.candidates.length %></div>
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white" id="voter_voted_count">0</div>
                                     <span class="font-normal text-md tracking-wide dark:text-gray-300 text-white">Voters voted</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
@@ -125,7 +129,7 @@
                         <div data="positions" class="w-full rpl cursor-pointer election_btn dark:bg-violet-700/50 shadow-md bg-violet-600/70 rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
-                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white"><%- election.positions.length %></div>
+                                    <div class="text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white" id="positions_count"><%- election.positions.length %></div>
                                     <span class="font-normal text-md tracking-wide dark:text-gray-300 text-white">No. of Positions</span>
                                 </div>
                                 <div class="ic flex items-center justify-end">
@@ -191,7 +195,7 @@
         </div>
         <!-- election voters -->
         <%- include('election_voters', {
-            pending: pending
+            pending: pending_voters
         }) %>
         <!-- election partylist -->
         <%- include('election_partylist', {
@@ -207,7 +211,8 @@
             e_partylist: election.partylist, 
             partylists: partylist, 
             e_position: election.positions, 
-            positions: positions
+            positions: positions, 
+            pending_candidates: pending_candidates
         }) %>
         <!-- election positions -->
         <%- include('election-positions', {
@@ -223,6 +228,8 @@
                 show: false
             }) %>
         </div>
+        <!-- candidacy info -->
+        <div class="candidacy-info"></div>
     </div>
     <script src="/js/theme.js "></script>
     <script src="/js/fetch.js "></script>

@@ -1,5 +1,6 @@
 $(document).ready(() => {
-    let voters_tab = 'ac'
+    //ac = accepted, pend = pending, del = deleted
+    let voters_tab = 'ac', candidates_tab = 'ac', candidates_tab_req = false
     //open navigation 
     $(".e_nav").click(() => {
         const nav = $(".e_nav_main")
@@ -30,7 +31,10 @@ $(document).ready(() => {
         }, 500)
         setTimeout( () => {
             if($(this).attr("data") === "voters"){   
-                election.voters("/control/elections/accepted-voters/", $("html").attr("data"))
+                election.voters("/control/elections/accepted-voters/")
+            }   
+            if($(this).attr("data") === "candidates" && !candidates_tab_req){   
+                election.candidates("/control/elections/candidates/accepted-candidates/")
             }   
         }, 2000)
     })
@@ -111,20 +115,14 @@ $(document).ready(() => {
                                     const res = await accept.json() 
                                     ac_v = false
                                     $(this).html(def)
+                                    //send event to server that this voter is accepted 
+                                    socket.emit('voter-accepted', {voterID: $(this).attr("data")})
                                     if(res.status){
                                         Swal.fire({
                                             title: res.msg, 
                                             icon: 'success', 
                                             backdrop: true, 
                                             allowOutsideClick: false
-                                        }).then( () => {
-                                            const pending_count = parseInt($(".e_pend_count ").html())
-                                            $(`.voters[data='${ $(this).attr("data")}']`).remove() 
-                                            if(pending_count === 1){
-                                                $(".e_pend_count ").remove()
-                                            } else {
-                                                $(".e_pend_count ").html(pending_count + 1)
-                                            }
                                         })
                                     } else {
                                         Swal.fire({
@@ -134,6 +132,8 @@ $(document).ready(() => {
                                             allowOutsideClick: false
                                         })
                                     }
+                                    await election.voters("/control/elections/pending-voters/", $("html").attr("data"))
+                                    electionData($("html").attr("data"))
                                 } else {
                                     ac_v = false
                                     throw new Error(`${accept.status} ${accept.statusText}`)
@@ -201,14 +201,6 @@ $(document).ready(() => {
                                             icon: 'success', 
                                             backdrop: true, 
                                             allowOutsideClick: false
-                                        }).then( () => {
-                                            const pending_count = parseInt($(".e_pend_count ").html())
-                                            $(`.voters[data='${ $(this).attr("data")}']`).remove() 
-                                            if(pending_count === 1){
-                                                $(".e_pend_count ").remove()
-                                            } else {
-                                                $(".e_pend_count ").html(pending_count - 1)
-                                            }
                                         })
                                     } else {
                                         Swal.fire({
@@ -218,6 +210,8 @@ $(document).ready(() => {
                                             allowOutsideClick: false
                                         })
                                     }
+                                    await election.voters("/control/elections/pending-voters/", $("html").attr("data"))
+                                    electionData($("html").attr("data"))
                                 } else {
                                     ac_v = false
                                     throw new Error(`${accept.status} ${accept.statusText}`)
@@ -362,6 +356,7 @@ $(document).ready(() => {
                             $(this).html(def)
                         })
                     }
+                    electionData($("html").attr("data"))
                 } else {
                     throw new Error(`${remove_pty.status} ${remove_pty.statusText}`)
                 }
@@ -438,6 +433,344 @@ $(document).ready(() => {
             $(".candidates_").removeClass("flex")
             $(".candidates_main").removeClass($(".candidates_main").attr("animate-out"))
         }, 300)
+    })
+    $(".candidates_tab").click( async function (e) {
+        e.preventDefault() 
+        const def = $(this).html()
+        $(".candidates_tab").removeClass("active-bg-amber active-bg-green active-bg-rose")
+        $(this).html(election.loader())
+        if($(this).attr("data") === 'ac' && !candidates_tab_req){
+            candidates_tab = $(this).attr("data")
+            candidates_tab_req = true
+            await election.candidates("/control/elections/candidates/accepted-candidates/")
+            $(".candidates_tab").removeClass("active-bg-amber active-bg-rose")
+            $(this).addClass("active-bg-green")
+            $(this).html(def)
+            candidates_tab_req = false
+        } else if($(this).attr("data") === 'pend' && !candidates_tab_req){
+            candidates_tab = $(this).attr("data")
+            candidates_tab_req = true
+            await election.candidates("/control/elections/candidates/pending-candidates/")
+            $(".candidates_tab").removeClass("active-bg-green active-bg-rose")
+            $(this).addClass("active-bg-amber")
+            $(this).html(def)
+            candidates_tab_req = false
+        } else if($(this).attr("data") === 'del' && !candidates_tab_req){
+            candidates_tab = $(this).attr("data")
+            candidates_tab_req = true
+            await election.candidates("/control/elections/candidates/deleted-candidates/")
+            $(".candidates_tab").removeClass("active-bg-amber active-bg-green")
+            $(this).addClass("active-bg-rose")
+            $(this).html(def)
+            candidates_tab_req = false
+        } else {
+            candidates_tab = 'ac'
+            candidates_tab_req = false
+            $(".candidates_tab").removeClass("active-bg-amber active-bg-green active-bg-rose")
+            $(this).html(def)
+            return false
+        }
+    })
+    //open candidacy form info
+    let ca_info = false
+    $(".candidates_").delegate(".user_candidates", "click", async function(e) { 
+        e.preventDefault() 
+        let data = new FormData()
+        data.append("id", $(this).attr("data"))
+        if(!ca_info && $(this).attr("data") !== undefined){
+            Swal.fire({
+                icon: 'info', 
+                title: 'Getting candidate information', 
+                html: 'Please wait...', 
+                backdrop: true, 
+                allowOutsideClick: false,
+                showConfirmButton: false, 
+                willOpen: async () => {
+                    Swal.showLoading() 
+                    ca_info = true 
+                    await election.candidacy_information(data) 
+                    ca_info = false
+                }
+            })
+        }
+    })
+    //close candidate form info 
+    $(".candidacy-info").delegate(".close_candidacy_info", "click", async function(e) {
+        $(".candidacy-info").find(".ca_info_main").addClass($(".candidacy-info").find(".ca_info_main").attr("animate-out")) 
+        setTimeout( () => {
+            $(".candidacy-info").find(".ca_info_").addClass("hidden")
+            $(".candidacy-info").find(".ca_info_").removeClass("flex")
+            $(".candidacy-info").find(".ca_info_main").removeClass($(".candidacy-info").find(".ca_info_main").attr("animate-out")) 
+            $(".candidacy-info").html('')
+        }, 500)
+    })
+    $(".candidacy-info").delegate(".ca_info_", "click", async function(e) {
+        if($(e.target).hasClass("ca_info_")){
+            $(".candidacy-info").find(".ca_info_main").addClass($(".candidacy-info").find(".ca_info_main").attr("animate-out")) 
+            setTimeout( () => {
+                $(".candidacy-info").find(".ca_info_").addClass("hidden")
+                $(".candidacy-info").find(".ca_info_").removeClass("flex")
+                $(".candidacy-info").find(".ca_info_main").removeClass($(".candidacy-info").find(".ca_info_main").attr("animate-out")) 
+                $(".candidacy-info").html('')
+            }, 500)
+        }
+    }) 
+    //candidacy form deny
+    let deny_ca = false
+    $(".candidacy-info").delegate(".deny_candidacy", "click", async function(e) {
+        e.preventDefault() 
+        let data = new FormData() 
+        data.append("id", $(this).attr("data").trim())
+        if(!deny_ca){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Temporary Delete candidacy form', 
+                html: 'Are you want to delete this candidacy form?', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showDenyButton: true, 
+                denyButtonText: 'Cancel', 
+                confirmButtonText: 'Delete'
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        input: 'textarea',
+                        title: 'Enter Message', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showDenyButton: true,
+                        denyButtonText: 'Cancel', 
+                        inputValidator: (val) => {
+                            if(val !== ''){
+                                data.append("msg", val)
+                                Swal.fire({
+                                    icon: 'info', 
+                                    title: 'Deleting candidacy form', 
+                                    html: 'Please wait...', 
+                                    backdrop: true, 
+                                    allowOutsideClick: false, 
+                                    showConfirmButton: false, 
+                                    willOpen: async () => {
+                                        Swal.showLoading() 
+                                        deny_ca = true
+                                        try {
+                                            const req = await fetchtimeout('/control/elections/candidates/delete-candidacy/', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                                }, 
+                                                body: data
+                                            })
+                                            if(req.ok) {
+                                                const res = await req.json() 
+                                                deny_ca = false
+                                                if(res.status){
+                                                    Swal.fire({
+                                                        icon: 'success', 
+                                                        title: res.txt, 
+                                                        html: res.msg, 
+                                                        backdrop: true, 
+                                                        allowOutsideClick: false,
+                                                    }).then( async () => {
+                                                        await election.candidates("/control/elections/candidates/pending-candidates/")
+                                                        await election.candidacy_information(data) 
+                                                    })
+                                                } else {
+                                                    Swal.fire({
+                                                        icon: 'info', 
+                                                        title: res.txt, 
+                                                        html: res.msg, 
+                                                        backdrop: true, 
+                                                        allowOutsideClick: false,
+                                                    })
+                                                }
+                                                electionData($("html").attr("data"))
+                                            } else {
+                                                throw new Error(`${req.status} ${req.statusText}`)
+                                            }
+                                        } catch (e) {
+                                            deny_ca = false
+                                            Swal.fire({
+                                                icon: 'error', 
+                                                title: 'Connection error', 
+                                                html: e.message, 
+                                                backdrop: true, 
+                                                allowOutsideClick: false,
+                                            })
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+    //candidacy form accept
+    let accept_ca = false
+    $(".candidacy-info").delegate(".accept_candidacy", "click", async function(e) {
+        e.preventDefault() 
+        let data = new FormData() 
+        data.append("id", $(this).attr("data").trim())
+        if(!accept_ca){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Accept candidacy form', 
+                html: 'Are sure you want to accept this candidacy form?', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showDenyButton: true, 
+                denyButtonText: 'Cancel', 
+                confirmButtonText: 'Accept'
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Accepting candidacy form', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            accept_ca = true
+                            try {
+                                const req = await fetchtimeout('/control/elections/candidates/accept-candidacy/', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok) {
+                                    const res = await req.json() 
+                                    accept_ca = false
+                                    if(res.status){
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.txt, 
+                                            html: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false,
+                                        }).then( async () => {
+                                            await election.candidates("/control/elections/candidates/pending-candidates/")  
+                                            await election.candidacy_information(data) 
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.txt, 
+                                            html: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false,
+                                        })
+                                    }
+                                    electionData($("html").attr("data"))
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                accept_ca = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false,
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+    //candidacy form delete permanently
+    let delete_ca = false
+    $(".candidacy-info").delegate(".delete_permanent_candidacy", "click", async function(e) {
+        e.preventDefault() 
+        let data = new FormData() 
+        data.append("id", $(this).attr("data").trim())
+        if(!delete_ca){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Delete candidate permanently', 
+                html: 'Are you sure would you like to delete this candidate permanently?', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showDenyButton: true, 
+                denyButtonText: 'Cancel', 
+                confirmButtonText: 'Delete'
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Deleting candidate', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            delete_ca = true
+                            try {
+                                const req = await fetchtimeout('/control/elections/candidates/delete/', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok) {
+                                    const res = await req.json() 
+                                    delete_ca = false
+                                    if(res.status){
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.txt, 
+                                            html: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false,
+                                        }).then( async () => {
+                                            await election.candidates("/control/elections/candidates/deleted-candidates/")
+                                            $(".candidacy-info").find(".ca_info_main").addClass($(".candidacy-info").find(".ca_info_main").attr("animate-out")) 
+                                            setTimeout( () => {
+                                                $(".candidacy-info").find(".ca_info_").addClass("hidden")
+                                                $(".candidacy-info").find(".ca_info_").removeClass("flex")
+                                                $(".candidacy-info").find(".ca_info_main").removeClass($(".candidacy-info").find(".ca_info_main").attr("animate-out")) 
+                                                $(".candidacy-info").html('')
+                                            }, 500)
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.txt, 
+                                            html: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false,
+                                        })
+                                    }
+                                    electionData($("html").attr("data"))
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                delete_ca = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false,
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
     })
     //positions 
     $(".positions_").click( function(e) {
@@ -998,7 +1331,7 @@ $(document).ready(() => {
         if(!auto_ac_c){
             Swal.fire({
                 title: 'Are you sure', 
-                html: toggle ? 'You want to enable auto accept cadidates feature with this election' : 'You want to disable auto accept candidates feature with this election',
+                html: toggle ? 'You want to enable auto accept candidates feature with this election' : 'You want to disable auto accept candidates feature with this election',
                 icon: 'question', 
                 backdrop: true, 
                 allowOutsideClick: false, 
@@ -1143,16 +1476,13 @@ $(document).ready(() => {
     })
     //functions 
     const election = {
-        voters: async (link, id) => {
-            const data = new FormData() 
-            data.append("id", id)
+        voters: async (link) => {
             try {
                 const ac = await fetchtimeout(link, {
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }, 
-                    method: 'POST', 
-                    body: data
+                    method: 'POST'
                 })
                 if(ac.ok){
                     const res = await ac.text() 
@@ -1175,6 +1505,35 @@ $(document).ready(() => {
                 })  
             }
         }, 
+        candidates: async (link) => {
+            try {
+                const ac = await fetchtimeout(link, {
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }, 
+                    method: 'POST'
+                })
+                if(ac.ok){
+                    const res = await ac.text() 
+                    $(".candidates_list").find(".acp_candidates_skeleton").hide()
+                    $(".candidates_list").find(".user_candidates").remove()
+                    $(".candidates_list").append(res)
+                } else {
+                    throw new Error(`${ac.status} ${ac.statusText}`)
+                }
+            } catch (e) {
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: rgb(225, 29, 72)" class="fad fa-times-circle"></i>
+                            <span>Error : ${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })  
+            }
+        },
         partylist: (id) => {
             const pty = JSON.parse($("body").find(".partylist").val())
             for(let i = 0; i < pty.length; i++){
@@ -1275,6 +1634,47 @@ $(document).ready(() => {
         }, 
         end: (dt) => {
             $("p#e_end_status").text(moment(dt).format('MMMM DD YYYY, h:mm a'))
+        }, 
+        deleted_candidates_count: (n) => {
+            return `<div class="e_del_count_ca absolute right-[-2px] top-[-7px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm">${n}</div>`
+        }, 
+        candidacy_information: async (data) => {
+            try {
+                const req = await  fetchtimeout('/control/elections/candidates/candidacy-information/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.text()
+                    setTimeout( () => {
+                        Swal.close() 
+                        $(".candidacy-info").html(res)
+                        $(".candidacy-info").find(".ca_info_").addClass("flex")
+                        $(".candidacy-info").find(".ca_info_").removeClass("hidden")
+                        $(".candidacy-info").find(".ca_info_main").addClass($(".candidacy-info").find(".ca_info_main").attr("animate-in"))
+                        setTimeout( () => {
+                            $(".candidacy-info").find(".ca_info_main").removeClass($(".candidacy-info").find(".ca_info_main").attr("animate-in"))
+                        }, 500)
+                    }, 1000)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error', 
+                    title: 'Connection error', 
+                    html: e.message, 
+                    backdrop: true, 
+                    allowOutsideClick: false,
+                })
+            }
         }
     }
+    //get election data every 10 secs
+    setInterval( () => {
+        electionData($("html").attr("data"))
+    }, 2500)
 })

@@ -62,8 +62,8 @@ $(document).ready( () => {
         $("#e_time").removeClass(themer ? 'flipdown__theme-dark' : 'flipdown__theme-light')
         $("#e_time").addClass(themer ? 'flipdown__theme-light' : 'flipdown__theme-dark')
     })
-    //opne candidacy form 
-    $(".file_candidacy_open").click( async function (e) {
+    //open candidacy form 
+    $(".e_menu").delegate(".file_candidacy_open", "click", async function (e)  {
         e.preventDefault() 
         const parent = $(".file_candidacy_")
         const child = $(".file_candidacy_main")
@@ -167,6 +167,7 @@ $(document).ready( () => {
             }
         }
     })
+    // delete candidacy form
     let delete_my_candidacy = false 
     $(".file_candidacy_").delegate(".delete_candidacy", "click", async function (e) {
         e.preventDefault() 
@@ -205,12 +206,13 @@ $(document).ready( () => {
                                     const res = await req.json() 
                                     delete_my_candidacy = false 
                                     if(res.status){
-                                        await election.file_candidacy()
                                         Swal.fire({
                                             icon: 'success', 
                                             title: res.msg,
                                             backdrop: true, 
                                             allowOutsideClick: false,
+                                        }).then( async () => {
+                                            await election.file_candidacy()
                                         })
                                     } else {
                                         Swal.fire({
@@ -240,8 +242,82 @@ $(document).ready( () => {
             })
         }
     })
+    // retry candidacy form  
+    let retry_candidacy = false
+    $(".file_candidacy_").delegate(".retry_candidacy", "click", async function (e) {
+        e.preventDefault() 
+        let data = new FormData() 
+        data.append("id", $(this).attr("data"))
+        if(!retry_candidacy){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Submit Candidacy form again',
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showDenyButton: true, 
+                confirmButtonText: 'Yes'
+            }).then( (a) => {
+                if(a.isConfirmed) {
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Resubmitting candidacy form', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false,
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            retry_candidacy = true 
+                            try {
+                                const req = await fetchtimeout('/election/re-submit-candidacy-form/', {
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    },
+                                    method: 'POST', 
+                                    body: data
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    retry_candidacy = false 
+                                    if(res.status){
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.msg,
+                                            backdrop: true, 
+                                            allowOutsideClick: false,
+                                        }).then( async () => {
+                                            await election.candidacy_status()
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.txt,
+                                            html: res.msg,
+                                            backdrop: true, 
+                                            allowOutsideClick: false,
+                                        })
+                                    }
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                retry_candidacy = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error',
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false,
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
     //open themes 
-    $(".theme_open").click( function (e) {
+    $(".e_menu").delegate(".theme_open", "click", function (e) {
         e.preventDefault() 
         const parent = $(".theme_")
         const child = $(".theme_main")
@@ -278,7 +354,7 @@ $(document).ready( () => {
         }
     })
     //join election 
-    $(".e_join_election").click( function (e) {
+    $(".e_menu").delegate(".e_join_election", "click", function (e) {
         e.preventDefault() 
         let data = new FormData() 
         Swal.fire({
@@ -362,7 +438,7 @@ $(document).ready( () => {
         })
     })
     //leave election 
-    $(".e_left_election").click( function (e) {
+    $(".e_menu").delegate(".e_left_election", "click", function (e) {
         e.preventDefault() 
         Swal.fire({
             icon: 'question', 

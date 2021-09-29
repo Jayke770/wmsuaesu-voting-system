@@ -4,7 +4,7 @@
             <span data-text="<%- started && !end ? 'Election will end in' : started && end ? `Election ended ` : `Election will begin in` %>" data="<%- started ? election.end : election.start %>" class="time_txt skeleton w-52 font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal"></span>
         </div>
         <div class="container flex flex-col justify-center items-center h-full p-2">
-            <div id="e_time" class="flipdown w-full flex-row flex" data="<%- started ? election.end : election.start %>" started="<%- started ? 'true' : 'false' %>"></div>
+            <div id="e_time" class="flipdown" data="<%- started ? election.end : election.start %>" started="<%- started ? 'true' : 'false' %>"></div>
         </div>
     </div>
 </div>

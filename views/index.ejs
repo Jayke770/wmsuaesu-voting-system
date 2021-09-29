@@ -50,7 +50,7 @@
                         <p class="text-2xl text-center dark:text-gray-300 font-medium tracking-wider"><%- election ? election.election_title : 'WMSU-AESU' %></p>
                     </div>
                 </div>
-                <div class="flex flex-col gap-2 mt-2">
+                <div class="flex flex-col gap-2 mt-2 e_menu">
                     <!-- election side menu -->
                     <%- include('election/side_menu', {
                         voterStatus: voterStatus,
@@ -86,7 +86,7 @@
             election: election, 
             is_join_election: is_join_election, 
             voterStatus: voterStatus
-            }) %>
+        }) %>
     </div>
     <!-- themes -->
     <div class="themes__ hidden">

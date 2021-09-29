@@ -8,11 +8,13 @@ const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
-const {hash} = require('./functions')
+const {hash, course, year, partylists, positions} = require('./functions')
 const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
+const objectid = require('mongodb').ObjectID
 const moment = require('moment')
+const nl2br = require('nl2br')
 /*##################################################################################### */
 adminrouter.get('/control',limit, isadmin, async (req, res) => {
     //delete the current election session 
@@ -178,7 +180,8 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
                             status: "Not Started", 
                             start: start, 
                             end: end, 
-                            autoAccept: false,
+                            autoAccept_voters: false,
+                            autoAccept_candidates: false,
                             created: moment().format()
                         }, (err, crtd) => {
                             if(err) throw new err 
@@ -238,7 +241,7 @@ adminrouter.post('/control/elections/election-list/', limit, isadmin, async (req
 //get elections by id
 adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, res) => {
     const id = req.params.id, from = req.params.from
-    let crs, yr, pos, pty, pending = 0, accepted = 0
+    let crs, yr, pos, pty, pending_v = 0, accepted_v = 0, pending_ca = 0, accepted_ca = 0, deleted_ca = 0
     try {
         await data.find({}, {course: 1, year:1, positions: 1, partylists: 1}).then( (cy) => {
             crs = cy.length === 0 ? [] : cy[0].course
@@ -255,13 +258,25 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             const end = moment(e_data.end).fromNow().search("ago") != -1 ? true : false
             //save election id to session 
             req.session.currentElection = xs(id)
-            //get all the pending voters 
+            //get all the pending & accepted voters 
             for(let i = 0; i < e_data.voters.length; i++){
                 if(e_data.voters[i].status === 'Pending'){
-                    pending += 1 
+                    pending_v += 1 
                 }
                 if(e_data.voters[i].status === 'Accepted'){
-                    accepted += 1 
+                    accepted_v += 1 
+                }
+            }
+            //get all pending, accepted, deleted candidates
+            for(let i = 0; i < e_data.candidates.length; i++){
+                if(e_data.candidates[i].status === 'Pending'){
+                    pending_ca += 1 
+                }
+                if(e_data.candidates[i].status === 'Accepted'){
+                    accepted_ca += 1 
+                }
+                if(e_data.candidates[i].status === 'Deleted'){
+                    deleted_ca += 1 
                 }
             }
             return res.render("control/forms/election_details", {
@@ -277,8 +292,11 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
                 year: yr,
                 positions: pos,
                 partylist: pty,
-                pending: pending,
-                accepted: accepted,
+                pending_voters: pending_v, // No. of pending_voters
+                accepted_voters: accepted_v, // No. of accepted voters 
+                pending_candidates: pending_ca, //No. of pending candidates
+                accepted_candidates: accepted_ca, //No. of accepted candiates
+                deleted_candidates: deleted_ca, //No. of deleted candiates
                 endtime: moment(e_data.end).fromNow(),
                 link: xs(from) === "home" ? '/control/' : '/control/elections/',
                 election_link: process.env.link,
@@ -293,7 +311,7 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
 })
 //get all accepted voters in current election 
 adminrouter.post("/control/elections/accepted-voters/", limit, isadmin, async (req, res) => {
-    const {id} = req.body 
+    const id = req.session.currentElection
     try {
         await election.find({
             _id: {$eq: xs(id)}
@@ -318,7 +336,7 @@ adminrouter.post("/control/elections/accepted-voters/", limit, isadmin, async (r
 })
 //get all pending voters in current election 
 adminrouter.post("/control/elections/pending-voters/", limit, isadmin, async (req, res) => {
-    const {id} = req.body 
+    const id = req.session.currentElection
     try {
         await election.find({
             _id: {$eq: xs(id)}
@@ -1107,6 +1125,229 @@ adminrouter.post('/control/election/status/', limit, isadmin, async (req, res) =
         })
     } catch (e) {
         console.log(e) 
+        return res.status(500).send()
+    }
+})
+// accepted candidates in election 
+adminrouter.post('/control/elections/candidates/accepted-candidates/', limit, isadmin, async (req, res) => {
+    const {currentElection} = req.session 
+    try {
+        //check election if exist 
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            "candidates.status": "Accepted",
+        }, {candidates: 1}).then( async (ca) => {
+            return res.render('control/forms/election-settings-accepted-candidates', {
+                candidates: ca.length === 0 ? [] : ca[0].candidates, 
+                data: {
+                    course: await course(), 
+                    year: await year(), 
+                    positions: await positions(), 
+                    partylists: await partylists()
+                }
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+// pending candidates in election 
+adminrouter.post('/control/elections/candidates/pending-candidates/', limit, isadmin, async (req, res) => {
+    const {currentElection} = req.session 
+    try {
+        //check election if exist 
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            "candidates.status": "Pending",
+        }, {candidates: 1}).then( async (ca) => {
+            return res.render('control/forms/election-settings-pending-candidates', {
+                candidates: ca.length === 0 ? [] : ca[0].candidates, 
+                data: {
+                    course: await course(), 
+                    year: await year(), 
+                    positions: await positions(), 
+                    partylists: await partylists()
+                }
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+// deleted candidates in election 
+adminrouter.post('/control/elections/candidates/deleted-candidates/', limit, isadmin, async (req, res) => {
+    const {currentElection} = req.session 
+    try {
+        //check election if exist 
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            "candidates.status": "Deleted",
+        }, {candidates: 1}).then( async (ca) => {
+            return res.render('control/forms/election-settings-deleted-candidates', {
+                candidates: ca.length === 0 ? [] : ca[0].candidates, 
+                data: {
+                    course: await course(), 
+                    year: await year(), 
+                    positions: await positions(), 
+                    partylists: await partylists()
+                }
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+// delete candidate permanently in election
+adminrouter.post('/control/elections/candidates/delete/', limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const {currentElection} = req.session 
+    
+    try {
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            "candidates.id": {$eq: xs(id)}
+        }).then( async (elec) => {
+            if(elec.length !== 0){
+                //pull the current candidate 
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}
+                }, {$pull: {candidates: {id: xs(id)}}}).then( (del) => {
+                    console.log(del) 
+                    return res.send({
+                        status: true, 
+                        txt: 'Candidate Deleted successfully'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Election / Candidate Not Found', 
+                    msg: 'Maybe the election / candidate is already deleted'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+}) 
+//accept candidacy form 
+adminrouter.post('/control/elections/candidates/accept-candidacy/', limit, isadmin, async (req, res) => {
+    const {id} = req.body
+    const {currentElection} = req.session
+    try {
+        //check if election and candidate is exist 
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            "candidates.id": {$eq: xs(id)}
+        }, {candidates: 1}).then( async (elec) => {
+            //if election and candidates is exist 
+            if(elec.length !== 0){
+                //accept candidate 
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}, 
+                    "candidates.id": {$eq: xs(id)}
+                }, {$set: {"candidates.$.status": "Accepted"}}).then( (ac) => {
+                    return res.send({
+                        status: true, 
+                        txt: 'Candidate successfully accepted'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Election / Candidate not found', 
+                    msg: 'Maybe Election / Candidate is deleted'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//delete candidacy form 
+adminrouter.post('/control/elections/candidates/delete-candidacy/', limit, isadmin, async (req, res) => {
+    const {id, msg} = req.body
+    const {currentElection} = req.session 
+    
+    try {
+        //check if election and candidate is exist 
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            "candidates.id": {$eq: xs(id)}
+        }, {candidates: 1}).then( async (elec) => {
+            //if election and candidates is exist 
+            if(elec.length !== 0){
+                //accept candidate 
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}, 
+                    "candidates.id": {$eq: xs(id)}
+                }, {$set: {
+                    "candidates.$.status": "Deleted", 
+                    "candidates.$.msg": xs(nl2br(msg))
+                }}).then( (ac) => {
+                    return res.send({
+                        status: true, 
+                        txt: 'Candidate temporarily deleted'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Election / Candidate not found', 
+                    msg: 'Maybe Election / Candidate is deleted'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+// get candidacy information 
+adminrouter.post('/control/elections/candidates/candidacy-information', limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const {currentElection} = req.session 
+
+    try {
+        //check if election and candidate is exists 
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            "candidates.id": {$eq: xs(id)}
+        }, {candidates: 1}).then( async (ca) => {
+            return res.render('control/forms/election-settings-candidacy-info', {
+                candidate: ca.length === 0 ? [] : ca[0].candidates[0], 
+                data: {
+                    course: await course(), 
+                    year: await year(),
+                    positions: await positions(), 
+                    partylists: await partylists()
+                }
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })

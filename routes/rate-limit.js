@@ -14,6 +14,6 @@ module.exports = {
     }),
     delete_limit: rateLimit({
         windowMs: 1*60*1000, 
-        max: 10,
+        max: 20,
     })
 }

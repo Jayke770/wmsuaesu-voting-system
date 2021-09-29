@@ -21,12 +21,12 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
-const adminSocket = require('./routes/adminSocket')
-const userSocket = require('./routes/userSocket')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
 const {ftp: ftp} = require('./routes/functions') 
-
+//models 
+const election = require('./models/election')
+const users = require('./models/user')
 mongoose.connect(process.env.db_url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -86,20 +86,112 @@ app.use(admin) //all admin req
 app.use(function(req, res, next) { 
     res.status(404).render('error/404')
 })
-
-//socket io session
-//socket.io admin namespace 
-const admin_socket = io.of("/admin").on("connection", (socket) => {adminSocket(io, socket)})
+io.use(sharedsession(appsession, {
+    autoSave: true,
+    resave: true, 
+    saveUninitialized: true
+}))
+//socket.io admin & user namespace 
+const admin_socket = io.of("/admin")
+const users_socket = io.of("/users") 
 admin_socket.use(sharedsession(appsession, {
     autoSave: true,
-    resave: false
+    resave: true, 
+    saveUninitialized: true
 }))
-//socket.io users namespace 
-const users_socket = io.of("/users").on("connection", (socket) => {userSocket(io, socket)})
 users_socket.use(sharedsession(appsession, {
     autoSave: true,
-    resave: false
+    resave: true, 
+    saveUninitialized: true
 }))
+//admin websocket events
+admin_socket.on('connection', (socket) => {
+    //election events
+    //if admin requests updated data of election 
+    socket.on('election-data', async (data, res) => {
+        let new_election_data = {
+            voters: {
+                accepted: 0, 
+                pending: 0, 
+                voted: 0
+            },
+            candidates: {
+                accepted: 0, 
+                pending: 0, 
+                deleted: 0
+            },
+            partylists: 0, 
+            positions: 0
+        }
+        try {
+            await election.find({_id: {$eq: xs(data.id)}}).then( (elec) => {
+                const election = elec.length === 0 ? [] : elec[0]
+                //accepeted voters 
+                for(let i = 0; i < election.voters.length; i++){
+                    if(election.voters[i].status === 'Accepted'){
+                        new_election_data.voters.accepted += 1
+                    }
+                    if(election.voters[i].status === 'Pending'){
+                        new_election_data.voters.pending += 1
+                    }
+                } 
+                //accepeted candidates 
+                for(let i = 0; i < election.candidates.length; i++){
+                    if(election.candidates[i].status === 'Accepted'){
+                        new_election_data.candidates.accepted += 1
+                    }
+                    if(election.candidates[i].status === 'Pending'){
+                        new_election_data.candidates.pending += 1
+                    }
+                    if(election.candidates[i].status === 'Deleted'){
+                        new_election_data.candidates.deleted += 1
+                    }
+                } 
+                //voters voted 
+                for(let i = 0; i < election.voters.length; i++){
+                    if(election.voters[i].voted){
+                        new_election_data.voters.voted += 1
+                    }
+                }
+                new_election_data.partylists = election.partylist.length
+                new_election_data.positions = election.positions.length
+                res({
+                    status: true, 
+                    data: new_election_data
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e){
+            console.log(e)
+            res({
+                status: false, 
+                msg: e
+            })
+        }
+    })
+    socket.on('voter-accepted', async (data, res) => {
+       //get voter socket id  
+       await users.find({_id: {$eq: xs(data.voterID)} }, {socket_id: 1}).then( (v) => {
+            const socket_id = v.length === 0 ? '' : v[0].socket_id 
+            if(socket_id !== ''){
+                users_socket.to(socket_id).emit('voter-accepted')
+            }
+        }).catch( (e) => {
+            console.error(e.message)
+        })
+    })
+})
+//user websocket events
+users_socket.on('connection', async (socket) => {
+    const {myid} = socket.handshake.session 
+    //update socket id every user connted to server 
+    await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( (s) => {
+        users_socket.to(socket.id).emit('user-connected', {id: myid, socket_id: socket.id})
+    }).catch( (e) => {
+        users_socket.to(socket.id).emit('error', {msg: e.message})
+    })
+})
 start()
 async function start() {
     http.listen(port, console.log('Server Started on port ' + port))

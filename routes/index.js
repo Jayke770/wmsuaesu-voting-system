@@ -391,7 +391,7 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
         fullname: `${firstname} ${middlename} ${lastname}`,
         course: '', 
         year: '',
-        status: 'Pending',
+        status: '?',
         voted: false,
         created: moment().format()
     } 
@@ -428,11 +428,13 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
                         break
                     }
                 }
-                //check  if the election id is not empty
+                //check if the election id is not empty
                 if (electionID) {
                     try {
-                        await election.find({ _id: { $eq: xs(electionID) } }, { voters: 1 }).then(async (v) => {
+                        await election.find({ _id: { $eq: xs(electionID) } }, { voters: 1, autoAccept_voters: 1}).then(async (v) => {
                             if (v.length !== 0) {
+                                //if election has a autoAccept_voters feature 
+                                v[0].autoAccept_voters ? new_voter.status = 'Accepted' : new_voter.status = 'Pending'
                                 //check if the voter did not join the election before  
                                 for (let i = 0; i < v[0].voters.length; i++) {
                                     if (v[0].voters[i].toString() === id.toString()) {
@@ -572,7 +574,7 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
     const {pty, pos, platform} = req.body 
     const {myid, electionID} = req.session
     const data = await user_data(xs(myid))
-    const new_candidate = {
+    let new_candidate = {
         id: uuidv4(), 
         student_id: data.student_id,
         fullname: `${data.firstname} ${data.middlename} ${data.lastname}`, 
@@ -581,7 +583,8 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
         partylist: xs(pty), 
         position: xs(pos), 
         platform: xs(platform),
-        status: 'Pending', 
+        status: '?', 
+        msg: '',
         created: moment().format()
     }
     try {
@@ -591,8 +594,10 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
             await election.find({
                 _id: {$eq: xs(electionID)},
                 "voters.id": {$eq: objectid(xs(myid))}
-            }, {candidates: 1}).then( async (elec) => {
+            }, {candidates: 1, autoAccept_candidates: 1}).then( async (elec) => {
                 if(elec.length !== 0){
+                    //if the auto accept candidates feature is enabled to this election accept the candidate automatically 
+                    elec[0].autoAccept_candidates ? new_candidate.status = 'Accepted' : new_candidate.status = 'Pending'
                     //check the new candidate is not candidate 
                     const candidates = elec[0].candidates 
                     let iscandidate = false
@@ -608,11 +613,10 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
                         await election.updateOne({
                             _id: {$eq: xs(electionID)}
                         }, {$push: {candidates: new_candidate}}).then( (new_c) => {
-                            console.log(new_c)
                             return res.send({
                                 status: true,
-                                txt: 'Form successfully submitted', 
-                                msg: 'Please wait for the admin to accept your candidacy form'
+                                txt: elec[0].autoAccept_candidates ? 'Candidacy successfully accepted' : 'Form successfully submitted', 
+                                msg: elec[0].autoAccept_candidates ? '' : 'Please wait for the admin to accept your candidacy form'
                             })
                         })
                     } else {
@@ -639,6 +643,46 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
                 msg: 'Invalid user form cannot be submitted'
             })
         }
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+// resubmit candidacy form after rejected by admin 
+router.post('/election/re-submit-candidacy-form/', normal_limit, isloggedin, async (req, res) => {
+    const {id} = req.body 
+    const {electionID} = req.session 
+    
+    try {
+        //check if election & candidate is exist 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            "candidates.id": {$eq: xs(id)}
+        }, {candidates: 1}).then( async (elec) => {
+            //if election & candidate is found 
+            if(elec.length !== 0){
+                //update status of candidate to pending 
+                await election.updateOne({
+                    _id: {$eq: xs(electionID)}, 
+                    "candidates.id": {$eq: xs(id)}
+                }, {$set: {"candidates.$.status": 'Pending'}}).then( (u) => {
+                    console.log(u)
+                    return res.send({
+                        status: true, 
+                        msg: 'Form Resubmitted successfully'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: 'Election / Candidate not found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
     } catch (e) {
         console.log(e)
         return res.status(500).send()
@@ -710,6 +754,74 @@ router.post('/election/delete-candidacy/', normal_limit, isloggedin, async (req,
         return res.status(500).send()
     }
 }) 
+// election status main 
+router.post('/election/status/main/', normal_limit, isloggedin, async (req, res) => {
+    const {electionID, myid} = req.session 
+    try {
+        //get election status voter status 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            "voters.id": {$eq: objectid(xs(myid))}
+        }, {
+            "voters.$": 1,
+            election_title: 1, 
+            election_description: 1, 
+            status: 1, 
+            start: 1, 
+            end: 1, 
+            created: 1, 
+        }).then( (elec) => {
+            const e_data = elec.length === 0 ? [] : elec[0]
+            return res.render('election/main', {
+                election: e_data, 
+                is_join_election: e_data.length === 0 ? false : true, 
+                voterStatus: e_data.voters[0],
+                started: moment(e_data.start).fromNow().search("ago") != -1 ? true : false,
+                end: moment(e_data.end).fromNow().search("ago") != -1 ? true : false
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+// election status side menu 
+router.post('/election/status/side-menu/', normal_limit, isloggedin, async (req, res) => {
+    const {electionID, myid} = req.session 
+    try {
+        //get election status voter status 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            "voters.id": {$eq: objectid(xs(myid))}
+        }, {
+            "voters.$": 1,
+            election_title: 1, 
+            election_description: 1, 
+            status: 1, 
+            start: 1, 
+            end: 1, 
+            created: 1, 
+        }).then( async (elec) => {
+            const e_data = elec.length === 0 ? [] : elec[0]
+            return res.render('election/side_menu', {
+                data: await user_data(myid),
+                election: e_data, 
+                is_join_election: e_data.length === 0 ? false : true, 
+                voterStatus: e_data.voters[0],
+                started: moment(e_data.start).fromNow().search("ago") != -1 ? true : false,
+                end: moment(e_data.end).fromNow().search("ago") != -1 ? true : false
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+
 //get all candidates
 router.post('/candidates', isloggedin, async (req, res) => {
     const e_id = req.session.election_id
