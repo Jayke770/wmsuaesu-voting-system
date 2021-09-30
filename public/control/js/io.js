@@ -1,15 +1,17 @@
 var socket = io('/admin') 
 let runtime_disconnected = false
+const currentElection = $("html").attr("data")
 //socket disconnect 
 socket.on('disconnect', () => {
     runtime_disconnected = true
     new_(0.2)
-    Snackbar.show({ 
+    SnackBar.show({
         text: `
             <div class="flex justify-center items-center gap-2"> 
                 <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
                 <span>Disconnected from server</span>
-            </div>
+          Snackbar.show({ 
+         </div>
         `, 
         duration: 3000,
         showAction: false
@@ -72,6 +74,17 @@ function electionData(id){
         }
     })
 }
-socket.on('test', (data) => {
-    console.log(data)
+// new voter joined the election 
+socket.on('new-user-join-election', (data) => {
+    const election = data.election 
+    if(election === currentElection){
+        alertify.notify('New voter joined the election!')
+    }
+})
+//new voter file for candidacy 
+socket.on('new-voter-file-for-candidacy', (data) => {
+    const election = data.election 
+    if(election === currentElection){
+        alertify.notify('New voter filed for candidacy!')
+    }
 })

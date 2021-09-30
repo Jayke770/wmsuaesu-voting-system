@@ -1131,14 +1131,20 @@ adminrouter.post('/control/election/status/', limit, isadmin, async (req, res) =
 // accepted candidates in election 
 adminrouter.post('/control/elections/candidates/accepted-candidates/', limit, isadmin, async (req, res) => {
     const {currentElection} = req.session 
+    let candidates_accepted = []
     try {
         //check election if exist 
         await election.find({
-            _id: {$eq: xs(currentElection)}, 
-            "candidates.status": "Accepted",
+            _id: {$eq: xs(currentElection)}
         }, {candidates: 1}).then( async (ca) => {
+            const candidates = ca.length === 0 ? [] : ca[0].candidates
+            for(let i = 0; i < candidates.length; i++){
+                if(candidates[i].status === 'Accepted'){
+                    candidates_accepted.push(candidates[i])
+                }
+            }
             return res.render('control/forms/election-settings-accepted-candidates', {
-                candidates: ca.length === 0 ? [] : ca[0].candidates, 
+                candidates: candidates_accepted, 
                 data: {
                     course: await course(), 
                     year: await year(), 
@@ -1156,14 +1162,20 @@ adminrouter.post('/control/elections/candidates/accepted-candidates/', limit, is
 // pending candidates in election 
 adminrouter.post('/control/elections/candidates/pending-candidates/', limit, isadmin, async (req, res) => {
     const {currentElection} = req.session 
+    let candidates_pending = []
     try {
         //check election if exist 
         await election.find({
-            _id: {$eq: xs(currentElection)}, 
-            "candidates.status": "Pending",
+            _id: {$eq: xs(currentElection)}
         }, {candidates: 1}).then( async (ca) => {
+            const candidates = ca.length === 0 ? [] : ca[0].candidates
+            for(let i = 0; i < candidates.length; i++){
+                if(candidates[i].status === 'Pending'){
+                    candidates_pending.push(candidates[i])
+                }
+            }
             return res.render('control/forms/election-settings-pending-candidates', {
-                candidates: ca.length === 0 ? [] : ca[0].candidates, 
+                candidates: candidates_pending, 
                 data: {
                     course: await course(), 
                     year: await year(), 
@@ -1181,14 +1193,20 @@ adminrouter.post('/control/elections/candidates/pending-candidates/', limit, isa
 // deleted candidates in election 
 adminrouter.post('/control/elections/candidates/deleted-candidates/', limit, isadmin, async (req, res) => {
     const {currentElection} = req.session 
+    let candidates_deleted = []
     try {
         //check election if exist 
         await election.find({
-            _id: {$eq: xs(currentElection)}, 
-            "candidates.status": "Deleted",
+            _id: {$eq: xs(currentElection)}
         }, {candidates: 1}).then( async (ca) => {
+            const candidates = ca.length === 0 ? [] : ca[0].candidates
+            for(let i = 0; i < candidates.length; i++){
+                if(candidates[i].status === 'Deleted'){
+                    candidates_deleted.push(candidates[i])
+                }
+            }
             return res.render('control/forms/election-settings-deleted-candidates', {
-                candidates: ca.length === 0 ? [] : ca[0].candidates, 
+                candidates: candidates_deleted, 
                 data: {
                     course: await course(), 
                     year: await year(), 
@@ -1332,8 +1350,8 @@ adminrouter.post('/control/elections/candidates/candidacy-information', limit, i
         //check if election and candidate is exists 
         await election.find({
             _id: {$eq: xs(currentElection)}, 
-            "candidates.id": {$eq: xs(id)}
-        }, {candidates: 1}).then( async (ca) => {
+            candidates: {$elemMatch: {id: {$eq: xs(id)}}}
+        }, {candidates: {$elemMatch: {id: {$eq: xs(id)}}}}).then( async (ca) => { 
             return res.render('control/forms/election-settings-candidacy-info', {
                 candidate: ca.length === 0 ? [] : ca[0].candidates[0], 
                 data: {
@@ -1345,6 +1363,68 @@ adminrouter.post('/control/elections/candidates/candidacy-information', limit, i
             })
         }).catch( (e) => {
             throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//sort candidates 
+adminrouter.post('/control/election/candidates/sort/', limit, isadmin, async (req, res) => {
+    const {search_by, id, tab} = req.body
+    let render_tab, status, sort_ca = []
+    const {currentElection} = req.session
+    if(tab === "ac"){
+        render_tab = 'control/forms/election-settings-accepted-candidates'
+        status = "Accepted"
+    }
+    if(tab === "pend"){
+        render_tab = 'control/forms/election-settings-pending-candidates'
+        status = "Pending"
+    } 
+    if(tab === "del") {
+        render_tab = 'control/forms/election-settings-deleted-candidates'
+        status = "Deleted"
+    }
+    try {
+        //get election candidates 
+        await election.find({_id: {$eq: xs(currentElection)}}, {candidates: 1}).then( async (elec) => {
+            const candidates = elec.length === 0 ? [] : elec[0].candidates  
+            for(let i = 0; i < candidates.length; i++){
+                // sort by positions
+                if(search_by === 'position'){
+                    if(candidates[i].position === xs(id) && candidates[i].status === status){
+                        sort_ca.push(candidates[i])
+                    }
+                }
+                // sort by partylists
+                if(search_by === 'position'){
+                    if(candidates[i].partylist === xs(id) && candidates[i].status === status){
+                        sort_ca.push(candidates[i])
+                    }
+                }
+                // sort by course
+                if(search_by === 'course'){
+                    if(candidates[i].course === xs(id) && candidates[i].status === status){
+                        sort_ca.push(candidates[i])
+                    }
+                }
+                // sort by year
+                if(search_by === 'year'){
+                    if(candidates[i].year === xs(id) && candidates[i].status === status){
+                        sort_ca.push(candidates[i])
+                    }
+                }
+            }
+            return res.render(render_tab, {
+                candidates: sort_ca, 
+                data: {
+                    course: await course(), 
+                    year: await year(), 
+                    positions: await positions(), 
+                    partylists: await partylists()
+                }
+            })
         })
     } catch (e) {
         console.log(e)

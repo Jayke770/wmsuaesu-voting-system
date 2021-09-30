@@ -63,39 +63,8 @@
                     <% } %>
                 </a>
             </div>
-            <div class="flex flex-row py-1">
-                <select class="search-candidates-by w-28 focus:w-auto dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg rounded-r-none focus:border-purple-500 dark:focus:border-purple-700 transition-all">
-                    <option value="">Search By</option>
-                    <optgroup label="Positions">
-                        <% for (let i = 0; i < e_position.length; i++) { %>
-                            <option value="<%- `{by: 'positions', id: '${e_position[i].id}'}` %>"><%- data.pos(e_position[i].id) %></option>
-                        <% } %>
-                    </optgroup>
-                    <optgroup label="Partylists">
-                        <% for (let i = 0; i < e_partylist.length; i++) { %>
-                            <option value="<%- `{by: 'partylists', id: '${e_partylist[i]}'}` %>"><%- data.p(e_partylist[i]) %></option>
-                        <% } %>
-                    </optgroup> 
-                    <optgroup label="Course">
-                        <% for (let i = 0; i < e_courses.length; i++) { %>
-                            <option value="<%- `{by: 'courses', id: '${e_courses[i]}'}` %>"><%- data.c(e_courses[i]) %></option>
-                        <% } %>
-                    </optgroup>
-                    <optgroup label="Year">
-                        <% for (let i = 0; i < e_year.length; i++) { %>
-                            <option value="<%- `{by: 'year', id: '${e_year[i]}'}` %>"><%- data.y(e_year[i]) %></option>
-                        <% } %>
-                    </optgroup>
-                    <optgroup label="Status">
-                        <option value="ac">Accepted Candidates</option>
-                        <option value="pend">Pending Candidates</option>
-                        <option value="rej">Deleted Candidates</option>
-                    </optgroup>
-                </select>
-                <input type="search" placeholder="Search" class="search-candidates w-full outline-none dark_border dark:bg-transparent py-2 px-4 dark:text-gray-300 rounded-lg rounded-l-none focus:border-purple-500 dark:focus:border-purple-700 transition-all">
-            </div>
         </div>
-        <div class="flex flex-col h-[calc(100%-155px)]">
+        <div class="flex flex-col h-[calc(100%-100px)]">
             <div class="candidates_list flex flex-col gap-3 pt-2 pb-2 px-3 transition-all overflow-y-auto flex-[90%]">
                 <% for (let i = 0; i < 20; i++) { %>
                     <div style="animation-delay: <%- i * .250 %>s;" class="acp_candidates_skeleton animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
@@ -118,32 +87,27 @@
                 <% } %>
             </div>
             <div class="w-full p-1 flex justify-center items-center flex-[10%] pt-3 px-3 transition-all">
-                <select class="search-candidates-by w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
-                    <option selected value="">Sort by</option>
+                <select class="sort-candidates-by w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+                    <option selected value=""> - Sort Candidates</option>
                     <optgroup label="Positions">
                         <% for (let i = 0; i < e_position.length; i++) { %>
-                            <option value="<%- `{by: 'positions', id: '${e_position[i].id}'}` %>"><%- data.pos(e_position[i].id) %></option>
+                            <option value='<%- `position, ${e_position[i].id}` %>'><%- data.pos(e_position[i].id) %></option>
                         <% } %>
                     </optgroup>
                     <optgroup label="Partylists">
                         <% for (let i = 0; i < e_partylist.length; i++) { %>
-                            <option value="<%- `{by: 'partylists', id: '${e_partylist[i]}'}` %>"><%- data.p(e_partylist[i]) %></option>
+                            <option value='<%- `partylist, ${e_partylist[i]}` %>'><%- data.p(e_partylist[i]) %></option>
                         <% } %>
                     </optgroup> 
                     <optgroup label="Course">
                         <% for (let i = 0; i < e_courses.length; i++) { %>
-                            <option value="<%- `{by: 'courses', id: '${e_courses[i]}'}` %>"><%- data.c(e_courses[i]) %></option>
+                            <option value='<%- `course, ${e_courses[i]}` %>'><%- data.c(e_courses[i]) %></option>
                         <% } %>
                     </optgroup>
                     <optgroup label="Year">
                         <% for (let i = 0; i < e_year.length; i++) { %>
-                            <option value="<%- `{by: 'year', id: '${e_year[i]}'}` %>"><%- data.y(e_year[i]) %></option>
+                            <option value='<%- `year, ${e_year[i]}` %>'><%- data.y(e_year[i]) %></option>
                         <% } %>
-                    </optgroup>
-                    <optgroup label="Status">
-                        <option value="ac">Accepted Candidates</option>
-                        <option value="pend">Pending Candidates</option>
-                        <option value="rej">Deleted Candidates</option>
                     </optgroup>
                 </select>
             </div>

@@ -23,7 +23,7 @@ const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
-const {ftp: ftp} = require('./routes/functions') 
+const {updateAdminSocketID, user_socket_id} = require('./routes/functions') 
 //models 
 const election = require('./models/election')
 const users = require('./models/user')
@@ -105,7 +105,15 @@ users_socket.use(sharedsession(appsession, {
     saveUninitialized: true
 }))
 //admin websocket events
-admin_socket.on('connection', (socket) => {
+admin_socket.on('connection', async (socket) => {
+    const {myid, currentElection, user_type, islogin} = socket.handshake.session
+    //update admin socket id every connection 
+    if(islogin !== "okay" && user_type !== "Admin"){
+        socket.disconnect()
+    } else {
+        updateAdminSocketID(myid, socket.id)
+        console.log("Admin Connected with soket Id of ", socket.id)
+    }
     //election events
     //if admin requests updated data of election 
     socket.on('election-data', async (data, res) => {
@@ -170,26 +178,55 @@ admin_socket.on('connection', (socket) => {
             })
         }
     })
-    socket.on('voter-accepted', async (data, res) => {
+    socket.on('voter-accepted', async (data) => {
        //get voter socket id  
        await users.find({_id: {$eq: xs(data.voterID)} }, {socket_id: 1}).then( (v) => {
             const socket_id = v.length === 0 ? '' : v[0].socket_id 
             if(socket_id !== ''){
                 users_socket.to(socket_id).emit('voter-accepted')
             }
-        }).catch( (e) => {
-            console.error(e.message)
         })
+    })
+    socket.on('candidacy-form-accepted', async (data) => {
+        try {
+            //get candidate information 
+            await election.find({
+                _id: {$eq: xs(currentElection)}, 
+                candidates: {$elemMatch: {id: {$eq: xs(data.candidacyID)}}}
+            }, {candidates: {$elemMatch: {id: {$eq: xs(data.candidacyID)}}}}).then( async (ca) => {
+                const student_id = ca.length === 0 ? '' : ca[0].candidates[0].student_id  
+                const socket_id = await user_socket_id(student_id)
+                if(socket_id !== false){
+                    users_socket.to(socket_id).emit('candidacy-accepted', {candidacyID: data.candidacyID})
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            console.log(e)
+        }
     })
 })
 //user websocket events
 users_socket.on('connection', async (socket) => {
-    const {myid} = socket.handshake.session 
+    const {myid, electionID, islogin, user_type} = socket.handshake.session 
     //update socket id every user connted to server 
-    await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( (s) => {
-        users_socket.to(socket.id).emit('user-connected', {id: myid, socket_id: socket.id})
-    }).catch( (e) => {
-        users_socket.to(socket.id).emit('error', {msg: e.message})
+    if((islogin && user_type === "Candidate") || islogin && user_type !== "Voter"){
+        await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( (s) => {
+            console.log("New User Connected with soket Id of ", socket.id)
+            users_socket.to(socket.id).emit('user-connected', {id: myid, socket_id: socket.id})
+        })
+    } else {
+        socket.disconnect()
+    }
+    //election events 
+    socket.on('success-join-election', async (data) => {
+        //notify all admins that their is new voter attempt to join the election 
+        admin_socket.emit('new-user-join-election', {id: myid, election: data.electionID})
+    })
+    //if user file for candidacy 
+    socket.on('file-candidacy', (data) => {
+        admin_socket.emit('new-voter-file-for-candidacy', {id: myid, election: electionID})
     })
 })
 start()

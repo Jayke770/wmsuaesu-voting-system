@@ -143,6 +143,23 @@ module.exports = {
         //return user data 
         return result
     },
+    //using student id
+    user_socket_id: async (id) => {
+        let res 
+        try {
+            //get user voter id 
+            await user.find({
+                student_id: {$eq: xs(id)}
+            }, {socket_id: 1}).then( (u) => {
+                res = u.length === 0 ? false : u[0].socket_id
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            res = false
+        }
+        return res
+    },
     //elections 
     course: async () => {
         let result
@@ -199,5 +216,16 @@ module.exports = {
         }
         //return positions
         return result
-    }
+    }, 
+    //admin socket id 
+    updateAdminSocketID: async (id, socket) => {
+        let res 
+        await admin.updateOne({_id: {$eq: xs(id)}}, {$set: {socket_id: xs(socket)}}).then( (a) => {
+            console.log(e)
+            res = true
+        }).catch( (e) => {
+            res = false
+        })
+        return res
+    },
 }

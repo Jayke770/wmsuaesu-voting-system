@@ -264,7 +264,7 @@ router.post('/login', async (req, res) => {
                             req.session.islogin = true // determine if logged
                             req.session.user_type = result[i].type // user type
                             req.session.myid = result[i]._id // user id
-                            req.session.data = result[i]
+                            req.session.data = await user_data(result[i]._id)
                             return res.send({
                                 islogin: true,
                                 msg: "Welcome " + result[i].firstname
@@ -447,6 +447,7 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
                                         req.session.electionID = xs(electionID)
                                         return res.send({
                                             joined: true,
+                                            electionID: electionID,
                                             msg: `Welcome to ${e_title}`,
                                             text: ""
                                         })
@@ -498,26 +499,28 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
 //leave election
 router.post('/leave-election', normal_limit, isloggedin, async (req, res) => {
     const e_id = req.session.electionID
-    console.log(e_id)
     const userID = req.session.myid 
+    const data = await user_data(userID)
     try {
         await election.find({
             _id: {$eq: xs(e_id)}, 
             "voters.id": {$eq: objectid(xs(userID))}
         }, {voters: 1}).then( async (v) => {
             if(v.length != 0){
+                // delete candidacy form if exists 
                 await election.updateOne({
                     _id: {$eq: xs(e_id)}
-                }, {$pull: {
-                    voters: {
-                        id: {$eq: objectid(xs(userID))}
-                    }}
-                }).then( (b) => {
-                    delete req.session.electionID
-                    console.log(b)
-                    return res.send({
-                        leave: true, 
-                        msg: 'Successfully left!'
+                }, {$pull: {candidates: {student_id: {$eq: data.student_id}}}}).then( async () => {
+                    await election.updateOne({
+                        _id: {$eq: xs(e_id)}
+                    }, {$pull: { voters: { id: {$eq: objectid(xs(userID))}}}}).then( () => {
+                        delete req.session.electionID
+                        return res.send({
+                            leave: true, 
+                            msg: 'Successfully left!'
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
                     })
                 }).catch( (e) => {
                     throw new Error(e)

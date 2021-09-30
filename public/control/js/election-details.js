@@ -475,8 +475,6 @@ $(document).ready(() => {
     let ca_info = false
     $(".candidates_").delegate(".user_candidates", "click", async function(e) { 
         e.preventDefault() 
-        let data = new FormData()
-        data.append("id", $(this).attr("data"))
         if(!ca_info && $(this).attr("data") !== undefined){
             Swal.fire({
                 icon: 'info', 
@@ -488,10 +486,24 @@ $(document).ready(() => {
                 willOpen: async () => {
                     Swal.showLoading() 
                     ca_info = true 
-                    await election.candidacy_information(data) 
+                    await election.candidacy_information($(this).attr("data")) 
                     ca_info = false
                 }
             })
+        }
+    })
+    //sort candidates 
+    let sorting_ca = false
+    $(".candidates_").delegate(".sort-candidates-by", "change", async function (e) {
+        e.preventDefault()  
+        const search_by = $(this).val().split(",")
+        if(!sorting_ca){
+            sorting_ca = true 
+            $(".candidates_").find(".acp_candidates_skeleton").fadeIn(100)
+            $(".candidates_").find(".user_candidates").remove()
+            await election.sort_candidates(search_by[0], search_by[1]) 
+            sorting_ca = false
+            $(".candidates_").find(".acp_candidates_skeleton").fadeOut(100)
         }
     })
     //close candidate form info 
@@ -574,7 +586,7 @@ $(document).ready(() => {
                                                         allowOutsideClick: false,
                                                     }).then( async () => {
                                                         await election.candidates("/control/elections/candidates/pending-candidates/")
-                                                        await election.candidacy_information(data) 
+                                                        await election.candidacy_information($(this).attr("data")) 
                                                     })
                                                 } else {
                                                     Swal.fire({
@@ -647,6 +659,7 @@ $(document).ready(() => {
                                 if(req.ok) {
                                     const res = await req.json() 
                                     accept_ca = false
+                                    socket.emit('candidacy-form-accepted', {candidacyID: $(this).attr("data").trim()})
                                     if(res.status){
                                         Swal.fire({
                                             icon: 'success', 
@@ -656,7 +669,7 @@ $(document).ready(() => {
                                             allowOutsideClick: false,
                                         }).then( async () => {
                                             await election.candidates("/control/elections/candidates/pending-candidates/")  
-                                            await election.candidacy_information(data) 
+                                            await election.candidacy_information($(this).attr("data")) 
                                         })
                                     } else {
                                         Swal.fire({
@@ -1638,7 +1651,9 @@ $(document).ready(() => {
         deleted_candidates_count: (n) => {
             return `<div class="e_del_count_ca absolute right-[-2px] top-[-7px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm">${n}</div>`
         }, 
-        candidacy_information: async (data) => {
+        candidacy_information: async (id) => {
+            let data = new FormData() 
+            data.append("id", id)
             try {
                 const req = await  fetchtimeout('/control/elections/candidates/candidacy-information/', {
                     method: 'POST',
@@ -1669,6 +1684,38 @@ $(document).ready(() => {
                     html: e.message, 
                     backdrop: true, 
                     allowOutsideClick: false,
+                })
+            }
+        }, 
+        sort_candidates: async (sort_by, id) => {
+            let data = new FormData() 
+            data.append("search_by", sort_by) 
+            data.append("id", id.trim()) 
+            data.append("tab", candidates_tab)
+            try {
+                const req = await fetchtimeout('/control/election/candidates/sort/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    $(".candidates_").find(".candidates_list").html(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
                 })
             }
         }

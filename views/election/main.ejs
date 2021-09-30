@@ -9,7 +9,7 @@
                 <p style="animation-delay: .150s;" class="dark:text-purple-600 text-purple-700 text-xl font-semibold animate__animated animate__fadeInUp">
                     <%- started && !end ? 'Election will end in' : started && end ? `Election ended ${endtime}` : `Election will begin in` %>
                 </p>
-                <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInUp" data="<%- started && !end ? election.start : started && end ? election.end : election.start %>"></div>
+                <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInUp" data="<%- started && !end ? election.end : started && end ? election.end : election.start %>"></div>
             </div>
             <div style="animation-delay: .750s;" class="animate__animated animate__fadeInUp flex flex-col justify-center items-center">
                 <div class="flex flex-row gap-2 items-center justify-center">

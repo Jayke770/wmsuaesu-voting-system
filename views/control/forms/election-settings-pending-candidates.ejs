@@ -32,7 +32,7 @@
 %>
 <% if(candidates.length !== 0) { %>
     <% for(let i = 0; i < candidates.length; i++) { %> 
-        <div data="<%- candidates[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="user_candidates animate__animated animate__fadeInUp ms-300 dark:hover:border-purple-700/50 hover:border-purple-600/50 min-h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
+        <div data="<%- candidates[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="user_candidates animate__animated animate__fadeInUp ms-300 dark:hover:border-purple-700/50 hover:border-purple-600/50 min-h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-col shadow-xl bg-gray-100 rounded-2xl transition-all">
             <div class="flex flex-row w-full">
                 <div class="relative">
                     <img class="h-[60px] w-[60px] rounded-full object-cover" src="/assets/image.jpg" alt="user profile">
@@ -44,6 +44,9 @@
                         <span class="text-sm dark:text-gray-400"><%- `${candidatesData.course(candidates[i].course)} ${candidatesData.year(candidates[i].year)}` %></span>
                     </div> 
                 </div> 
+            </div>
+            <div class="flex flex-col justify-center w-full items-center gap-2 mt-2">
+                <span class="dark:text-gray-300/90 text-sm text-bluegray-800"><%- `Running for ${candidatesData.positions(candidates[i].position)} at ${candidatesData.partylists(candidates[i].partylist)}` %></span>
             </div>
         </div>
     <% } %>

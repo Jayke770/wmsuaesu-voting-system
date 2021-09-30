@@ -129,7 +129,9 @@ $(document).ready( () => {
                 if(req.ok){
                     const res = await req.json() 
                     candidacy_form = false
+                    await election.candidacy_status()
                     $(this).find("button[type='submit']").html(def)
+                    socket.emit('file-candidacy')
                     if(res.status){
                         Swal.fire({
                             icon: 'success', 
@@ -137,9 +139,7 @@ $(document).ready( () => {
                             html: res.msg, 
                             backdrop: true, 
                             allowOutsideClick: false,
-                        }).then( async () => { 
-                            await election.candidacy_status()
-                        }) 
+                        })
                     } else {
                         candidacy_form = false
                         $(this).find("button[type='submit']").html(def)
@@ -396,6 +396,7 @@ $(document).ready( () => {
                                 if(join.ok){
                                     const res = await join.json() 
                                     if(res.joined){
+                                        socket.emit('success-join-election', {electionID: res.electionID})
                                         Swal.fire({
                                             icon: 'success', 
                                             title: res.msg,
@@ -405,8 +406,10 @@ $(document).ready( () => {
                                             showConfirmButton: false,
                                             willOpen: () => {
                                                 Swal.showLoading()
-                                                setTimeout( () => {
-                                                    window.location.assign('')
+                                                setTimeout( async () => {
+                                                    await election.status() 
+                                                    await election.status_menu() 
+                                                    Swal.close()
                                                 }, 1000)
                                             }
                                         })
@@ -566,6 +569,61 @@ $(document).ready( () => {
         },
         loader: () => {
             return '<i class="fad animate-spin fa-spinner-third"></i>'
+        }, 
+        status: async () => {
+            try {
+                const req = await fetchtimeout('/election/status/main/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    $(".election__").html('')
+                    $(".election__").html(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>Failed to get election status</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }, 
+        status_menu: async () => {
+            try {
+                const req = await fetchtimeout('/election/status/side-menu/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    $(".e_menu").html(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>Failed to get election status</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
         }
     }
 })
