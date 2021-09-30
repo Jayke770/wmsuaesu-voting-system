@@ -431,7 +431,7 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
                 //check if the election id is not empty
                 if (electionID) {
                     try {
-                        await election.find({ _id: { $eq: xs(electionID) } }, { voters: 1, autoAccept_voters: 1}).then(async (v) => {
+                        await election.find({ _id: { $eq: xs(electionID) } }, { voters: 1, autoAccept_voters: 1, status: 1}).then(async (v) => {
                             if (v.length !== 0) {
                                 //if election has a autoAccept_voters feature 
                                 v[0].autoAccept_voters ? new_voter.status = 'Accepted' : new_voter.status = 'Pending'
@@ -443,17 +443,26 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
                                     }
                                 }
                                 if (!joined) {
-                                    await election.updateOne({ _id: { $eq: xs(electionID) } }, { $push: { voters: new_voter } }).then(() => {
-                                        req.session.electionID = xs(electionID)
+                                    //check if the election is not close or Pending for deletion 
+                                    if(v[0].status === 'Closed' || v[0].status === 'Pending for deletion'){
                                         return res.send({
-                                            joined: true,
-                                            electionID: electionID,
-                                            msg: `Welcome to ${e_title}`,
-                                            text: ""
+                                            joined: false, 
+                                            msg: "You can't join this election",
+                                            text: `Election is ${v[0].status}`
                                         })
-                                    }).catch((e) => {
-                                        throw new Error(e)
-                                    })
+                                    } else {
+                                        await election.updateOne({ _id: { $eq: xs(electionID) } }, { $push: { voters: new_voter } }).then(() => {
+                                            req.session.electionID = xs(electionID)
+                                            return res.send({
+                                                joined: true,
+                                                electionID: electionID,
+                                                msg: `Welcome to ${e_title}`,
+                                                text: ""
+                                            })
+                                        }).catch((e) => {
+                                            throw new Error(e)
+                                        })
+                                    }
                                 } else {
                                     req.session.electionID = xs(electionID)
                                     return res.send({
@@ -586,6 +595,7 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
         partylist: xs(pty), 
         position: xs(pos), 
         platform: xs(platform),
+        votes: [],
         status: '?', 
         msg: '',
         created: moment().format()

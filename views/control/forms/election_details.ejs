@@ -188,7 +188,7 @@
             </div>
             <div class="container mt-6">
                 <%- include('votes-tally', {
-                    e_positions: election.positions, 
+                    election: election,
                     positions: positions
                 }) %>
             </div>

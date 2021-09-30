@@ -27,6 +27,7 @@ const election = new mongoose.Schema({
         type: String,
         required: true
     },
+    //Pending, Not Started, Pending for deletion
     status:{
         type: String,
     },

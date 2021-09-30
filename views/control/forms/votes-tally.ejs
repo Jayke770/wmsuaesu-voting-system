@@ -1,61 +1,80 @@
 <% 
-    function pos(id) {
-        for(let i = 0; i < positions.length; i++){
-            if(id === positions[i].id){
-                return positions[i].type
+    const electionData = {
+        pos: (id) => {
+            for(let i = 0; i < positions.length; i++){
+                if(id === positions[i].id){
+                    return positions[i].type
+                }
             }
+        }, 
+        candidates: (pos) => {
+            let candidates = []
+            for(let i = 0; i < election.candidates.length; i++){
+                if(election.candidates[i].position === pos){
+                    candidates.push(election.candidates[i].fullname)
+                }
+            }
+            return candidates
         }
-    } 
+    }
 %>
 <div class="py-2">
     <span class="dark:text-gray-300 text-2xl">Votes Tally</span>
 </div>
 <div class="container mt-3">
     <div class="grid grid-cols-2 gap-3 md:grid-cols-none transition-all">
-        <% if(e_positions.length !== 0){ %>
-            <% for (let i = 0; i < e_positions.length; i++) { %>
-                <div class="w-full dark:bg-darkBlue-secondary shadow-md bg-gray-200 rounded-md  transition-all">
-                    <div class="p-2">
-                        <span class="p-2 dark:text-gray-300 text-purple-700 text-xl"><%- pos(e_positions[i].id) %></span>
-                    </div>
-                    <div class="container p-1">
-                        <canvas id="<%- `chart-${i}-${e_positions[i].id}` %>"></canvas>
-                    </div>
+        <% for(let i = 0; i < election.positions.length; i++) { %>
+            
+            <div id="election_positions" data="<%- `c${i}` %>" class="w-full dark:bg-darkBlue-secondary shadow-md bg-gray-200 rounded-md  transition-all">
+                <div class="p-2">
+                    <span class="p-2 dark:text-gray-300 text-purple-700 text-xl"><%- electionData.pos(election.positions[i].id) %></span>
                 </div>
-                <script>
-                    var ctx = document.getElementById("<%- `chart-${i}-${e_positions[i].id}` %>")
-                        var myChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Clint Ford', 'Jhon Flex', 'Jane Smith'],
-                            datasets: [{
-                                label: 'Total Votes',
-                                data: [100, 200, 500],
-                                backgroundColor: [
-                                    'rgba(255, 99, 132, 0.2)',
-                                    'rgba(54, 162, 235, 0.2)',
-                                    'rgba(255, 206, 86, 0.2)',
-                                    'rgba(75, 192, 192, 0.2)',
-                                    'rgba(153, 102, 255, 0.2)',
-                                    'rgba(255, 159, 64, 0.2)'
-                                ],
-                                borderColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
-                                ],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                        }
-                        });
-                </script>
-            <% }
-        } %>
+                <div class="container p-1">
+                    <canvas id="<%- `chart-${i}` %>"></canvas>
+                </div>
+            </div>
+            <script>
+                var <%- `ca_in_pos_${i}` %> = '<%- electionData.candidates(election.positions[i].id) %>'
+                var ctx = document.getElementById("<%- `chart-${i}` %>")
+                var <%- `c${i}` %> = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Total Votes',
+                            data: [100, 200, 500],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                    })
+                setTimeout( () => {
+                    //push name in chart labels 
+                    for(let i = 0; i < <%- `ca_in_pos_${i}` %>.split(",").length; i++){
+                        <%- `c${i}` %>.data.labels.push(<%- `ca_in_pos_${i}` %>.split(",")[i])
+                    }
+                    //update chart 
+                    <%- `c${i}` %>.update()
+                }, 2000)
+            </script>
+        <% } %>
     </div>
 </div>
