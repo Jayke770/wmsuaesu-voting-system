@@ -1702,7 +1702,7 @@ $(document).ready(() => {
                 })
                 if(req.ok){
                     const res = await req.text() 
-                    $(".candidates_").find(".candidates_list").html(res)
+                    $(".candidates_").find(".candidates_list").append(res)
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
                 }
