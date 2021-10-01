@@ -40,9 +40,6 @@ $(document).ready(() => {
             settings_main.removeClass(settings_main.attr("animate-out"))
         }, 500)
     })
-    $(".loader").delegate(".return_main", "click", () => {
-        window.location.assign('')
-    })
     //create election
     $(".create_election_btn").click( function(e) {
         e.preventDefault()
@@ -326,7 +323,8 @@ $(document).ready(() => {
                         $(".e_submit_res").find(".e_submit_res_msg").text(res.msg)
                         $(".e_submit_res").find(".e_submit_res_start").text(res.data.e_start)
                         $(".e_submit_res").find(".e_submit_res_pass").text(res.data.passcode)  
-                        elections()
+                        $(".course_select, .year_select, .partylist_select").find(".course_select_ic, .year_select_ic, .partylist_select_ic").html('')
+                        $(".course_select, .year_select, .partylist_select").removeClass("active-b-green")
                     }, 1500)
                 } else {
                     Swal.fire({
@@ -369,79 +367,94 @@ $(document).ready(() => {
         disableMobile: "true", 
         minDate: "today",
         enableTime: true,
+        input: true,
     })
+    elections()
     //get all elections 
-    Snackbar.show({ 
-        text: `
-            <div class="flex justify-center items-center gap-2"> 
-                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
-                <span>Fetching Elections</span>
-            </div>
-        `, 
-        duration: false,
-        showAction: false
-    })
-    setTimeout( () => {
-        elections()
-    }, 2000) 
-    async function elections() {
-        try {
-            const res = await fetchtimeout('election-list/', {
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                method: 'POST'
-            })
-            if(res.ok){
-                const data = await res.text()
-                $(".election_list").html(data)
-                setTimeout( () => {
-                    $(".election_list").find(".icon_e_name").each( function() {
-                        $(this).removeClass("skeleton-image")
-                        $(this).attr("src", avatar($(this).attr("data"), "#fff", dark()) )
-                    })
-                }, 1000)
-                Snackbar.show({ 
-                    text: 'All Election Fetch',
-                    duration: 3000, 
-                    actionText: 'Okay'
+    function elections() {
+        Snackbar.show({ 
+            text: `
+                <div class="flex justify-center items-center gap-2"> 
+                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                    <span>Fetching Elections</span>
+                </div>
+            `, 
+            duration: false,
+            showAction: false
+        })
+        setTimeout( async () => {
+            try {
+                const res = await fetchtimeout('election-list/', {
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    method: 'POST'
                 })
-            } else {
-                throw new Error(`${res.status} ${res.statusText}`)
-            }
-        } catch (e) {
-            Snackbar.show({ 
-                text: 'Connection Error',
-                actionText: 'Retry',
-                duration: false, 
-                onActionClick: () => {
+                if(res.ok){
+                    const data = await res.text()
+                    $(".election_list").html(data)
+                    setTimeout( () => {
+                        $(".election_list").find(".icon_e_name").each( function() {
+                            $(this).removeClass("skeleton-image")
+                            $(this).attr("src", avatar($(this).attr("data"), "#fff", dark()) )
+                        })
+                    }, 1000)
                     Snackbar.show({ 
-                        text: `
-                            <div class="flex justify-center items-center gap-2"> 
-                                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
-                                <span>Retrying...</span>
-                            </div>
-                        `, 
-                        duration: false,
-                        showAction: false
-                    }) 
+                        text: 'All Election Fetch',
+                        duration: 3000, 
+                        actionText: 'Okay'
+                    })
+                } else {
+                    throw new Error(`${res.status} ${res.statusText}`)
+                }
+            } catch (e) {
+                Snackbar.show({ 
+                    text: 'Connection Error',
+                    actionText: 'Retry',
+                    duration: false, 
+                    onActionClick: () => {
+                        Snackbar.show({ 
+                            text: `
+                                <div class="flex justify-center items-center gap-2"> 
+                                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                                    <span>Retrying...</span>
+                                </div>
+                            `, 
+                            duration: false,
+                            showAction: false
+                        }) 
+                        elections()
+                    }
+                })
+            }
+        }, 2000)
+    }
+    //get election every 10 seconds 
+    setInterval( () => {
+        if($("html[type='elections']").length !== 0){
+            const e_count =  parseInt($("html[type='elections']").attr("total-election"))
+            //get elections count
+            socket.emit('elections', (res) => {
+                if(e_count !== res.elections){
+                    $("html[type='elections']").attr("total-election", res.elections)
                     elections()
                 }
             })
+        } else {
+            clearInterval()
         }
-    }
+    }, 5000)
     //type writer effect
-    var app = document.querySelector('#e_creating');
-
+    var app = document.querySelector('#e_creating')
     var typewriter = new Typewriter(app, {
       loop: true,
       delay: 90,
-    });
+    })
     typewriter
       .typeString('Creating Election...')
       .pauseFor(300)
       .deleteAll()
       .typeString('Please wait...')
       .pauseFor(1000)
-      .start();
+      .start()
 })

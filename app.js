@@ -23,7 +23,7 @@ const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
-const {updateAdminSocketID, user_socket_id} = require('./routes/functions') 
+const {updateAdminSocketID, user_socket_id, election_handler} = require('./routes/functions') 
 //models 
 const election = require('./models/election')
 const users = require('./models/user')
@@ -112,6 +112,7 @@ admin_socket.on('connection', async (socket) => {
         socket.disconnect()
     } else {
         updateAdminSocketID(myid, socket.id)
+        admin_socket_id = socket.id
         console.log("Admin Connected with soket Id of ", socket.id)
     }
     //election events
@@ -133,40 +134,47 @@ admin_socket.on('connection', async (socket) => {
         }
         try {
             await election.find({_id: {$eq: xs(data.id)}}).then( (elec) => {
-                const election = elec.length === 0 ? [] : elec[0]
-                //accepeted voters 
-                for(let i = 0; i < election.voters.length; i++){
-                    if(election.voters[i].status === 'Accepted'){
-                        new_election_data.voters.accepted += 1
+               if(elec.length !== 0){
+                    const election = elec.length === 0 ? [] : elec[0]
+                    //accepeted voters 
+                    for(let i = 0; i < election.voters.length; i++){
+                        if(election.voters[i].status === 'Accepted'){
+                            new_election_data.voters.accepted += 1
+                        }
+                        if(election.voters[i].status === 'Pending'){
+                            new_election_data.voters.pending += 1
+                        }
+                    } 
+                    //accepeted candidates 
+                    for(let i = 0; i < election.candidates.length; i++){
+                        if(election.candidates[i].status === 'Accepted'){
+                            new_election_data.candidates.accepted += 1
+                        }
+                        if(election.candidates[i].status === 'Pending'){
+                            new_election_data.candidates.pending += 1
+                        }
+                        if(election.candidates[i].status === 'Deleted'){
+                            new_election_data.candidates.deleted += 1
+                        }
+                    } 
+                    //voters voted 
+                    for(let i = 0; i < election.voters.length; i++){
+                        if(election.voters[i].voted){
+                            new_election_data.voters.voted += 1
+                        }
                     }
-                    if(election.voters[i].status === 'Pending'){
-                        new_election_data.voters.pending += 1
-                    }
-                } 
-                //accepeted candidates 
-                for(let i = 0; i < election.candidates.length; i++){
-                    if(election.candidates[i].status === 'Accepted'){
-                        new_election_data.candidates.accepted += 1
-                    }
-                    if(election.candidates[i].status === 'Pending'){
-                        new_election_data.candidates.pending += 1
-                    }
-                    if(election.candidates[i].status === 'Deleted'){
-                        new_election_data.candidates.deleted += 1
-                    }
-                } 
-                //voters voted 
-                for(let i = 0; i < election.voters.length; i++){
-                    if(election.voters[i].voted){
-                        new_election_data.voters.voted += 1
-                    }
-                }
-                new_election_data.partylists = election.partylist.length
-                new_election_data.positions = election.positions.length
-                res({
-                    status: true, 
-                    data: new_election_data
-                })
+                    new_election_data.partylists = election.partylist.length
+                    new_election_data.positions = election.positions.length
+                    res({
+                        status: true, 
+                        data: new_election_data
+                    })
+               } else {
+                    res({
+                        status: false, 
+                        data: new_election_data
+                    })
+               }
             }).catch( (e) => {
                 throw new Error(e)
             })
@@ -206,6 +214,11 @@ admin_socket.on('connection', async (socket) => {
             console.log(e)
         }
     })
+    socket.on('elections', async (res) => {
+        res({
+            elections: await election.countDocuments()
+        })
+    })
 })
 //user websocket events
 users_socket.on('connection', async (socket) => {
@@ -230,7 +243,25 @@ users_socket.on('connection', async (socket) => {
     })
 })
 start()
+//check election every 10 seconds
+setInterval( async () => {
+   const election_status = await election_handler() 
+   if(election_status !== undefined){
+       //if there is new election started
+       if(election_status.status && election_status.type === "Started"){
+           //send event to admin that there is new election has been started 
+           admin_socket.emit('new-election-started', {electionID: election_status.electionID})
+       }
+        //if there is new election ended
+        if(election_status.status && election_status.type === "Ended"){
+            //send event to admin that there is new election has been started 
+            admin_socket.emit('new-election-ended', {electionID: election_status.electionID})
+        }
+        
+   }
+}, 2000)
 async function start() {
+    await election_handler()
     http.listen(port, console.log('Server Started on port ' + port))
     // if (process.env.NODE_ENV !== 'production') {
     //     http.listen(port, console.log('Server Started on port ' + port))

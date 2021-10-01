@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" type="elections" total-election="<%- elections %>">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -108,15 +108,15 @@
                 </div>
             </div>
         </div>
-        <div class="create_election z-20 dark:bg-darkBlue-primary/60 bg-gray-900/60 hidden justify-center items-center fixed top-0 w-full h-full">
+        <div class="create_election p-2 z-20 dark:bg-darkBlue-primary/60 bg-gray-900/60 hidden justify-center items-center fixed top-0 w-full h-full">
             <input type="hidden" name="default-course" value='<%- JSON.stringify(course) %>'>
             <input type="hidden" name="default-year" value='<%- JSON.stringify(year) %>'>
             <input type="hidden" name="default-pos" value='<%- JSON.stringify(positions) %>'>
             <input type="hidden" name="default-pty" value='<%- JSON.stringify(partylists) %>'>
-            <div class="create_election_main ms-500 p-2 w-[70%] h-[90%] lg:w-[85%] md:w-[95%] md:h-[95%] bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl" animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp">
+            <div class="create_election_main ms-500 w-[70%] h-[90%] lg:w-[85%] md:w-full md:h-full bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl" animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp">
                 <div class="flex flex-row w-full">
                     <div class="w-[95%] flex flex-col">
-                        <p class="font-medium transition-all relative text-purple-600 dark:text-purple-500 text-3xl xsm:text-xl py-2 px-3 after:absolute after:bottom-0 after:left-3 after:bg-purple-600 dark:after:bg-purple-700 after:w-6/12 after:h-[3px]">Create Election</p>
+                        <p class="font-medium transition-all relative text-purple-600 dark:text-purple-500 text-3xl md:text-2xl py-2 px-3 after:absolute after:bottom-0 after:left-3 after:bg-purple-600 dark:after:bg-purple-700 after:w-6/12 md:after:w-9/12 after:h-[3px]">Create Election</p>
                     </div>
                     <div class="flex justify-end items-center">
                         <a class="close_e_create cursor-pointer text-red-500 dark:text-red-500 text-xl py-1 rounded-md rpl px-3">
@@ -124,9 +124,9 @@
                         </a>
                     </div>
                 </div>
-                <div class="w-full h-[calc(100%-54px)] p-2 py-3">
-                    <div class="w-full h-full flex flex-row md:flex-col">
-                        <div class="transition-all w-60 md:w-full md:grid md:grid-cols-5 md:dark:border-b-[.1px] md:dark:border-r-0 md:p-1 flex flex-col gap-1 p-2 dark:border-r-[.1px] dark:border-gray-600">
+                <div class="w-full h-[calc(100%-50px)]">
+                    <div class="w-full h-full flex flex-row md:flex-col-reverse px-2 md:gap-2">
+                        <div class="transition-all w-60 md:w-full md:grid md:grid-cols-5 md:dark:border-t-[.1px] md:dark:border-r-0 md:p-1 flex flex-col gap-1 p-2 dark:border-r-[.1px] dark:border-gray-600">
                             <a data=".e_info" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
                                 <span class="md:hidden">Information</span>
                                 <i class="hidden md:block text-xl text-teal-500">
@@ -152,16 +152,16 @@
                                 </i>
                             </a>
                             <a data=".e_submit" class="create_e_btn rpl cursor-pointer md:text-center py-2 px-3 text-purple-800  dark:text-gray-300 dark:hover:bg-[#1d2936] transition-all rounded-md">
-                                <span class="md:hidden">Finish</span>
+                                <span class="md:hidden">Submit Election</span>
                                 <i class="hidden md:block text-xl text-lime-600">
                                     <i class="fad fa-check-circle"></i>
                                 </i>
                             </a>
                         </div>
-                        <form class="create_election_form w-[calc(100%-15rem)] md:h-full md:w-full overflow-x-hidden overflow-hidden">
+                        <form class="create_election_form w-[calc(100%-15rem)] md:h-full md:w-full overflow-x-hidden overflow-y-auto md:py-2">
                             <input type="reset" class="hidden">
-                            <div class="e_info h-full pl-3 md:pl-0">
-                                <div class="flex flex-col sm:justify-center py-3 gap-5 h-full">
+                            <div class="e_info px-2 h-full pl-3 md:pl-0">
+                                <div class="flex flex-col py-3 gap-5 h-full">
                                     <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-2/5 lg:w-10/12 md:w-full px-4 ">
                                         <label for="e_title" class="dark:text-gray-300 text-base">Election Title</label>
                                         <input required type="text" name="e_title" placeholder="e.g SSG Election" autocomplete="off" class="text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
@@ -182,7 +182,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="e_courses hidden h-full pl-3 md:pl-0">
+                            <div class="e_courses px-2 hidden h-full pl-3 md:pl-0">
                                 <div class="flex flex-col mt-2 gap-2 h-full md:grid-cols-1 overflow-hidden">
                                     <div class="flex flex-row w-full">
                                         <div class="c_list_e py-3 rounded-l-md dark:bg-bluegray-800 dark:text-gray-300 w-full flex justify-center items-center cursor-pointer rpl">
@@ -234,7 +234,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="e_positions hidden h-full pl-3 md:pl-0">
+                            <div class="e_positions px-2 hidden h-full pl-3 md:pl-0">
                                 <div class="w-full flex flex-col items-center p-2">
                                     <p class="dark:text-gray-300 text-2xl">Select Positions</p>
                                 </div>
@@ -245,14 +245,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="e_partylist hidden h-full pl-3 md:pl-0">
+                            <div class="e_partylist px-2 hidden h-full pl-3 md:pl-0">
                                 <div class="w-full h-full items-center flex flex-col gap-3 py-2 overflow-x-hidden">
                                     <p class="text-2xl dark:text-gray-300">Select Partylist</p>
-                                    <div class="partylists w-full flex flex-col items-center gap-2 p-2">
+                                    <div class="partylists w-full grid grid-cols-2 md:grid-cols-none gap-2 p-2">
                                         <input required type="hidden" name="partylists">
                                         <% if(partylists.length != 0) { 
                                             for (let i = 0; i < partylists.length; i++) { %> 
-                                                <div data="<%- partylists[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="partylist_select w-[200px] animate__animated animate__fadeInUp sm:w-full ms-500 grid grid-cols-2 px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800 bg-purple-200">
+                                                <div data="<%- partylists[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="partylist_select w-full animate__animated animate__fadeInUp ms-500 grid grid-cols-2 px-2 py-2 rounded-md rpl cursor-pointer dark:bg-bluegray-800 bg-purple-200">
                                                     <span class="chip-title dark:text-gray-300"><%- partylists[i].type %></span>
                                                     <div class="flex justify-end items-center">
                                                         <a class="partylist_select_ic cursor-pointer rpl outline-none px-3 pr-1 dark:text-teal-500 text-teal-700"></a>

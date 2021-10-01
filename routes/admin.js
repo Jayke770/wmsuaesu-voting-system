@@ -13,7 +13,7 @@ const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
 const objectid = require('mongodb').ObjectID
-const moment = require('moment')
+const moment = require('moment-timezone')
 const nl2br = require('nl2br')
 /*##################################################################################### */
 adminrouter.get('/control',limit, isadmin, async (req, res) => {
@@ -38,12 +38,13 @@ adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
     delete req.session.currentElection 
     try {
         //get all courses, positions, & partylist 
-        data.find({}, {positions: 1, course: 1, year: 1, partylists: 1}).then( (d) => {
+        await data.find({}, {positions: 1, course: 1, year: 1, partylists: 1}).then( async (d) => {
             return res.render("control/forms/elections", {
                 positions: d.length != 0 ? d[0].positions : [], 
                 course: d.length != 0 ? d[0].course : [], 
                 year: d.length != 0 ? d[0].year : [], 
                 partylists: d.length != 0 ? d[0].partylists : [], 
+                elections: await election.countDocuments(),
                 csrf: req.csrfToken()
             })
         }).catch( (e) => {
@@ -78,8 +79,8 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
         e_pos = true, 
         e_pty = true,
         e_strt = true, 
-        start_time = moment(start).startOf().fromNow().split(" "), 
-        end_time = moment(end).startOf().fromNow().split(" ")
+        start_time = moment(start).tz("Asia/Manila").startOf().fromNow().split(" "), 
+        end_time = moment(end).tz("Asia/Manila").startOf().fromNow().split(" ")
     if(title != "" && start != "" && end != "" && crs.length != 0 && yr.length != 0 && pos.length != 0 && pty.length != 0){
         try {
             //if the partylist is less than 2
@@ -182,7 +183,7 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
                             end: end, 
                             autoAccept_voters: false,
                             autoAccept_candidates: false,
-                            created: moment().format()
+                            created: moment().tz("Asia/Manila").format()
                         }, (err, crtd) => {
                             if(err) throw new err 
                             if(crtd){
@@ -190,7 +191,7 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
                                     created: true, 
                                     msg: "Election Created Successfully", 
                                     data: {
-                                        e_start: moment(start).startOf().fromNow(),  
+                                        e_start: moment(start).tz("Asia/Manila").startOf().fromNow(),  
                                         passcode: pass
                                     }
                                 })
@@ -254,8 +255,8 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
         await election.find({_id: {$eq: xs(id)}}).then( async (elecs) => {
             const e_data = elecs.length === 0 ? '' : elecs[0] 
             //if election is already started set the started variable to true
-            const started = moment(e_data.start).fromNow().search("ago") != -1 ? true : false
-            const end = moment(e_data.end).fromNow().search("ago") != -1 ? true : false
+            const started = moment(e_data.start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
+            const end = moment(e_data.end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
             //save election id to session 
             req.session.currentElection = xs(id)
             //get all the pending & accepted voters 
@@ -282,9 +283,9 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             return res.render("control/forms/election_details", {
                 election: elecs.length === 0 ? '' : elecs[0], 
                 str: {
-                    start: moment(e_data.start).format('MMMM DD YYYY, h:mm a'),
-                    end: moment(e_data.end).format('MMMM DD YYYY, h:mm a'),
-                    created: moment(e_data.created).format('MMMM DD YYYY, h:mm a'),
+                    start: moment(e_data.start).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
+                    end: moment(e_data.end).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
+                    created: moment(e_data.created).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
                 },
                 started: started, 
                 end: end,
@@ -297,7 +298,7 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
                 pending_candidates: pending_ca, //No. of pending candidates
                 accepted_candidates: accepted_ca, //No. of accepted candiates
                 deleted_candidates: deleted_ca, //No. of deleted candiates
-                endtime: moment(e_data.end).fromNow(),
+                endtime: moment(e_data.end).tz("Asia/Manila").fromNow(),
                 link: xs(from) === "home" ? '/control/' : '/control/elections/',
                 election_link: process.env.link,
                 csrf: req.csrfToken()
@@ -330,7 +331,6 @@ adminrouter.post("/control/elections/accepted-voters/", limit, isadmin, async (r
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -355,7 +355,6 @@ adminrouter.post("/control/elections/pending-voters/", limit, isadmin, async (re
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -395,7 +394,6 @@ adminrouter.post('/control/elections/accept-voter/', limit, isadmin, async (req,
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e.message)
         return res.status(500).send()
     }
 })
@@ -435,7 +433,6 @@ adminrouter.post('/control/elections/deny-voter/', limit, isadmin, async (req, r
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e.message)
         return res.status(500).send()
     }
 })
@@ -477,7 +474,6 @@ adminrouter.post('/control/elections/e-add-pty/', limit, isadmin, async (req, re
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -518,8 +514,7 @@ adminrouter.post('/control/elections/e-remove-partylist/', limit, isadmin, async
         }).catch( (e) => {
             throw new Error(e)
         })
-    } catch (e) {
-        console.log(e) 
+    } catch (e) { 
         return res.status(500).send()
     }
 })
@@ -669,7 +664,6 @@ adminrouter.post('/control/election/settings/change-title/', limit, isadmin, asy
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e.message)
         return res.status(500).send()
     }
 })
@@ -755,7 +749,7 @@ adminrouter.post('/control/election/settings/start-election/', limit, isadmin, a
                         _id: {$eq: xs(electionID)}
                     }, {$set: {
                         status: 'Started',
-                        start: moment().format()
+                        start: moment().tz("Asia/Manila").format()
                     }}).then( () => {
                         return res.send({
                             status: true, 
@@ -797,7 +791,6 @@ adminrouter.post('/control/election/settings/start-election/', limit, isadmin, a
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -815,7 +808,7 @@ adminrouter.post('/control/election/settings/stop-election/', limit, isadmin, as
                         _id: {$eq: xs(electionID)}
                     }, {$set: {
                         status: 'Ended', 
-                        end: moment().format()
+                        end: moment().tz("Asia/Manila").format()
                     }}).then( () => {
                         return res.send({
                             status: true, 
@@ -849,7 +842,6 @@ adminrouter.post('/control/election/settings/stop-election/', limit, isadmin, as
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -887,7 +879,6 @@ adminrouter.post('/control/election/settings/edit-starting-dt/', limit, isadmin,
                 throw new Error(e)
             })
         } catch (e) {
-            console.log(e)
             return res.status(500).send()
         }
     } else {
@@ -907,8 +898,8 @@ adminrouter.post('/control/election/settings/edit-ending-dt/', limit, isadmin, a
             _id: {$eq: xs(electionID)}
         }, {status: 1, start: 1, end: 1}).then( async (e_st) => {
            if(e_st.length !== 0){
-                const e_start_time = moment(e_st[0].start).fromNow().search("ago") != -1 ? true : false
-                const e_end_time = moment(e_st[0].end).fromNow().search("ago") != -1 ? true : false
+                const e_start_time = moment(e_st[0].start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
+                const e_end_time = moment(e_st[0].end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
                 // if election is ended  
                 if(e_st[0].status === 'Ended' && e_end_time){
                     //if election is already ended then restart the election and change to started 
@@ -948,7 +939,6 @@ adminrouter.post('/control/election/settings/edit-ending-dt/', limit, isadmin, a
            }
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -986,7 +976,6 @@ adminrouter.post('/control/election/settings/auto-accept-voters/', limit, isadmi
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -1024,7 +1013,6 @@ adminrouter.post('/control/election/settings/auto-accept-candidates/', limit, is
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -1035,14 +1023,13 @@ adminrouter.post('/control/elections/status/settings/', limit, isadmin, async (r
         await election.find({
             _id: {$eq: xs(electionID)}
         }).then( (elec) => {
-            console.log(elec)
             return res.render('control/forms/election-settings', {
                 election: elec[0], 
                 link: process.env.link,
                 str: {
-                    start: moment(elec[0].start).format('MMMM DD YYYY, h:mm a'),
-                    end: moment(elec[0].end).format('MMMM DD YYYY, h:mm a'),
-                    created: moment(elec[0].created).format('MMMM DD YYYY, h:mm a'),
+                    start: moment(elec[0].start).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
+                    end: moment(elec[0].end).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
+                    created: moment(elec[0].created).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
                 },
                 show: true
             })
@@ -1050,7 +1037,6 @@ adminrouter.post('/control/elections/status/settings/', limit, isadmin, async (r
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -1062,16 +1048,15 @@ adminrouter.post('/control/elections/status/election-date-time/', limit, isadmin
             _id: {$eq: xs(electionID)}
         }).then( (elec) => {
             return res.render('control/forms/election-date-time', {
-                started:  moment(elec[0].start).fromNow().search("ago") != -1 ? true : false, 
-                end: moment(elec[0].end).fromNow().search("ago") != -1 ? true : false, 
-                endtime: moment(elec[0].end).fromNow(), 
+                started:  moment(elec[0].start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false, 
+                end: moment(elec[0].end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false, 
+                endtime: moment(elec[0].end).tz("Asia/Manila").fromNow(), 
                 election: elec[0]
             })
         }).catch( (e) => {
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -1093,7 +1078,7 @@ adminrouter.post('/control/election/settings/delete-election/', limit, isadmin, 
                 await election.updateOne({
                     _id: {$eq: xs(electionID)}
                 }, {$set: {
-                    deletion_status: moment().format(), 
+                    deletion_status: moment().tz("Asia/Manila").format(), 
                     status: 'Pending for deletion'
                 }}).then( (u) => {
                     return res.send({
@@ -1124,7 +1109,6 @@ adminrouter.post('/control/election/status/', limit, isadmin, async (req, res) =
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -1236,7 +1220,6 @@ adminrouter.post('/control/elections/candidates/delete/', limit, isadmin, async 
                 await election.updateOne({
                     _id: {$eq: xs(currentElection)}
                 }, {$pull: {candidates: {id: xs(id)}}}).then( (del) => {
-                    console.log(del) 
                     return res.send({
                         status: true, 
                         txt: 'Candidate Deleted successfully'
@@ -1255,7 +1238,6 @@ adminrouter.post('/control/elections/candidates/delete/', limit, isadmin, async 
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 }) 
@@ -1294,7 +1276,6 @@ adminrouter.post('/control/elections/candidates/accept-candidacy/', limit, isadm
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -1337,7 +1318,6 @@ adminrouter.post('/control/elections/candidates/delete-candidacy/', limit, isadm
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -1365,7 +1345,6 @@ adminrouter.post('/control/elections/candidates/candidacy-information', limit, i
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -1427,7 +1406,6 @@ adminrouter.post('/control/election/candidates/sort/', limit, isadmin, async (re
             })
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })

@@ -268,8 +268,6 @@ $(document).ready(() => {
                 if(add.ok){
                     const res = await add.json()
                     if(res.add){
-                        //send event to websocket that the election is updated
-                        new_partylist(res.id)
                         toast.fire({
                             title: res.msg,
                             icon: 'success', 
@@ -828,10 +826,13 @@ $(document).ready(() => {
         }, 300)
     })
     $("body").delegate('.back_settings', 'click', async function() {
+        const def = $(this).html() 
+        $(this).html(election.loader())
         await election.settings()
+        $(this).html(def)
         $(".card_settings_form").html('')
-        $(this).hide() 
         $('.card_settings').show(500)
+        $(".back_settings").hide(500)
     })
     let settings = false
     $("body").delegate(".election_settings_btn", "click", async function() {

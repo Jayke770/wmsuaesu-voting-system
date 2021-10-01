@@ -20,7 +20,7 @@ const path = require('path')
 const fs = require('fs-extra')
 const base64ToImage = require('base64-to-image')
 const ftp = require('basic-ftp')
-const moment = require('moment')
+const moment = require('moment-timezone')
 //profile 
 router.get('/profile/:id', normal_limit, isloggedin, async (req, res) => {
     const id = req.params.id
@@ -176,15 +176,15 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
             }
             req.session.electionID = el.length === 0 ? '' : el[0]._id
             const data = el.length === 0 ? '' : el[0]
-            const started = moment(data.start).fromNow().search("ago") != -1 ? true : false
-            const end = moment(data.end).fromNow().search("ago") != -1 ? true : false
+            const started = moment(data.start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
+            const end = moment(data.end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
             return res.render('index', {
                 is_join_election: el.length === 0 ? false : true,
                 data: await user_data(myid), 
                 election: el.length === 0 ? null : el[0], 
                 started: started,
                 end: end, 
-                endtime: moment(data.end).fromNow(), 
+                endtime: moment(data.end).tz("Asia/Manila").fromNow(), 
                 voterStatus: voter_data,
                 csrf: req.csrfToken()
             })
@@ -393,7 +393,7 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
         year: '',
         status: '?',
         voted: false,
-        created: moment().format()
+        created: moment().tz("Asia/Manila").format()
     } 
     try {
         //get course & year 
@@ -598,7 +598,7 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
         votes: [],
         status: '?', 
         msg: '',
-        created: moment().format()
+        created: moment().tz("Asia/Manila").format()
     }
     try {
         //user type if == Candidate 
@@ -789,8 +789,8 @@ router.post('/election/status/main/', normal_limit, isloggedin, async (req, res)
                 election: e_data, 
                 is_join_election: e_data.length === 0 ? false : true, 
                 voterStatus: e_data.voters[0],
-                started: moment(e_data.start).fromNow().search("ago") != -1 ? true : false,
-                end: moment(e_data.end).fromNow().search("ago") != -1 ? true : false
+                started: moment(e_data.start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false,
+                end: moment(e_data.end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
             })
         }).catch( (e) => {
             throw new Error(e)
@@ -823,8 +823,8 @@ router.post('/election/status/side-menu/', normal_limit, isloggedin, async (req,
                 election: e_data, 
                 is_join_election: e_data.length === 0 ? false : true, 
                 voterStatus: e_data.voters[0],
-                started: moment(e_data.start).fromNow().search("ago") != -1 ? true : false,
-                end: moment(e_data.end).fromNow().search("ago") != -1 ? true : false
+                started: moment(e_data.start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false,
+                end: moment(e_data.end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
             })
         }).catch( (e) => {
             throw new Error(e)

@@ -13,7 +13,13 @@
                 <div class="flex flex-row gap-3 items-center justify-center float-right">
                     <span class="dark:text-gray-300 sm:text-sm">Status :</span>
                     <% if(elections[i].status === 'Not Started') { %>
-                        <div class="dark:bg-amber-700/50 px-3 text-base sm:text-sm rounded-md dark:text-amber-500 bg-amber-500/40 text-amber-700"><%- elections[i].status %></div>
+                        <div class="dark:bg-yellow-600/50 bg-yellow-700 text-gray-100 dark:text-gray-300 py-0.5 text-sm px-2 rounded-2xl"><%- elections[i].status %></div>
+                    <% } else if(elections[i].status === 'Started') { %>
+                        <div class="dark:bg-teal-600/50 bg-teal-700 text-gray-100 dark:text-gray-300 py-0.5 text-sm px-5 rounded-2xl"><%- elections[i].status %></div>
+                    <% } else if(elections[i].status === 'Ended') { %>
+                        <div class="dark:bg-rose-600/50 bg-rose-700 text-gray-100 dark:text-gray-300 py-0.5 text-sm px-5 rounded-2xl"><%- elections[i].status %></div>
+                    <% } else { %>
+                        <div class="dark:bg-red-600/50 bg-red-700 text-gray-100 dark:text-gray-300 py-0.5 text-sm px-2 rounded-2xl"><%- elections[i].status %></div>
                     <% } %>
                 </div>
                 <span class="p-2 dark:text-gray-400 text-purple-700 text-xl sm:text-base"><%- elections[i].election_title %></span>

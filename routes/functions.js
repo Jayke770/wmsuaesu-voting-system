@@ -1,11 +1,13 @@
 const user = require('../models/user')
 const admin = require('../models/admin')
 const data = require('../models/data')
+const election = require('../models/election')
 const objectid = require('mongodb').ObjectID
 const { v4: uuid } = require('uuid');
 const ftp = require('basic-ftp')
 const bcrypt = require('bcrypt')
 const xs = require('xss')
+const moment = require('moment-timezone')
 module.exports = {
     toUppercase: function (val) {
         const str = val.charAt(0).toUpperCase() + val.slice(1)
@@ -217,6 +219,59 @@ module.exports = {
         //return positions
         return result
     }, 
+    //update all election status 
+    election_handler: async () => {
+        let res
+        try {
+            //get all elections 
+            await election.find({}).then( async (elec) => {
+                if(elec.length !== 0){
+                    for(let i = 0; i < elec.length; i++){
+                        const e_start = moment(elec[i].start).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
+                        const e_end = moment(elec[i].end).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
+                        const e_deletion = moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow().search("minute|moment|seconds|hour") !== -1 ? true : false
+                        //if election is not started and it is the time to start
+                        if(elec[i].status === "Not Started" && e_start && !e_end){
+                            //start election 
+                            await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Started"}}).then( (u) => {
+                                console.log(`Election with ID ${elec[i]._id} has been Started\nElection Title : ${elec[i].election_title}`)
+                                res = {electionID: elec[i]._id, status: true, type: "Started"}
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        }
+                        //if election is not ended and it is the time to end
+                        if(elec[i].status === "Started" && e_start && e_end){
+                            //start election 
+                            await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Ended"}}).then( () => {
+                                console.log(`Election with ID ${elec[i]._id} has been Ended\nElection Title : ${elec[i].election_title}`)
+                                res = {electionID: elec[i]._id, status: true, type: "Ended"}
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        }
+                        //if election is pending for deleetion 
+                        if(elec[i].status === "Pending for deletion" && e_deletion && e_start && e_end){
+                            //delete election 
+                            await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( (d) => {
+                                console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
+                                res = {electionID: elec[i]._id, status: true, type: "Deleted"}
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        }
+                    }
+                } else {
+                    return false
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            res = {electionID: elec[i]._id, status: false, type: "Error"}
+        }
+        return res
+    },
     //admin socket id 
     updateAdminSocketID: async (id, socket) => {
         let res 
