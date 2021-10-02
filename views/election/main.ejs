@@ -1,24 +1,146 @@
-<% if(is_join_election) { %>
+<% if(!joined) { %> 
+    <div class="h-screen pt-[64px] pb-1">
+        <div class="container p-2 px-5 flex md:px-2 items-center transition-all">
+            <span class="dark:text-gray-300 text-bluegray-900 text-2xl md:text-xl text-center font-medium">Elections that you have joined</span>
+        </div>
+        <div class="w-full grid grid-cols-3 lg:grid-cols-2 md:grid-cols-none gap-3 py-3 md:pt-0.5 px-5 md:px-2 transition-all">
+            <% 
+                const electionData = {
+                    voterStatus: (student_id) => {
+                        if(elections.length !== 0){
+                            const voters = elections[0].voters 
+                            for(let i = 0; i < voters.length; i++){
+                                if(voters[i].student_id === student_id){
+                                    return voters[i].status
+                                }
+                            }
+                        }
+                    }
+                }
+            %> 
+            <% if(elections.length !== 0) { %>
+                <% for (let i = 0; i < elections.length; i++) { %>
+                    <div style="animation-delay: <%- i * .250 %>s;" class="animate__animated animate__fadeInUp ms-500 rounded-xl dark_border dark:bg-darkBlue-secondary">
+                         <div class="flex flex-col">
+                             <div class="container">
+                                 <img data="<%- elections[i].election_title.split(" ").length >= 2 ? `${elections[i].election_title.split(" ")[0].charAt(0).toUpperCase()} ${elections[i].election_title.split(" ")[1].charAt(0).toUpperCase()}` : elections[i].election_title.split(" ")[0].charAt(0).toUpperCase() %>" class="object-cover w-full h-52 rounded-tl-xl rounded-tr-xl skeleton-image" alt="election_icon">
+                             </div>
+                             <div class="container">
+                                 <div class="py-0.5 px-2 flex flex-col">
+                                     <div class="flex items-center md:justify-center p-2 px-3">
+                                         <span class="dark:text-purple-500 text-lg md:text-xl font-medium text-bluegray-900"><%- elections[i].election_title %></span>
+                                     </div>
+                                     <div class="flex flex-col gap-1 px-3">
+                                         <span class="dark:text-gray-300/80 text-base font-medium">Election ID</span>
+                                         <div class="flex justify-start w-full">
+                                             <span class="dark:text-gray-400 font-light break-all"><%- elections[i]._id %></span>
+                                         </div>
+                                     </div>
+                                     <div class="grid grid-rows-2 gap-1 px-3">
+                                         <span class="dark:text-gray-300/80 text-base font-medium">Election Status</span>
+                                         <div class="flex justify-start w-full">
+                                            <% if(elections[i].status === 'Not Started') { %>
+                                                <span class="dark:bg-amber-700/40 bg-amber-600 dark:text-amber-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg"><%- elections[i].status %></span>
+                                            <% } %> 
+                                            <% if(elections[i].status === 'Started') { %>
+                                                <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg"><%- elections[i].status %></span>
+                                            <% } %> 
+                                            <% if(elections[i].status === 'Pending for deletion') { %>
+                                                <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg animate-pulse"><%- elections[i].status %></span>
+                                            <% } %>
+                                            <% if(elections[i].status === 'Ended') { %>
+                                                <span class="dark:bg-red-700/40 bg-red-600 dark:text-red-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg"><%- elections[i].status %></span>
+                                            <% } %>
+                                         </div>
+                                     </div>
+                                     <div class="grid grid-rows-2 gap-1 px-3">
+                                         <span class="dark:text-gray-300/80 text-base font-medium">Voters</span>
+                                         <div class="flex w-full justify-start px-2">
+                                             <span class="dark:text-gray-400 font-light break-all"><%- elections[i].voters.length %></span>
+                                         </div>
+                                     </div>
+                                     <div class="grid grid-rows-2 gap-1 px-3">
+                                         <span class="dark:text-gray-300/80 text-base font-medium">Request Status</span>
+                                         <div class="flex justify-start w-full">
+                                            <% if(electionData.voterStatus(userData.student_id) === 'Pending') { %>
+                                                <span class="dark:bg-amber-700/40 bg-amber-600 dark:text-amber-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg animate-pulse"><%- electionData.voterStatus(userData.student_id) %></span>
+                                            <% } %> 
+                                            <% if(electionData.voterStatus(userData.student_id) === 'Accepted') { %>
+                                                <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg"><%- electionData.voterStatus(userData.student_id) %></span>
+                                            <% } %> 
+                                            <% if(electionData.voterStatus(userData.student_id) === 'Deleted') { %>
+                                                <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg"><%- electionData.voterStatus(userData.student_id) %></span>
+                                            <% } %>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="flex justify-center items-center px-4 py-2.5 mt-2">
+                                     <a href="/home/election/id/<%- elections[i]._id %>/" class="rpl transition-all rounded-md cursor-pointer dark:bg-purple-800 dark:hover:bg-purple-700 dark:text-gray-300 text-bluegray-900 focus:outline-none dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 font-normal px-3 py-1.5 w-full text-center">Goto Election</a>
+                                 </div>
+                             </div>
+                         </div>
+                    </div>
+                 <% } %>
+            <% } %>
+        </div>
+    </div>
+<% } else { %>
+    <% 
+        const electionData = {
+            voterStatus: (student_id) => {
+                if(elections.length !== 0){
+                    const voters = elections.voters 
+                    for(let i = 0; i < voters.length; i++){
+                        if(voters[i].student_id === student_id){
+                            return voters[i].status
+                        }
+                    }
+                }
+            }
+        }
+    %> 
     <div class="pt-16 w-full h-screen">
         <div class="p-1 grid grid-rows-3 w-full h-full">
             <div class="flex flex-col gap-3 justify-center items-center">
-                <div style="animation-delay: .150s;" class="dark:text-purple-600 text-purple-700 text-6xl font-bold text-center sm:text-3xl animate__animated animate__fadeInUp"><%- election.election_title %></div>
-                <div style="animation-delay: .650s;" class="dark:text-purple-300 text-purple-400 text-base animate__animated animate__fadeInDown break-words px-96 lg:px-48 md:px-20 sm:px-3 text-center"><%- election.election_description %></div>
+                <div style="animation-delay: .150s;" class="dark:text-purple-600 text-purple-700 text-6xl font-bold text-center sm:text-3xl animate__animated animate__fadeInUp"><%- elections.election_title %></div>
+                <div style="animation-delay: .650s;" class="dark:text-purple-300 text-purple-400 text-base animate__animated animate__fadeInDown break-words px-96 lg:px-48 md:px-20 sm:px-3 text-center"><%- elections.election_description %></div>
             </div>
             <div class="mt-5 flex flex-col justify-center items-center">
                 <p style="animation-delay: .150s;" class="dark:text-purple-600 text-purple-700 text-xl font-semibold animate__animated animate__fadeInUp">
-                    <%- started && !end ? 'Election will end in' : started && end ? `Election ended ${endtime}` : `Election will begin in` %>
+                    <% if(elections.status === 'Not Started') { %>
+                        <%- 'Election will begin in' %>
+                    <% } %>
+                    <% if(elections.status === 'Started') { %>
+                        <%- 'Election will end in' %>
+                    <% } %>
+                    <% if(elections.status === 'Ended') { %>
+                        Election ended <span class="time" data="<%- elections.end %>"></span>
+                    <% } %>
+                    <% if(elections.status === 'Pending for deletion') { %>
+                        <%- 'Election will be deleted in' %>
+                    <% } %>
                 </p>
-                <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInUp" data="<%- started && !end ? election.end : started && end ? election.end : election.start %>"></div>
+                <% if(elections.status === 'Not Started') { %>
+                    <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInUp" data="<%- elections.start %>"></div>
+                <% } %>
+                <% if(elections.status === 'Started') { %>
+                    <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInUp" data="<%- elections.end %>"></div>
+                <% } %>
+                <% if(elections.status === 'Ended') { %>
+                    <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInUp" data="<%- elections.end %>"></div>
+                <% } %>
+                <% if(elections.status === 'Pending for deletion') { %>
+                    <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInUp" data="<%- elections.deletion_status %>"></div>
+                <% } %>
             </div>
             <div style="animation-delay: .750s;" class="animate__animated animate__fadeInUp flex flex-col justify-center items-center">
                 <div class="flex flex-row gap-2 items-center justify-center">
                     <span class="dark:text-gray-400">Request Status : </span>
-                    <% if(voterStatus.status === 'Pending') { %>
-                        <span class="dark:bg-amber-700/50 bg-amber-600 dark:text-amber-500 text-gray-50 px-3 p-y-2 rounded-lg animate-pulse"><%- voterStatus.status %></span>
-                    <% } else if(voterStatus.status === 'Accepted') { %>
-                        <span class="dark:bg-teal-700/50 bg-teal-600 dark:text-teal-500 text-gray-50 px-3 p-y-2 rounded-lg"><%- voterStatus.status %></span>
-                    <% } else if(voterStatus.status === 'Deleted') { %>
+                    <% if(electionData.voterStatus(userData.student_id) === 'Pending') { %>
+                        <span class="dark:bg-amber-700/50 bg-amber-600 dark:text-amber-500 text-gray-50 px-3 p-y-2 rounded-lg animate-pulse"><%- electionData.voterStatus(userData.student_id) %></span>
+                    <% } else if(electionData.voterStatus(userData.student_id) === 'Accepted') { %>
+                        <span class="dark:bg-teal-700/50 bg-teal-600 dark:text-teal-500 text-gray-50 px-3 p-y-2 rounded-lg"><%- electionData.voterStatus(userData.student_id) %></span>
+                    <% } else if(electionData.voterStatus(userData.student_id) === 'Deleted') { %>
                         <span class="dark:bg-red-700/50 bg-red-600 dark:text-red-500 text-gray-50 px-3 p-y-2 rounded-lg">Request deleted</span>
                     <% } %>
                 </div>
@@ -34,6 +156,4 @@
         $("#e_time").removeClass(localStorage.getItem('theme') === "dark" ? 'flipdown__theme-dark' : 'flipdown__theme-light')
         $("#e_time").addClass(localStorage.getItem('theme') === "dark"? 'flipdown__theme-light' : 'flipdown__theme-dark')
     </script>
-<% } else { %>
-    
 <% } %>

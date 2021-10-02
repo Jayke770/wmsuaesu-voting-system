@@ -55,11 +55,11 @@ const user =  new mongoose.Schema({
     notifications:{
         type: Array,
     },
+    elections: {
+        type: Array,
+    },
     devices: {
         type: Boolean,
-    },
-    ip: {
-        type: String,
     },
     created: {
         type: Date, 

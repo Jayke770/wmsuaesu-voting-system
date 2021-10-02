@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="font-sans antialiased transition-all">
+<html lang="en" class="font-sans antialiased transition-all" joined="<%- joined %>">
 
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6b21a8">
     <meta name="keywords" content="wmsu, online voting system, voting system, wmsu auora, auora, voting">
-    <title><%- election ? election.election_title : 'WMSU-AESU' %></title>
+    <title>
+        <% if(!joined) { %> 
+            WMSU-AESU
+        <% } else { %>
+            <%- elections.election_title %>
+        <% } %>
+    </title>
     <meta name="description" content="New and upgraded version of voting system">
     <meta property="og:title" content="Online Voting System">
     <meta property="og:description" content="New and upgraded version of voting system">
@@ -47,16 +53,16 @@
                         <i class="fas fa-times-circle"></i>
                     </a>
                     <div class="flex h-full pl-4">
-                        <p class="text-2xl text-center dark:text-gray-300 font-medium tracking-wider"><%- election ? election.election_title : 'WMSU-AESU' %></p>
+                        <p class="text-2xl text-center dark:text-gray-300 font-medium tracking-wider">WMSU-AESU</p>
                     </div>
                 </div>
                 <div class="flex flex-col gap-2 mt-2 e_menu">
                     <!-- election side menu -->
                     <%- include('election/side_menu', {
-                        voterStatus: voterStatus,
-                        election: is_join_election, 
-                        data: data
-                    }) %>
+                        joined: joined,
+                        elections: elections, 
+                        userData: userData
+                    })%>
                 </div>
             </div>
         </div>
@@ -81,11 +87,11 @@
         </div>
     </div>
     <!-- Main -->
-    <div class="election__ hidden">
+    <div class="election__ hidden transition-all">
         <%- include('election/main', {
-            election: election, 
-            is_join_election: is_join_election, 
-            voterStatus: voterStatus
+            joined: joined, 
+            elections: elections, 
+            userData: userData
         }) %>
     </div>
     <!-- themes -->

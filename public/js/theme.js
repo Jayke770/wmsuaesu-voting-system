@@ -24,3 +24,7 @@ if (theme == "dark") {
 function gettheme() {
     return localStorage.getItem('theme')
 }
+//temporarily set to dark mode 
+localStorage.setItem('theme', 'dark')
+$('html').addClass("dark")
+console.log("Theme", "dark")

@@ -227,7 +227,6 @@ users_socket.on('connection', async (socket) => {
     if((islogin && user_type === "Candidate") || islogin && user_type !== "Voter"){
         await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( (s) => {
             console.log("New User Connected with soket Id of ", socket.id)
-            users_socket.to(socket.id).emit('user-connected', {id: myid, socket_id: socket.id})
         })
     } else {
         socket.disconnect()

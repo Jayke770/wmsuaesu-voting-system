@@ -158,42 +158,49 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 })
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
-    const {myid} = req.session
-    let voter_data
+    delete req.session.electionID
+    const {myid} = req.session 
+    const {elections} = await user_data(myid)
+    let electionsJoined = []
     try {
-        await election.find(
-            {"voters.id": {$eq: objectid(xs(myid))}}, 
-            {election_title: 1, election_description: 1, status: 1, start: 1, end: 1, created: 1, candidates: 1, voters: 1}
-        ).then( async (el) => { 
-            const voters = el.length === 0 ? [] : el[0].voters 
-            if(voters.length !== 0){
-                for(let i = 0; i < voters.length; i++){
-                    if(myid.toString() === voters[i].id.toString()){
-                        voter_data = voters[i]
-                        break
-                    }
-                }
+        //check if the user joined any election 
+        if(elections.length !== 0){
+            //get all elections 
+            for(let i = 0; i < elections.length; i++){
+                await election.find({_id: {$eq: xs(elections[i])}}, {passcode: 0}).then( (elec) => {
+                    elec.length === 0 ? electionsJoined.push() : electionsJoined.push(elec[0])
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
             }
-            req.session.electionID = el.length === 0 ? '' : el[0]._id
-            const data = el.length === 0 ? '' : el[0]
-            const started = moment(data.start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
-            const end = moment(data.end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
             return res.render('index', {
-                is_join_election: el.length === 0 ? false : true,
-                data: await user_data(myid), 
-                election: el.length === 0 ? null : el[0], 
-                started: started,
-                end: end, 
-                endtime: moment(data.end).tz("Asia/Manila").fromNow(), 
-                voterStatus: voter_data,
+                joined: false,
+                elections: electionsJoined, 
+                data: {
+                    positions: await positions(), 
+                    partylists: await partylists(), 
+                    course: await course(), 
+                    year: await  year()
+                }, 
+                userData: await user_data(myid), 
                 csrf: req.csrfToken()
             })
-        }).catch( (e) => {
-            throw new Error(e)
-        })
+        } else {
+            return res.render('index', {
+                joined: false,
+                elections: electionsJoined, 
+                data: {
+                    positions: await positions(), 
+                    partylists: await partylists(), 
+                    course: await course(), 
+                    year: await  year()
+                }, 
+                userData: await user_data(myid), 
+                csrf: req.csrfToken()
+            })
+        }
     } catch (e) {
         console.log(e)
-        return res.status(500).send()
     }
 })
 router.get('/logout', normal_limit, async (req, res) => {
@@ -437,7 +444,8 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
                                 v[0].autoAccept_voters ? new_voter.status = 'Accepted' : new_voter.status = 'Pending'
                                 //check if the voter did not join the election before  
                                 for (let i = 0; i < v[0].voters.length; i++) {
-                                    if (v[0].voters[i].toString() === id.toString()) {
+                                    if (v[0].voters[i].id === id) {
+                                        console.log('the same')
                                         joined = true
                                         break
                                     }
@@ -451,15 +459,20 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
                                             text: `Election is ${v[0].status}`
                                         })
                                     } else {
-                                        await election.updateOne({ _id: { $eq: xs(electionID) } }, { $push: { voters: new_voter } }).then(() => {
-                                            req.session.electionID = xs(electionID)
-                                            return res.send({
-                                                joined: true,
-                                                electionID: electionID,
-                                                msg: `Welcome to ${e_title}`,
-                                                text: ""
+                                        //add election id to user elections that he/she joined 
+                                        await user.updateOne({_id: {$eq: xs(id)}}, {$push: {elections: xs(electionID)}}).then( async () => {
+                                            //add user to election voters
+                                            await election.updateOne({ _id: { $eq: xs(electionID) } }, { $push: { voters: new_voter } }).then(() => {
+                                                return res.send({
+                                                    joined: true,
+                                                    electionID: electionID,
+                                                    msg: `Welcome to ${e_title}`,
+                                                    text: ""
+                                                })
+                                            }).catch((e) => {
+                                                throw new Error(e)
                                             })
-                                        }).catch((e) => {
+                                        }).catch( (e) => {
                                             throw new Error(e)
                                         })
                                     }
@@ -607,36 +620,46 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
             await election.find({
                 _id: {$eq: xs(electionID)},
                 "voters.id": {$eq: objectid(xs(myid))}
-            }, {candidates: 1, autoAccept_candidates: 1}).then( async (elec) => {
+            }, {candidates: 1, autoAccept_candidates: 1, status: 1}).then( async (elec) => {
                 if(elec.length !== 0){
-                    //if the auto accept candidates feature is enabled to this election accept the candidate automatically 
-                    elec[0].autoAccept_candidates ? new_candidate.status = 'Accepted' : new_candidate.status = 'Pending'
-                    //check the new candidate is not candidate 
-                    const candidates = elec[0].candidates 
-                    let iscandidate = false
-                    for(let i = 0; i < candidates.length; i++){
-                        if(data.student_id === candidates[i].student_id){
-                            iscandidate = true 
-                            break
+                    const is_ended = elec[0].status === 'Ended' ? true : false 
+                    const is_pend_for_del = !is_ended && elec[0].status === 'Pending for deletion' ? true : false
+                    if(!is_ended && !is_pend_for_del){
+                        //if the auto accept candidates feature is enabled to this election accept the candidate automatically 
+                        elec[0].autoAccept_candidates ? new_candidate.status = 'Accepted' : new_candidate.status = 'Pending'
+                        //check the new candidate is not candidate 
+                        const candidates = elec[0].candidates 
+                        let iscandidate = false
+                        for(let i = 0; i < candidates.length; i++){
+                            if(data.student_id === candidates[i].student_id){
+                                iscandidate = true 
+                                break
+                            }
                         }
-                    }
-                    //if not candidate
-                    if(!iscandidate){
-                        //push the new candidate in election
-                        await election.updateOne({
-                            _id: {$eq: xs(electionID)}
-                        }, {$push: {candidates: new_candidate}}).then( (new_c) => {
-                            return res.send({
-                                status: true,
-                                txt: elec[0].autoAccept_candidates ? 'Candidacy successfully accepted' : 'Form successfully submitted', 
-                                msg: elec[0].autoAccept_candidates ? '' : 'Please wait for the admin to accept your candidacy form'
+                        //if not candidate
+                        if(!iscandidate){
+                            //push the new candidate in election
+                            await election.updateOne({
+                                _id: {$eq: xs(electionID)}
+                            }, {$push: {candidates: new_candidate}}).then( (new_c) => {
+                                return res.send({
+                                    status: true,
+                                    txt: elec[0].autoAccept_candidates ? 'Candidacy successfully accepted' : 'Form successfully submitted', 
+                                    msg: elec[0].autoAccept_candidates ? '' : 'Please wait for the admin to accept your candidacy form'
+                                })
                             })
-                        })
+                        } else {
+                            return res.send({
+                                status: false, 
+                                txt: "You're already a candidate", 
+                                msg: 'Please wait for the admin to accept your candidacy form'
+                            })
+                        }
                     } else {
                         return res.send({
                             status: false, 
-                            txt: "You're already a candidate", 
-                            msg: 'Please wait for the admin to accept your candidacy form'
+                            txt: `Election is ${elec[0].status}`, 
+                            msg: `You can't submit your candidacy form once the election is ${elec[0].status}`
                         })
                     }
                 } else {
@@ -770,62 +793,91 @@ router.post('/election/delete-candidacy/', normal_limit, isloggedin, async (req,
 // election status main 
 router.post('/election/status/main/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid} = req.session 
+    const userData = await user_data(myid)
     try {
-        //get election status voter status 
+        // election description, title, start & end time, voter request status 
         await election.find({
             _id: {$eq: xs(electionID)}, 
-            "voters.id": {$eq: objectid(xs(myid))}
+            voters: {$elemMatch: {student_id: {$eq: xs(userData.student_id)}}}
         }, {
-            "voters.$": 1,
-            election_title: 1, 
-            election_description: 1, 
-            status: 1, 
-            start: 1, 
-            end: 1, 
-            created: 1, 
+            voters: {$elemMatch: {student_id: {$eq: xs(userData.student_id)}}}, 
+            passcode: 0
         }).then( (elec) => {
-            const e_data = elec.length === 0 ? [] : elec[0]
-            return res.render('election/main', {
-                election: e_data, 
-                is_join_election: e_data.length === 0 ? false : true, 
-                voterStatus: e_data.voters[0],
-                started: moment(e_data.start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false,
-                end: moment(e_data.end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
-            })
+            if(elec.length !== 0){
+                return res.render('election/main', {
+                    joined: true, 
+                    elections: elec[0], 
+                    userData: userData
+                })
+            } else {
+                throw new Error(e)
+            }
         }).catch( (e) => {
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
 // election status side menu 
 router.post('/election/status/side-menu/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid} = req.session 
+    const userData = await user_data(myid)
     try {
-        //get election status voter status 
+        // election description, title, start & end time, voter request status 
         await election.find({
             _id: {$eq: xs(electionID)}, 
-            "voters.id": {$eq: objectid(xs(myid))}
+            voters: {$elemMatch: {student_id: {$eq: xs(userData.student_id)}}}
         }, {
-            "voters.$": 1,
-            election_title: 1, 
-            election_description: 1, 
-            status: 1, 
-            start: 1, 
-            end: 1, 
-            created: 1, 
+            voters: {$elemMatch: {student_id: {$eq: xs(userData.student_id)}}}, 
+            passcode: 0
+        }).then( (elec) => {
+            if(elec.length !== 0){
+                return res.render('election/side_menu', {
+                    joined: true, 
+                    elections: elec[0], 
+                    userData: userData
+                })
+            } else {
+                throw new Error(e)
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+//when user try to enter the election he/she joined
+router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (req, res) => {
+    const {electionID} = req.params
+    const {myid} = req.session 
+    const {student_id} = await user_data(myid)
+    try {
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            voters: {$elemMatch: {student_id: {$eq: xs(student_id)}}}
+        }, { 
+            voters: {$elemMatch: {student_id: {$eq: xs(student_id)}}}, 
+            passcode: 0
         }).then( async (elec) => {
-            const e_data = elec.length === 0 ? [] : elec[0]
-            return res.render('election/side_menu', {
-                data: await user_data(myid),
-                election: e_data, 
-                is_join_election: e_data.length === 0 ? false : true, 
-                voterStatus: e_data.voters[0],
-                started: moment(e_data.start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false,
-                end: moment(e_data.end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
-            })
+            if(elec.length !== 0){
+                req.session.electionID = xs(electionID)
+                return res.render('index', {
+                    joined: true,
+                    elections: elec[0],
+                    data: {
+                        positions: await positions(), 
+                        partylists: await partylists(), 
+                        course: await course(), 
+                        year: await  year()
+                    }, 
+                    userData: await user_data(myid), 
+                    csrf: req.csrfToken()
+                })
+            } else {
+                throw new Error(e)
+            }
         }).catch( (e) => {
             throw new Error(e)
         })
@@ -834,6 +886,24 @@ router.post('/election/status/side-menu/', normal_limit, isloggedin, async (req,
         return res.status(500).send()
     }
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //get all candidates
 router.post('/candidates', isloggedin, async (req, res) => {

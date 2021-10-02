@@ -1081,10 +1081,10 @@ $(document).ready(() => {
                 //terminate election 
                 Swal.fire({
                     icon: 'question', 
-                    title: 'Terminate election', 
-                    html: 'This will force to terminate the election',
+                    title: 'Stop election', 
+                    html: 'This will force to stop the election',
                     showDenyButton: true, 
-                    confirmButtonText: 'Terminate',
+                    confirmButtonText: 'Stop',
                     denyButtonText: 'Cancel', 
                     backdrop: true, 
                     allowOutsideClick: false,

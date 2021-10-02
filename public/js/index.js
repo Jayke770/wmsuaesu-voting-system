@@ -131,8 +131,8 @@ $(document).ready( () => {
                     candidacy_form = false
                     await election.candidacy_status()
                     $(this).find("button[type='submit']").html(def)
-                    socket.emit('file-candidacy')
                     if(res.status){
+                        socket.emit('file-candidacy')
                         Swal.fire({
                             icon: 'success', 
                             title: res.txt,
@@ -407,8 +407,8 @@ $(document).ready( () => {
                                             willOpen: () => {
                                                 Swal.showLoading()
                                                 setTimeout( async () => {
-                                                    await election.status() 
-                                                    await election.status_menu() 
+                                                    // await election.status() 
+                                                    // await election.status_menu() 
                                                     Swal.close()
                                                 }, 1000)
                                             }
@@ -499,7 +499,7 @@ $(document).ready( () => {
             }
         })
     })
-    //election 
+    //election
     const election = {
         file_candidacy: async () => {
             try {
@@ -576,7 +576,8 @@ $(document).ready( () => {
                     method: 'POST', 
                     headers: {
                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                    }
+                    }, 
+                    timeout: 2000
                 })
                 if(req.ok){
                     const res = await req.text() 

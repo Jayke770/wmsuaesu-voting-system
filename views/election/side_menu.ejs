@@ -1,23 +1,39 @@
-<a class="cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+<% 
+    const electionData = {
+        voterStatus: (student_id) => {
+            for(let i = 0; i < elections.voters.length; i++){
+                if(elections.voters[i].student_id === student_id){
+                    if(elections.voters[i].status === "Accepted"){
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            }
+        },
+        
+    }
+%>
+<a href="/home" class="cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
     <i class="ic dark:text-amber-600 w-9 text-xl text-amber-500">
         <i class="fad fa-home"></i>
     </i>
     <span class="dark:text-gray-300 text-purple-800 font-medium">Home</span>
 </a>
-<a href="/profile/<%- data._id %>" class="cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+<a class="cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
     <i class="ic dark:text-teal-600 w-9 text-xl text-teal-500">
         <i class="fad fa-user"></i>
     </i>
     <span class="dark:text-gray-300 text-purple-800  font-medium">My Profile</span>
 </a>
-<% if(election) { %>
-    <a class="<%- voterStatus.status === 'Accepted' && data.type === 'Candidate' ? 'cursor-pointer rpl hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 file_candidacy_open ' : ' cursor-not-allowed opacity-50 ' %> transition-all py-2 px-4 flex flex-row items-center">
+<% if(joined) { %> 
+    <a class="<%- electionData.voterStatus(userData.student_id) && userData.type === "Candidate" ? " cursor-pointer rpl hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 file_candidacy_open " : "cursor-not-allowed opacity-50 " %> transition-all py-2 px-4 flex flex-row items-center">
         <i class="ic dark:text-blue-400 w-9 text-xl text-blue-500">
             <i class="fad fa-ballot-check"></i>
         </i>
         <span class="dark:text-gray-300 text-purple-800  font-medium">File for candidacy</span>
     </a>
-    <a class="<%- voterStatus.status !== 'Pending' && voterStatus.status !== 'Deleted' ? 'cursor-pointer rpl  hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70' : 'cursor-not-allowed opacity-50' %> transition-all py-2 px-4 flex flex-row items-center">
+    <a class="<%- electionData.voterStatus(userData.student_id) ? " cursor-pointer rpl hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 " : " cursor-not-allowed opacity-50 " %> transition-all py-2 px-4 flex flex-row items-center">
         <i class="ic dark:text-violet-400 w-9 text-xl text-violet-500">
             <i class="fad fa-list-ol"></i>
         </i>
@@ -29,7 +45,8 @@
         </i>
         <span class="dark:text-gray-300 text-purple-800  font-medium">Leave Election</span>
     </a>
-<% } else { %>
+<% } %>
+<% if(!joined) { %> 
     <a class="e_join_election cursor-pointer hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
         <i class="ic dark:text-green-400 w-9 text-xl text-green-500">
             <i class="fad fa-sign-in-alt"></i>
