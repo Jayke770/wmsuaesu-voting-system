@@ -115,8 +115,8 @@ module.exports = {
     hash: async (data, n) => {
         return await bcrypt.hash(data, n)
     }, 
-    compareHash: async (neW, old) => {
-        return await bcrypt.compare(neW, old)
+    compareHash: async (a, b) => { //(string to compare, the password)
+        return await bcrypt.compare(a, b)
     },
     //socket functions
     isadminSocket: async (type) => {
@@ -222,6 +222,44 @@ module.exports = {
         //return positions
         return result
     }, 
+    mycourse: async (id) => {
+        let res
+        try {
+            await data.find({}, {course: 1}).then( (c) =>{
+                const course = c.length === 0 ? [] : c[0].course
+                for(let i = 0; i < course.length; i++){
+                    if(course[i].id === id){
+                        res = course[i].type 
+                        break
+                    }
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            res = false
+        }
+        return res
+    },
+    myyear: async (id) => {
+        let res
+        try {
+            await data.find({}, {year: 1}).then( (y) =>{
+                const year = y.length === 0 ? [] : y[0].year
+                for(let i = 0; i < year.length; i++){
+                    if(year[i].id === id){
+                        res = year[i].type 
+                        break
+                    }
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            res = false
+        }
+        return res
+    },
     //update all election status 
     election_handler: async () => {
         let res

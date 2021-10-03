@@ -461,6 +461,7 @@ $(document).ready( () => {
                         Swal.showLoading() 
                         try {
                             const leave = await fetchtimeout('/home/leave-election/', {
+                                timeout: 1000,
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                 }, 
@@ -476,7 +477,10 @@ $(document).ready( () => {
                                         allowOutsideClick: false,
                                         showConfirmButton: false, 
                                         willOpen: async () => {
-                                            window.location.href = "/home/"
+                                            Swal.showLoading()
+                                            setTimeout( () => {
+                                                window.location.href = "/home/"
+                                            }, 2000)
                                         }
                                     })
                                 } else {
@@ -486,6 +490,7 @@ $(document).ready( () => {
                                     })
                                 }
                             } else {
+                                console.log(leave)
                                 throw new Error(`${leave.status} ${leave.statusText}`)
                             }
                         } catch (e) {

@@ -10,7 +10,7 @@ const admin = require('../models/admin')
 const data = require('../models/data')
 const election = require('../models/election')
 const { authenticated, isadmin, isloggedin, take_photo, get_face } = require('./auth')
-const { toUppercase, chat, bot, new_msg, new_nty, hash, course, year, partylists, positions, user_data} = require('./functions')
+const { toUppercase, chat, bot, new_msg, new_nty, hash, course, year, partylists, positions, user_data, mycourse, myyear, compareHash} = require('./functions')
 const { normal_limit } = require('./rate-limit')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
@@ -388,134 +388,245 @@ router.post('/register', async (req, res) => {
 })
 //join election
 router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) => {
-    const { code } = req.body
-    const id = req.session.myid
-    const {firstname, middlename, lastname, course, year, student_id} = req.session.data
-    let electionID, joined = false, e_title
+    const {code} = req.body 
+    const {myid} = req.session 
+    const {_id, firstname, lastname, middlename, course, year, student_id, elections} = await user_data(myid)
     let new_voter = {
-        id: id, 
-        student_id: student_id,
-        fullname: `${firstname} ${middlename} ${lastname}`,
-        course: '', 
-        year: '',
+        id: xs(_id), 
+        student_id: xs(student_id),
+        fullname: `${xs(firstname)} ${xs(middlename)} ${xs(lastname)}`,
+        course: await mycourse(course), 
+        year: await myyear(year),
         status: '?',
         voted: false,
         created: moment().tz("Asia/Manila").format()
-    } 
+    },  
+    electionData = {
+        id: '',
+        title: '', 
+        isjoined: false,
+        autoAccept: null,
+        status: ''
+    }
+
     try {
-        //get course & year 
-        await data.find({}, {
-            course: 1, 
-            year: 1
-        }).then( (cy) => {
-            if(cy.length !== 0){
-                for(let i = 0; i < cy[0].course.length; i++){
-                    if(course === cy[0].course[i].id){
-                        new_voter.course = cy[0].course[i].type 
+        //get all elections and compare the given passcode of user  
+        await election.find({}, {passcode: 1, election_title: 1, status: 1, autoAccept_voters: 1,}).then( async (elec) => {
+            //check if theres any election found in query 
+            if(elec.length !== 0){
+                //get all the passcode and compare 
+                for(let i = 0; i < elec.length; i++){
+                    if(await compareHash(xs(code), elec[i].passcode)){
+                        electionData.id = elec[i]._id.toString()
+                        electionData.title = elec[i].election_title 
+                        electionData.isjoined = true 
+                        electionData.status = elec[i].status
+                        electionData.autoAccept = elec[i].autoAccept_voters
                         break
                     }
                 }
-                for(let i = 0; i < cy[0].year.length; i++){
-                    if(year === cy[0].year[i].id){
-                        new_voter.year = cy[0].year[i].type 
-                        break
+
+                const isEnded = electionData.status === 'Ended' ? true : false 
+                const isPending4deletion = electionData.status === 'Pending for deletion' ? true : false 
+                //check if the election is not ended or pending for deletion
+                if(!isEnded && !isPending4deletion){
+                    //check this election id in the elections feild of user
+                    let electionExists = false 
+                    for(let i = 0; i < elections.length; i++){
+                        if(elections[i] === electionData.id){
+                            electionExists = true
+                        }
                     }
-                }
-            }
-        }).catch( (e) => {
-            throw new Error(e)
-        })
-        await election.find({}).then(async (elec) => {
-            if (elec.length !== 0) {
-                for (let i = 0; i < elec.length; i++) {
-                    const passcode = await bcrypt.compare(code, elec[i].passcode)
-                    if (passcode) {
-                        electionID = elec[i]._id
-                        e_title = elec[i].election_title
-                        break
-                    }
-                }
-                //check if the election id is not empty
-                if (electionID) {
-                    try {
-                        await election.find({ _id: { $eq: xs(electionID) } }, { voters: 1, autoAccept_voters: 1, status: 1}).then(async (v) => {
-                            if (v.length !== 0) {
-                                //if election has a autoAccept_voters feature 
-                                v[0].autoAccept_voters ? new_voter.status = 'Accepted' : new_voter.status = 'Pending'
-                                //check if the voter did not join the election before  
-                                for (let i = 0; i < v[0].voters.length; i++) {
-                                    if (v[0].voters[i].id === id) {
-                                        joined = true
-                                        break
-                                    }
-                                }
-                                if (!joined) {
-                                    //check if the election is not close or Pending for deletion 
-                                    if(v[0].status === 'Closed' || v[0].status === 'Pending for deletion'){
-                                        return res.send({
-                                            joined: false, 
-                                            msg: "You can't join this election",
-                                            text: `Election is ${v[0].status}`
-                                        })
-                                    } else {
-                                        //add election id to user elections that he/she joined 
-                                        await user.updateOne({_id: {$eq: xs(id)}}, {$push: {elections: xs(electionID)}}).then( async () => {
-                                            //add user to election voters
-                                            await election.updateOne({ _id: { $eq: xs(electionID) } }, { $push: { voters: new_voter } }).then(() => {
-                                                return res.send({
-                                                    joined: true,
-                                                    electionID: electionID,
-                                                    msg: `Welcome to ${e_title}`,
-                                                    text: ""
-                                                })
-                                            }).catch((e) => {
-                                                throw new Error(e)
-                                            })
-                                        }).catch( (e) => {
-                                            throw new Error(e)
-                                        })
-                                    }
-                                } else {
-                                    req.session.electionID = xs(electionID)
-                                    return res.send({
-                                        joined: false,
-                                        msg: "You already joined the election",
-                                        text: "Please restart your browser"
-                                    })
-                                }
-                            } else {
+                    //if election id not found in user elections feild 
+                    if(!electionExists){
+                        //insert new voter 
+                        electionData.autoAccept ? new_voter.status = 'Accepted' : new_voter.status = 'Pending'
+                        await election.updateOne({
+                            _id: {$eq: xs(electionData.id)}
+                        }, {$push: {voters: new_voter}}).then( async () => {
+                            //push the election id to user elections feild 
+                            await user.updateOne({
+                                _id: {$eq: xs(_id)}
+                            }, {$push: {elections: xs(electionData.id)}}).then( () => {
                                 return res.send({
-                                    joined: false,
-                                    msg: "Something went wrong",
-                                    text: "Please try again later"
+                                    joined: true,
+                                    electionID: xs(electionData.id),
+                                    msg: `Welcome to ${electionData.title}`,
+                                    text: new_voter.status === 'Pending' ? "Please wait for the admin to accept your voter request" : "Your request was accepted!"
                                 })
-                            }
-                        }).catch((e) => {
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        }).catch( (e) => {
                             throw new Error(e)
                         })
-                    } catch (e) {
-                        throw new Error(e)
+                    } else {
+                        return res.send({
+                            joined: false, 
+                            msg: "You already joined this election", 
+                            text: "Please refresh the app"
+                        })
                     }
                 } else {
                     return res.send({
-                        joined: false,
-                        msg: "Election not found",
-                        text: "Please check the election passcode"
+                        joined: false, 
+                        msg: "You can't join this election",
+                        text: `Election is ${electionData.status}`
                     })
                 }
             } else {
                 return res.send({
                     joined: false,
-                    msg: "Election not found",
-                    text: "Please check the election passcode"
+                    msg: "Election Not Found",
+                    text: "Database election collections is empty"
                 })
             }
-        }).catch((e) => {
+        }).catch( (e) => {
             throw new Error(e)
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
+    // const { code } = req.body
+    // const id = req.session.myid
+    // const {firstname, middlename, lastname, course, year, student_id, elections} = await user_data(id)
+    // let electionID, joined = false, e_title
+    // let new_voter = {
+    //     id: id, 
+    //     student_id: student_id,
+    //     fullname: `${firstname} ${middlename} ${lastname}`,
+    //     course: '', 
+    //     year: '',
+    //     status: '?',
+    //     voted: false,
+    //     created: moment().tz("Asia/Manila").format()
+    // } 
+    // try {
+    //     //get course & year 
+    //     await data.find({}, {
+    //         course: 1, 
+    //         year: 1
+    //     }).then( (cy) => {
+    //         if(cy.length !== 0){
+    //             for(let i = 0; i < cy[0].course.length; i++){
+    //                 if(course === cy[0].course[i].id){
+    //                     new_voter.course = cy[0].course[i].type 
+    //                     break
+    //                 }
+    //             }
+    //             for(let i = 0; i < cy[0].year.length; i++){
+    //                 if(year === cy[0].year[i].id){
+    //                     new_voter.year = cy[0].year[i].type 
+    //                     break
+    //                 }
+    //             }
+    //         }
+    //     }).catch( (e) => {
+    //         throw new Error(e)
+    //     })
+    //     await election.find({}).then(async (elec) => {
+    //         if (elec.length !== 0) {
+    //             for (let i = 0; i < elec.length; i++) {
+    //                 const passcode = await bcrypt.compare(code, elec[i].passcode)
+    //                 if (passcode) {
+    //                     electionID = elec[i]._id
+    //                     e_title = elec[i].election_title
+    //                     break
+    //                 }
+    //             }
+    //             //check if the election id is not empty
+    //             if (electionID) { 
+    //                 try {
+    //                     //check the user election list if this election is not present 
+    //                     if(elections.length !== 0){
+    //                         for(let i = 0; i < elections.length; i++){
+    //                             if(elections[i] === electionID){
+    //                                 return res.send({
+    //                                     joined: false,
+    //                                     msg: "You already joined the election",
+    //                                     text: "Please restart your browser"
+    //                                 })
+    //                             }
+    //                         }
+    //                     } 
+    //                     await election.find({ _id: { $eq: xs(electionID) } }, { voters: 1, autoAccept_voters: 1, status: 1}).then(async (v) => {
+    //                         if (v.length !== 0) {
+    //                             //if election has a autoAccept_voters feature 
+    //                             v[0].autoAccept_voters ? new_voter.status = 'Accepted' : new_voter.status = 'Pending'
+    //                             //check if the voter did not join the election before  
+    //                             for (let i = 0; i < v[0].voters.length; i++) {
+    //                                 if (v[0].voters[i].id === id) {
+    //                                     joined = true
+    //                                     break
+    //                                 }
+    //                             }
+    //                             if (!joined) {
+    //                                 //check if the election is not close or Pending for deletion 
+    //                                 if(v[0].status === 'Closed' || v[0].status === 'Pending for deletion'){
+    //                                     return res.send({
+    //                                         joined: false, 
+    //                                         msg: "You can't join this election",
+    //                                         text: `Election is ${v[0].status}`
+    //                                     })
+    //                                 } else {
+    //                                     //add election id to user elections that he/she joined 
+    //                                     await user.updateOne({_id: {$eq: xs(id)}}, {$push: {elections: xs(electionID)}}).then( async () => {
+    //                                         //add user to election voters
+    //                                         await election.updateOne({ _id: { $eq: xs(electionID) } }, { $push: { voters: new_voter } }).then(() => {
+    //                                             return res.send({
+    //                                                 joined: true,
+    //                                                 electionID: electionID,
+    //                                                 msg: `Welcome to ${e_title}`,
+    //                                                 text: ""
+    //                                             })
+    //                                         }).catch((e) => {
+    //                                             throw new Error(e)
+    //                                         })
+    //                                     }).catch( (e) => {
+    //                                         throw new Error(e)
+    //                                     })
+    //                                 }
+    //                             } else {
+    //                                 return res.send({
+    //                                     joined: false,
+    //                                     msg: "You already joined the election",
+    //                                     text: "Please restart your browser"
+    //                                 })
+    //                             }
+    //                         } else {
+    //                             return res.send({
+    //                                 joined: false,
+    //                                 msg: "Something went wrong",
+    //                                 text: "Please try again later"
+    //                             })
+    //                         }
+    //                     }).catch((e) => {
+    //                         throw new Error(e)
+    //                     })
+    //                 } catch (e) {
+    //                     throw new Error(e)
+    //                 }
+    //             } else {
+    //                 return res.send({
+    //                     joined: false,
+    //                     msg: "Election not found",
+    //                     text: "Please check the election passcode"
+    //                 })
+    //             }
+    //         } else {
+    //             return res.send({
+    //                 joined: false,
+    //                 msg: "Election not found",
+    //                 text: "Please check the election passcode"
+    //             })
+    //         }
+    //     }).catch((e) => {
+    //         throw new Error(e)
+    //     })
+    // } catch (e) {
+    //     return res.status(500).send()
+    // }
 })
 //leave election
 router.post('/home/leave-election/', normal_limit, isloggedin, async (req, res) => {
@@ -524,7 +635,7 @@ router.post('/home/leave-election/', normal_limit, isloggedin, async (req, res) 
     try {
         await election.find({
             _id: {$eq: xs(electionID)}, 
-            "voters.id": {$eq: objectid(xs(data._id))}
+            "voters.id": {$eq: xs(data._id)}
         }, {voters: 1}).then( async (v) => {
             if(v.length != 0){
                 // delete candidacy form if exists and voter data from election

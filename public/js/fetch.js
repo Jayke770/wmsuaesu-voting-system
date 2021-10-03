@@ -6,7 +6,6 @@ async function fetchtimeout(source, options = {}){
     const i = setTimeout( () => { 
         $(".lazy-progress-bar").hide(100)
         controller.abort()  
-        return 'Connection Timeout'
     }, timeout)
     const log = {
         link: source, 
@@ -22,6 +21,7 @@ async function fetchtimeout(source, options = {}){
         $(".lazy-progress-bar").hide(100)
         return response
     } catch (e) {
-        return new Error(e)
+        $(".lazy-progress-bar").hide(100)
+        return new Error(e) 
     }
 }
