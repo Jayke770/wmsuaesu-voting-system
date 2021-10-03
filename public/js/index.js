@@ -386,7 +386,7 @@ $(document).ready( () => {
                         willOpen: async () => {
                             Swal.showLoading()
                             try {
-                                const join = await fetchtimeout('join-election/', {
+                                const join = await fetchtimeout('/home/join-election/', {
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                     },
@@ -407,8 +407,7 @@ $(document).ready( () => {
                                             willOpen: () => {
                                                 Swal.showLoading()
                                                 setTimeout( async () => {
-                                                    // await election.status() 
-                                                    // await election.status_menu() 
+                                                    await election.status() 
                                                     Swal.close()
                                                 }, 1000)
                                             }
@@ -461,7 +460,7 @@ $(document).ready( () => {
                     willOpen: async () => {
                         Swal.showLoading() 
                         try {
-                            const leave = await fetchtimeout('/leave-election', {
+                            const leave = await fetchtimeout('/home/leave-election/', {
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                 }, 
@@ -474,9 +473,11 @@ $(document).ready( () => {
                                         icon: 'success', 
                                         title: res.msg, 
                                         backdrop: true, 
-                                        allowOutsideClick: false
-                                    }).then( () => {
-                                        window.location.assign('')
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false, 
+                                        willOpen: async () => {
+                                            window.location.href = "/home/"
+                                        }
                                     })
                                 } else {
                                     Swal.fire({

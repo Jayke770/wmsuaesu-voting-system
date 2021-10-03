@@ -200,7 +200,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
             })
         }
     } catch (e) {
-        console.log(e)
+        return res.status(500).send()
     }
 })
 router.get('/logout', normal_limit, async (req, res) => {
@@ -387,7 +387,7 @@ router.post('/register', async (req, res) => {
     }
 })
 //join election
-router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
+router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) => {
     const { code } = req.body
     const id = req.session.myid
     const {firstname, middlename, lastname, course, year, student_id} = req.session.data
@@ -445,7 +445,6 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
                                 //check if the voter did not join the election before  
                                 for (let i = 0; i < v[0].voters.length; i++) {
                                     if (v[0].voters[i].id === id) {
-                                        console.log('the same')
                                         joined = true
                                         break
                                     }
@@ -519,23 +518,28 @@ router.post('/join-election', normal_limit, isloggedin, async (req, res) => {
     }
 })
 //leave election
-router.post('/leave-election', normal_limit, isloggedin, async (req, res) => {
-    const e_id = req.session.electionID
-    const userID = req.session.myid 
-    const data = await user_data(userID)
+router.post('/home/leave-election/', normal_limit, isloggedin, async (req, res) => {
+    const {electionID, myid} = req.session
+    const data = await user_data(myid)
     try {
         await election.find({
-            _id: {$eq: xs(e_id)}, 
-            "voters.id": {$eq: objectid(xs(userID))}
+            _id: {$eq: xs(electionID)}, 
+            "voters.id": {$eq: objectid(xs(data._id))}
         }, {voters: 1}).then( async (v) => {
             if(v.length != 0){
-                // delete candidacy form if exists 
+                // delete candidacy form if exists and voter data from election
                 await election.updateOne({
-                    _id: {$eq: xs(e_id)}
-                }, {$pull: {candidates: {student_id: {$eq: data.student_id}}}}).then( async () => {
-                    await election.updateOne({
-                        _id: {$eq: xs(e_id)}
-                    }, {$pull: { voters: { id: {$eq: objectid(xs(userID))}}}}).then( () => {
+                    _id: {$eq: xs(electionID)}
+                }, {
+                    $pull: {
+                        candidates: {student_id: {$eq: data.student_id}},
+                        voters: {student_id: {$eq: data.student_id}}
+                    }
+                }).then( async () => {
+                    //remove election in user election feild 
+                    await user.updateOne({
+                        _id: {$eq: xs(data._id)}
+                    }, {$pull: {elections: xs(electionID)}}).then( () => {
                         delete req.session.electionID
                         return res.send({
                             leave: true, 
@@ -557,7 +561,6 @@ router.post('/leave-election', normal_limit, isloggedin, async (req, res) => {
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -590,7 +593,6 @@ router.post('/election/file-candidacy-form/', normal_limit, isloggedin, async (r
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -680,7 +682,6 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
             })
         }
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -702,7 +703,6 @@ router.post('/election/re-submit-candidacy-form/', normal_limit, isloggedin, asy
                     _id: {$eq: xs(electionID)}, 
                     "candidates.id": {$eq: xs(id)}
                 }, {$set: {"candidates.$.status": 'Pending'}}).then( (u) => {
-                    console.log(u)
                     return res.send({
                         status: true, 
                         msg: 'Form Resubmitted successfully'
@@ -720,7 +720,6 @@ router.post('/election/re-submit-candidacy-form/', normal_limit, isloggedin, asy
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -747,7 +746,6 @@ router.post('/election/candidacy-status/', normal_limit, isloggedin, async (req,
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -786,7 +784,6 @@ router.post('/election/delete-candidacy/', normal_limit, isloggedin, async (req,
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 }) 
@@ -794,27 +791,54 @@ router.post('/election/delete-candidacy/', normal_limit, isloggedin, async (req,
 router.post('/election/status/main/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid} = req.session 
     const userData = await user_data(myid)
+    let electionsJoined = []
     try {
-        // election description, title, start & end time, voter request status 
-        await election.find({
-            _id: {$eq: xs(electionID)}, 
-            voters: {$elemMatch: {student_id: {$eq: xs(userData.student_id)}}}
-        }, {
-            voters: {$elemMatch: {student_id: {$eq: xs(userData.student_id)}}}, 
-            passcode: 0
-        }).then( (elec) => {
-            if(elec.length !== 0){
+        if(!xs(electionID)){
+            //get all election atented by this user 
+            if(userData.elections.length !== 0){
+                for(let i = 0; i < userData.elections.length; i++){
+                    await election.find({
+                        _id: {$eq: xs(userData.elections[i])}
+                    }, {passcode: 0}).then( (elec) => {
+                        elec.length === 0 ? electionsJoined.push() : electionsJoined.push(elec[0])
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                }
                 return res.render('election/main', {
-                    joined: true, 
-                    elections: elec[0], 
+                    joined: false, 
+                    elections: electionsJoined, 
                     userData: userData
                 })
             } else {
-                throw new Error(e)
+                return res.render('election/main', {
+                    joined: false, 
+                    elections: [], 
+                    userData: userData
+                })
             }
-        }).catch( (e) => {
-            throw new Error(e)
-        })
+        } else {
+            // election description, title, start & end time, voter request status 
+            await election.find({
+                _id: {$eq: xs(electionID)}, 
+                voters: {$elemMatch: {student_id: {$eq: xs(userData.student_id)}}}
+            }, {
+                voters: {$elemMatch: {student_id: {$eq: xs(userData.student_id)}}}, 
+                passcode: 0
+            }).then( (elec) => {
+                if(elec.length !== 0){
+                    return res.render('election/main', {
+                        joined: true, 
+                        elections: elec[0], 
+                        userData: userData
+                    })
+                } else {
+                    throw new Error(e)
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        }
     } catch (e) {
         return res.status(500).send()
     }
@@ -876,13 +900,12 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
                     csrf: req.csrfToken()
                 })
             } else {
-                throw new Error(e)
+                throw new Error('Election not found')
             }
         }).catch( (e) => {
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })

@@ -658,6 +658,8 @@ $(document).ready(() => {
                                     const res = await req.json() 
                                     accept_ca = false
                                     socket.emit('candidacy-form-accepted', {candidacyID: $(this).attr("data").trim()})
+                                    await election.candidates("/control/elections/candidates/pending-candidates/")  
+                                    await election.candidacy_information($(this).attr("data")) 
                                     if(res.status){
                                         Swal.fire({
                                             icon: 'success', 
@@ -665,9 +667,6 @@ $(document).ready(() => {
                                             html: res.msg, 
                                             backdrop: true, 
                                             allowOutsideClick: false,
-                                        }).then( async () => {
-                                            await election.candidates("/control/elections/candidates/pending-candidates/")  
-                                            await election.candidacy_information($(this).attr("data")) 
                                         })
                                     } else {
                                         Swal.fire({

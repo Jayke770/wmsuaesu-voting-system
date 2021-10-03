@@ -23,7 +23,7 @@ const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
-const {updateAdminSocketID, user_socket_id, election_handler} = require('./routes/functions') 
+const {updateAdminSocketID, user_socket_id, election_handler, user_data} = require('./routes/functions') 
 //models 
 const election = require('./models/election')
 const users = require('./models/user')
@@ -191,7 +191,7 @@ admin_socket.on('connection', async (socket) => {
        await users.find({_id: {$eq: xs(data.voterID)} }, {socket_id: 1}).then( (v) => {
             const socket_id = v.length === 0 ? '' : v[0].socket_id 
             if(socket_id !== ''){
-                users_socket.to(socket_id).emit('voter-accepted')
+                users_socket.to(socket_id).emit('voter-accepted', {electionID: currentElection})
             }
         })
     })
@@ -223,6 +223,7 @@ admin_socket.on('connection', async (socket) => {
 //user websocket events
 users_socket.on('connection', async (socket) => {
     const {myid, electionID, islogin, user_type} = socket.handshake.session 
+    const {student_id} = await user_data(myid)
     //update socket id every user connted to server 
     if((islogin && user_type === "Candidate") || islogin && user_type !== "Voter"){
         await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( (s) => {
@@ -239,6 +240,56 @@ users_socket.on('connection', async (socket) => {
     //if user file for candidacy 
     socket.on('file-candidacy', (data) => {
         admin_socket.emit('new-voter-file-for-candidacy', {id: myid, election: electionID})
+    })
+    //get election data 
+    socket.on('election-status', async (data, res) => {
+        let electionStatus = {
+            id: data.electionID,
+            election: {
+                status: ''
+            }, 
+            voters: {
+                total: 0,
+                status: ''
+            }
+        }
+        try {
+            await election.find({
+                _id: {$eq: xs(data.electionID)}, 
+                voters: {$elemMatch: {student_id: {$eq: xs(student_id)}}}
+            }, {voters: 1, status: 1}).then( (elec) => {
+                const e_data = elec.length === 0 ? [] : elec[0].voters
+                //get voter status 
+                if(e_data.length !== 0){
+                    for(let i = 0; i < e_data.length; i++){
+                        if(e_data[i].student_id === student_id){
+                            electionStatus.voters.status = e_data[i].status
+                            break
+                        }
+                    }
+                    electionStatus.voters.total = elec.length === 0 ? 0 : elec[0].voters.length
+                    electionStatus.election.status = elec.length === 0 ? '' : elec[0].status
+                    res({
+                        status: true, 
+                        data: electionStatus
+                    })
+                } else {
+                    res({
+                        status: false,
+                        data: {}
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            console.log(e)
+            res({
+                status: false, 
+                data: {},
+                msg: "Something went wrong"
+            })
+        }
     })
 })
 start()

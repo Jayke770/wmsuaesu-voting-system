@@ -8,7 +8,7 @@ const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
-const {hash, course, year, partylists, positions} = require('./functions')
+const {hash, compareHash, course, year, partylists, positions} = require('./functions')
 const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
@@ -704,25 +704,45 @@ adminrouter.post('/control/election/settings/change-passcode/', limit, isadmin, 
     const {e_passcode} = req.body 
     const electionID = req.session.currentElection
     try {
-        await election.find({
-            _id: {$eq: xs(electionID)}
-        }, {passcode: 1}).then( async (ps) => {
-            if(ps.length !== 0){
-                const passcode = await hash(xs(e_passcode), 10)
-                await election.updateOne({
+        //get all elections passcode and campare to the new election passcode 
+        await election.find({}, {passcode: 1}).then( async (elecs) => {
+            if(elecs.length !== 0){
+                for(let i = 0; i < elecs.length; i++){
+                    if(await compareHash(e_passcode, elecs[i].passcode)){
+                        return res.send({
+                            status: false, 
+                            txt: "Passcode is already in used"
+                        })
+                    }
+                }
+                await election.find({
                     _id: {$eq: xs(electionID)}
-                }, {$set: {passcode: passcode}}).then( (up_e) =>{
-                    return res.send({
-                        status: true, 
-                        txt: 'Passcode successfully changed!'
-                    })
+                }, {passcode: 1}).then( async (ps) => {
+                    if(ps.length !== 0){
+                        const passcode = await hash(xs(e_passcode), 10)
+                        await election.updateOne({
+                            _id: {$eq: xs(electionID)}
+                        }, {$set: {passcode: passcode}}).then( (up_e) =>{
+                            return res.send({
+                                status: true, 
+                                txt: 'Passcode successfully changed!'
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            txt: 'Election not found'
+                        })
+                    }
                 }).catch( (e) => {
                     throw new Error(e)
                 })
             } else {
                 return res.send({
                     status: false, 
-                    txt: 'Election not found'
+                    txt: "Something went wrong"
                 })
             }
         }).catch( (e) => {

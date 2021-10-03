@@ -115,6 +115,9 @@ module.exports = {
     hash: async (data, n) => {
         return await bcrypt.hash(data, n)
     }, 
+    compareHash: async (neW, old) => {
+        return await bcrypt.compare(neW, old)
+    },
     //socket functions
     isadminSocket: async (type) => {
         return type === "admin" ? true : false
