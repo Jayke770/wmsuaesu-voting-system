@@ -367,7 +367,7 @@ $(document).ready(() => {
         disableMobile: "true", 
         minDate: "today",
         enableTime: true,
-        input: true,
+        dateFormat: 'Z'
     })
     elections()
     //get all elections 
