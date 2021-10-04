@@ -246,7 +246,8 @@ users_socket.on('connection', async (socket) => {
         let electionStatus = {
             id: data.electionID,
             election: {
-                status: ''
+                status: '', 
+                title: ''
             }, 
             voters: {
                 total: 0,
@@ -257,8 +258,9 @@ users_socket.on('connection', async (socket) => {
             await election.find({
                 _id: {$eq: xs(data.electionID)}, 
                 voters: {$elemMatch: {student_id: {$eq: xs(student_id)}}}
-            }, {voters: 1, status: 1}).then( (elec) => {
+            }, {voters: 1, status: 1, election_title: 1}).then( (elec) => {
                 const e_data = elec.length === 0 ? [] : elec[0].voters
+                electionStatus.election.title = elec.length === 0 ? '' : elec[0].election_title
                 //get voter status 
                 if(e_data.length !== 0){
                     for(let i = 0; i < e_data.length; i++){

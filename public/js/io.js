@@ -31,6 +31,8 @@ socket.on('connect', (data) => {
         })
     }
 })
+//election events
+//if voter is accepted
 socket.on('voter-accepted', async (data) => {
     alertify.notify('Voter request accepted')
     if($("html").attr("joined") === "true"){
@@ -87,8 +89,9 @@ socket.on('voter-accepted', async (data) => {
         }
     } else {
         socket.emit('election-status', {electionID: data.electionID}, (res) => {
-            console.log(res)
             if (res.status) {
+                //set election title 
+                $(`div[data='election-${res.data.id}'`).find("#election_title").html(res.data.election.title)
                 //election status
                 if (res.data.election.status === 'Not Started') {
                     $(`div[data='election-${res.data.id}'`).find("#election_status").html(`
@@ -130,6 +133,7 @@ socket.on('voter-accepted', async (data) => {
         })
     }
 })
+//if candidacy form accepted
 socket.on('candidacy-accepted', async (data) => {
     alertify.notify("Candidacy has been accepted")
     try {
@@ -162,5 +166,57 @@ socket.on('candidacy-accepted', async (data) => {
             duration: 3000,
             showAction: false
         })
+    }
+})
+//check all elections 
+$(".elections-joined").each( async function() {
+    if($(this).attr("data") !== ""){
+        setTimeout( () => {
+            setInterval( () => {
+                socket.emit('election-status', {electionID: $(this).attr("data").replace("election-", "")}, (res) => {
+                    if (res.status) {
+                        //set election title 
+                        $(`div[data='election-${res.data.id}'`).find("#election_title").html(res.data.election.title)
+                        //election status
+                        if (res.data.election.status === 'Not Started') {
+                            $(`div[data='election-${res.data.id}'`).find("#election_status").html(`
+                                <span class="dark:bg-amber-700/40 bg-amber-600 dark:text-amber-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">${res.data.election.status}</span>
+                            `)
+                        }
+                        else if (res.data.election.status === 'Started') {
+                            $(`div[data='election-${res.data.id}'`).find("#election_status").html(`
+                                <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">${res.data.election.status}</span>
+                            `)
+                        }
+                        else if (res.data.election.status === 'Pending for deletion') {
+                            $(`div[data='election-${res.data.id}'`).find("#election_status").html(`
+                                <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg animate-pulse">${res.data.election.status}</span>
+                            `)
+                        }
+                        else if (res.data.election.status === 'Ended') {
+                            $(`div[data='election-${res.data.id}'`).find("#election_status").html(`
+                                <span class="dark:bg-red-700/40 bg-red-600 dark:text-red-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">${res.data.election.status}</span>
+                            `)
+                        }
+                        //election voters count
+                        $(`election-${res.data.election.id}`).find("#election_voters_count").html(`${res.data.voters.total}`)
+                        //voter election request status 
+                        if(res.data.voters.status === 'Pending') {
+                            $(`div[data='election-${res.data.id}'`).find("#voter_election_request").html(`  
+                                <span class="dark:bg-amber-700/40 bg-amber-600 dark:text-amber-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg animate-pulse">${res.data.voters.status}</span>
+                            `)
+                        } else if(res.data.voters.status === 'Accepted') {
+                            $(`div[data='election-${res.data.id}'`).find("#voter_election_request").html(`  
+                                <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">${res.data.voters.status}</span>
+                            `)
+                        } else if(res.data.voters.status === 'Deleted'){
+                            $(`div[data='election-${res.data.id}'`).find("#voter_election_request").html(`  
+                                <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">${res.data.voters.status}</span>
+                            `)
+                        }
+                    }
+                })
+            }, 10000)
+        }, 10000)
     }
 })

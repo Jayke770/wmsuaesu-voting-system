@@ -425,53 +425,61 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
                         break
                     }
                 }
-
-                const isEnded = electionData.status === 'Ended' ? true : false 
-                const isPending4deletion = electionData.status === 'Pending for deletion' ? true : false 
-                //check if the election is not ended or pending for deletion
-                if(!isEnded && !isPending4deletion){
-                    //check this election id in the elections feild of user
-                    let electionExists = false 
-                    for(let i = 0; i < elections.length; i++){
-                        if(elections[i] === electionData.id){
-                            electionExists = true
+                //check if the election is found 
+                if(electionData.id !== ''){
+                    const isEnded = electionData.status === 'Ended' ? true : false 
+                    const isPending4deletion = electionData.status === 'Pending for deletion' ? true : false 
+                    //check if the election is not ended or pending for deletion
+                    if(!isEnded && !isPending4deletion){
+                        //check this election id in the elections feild of user
+                        let electionExists = false 
+                        for(let i = 0; i < elections.length; i++){
+                            if(elections[i] === electionData.id){
+                                electionExists = true
+                            }
                         }
-                    }
-                    //if election id not found in user elections feild 
-                    if(!electionExists){
-                        //insert new voter 
-                        electionData.autoAccept ? new_voter.status = 'Accepted' : new_voter.status = 'Pending'
-                        await election.updateOne({
-                            _id: {$eq: xs(electionData.id)}
-                        }, {$push: {voters: new_voter}}).then( async () => {
-                            //push the election id to user elections feild 
-                            await user.updateOne({
-                                _id: {$eq: xs(_id)}
-                            }, {$push: {elections: xs(electionData.id)}}).then( () => {
-                                return res.send({
-                                    joined: true,
-                                    electionID: xs(electionData.id),
-                                    msg: `Welcome to ${electionData.title}`,
-                                    text: new_voter.status === 'Pending' ? "Please wait for the admin to accept your voter request" : "Your request was accepted!"
+                        //if election id not found in user elections feild 
+                        if(!electionExists){
+                            //insert new voter 
+                            electionData.autoAccept ? new_voter.status = 'Accepted' : new_voter.status = 'Pending'
+                            await election.updateOne({
+                                _id: {$eq: xs(electionData.id)}
+                            }, {$push: {voters: new_voter}}).then( async () => {
+                                //push the election id to user elections feild 
+                                await user.updateOne({
+                                    _id: {$eq: xs(_id)}
+                                }, {$push: {elections: xs(electionData.id)}}).then( () => {
+                                    return res.send({
+                                        joined: true,
+                                        electionID: xs(electionData.id),
+                                        msg: `Welcome to ${electionData.title}`,
+                                        text: new_voter.status === 'Pending' ? "Please wait for the admin to accept your voter request" : "Your request was accepted!"
+                                    })
+                                }).catch( (e) => {
+                                    throw new Error(e)
                                 })
                             }).catch( (e) => {
                                 throw new Error(e)
                             })
-                        }).catch( (e) => {
-                            throw new Error(e)
-                        })
+                        } else {
+                            return res.send({
+                                joined: false, 
+                                msg: "You already joined this election", 
+                                text: "Please refresh the app"
+                            })
+                        }
                     } else {
                         return res.send({
                             joined: false, 
-                            msg: "You already joined this election", 
-                            text: "Please refresh the app"
+                            msg: "You can't join this election",
+                            text: `Election is ${electionData.status}`
                         })
                     }
                 } else {
                     return res.send({
-                        joined: false, 
-                        msg: "You can't join this election",
-                        text: `Election is ${electionData.status}`
+                        joined: false,
+                        msg: "Election Not Found", 
+                        text: "Please check your election passcode"
                     })
                 }
             } else {
@@ -878,6 +886,35 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
             throw new Error(e)
         })
     } catch (e) {
+        return res.status(500).send()
+    }
+})
+//get all candidates 
+router.post('/home/election/candidates/', normal_limit, isloggedin, async (req, res) => {
+    const {id} = req.body 
+    const {electionID, myid} = req.session 
+    const {_id, student_id} = await user_data(myid)
+
+    try {
+        //check if election & voter is exists 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            voters: {$elemMatch: {student_id: xs(student_id)}}
+        }, {passcode: 0}).then( async (elec) => {
+            return res.render('election/candidates', {
+                election: elec[0], 
+                data: {
+                    course: await course(), 
+                    year: await year(), 
+                    partylists: await partylists(), 
+                    positions: await positions(),
+                }, 
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
         return res.status(500).send()
     }
 })
