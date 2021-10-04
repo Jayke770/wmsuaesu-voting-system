@@ -72,9 +72,6 @@
         <div class="e_main_content w-full px-2 py-1 mt-16 transition-all">
             <div class="container election-date-time">
                 <%- include('election-date-time', {
-                    started: started, 
-                    end: end, 
-                    endtime: endtime, 
                     election: election
                 }) %>
             </div>
@@ -145,16 +142,16 @@
             <div class="container mt-6">
                 <% 
                     function c(val) {
-                        for (let c = 0; c < course.length; c++) {
-                            if (val === course[c].id) {
-                                return course[c].type
+                        for (let c = 0; c < data.course.length; c++) {
+                            if (val === data.course[c].id) {
+                                return data.course[c].type
                             }
                         }
                     }
                     function y(val) {
-                        for (let c = 0; c < year.length; c++) {
-                            if (val === year[c].id) {
-                                return year[c].type
+                        for (let c = 0; c < data.year.length; c++) {
+                            if (val === data.year[c].id) {
+                                return data.year[c].type
                             }
                         }
                     }
@@ -191,7 +188,7 @@
             <div class="container mt-6">
                 <%- include('votes-tally', {
                     election: election,
-                    positions: positions
+                    positions: data.positions
                 }) %>
             </div>
         </div>
@@ -202,33 +199,28 @@
         <!-- election partylist -->
         <%- include('election_partylist', {
             election_partylist: election.partylist, 
-            partylists: partylist
+            partylists: data.partylist
         }) %> 
         <!-- election candidates -->
         <%- include('election-candidates', {
-            course: course, 
-            year: year, 
+            course: data.course, 
+            year: data.year, 
             e_courses: election.courses, 
             e_year: election.year, 
             e_partylist: election.partylist, 
-            partylists: partylist, 
+            partylists: data.partylist, 
             e_position: election.positions, 
-            positions: positions, 
+            positions: data.positions, 
             pending_candidates: pending_candidates
         }) %>
         <!-- election positions -->
         <%- include('election-positions', {
             e_positions: election.positions, 
-            positions: positions
+            positions: data.positions
         }) %>
         <!-- election settings -->
         <div class="election_settings">
-            <%- include('election-settings', {
-                election: election, 
-                str: str,
-                link: election_link, 
-                show: false
-            }) %>
+            <%- include('election-settings') %>
         </div>
         <!-- candidacy info -->
         <div class="candidacy-info"></div>

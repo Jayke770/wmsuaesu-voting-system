@@ -220,3 +220,75 @@ $(".elections-joined").each( async function() {
         }, 10000)
     }
 })
+//new election started 
+socket.on("new-election-started", async (data) => {
+    if($("html").attr("joined") === "true"){
+        await election.status()
+        await election.status_menu()
+    }
+})
+//new election ended 
+socket.on("new-election-ended", async (data) => {
+    if($("html").attr("joined") === "true"){
+        await election.status()
+        await election.status_menu()
+    }
+})
+const election = {
+    status: async () => {
+        try {
+            const req = await fetchtimeout('/election/status/main/', {
+                method: 'POST', 
+                headers: {
+                    'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                }, 
+                timeout: 2000
+            })
+            if(req.ok){
+                const res = await req.text() 
+                $(".election__").html('')
+                $(".election__").html(res)
+            } else {
+                throw new Error(`${req.status} ${req.statusText}`)
+            }
+        } catch (e) {
+            Snackbar.show({ 
+                text: `
+                    <div class="flex justify-center items-center gap-2"> 
+                        <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                        <span>Failed to get election status</span>
+                    </div>
+                `, 
+                duration: 3000,
+                showAction: false
+            })
+        }
+    }, 
+    status_menu: async () => {
+        try {
+            const req = await fetchtimeout('/election/status/side-menu/', {
+                method: 'POST', 
+                headers: {
+                    'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                }
+            })
+            if(req.ok){
+                const res = await req.text() 
+                $(".e_menu").html(res)
+            } else {
+                throw new Error(`${req.status} ${req.statusText}`)
+            }
+        } catch (e) {
+            Snackbar.show({ 
+                text: `
+                    <div class="flex justify-center items-center gap-2"> 
+                        <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                        <span>Failed to get election status</span>
+                    </div>
+                `, 
+                duration: 3000,
+                showAction: false
+            })
+        }
+    }
+}

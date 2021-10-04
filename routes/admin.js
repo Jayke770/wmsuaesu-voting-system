@@ -67,8 +67,8 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
     const passcode = await hash(pass, 10) // passcode in with hashing
     const title = xs(e_title)
     const description = xs(e_description)
-    const start = xs(e_start) 
-    const end = xs(e_end)
+    const start = moment(xs(e_start)).tz("Asia/Manila").format() 
+    const end = moment(xs(e_end)).tz("Asia/Manila").format()
     const crs = xs(courses).split(",")
     const yr = xs(year).split(",")
     const pos = JSON.parse(positions)
@@ -244,19 +244,8 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
     const id = req.params.id, from = req.params.from
     let crs, yr, pos, pty, pending_v = 0, accepted_v = 0, pending_ca = 0, accepted_ca = 0, deleted_ca = 0
     try {
-        await data.find({}, {course: 1, year:1, positions: 1, partylists: 1}).then( (cy) => {
-            crs = cy.length === 0 ? [] : cy[0].course
-            yr = cy.length === 0 ? [] : cy[0].year
-            pos = cy.length === 0 ? [] : cy[0].positions
-            pty = cy.length === 0 ? [] : cy[0].partylists
-        }).catch( (e) => {
-            throw new Error(e)
-        })
         await election.find({_id: {$eq: xs(id)}}).then( async (elecs) => {
             const e_data = elecs.length === 0 ? '' : elecs[0] 
-            //if election is already started set the started variable to true
-            const started = moment(e_data.start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
-            const end = moment(e_data.end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
             //save election id to session 
             req.session.currentElection = xs(id)
             //get all the pending & accepted voters 
@@ -282,17 +271,12 @@ adminrouter.get('/control/elections/id/:id/:from/', limit, isadmin, async (req, 
             }
             return res.render("control/forms/election_details", {
                 election: elecs.length === 0 ? '' : elecs[0], 
-                str: {
-                    start: moment(e_data.start).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
-                    end: moment(e_data.end).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
-                    created: moment(e_data.created).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
+                data: {
+                    course: await course(), 
+                    year: await year(),
+                    positions: await positions(),
+                    partylist: await partylists(),
                 },
-                started: started, 
-                end: end,
-                course: crs, 
-                year: yr,
-                positions: pos,
-                partylist: pty,
                 pending_voters: pending_v, // No. of pending_voters
                 accepted_voters: accepted_v, // No. of accepted voters 
                 pending_candidates: pending_ca, //No. of pending candidates
@@ -598,7 +582,10 @@ adminrouter.post('/control/elections/settings/:settings/', limit, isadmin, async
     const electionID = req.session.currentElection 
     try {
         await election.find({_id: {$eq: xs(electionID)}}).then( (elec) => {
-            return res.render(`control/forms/${settings}`, {election: elec.length !== 0 ? elec[0] : []})
+            return res.render(`control/forms/${settings}`, {
+                election: elec.length !== 0 ? elec[0] : [], 
+                link: process.env.link
+            })
         }).catch( (e) => {
             throw new Error(e)
         })
@@ -1037,26 +1024,19 @@ adminrouter.post('/control/election/settings/auto-accept-candidates/', limit, is
     }
 })
 // election settings 
-adminrouter.post('/control/elections/status/settings/', limit, isadmin, async (req, res) => {
-    const electionID = req.session.currentElection 
+adminrouter.post('/control/elections/status/settings-menu/', limit, isadmin, async (req, res) => {
+    const {currentElection} = req.session
     try {
-        await election.find({
-            _id: {$eq: xs(electionID)}
-        }).then( (elec) => {
-            return res.render('control/forms/election-settings', {
-                election: elec[0], 
-                link: process.env.link,
-                str: {
-                    start: moment(elec[0].start).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
-                    end: moment(elec[0].end).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
-                    created: moment(elec[0].created).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'),
-                },
-                show: true
+        await election.find({_id: {$eq: xs(currentElection)}}).then( (elec) => {
+            return res.render('control/forms/election-settings-menus', {
+                election: elec.length === 0 ? {} : elec[0], 
+                link: process.env.link
             })
         }).catch( (e) => {
             throw new Error(e)
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })

@@ -35,8 +35,11 @@ $(document).ready(() => {
             }   
             if($(this).attr("data") === "candidates" && !candidates_tab_req){   
                 election.candidates("/control/elections/candidates/accepted-candidates/")
-            }   
-        }, 2000)
+            }  
+            if($(this).attr("data") === "settings"){
+                election.settingsMenu()
+            } 
+        }, 1000)
     })
     $(".e_ac").click( () => {
         voters_tab = 'ac'
@@ -802,7 +805,7 @@ $(document).ready(() => {
         }, 300)
     })
     //settings
-    $("body").delegate('.settings_', 'click', function(e) {
+    $(".settings_").click(function(e) {
         if($(e.target).hasClass("settings_")){
             $(".settings_main").addClass($(".settings_main").attr("animate-out"))
             setTimeout(() => {
@@ -811,10 +814,12 @@ $(document).ready(() => {
                 $(".settings_main").removeClass($(".settings_main").attr("animate-out"))
                 $(".card_settings_form").html('')
                 $(".card_settings").show()
+                $(".settings_main").find(".preload_settings").show()
+                $(".settings_main").find(".settings_menus").remove()
             }, 300)
         }
     })
-    $("body").delegate(".close_settings", "click", () => {
+    $(".settings_").delegate(".close_settings", "click", () => {
         $(".settings_main").addClass($(".settings_main").attr("animate-out"))
         setTimeout(() => {
             $(".settings_").addClass("hidden")
@@ -822,19 +827,21 @@ $(document).ready(() => {
             $(".settings_main").removeClass($(".settings_main").attr("animate-out"))
             $(".card_settings_form").html('')
             $(".card_settings").show()
+            $(".settings_main").find(".preload_settings").show()
+                $(".settings_main").find(".settings_menus").remove()
         }, 300)
     })
-    $("body").delegate('.back_settings', 'click', async function() {
+    $(".settings_").delegate('.back_settings', 'click', async function() {
         const def = $(this).html() 
         $(this).html(election.loader())
-        await election.settings()
+        await election.settingsMenu()
         $(this).html(def)
         $(".card_settings_form").html('')
         $('.card_settings').show(500)
         $(".back_settings").hide(500)
     })
     let settings = false
-    $("body").delegate(".election_settings_btn", "click", async function() {
+    $(".settings_main").delegate(".election_settings_btn", "click", async function() {
         const def = $(this).find(".settings_ic").html() 
         if(!settings){
             settings = true 
@@ -869,7 +876,7 @@ $(document).ready(() => {
     })
     //chnage election title
     let e_change_title = false
-    $("body").delegate(".edit_election_title", "submit", async function(e) {
+    $(".settings_main").delegate(".edit_election_title", "submit", async function(e) {
         e.preventDefault()
         const def = $(this).find("button[type='submit']").html()
         if(!e_change_title){
@@ -912,7 +919,7 @@ $(document).ready(() => {
     })
     //change election description
     let e_change_description = false 
-    $("body").delegate(".edit_election_description", "submit", async function(e) {
+    $(".settings_main").delegate(".edit_election_description", "submit", async function(e) {
         e.preventDefault() 
         const def = $(this).find("button[type='submit']").html()
         if(!e_change_description){ 
@@ -955,7 +962,7 @@ $(document).ready(() => {
     })
     //change election passcode
     let e_change_passcode = false
-    $("body").delegate(".edit_election_passcode", "submit", async function(e) {
+    $(".settings_main").delegate(".edit_election_passcode", "submit", async function(e) {
         e.preventDefault()
         const def = $(this).find("button[type='submit']").html()
         if(!e_change_passcode){ 
@@ -997,7 +1004,7 @@ $(document).ready(() => {
     })
     //change election status 
     let e_status = false
-    $("body").delegate(".election_status_toggle", "change", async function(e) {
+    $(".settings_main").delegate(".election_status_toggle", "change", async function(e) {
         e.preventDefault()
         const toggle = $(this).prop("checked")
         if(!e_status){
@@ -1056,8 +1063,6 @@ $(document).ready(() => {
                                                 $(this).prop("checked", res.e_status)
                                             })
                                         }
-                                        //get election status
-                                        await election.status()
                                         //get the election date & time 
                                         await election.dt()
                                         await election.election_status()
@@ -1132,8 +1137,6 @@ $(document).ready(() => {
                                                 $(this).prop("checked", res.e_status)
                                             })
                                         }
-                                        //get election status
-                                        await election.status()
                                         //get the election date & time 
                                         await election.dt()
                                         await election.election_status()
@@ -1157,7 +1160,7 @@ $(document).ready(() => {
     })
     //change election starting date & time 
     let e_start_dt = false
-    $("body").delegate(".edit_election_start-dt", "submit", async function(e) {
+    $(".settings_main").delegate(".edit_election_start-dt", "submit", async function(e) {
         e.preventDefault() 
         const def = $(this).find("button[type='submit']").html()
         if(!e_start_dt){
@@ -1209,7 +1212,7 @@ $(document).ready(() => {
     })
     //change election starting date & time 
     let e_end_dt = false
-    $("body").delegate(".edit_election_end-dt", "submit", async function(e) {
+    $(".settings_main").delegate(".edit_election_end-dt", "submit", async function(e) {
         e.preventDefault() 
         const def = $(this).find("button[type='submit']").html()
         if(!e_end_dt){
@@ -1261,7 +1264,7 @@ $(document).ready(() => {
     })
     //change election autoAccept voters 
     let auto_ac_v = false
-    $("body").delegate(".auto_accept_voters", "change", async function(e) {
+    $(".settings_main").delegate(".auto_accept_voters", "change", async function(e) {
         e.preventDefault() 
         const toggle = $(this).prop("checked")
         if(!auto_ac_v){
@@ -1338,7 +1341,7 @@ $(document).ready(() => {
     })
     //change election autoAccept candidates 
     let auto_ac_c = false
-    $("body").delegate(".auto_accept_candidates", "change", async function(e) {
+    $(".settings_main").delegate(".auto_accept_candidates", "change", async function(e) {
         e.preventDefault() 
         const toggle = $(this).prop("checked")
         if(!auto_ac_c){
@@ -1415,7 +1418,7 @@ $(document).ready(() => {
     })
     // delete election 
     let delete_election = false
-    $("body").delegate(".election_settings_delete_election", "click", async () => {
+    $(".settings_main").delegate(".election_settings_delete_election", "click", async () => {
         const def = $(this).find(".settings_ic").html() 
         if(!delete_election){
             delete_election = true 
@@ -1563,27 +1566,7 @@ $(document).ready(() => {
         }, 
         description: (descrip) => {
             $("html").find("p#election_description").text(descrip)
-        }, 
-        status: async () => {
-            try {
-                const req2 = await fetchtimeout(`/control/elections/settings/election-settings-status/`, {
-                    headers: {
-                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                    }, 
-                    method: 'POST'
-                })
-                if(req2.ok){
-                    const res = await req2.text() 
-                    $(".card_settings").hide()
-                    $(".back_settings, .card_settings_form").fadeIn(500) 
-                    $(".card_settings_form").html(res)
-                } else {
-                    throw new Error(`${req2.status} ${req2.statusText}`)
-                }
-            } catch (e) {
-                console.log(e.message)
-            }
-        }, 
+        },
         election_status: async () => {
             try {
                 const req = await fetchtimeout(`/control/election/status/`, {
@@ -1620,33 +1603,32 @@ $(document).ready(() => {
                 console.log(e.message)
             }
         }, 
-        settings: async () => {
-            const card = $(".card_settings").css("display") === 'none'
-            const form = $('.card_settings_form').html()
-            try {
-                const req = await fetchtimeout('/control/elections/status/settings/', {
-                    method: 'POST', 
-                    headers: {
-                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                    }
-                })
-                if(req.ok){
-                    const res = await req.text() 
-                    $(".election_settings").html(res) 
-                    card ? $(".card_settings").css("display", "none") : ''
-                    $('.card_settings_form').html(form)
-                } else {
-                    throw new Error(`${req3.status} ${req3.statusText}`)
-                }
-            } catch (e){
-                console.log(e.message)
-            }
+        settingsMenu: async () => {
+           try {
+               const req = await fetchtimeout('/control/elections/status/settings-menu/', {
+                   timeout: 1000,
+                   method: 'POST',
+                   headers: {
+                       'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                   }
+               })
+               if(req.ok){
+                   const res = await req.text()
+                   $(".settings_main").find(".preload_settings").hide()
+                   $(".settings_main").find(".settings_menus").remove()
+                   $(".settings_main").append(res)
+               } else {
+                   throw new Error(`${req.status} ${req.statusText}`)
+               }
+           } catch (e) {
+               console.log(e)
+           }
         }, 
         start: (dt) => {
-            $("p#e_start_status").text(moment(dt).format('MMMM DD YYYY, h:mm a'))
+            $("p#e_start_status").text(moment(dt).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'))
         }, 
         end: (dt) => {
-            $("p#e_end_status").text(moment(dt).format('MMMM DD YYYY, h:mm a'))
+            $("p#e_end_status").text(moment(dt).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'))
         }, 
         deleted_candidates_count: (n) => {
             return `<div class="e_del_count_ca absolute right-[-2px] top-[-7px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm">${n}</div>`

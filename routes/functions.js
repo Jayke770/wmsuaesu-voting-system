@@ -283,7 +283,7 @@ module.exports = {
                         }
                         //if election is not ended and it is the time to end
                         if(elec[i].status === "Started" && e_start && e_end){
-                            //start election 
+                            // end election 
                             await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Ended"}}).then( () => {
                                 console.log(`Election with ID ${elec[i]._id} has been Ended\nElection Title : ${elec[i].election_title}`)
                                 res = {electionID: elec[i]._id, status: true, type: "Ended"}

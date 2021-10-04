@@ -3,7 +3,13 @@ $(document).ready( () => {
         setInterval(() => {
             $(".time").each(function () {
                 $(this).removeClass("skeleton")
-                $(this).html(moment($(this).attr("data")).fromNow())
+                $(this).html(moment($(this).attr("data")).tz("Asia/Manila").fromNow())
+            })
+        }, 1000)
+        setInterval(() => {
+            $(".time-text").each(function () {
+                $(this).removeClass("skeleton")
+                $(this).html(moment($(this).attr("data")).tz("Asia/Manila").format('MMMM Do YYYY, h:mm a'))
             })
         }, 1000)
     }, 1500)

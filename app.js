@@ -301,13 +301,15 @@ setInterval( async () => {
    if(election_status !== undefined){
        //if there is new election started
        if(election_status.status && election_status.type === "Started"){
-           //send event to admin that there is new election has been started 
+           //send event to admin & user that there is new election has been started 
            admin_socket.emit('new-election-started', {electionID: election_status.electionID})
+           users_socket.emit('new-election-started', {electionID: election_status.electionID})
        }
         //if there is new election ended
         if(election_status.status && election_status.type === "Ended"){
-            //send event to admin that there is new election has been started 
+            //send event to admin & user that there is new election has been started 
             admin_socket.emit('new-election-ended', {electionID: election_status.electionID})
+            users_socket.emit('new-election-ended', {electionID: election_status.electionID})
         }
         
    }

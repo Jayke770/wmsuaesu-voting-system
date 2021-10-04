@@ -1,17 +1,33 @@
 <div class="flex md:block justify-center transition-all">
     <div class="shadow-md bg-gray-100 dark:bg-[#161b22] rounded-md p-3 transition-all gap-2 flex flex-col">
         <div class="container flex">
-            <span data-text="<%- started && !end ? 'Election will end' : started && end ? `Election ended ` : `Election will begin ` %>" data="<%- started ? election.end : election.start %>" class="time_txt skeleton w-52 font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal"></span>
+            <% if(election.status === "Not Started") { %> 
+                <span data-text="The election will begin " data="<%- election.start %>" class="time_txt skeleton w-52 font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal"></span>
+            <% } %>
+            <% if(election.status === "Started") { %> 
+                <span data-text="The election will end " data="<%- election.end %>" class="time_txt skeleton w-52 font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal"></span>
+            <% } %>
+            <% if(election.status === "Ended") { %> 
+                <span data-text="The election ended " data="<%- election.end %>" class="time_txt skeleton w-52 font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal"></span>
+            <% } %>
         </div>
         <div class="container flex flex-col justify-center items-center h-full p-2">
-            <div id="e_time" class="flipdown" data="<%- started ? election.end : election.start %>" started="<%- started ? 'true' : 'false' %>"></div>
+            <% if(election.status === "Not Started") { %> 
+                <div id="e_time" class="flipdown" data="<%- election.start %>"></div>
+            <% } %>
+            <% if(election.status === "Started") { %> 
+                <div id="e_time" class="flipdown" data="<%- election.end %>"></div>
+            <% } %>
+            <% if(election.status === "Ended") { %> 
+                <div id="e_time" class="flipdown" data="<%- election.end %>"></div>
+            <% } %>
         </div>
     </div>
 </div>
 <script> 
     $(document).ready( () => {
         //get the election starting time  
-        let e_start = (new Date($("#e_time").attr("data")).getTime() / 1000), start = false
+        let e_start = (new Date($("#e_time").attr("data")).getTime() / 1000)
         let flipdown = new FlipDown(e_start, "e_time")
         flipdown.start()
         //set the theme of flipdown 

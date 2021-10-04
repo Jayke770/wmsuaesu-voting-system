@@ -134,17 +134,15 @@ const election = {
     },
     status: async () => {
         try {
-            const req2 = await fetchtimeout(`/control/elections/settings/election-settings-status/`, {
+            const req2 = await fetchtimeout(`/control/elections/settings/election-settings/`, {
                 headers: {
                     'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
                 }, 
                 method: 'POST'
             })
             if(req2.ok){
-                const res = await req2.text() 
-                $(".card_settings").hide()
-                $(".back_settings, .card_settings_form").fadeIn(500) 
-                $(".card_settings_form").html(res)
+                const res = await req2.json() 
+                console.log(res)
             } else {
                 throw new Error(`${req2.status} ${req2.statusText}`)
             }
