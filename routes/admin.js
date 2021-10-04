@@ -67,8 +67,8 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
     const passcode = await hash(pass, 10) // passcode in with hashing
     const title = xs(e_title)
     const description = xs(e_description)
-    const start = moment(xs(e_start)).tz("Asia/Manila").format() 
-    const end = moment(xs(e_end)).tz("Asia/Manila").format()
+    const start = xs(e_start)
+    const end = xs(e_end)
     const crs = xs(courses).split(",")
     const yr = xs(year).split(",")
     const pos = JSON.parse(positions)
