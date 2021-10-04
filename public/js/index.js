@@ -461,7 +461,6 @@ $(document).ready( () => {
                         Swal.showLoading() 
                         try {
                             const leave = await fetchtimeout('/home/leave-election/', {
-                                timeout: 1000,
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                 }, 
