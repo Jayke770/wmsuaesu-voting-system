@@ -81,6 +81,7 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
         e_strt = true, 
         start_time = moment(start).tz("Asia/Manila").startOf().fromNow().split(" "), 
         end_time = moment(end).tz("Asia/Manila").startOf().fromNow().split(" ")
+console.log(start, end)
     if(title != "" && start != "" && end != "" && crs.length != 0 && yr.length != 0 && pos.length != 0 && pty.length != 0){
         try {
             //if the partylist is less than 2
@@ -186,7 +187,8 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
                             created: moment().tz("Asia/Manila").format()
                         }, (err, crtd) => {
                             if(err) throw new err 
-                            if(crtd){
+                            if(crtd){ 
+console.log(crtd)
                                 return res.send({
                                     created: true, 
                                     msg: "Election Created Successfully", 
