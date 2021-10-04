@@ -275,11 +275,11 @@ module.exports = {
                             id: elec[i]._id,
                             title: elec[i].election_title, 
                             start: elec[i].start, 
-                            start_in_moment: moment(elec[i].start).tz("Asia/Manila").fromNow(),
+                            start_in_moment: moment(elec[i].start).fromNow(),
                             end: elec[i].end, 
-                            end_in_moment: moment(elec[i].end).tz("Asia/Manila").fromNow(),
+                            end_in_moment: moment(elec[i].end).fromNow(),
                             deletion: elec[i].deletion_status, 
-                            deletion_in_moment: moment(elec[i].deletion_status).tz("Asia/Manila").fromNow()
+                            deletion_in_moment: moment(elec[i].deletion_status).fromNow()
                         }
                         console.log(elec_t)
                         // //if election is not started and it is the time to start

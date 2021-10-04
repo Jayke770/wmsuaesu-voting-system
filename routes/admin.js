@@ -57,6 +57,7 @@ adminrouter.get('/control/elections/', limit, isadmin, async (req, res) => {
 //create election 
 // 1 bug here in starting and ending data/time of election
 adminrouter.post('/control/elections/create-election/', limit, isadmin, async (req, res) => {
+    console.log(moment().format())
     const {e_title, e_description, e_start, e_end, courses, year, positions, partylists} = req.body 
     //sanitize 
     const pass =  genpass.generate({
@@ -79,8 +80,8 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
         e_pos = true, 
         e_pty = true,
         e_strt = true, 
-        start_time = moment(start).tz("Asia/Manila").startOf().fromNow().split(" "), 
-        end_time = moment(end).tz("Asia/Manila").startOf().fromNow().split(" ")
+        start_time = moment(start).startOf().fromNow().split(" "), 
+        end_time = moment(end).startOf().fromNow().split(" ")
 console.log(start, end)
     if(title != "" && start != "" && end != "" && crs.length != 0 && yr.length != 0 && pos.length != 0 && pty.length != 0){
         try {
