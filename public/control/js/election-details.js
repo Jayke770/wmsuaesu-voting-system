@@ -1606,7 +1606,6 @@ $(document).ready(() => {
         settingsMenu: async () => {
            try {
                const req = await fetchtimeout('/control/elections/status/settings-menu/', {
-                   timeout: 1000,
                    method: 'POST',
                    headers: {
                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
