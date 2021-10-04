@@ -3867,11 +3867,6 @@ html::selection, body::selection {
   cursor: not-allowed;
 }
 
-.disabled\:border-purple-700:disabled {
-  --tw-border-opacity: 1;
-  border-color: rgba(126, 34, 206, var(--tw-border-opacity));
-}
-
 .disabled\:bg-purple-500:disabled {
   --tw-bg-opacity: 1;
   background-color: rgba(168, 85, 247, var(--tw-bg-opacity));
@@ -3884,11 +3879,6 @@ html::selection, body::selection {
 
 .disabled\:bg-green-700\/60:disabled {
   background-color: rgba(21, 128, 61, 0.6);
-}
-
-.disabled\:text-gray-600:disabled {
-  --tw-text-opacity: 1;
-  color: rgba(82, 82, 91, var(--tw-text-opacity));
 }
 
 .disabled\:text-gray-300:disabled {
@@ -4093,12 +4083,12 @@ html::selection, body::selection {
   background-color: rgba(225, 29, 72, 0.5);
 }
 
-.dark .dark\:bg-darkBlue-primary\/50 {
-  background-color: rgba(9, 12, 16, 0.5);
-}
-
 .dark .dark\:bg-rose-500\/40 {
   background-color: rgba(244, 63, 94, 0.4);
+}
+
+.dark .dark\:bg-darkBlue-primary\/50 {
+  background-color: rgba(9, 12, 16, 0.5);
 }
 
 .dark .dark\:bg-red-600\/50 {
