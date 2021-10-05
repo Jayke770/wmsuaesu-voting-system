@@ -1077,7 +1077,7 @@ adminrouter.post('/control/election/settings/delete-election/', limit, isadmin, 
                 await election.updateOne({
                     _id: {$eq: xs(electionID)}
                 }, {$set: {
-                    deletion_status: moment().tz("Asia/Manila").format(), 
+                    deletion_status: moment().tz("Asia/Manila").add(1, "days").format(), 
                     status: 'Pending for deletion'
                 }}).then( (u) => {
                     return res.send({
