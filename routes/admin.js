@@ -1036,7 +1036,6 @@ adminrouter.post('/control/elections/status/settings-menu/', limit, isadmin, asy
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
