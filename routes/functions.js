@@ -294,12 +294,13 @@ module.exports = {
                         //if election is pending for deleetion 
                         if(elec[i].status === "Pending for deletion" && e_deletion && e_start && e_end){
                             //delete election 
-                            await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( (d) => {
-                                console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
-                                res = {electionID: elec[i]._id, status: true, type: "Deleted"}
-                            }).catch( (e) => {
-                                throw new Error(e)
-                            })
+                            // await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( (d) => {
+                            //     console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
+                            //     res = {electionID: elec[i]._id, status: true, type: "Deleted"}
+                            // }).catch( (e) => {
+                            //     throw new Error(e)
+                            // })
+                            console.log('del')
                         }
                     }
                 } else {
