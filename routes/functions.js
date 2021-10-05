@@ -270,9 +270,7 @@ module.exports = {
                     for(let i = 0; i < elec.length; i++){
                         const e_start = moment(elec[i].start).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
                         const e_end = moment(elec[i].end).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
-                        const e_deletion = elec[i].deletetion_status === undefined ? false : moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
-                        console.log(elec[i].deletetion_status)
-                        console.log('del', moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow())
+                        const e_deletion = moment(elec[i].deletion_status).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
                         //if election is not started and it is the time to start
                         if(elec[i].status === "Not Started" && e_start && !e_end){
                             //start election 
@@ -296,13 +294,12 @@ module.exports = {
                         //if election is pending for deleetion 
                         if(elec[i].status === "Pending for deletion" && e_deletion && e_start && e_end){
                             //delete election 
-                            // await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( (d) => {
-                            //     console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
-                            //     res = {electionID: elec[i]._id, status: true, type: "Deleted"}
-                            // }).catch( (e) => {
-                            //     throw new Error(e)
-                            // })
-                            console.log('del', e_deletion)
+                            await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( (d) => {
+                                console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
+                                res = {electionID: elec[i]._id, status: true, type: "Deleted"}
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
                         }
                     }
                 } else {
