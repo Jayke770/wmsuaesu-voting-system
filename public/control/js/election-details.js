@@ -841,7 +841,7 @@ $(document).ready(() => {
         $(".back_settings").hide(500)
     })
     let settings = false
-    $(".settings_main").delegate(".election_settings_btn", "click", async function() {
+    $(".settings_").delegate(".election_settings_btn", "click", async function() {
         const def = $(this).find(".settings_ic").html() 
         if(!settings){
             settings = true 
@@ -876,7 +876,7 @@ $(document).ready(() => {
     })
     //chnage election title
     let e_change_title = false
-    $(".settings_main").delegate(".edit_election_title", "submit", async function(e) {
+    $(".settings_").delegate(".edit_election_title", "submit", async function(e) {
         e.preventDefault()
         const def = $(this).find("button[type='submit']").html()
         if(!e_change_title){
@@ -919,7 +919,7 @@ $(document).ready(() => {
     })
     //change election description
     let e_change_description = false 
-    $(".settings_main").delegate(".edit_election_description", "submit", async function(e) {
+    $(".settings_").delegate(".edit_election_description", "submit", async function(e) {
         e.preventDefault() 
         const def = $(this).find("button[type='submit']").html()
         if(!e_change_description){ 
@@ -962,7 +962,7 @@ $(document).ready(() => {
     })
     //change election passcode
     let e_change_passcode = false
-    $(".settings_main").delegate(".edit_election_passcode", "submit", async function(e) {
+    $(".settings_").delegate(".edit_election_passcode", "submit", async function(e) {
         e.preventDefault()
         const def = $(this).find("button[type='submit']").html()
         if(!e_change_passcode){ 
@@ -1004,7 +1004,7 @@ $(document).ready(() => {
     })
     //change election status 
     let e_status = false
-    $(".settings_main").delegate(".election_status_toggle", "change", async function(e) {
+    $(".settings_").delegate(".election_status_toggle", "change", async function(e) {
         e.preventDefault()
         const toggle = $(this).prop("checked")
         if(!e_status){
@@ -1160,7 +1160,7 @@ $(document).ready(() => {
     })
     //change election starting date & time 
     let e_start_dt = false
-    $(".settings_main").delegate(".edit_election_start-dt", "submit", async function(e) {
+    $(".settings_").delegate(".edit_election_start-dt", "submit", async function(e) {
         e.preventDefault() 
         const def = $(this).find("button[type='submit']").html()
         if(!e_start_dt){
@@ -1212,7 +1212,7 @@ $(document).ready(() => {
     })
     //change election starting date & time 
     let e_end_dt = false
-    $(".settings_main").delegate(".edit_election_end-dt", "submit", async function(e) {
+    $(".settings_").delegate(".edit_election_end-dt", "submit", async function(e) {
         e.preventDefault() 
         const def = $(this).find("button[type='submit']").html()
         if(!e_end_dt){
@@ -1264,7 +1264,7 @@ $(document).ready(() => {
     })
     //change election autoAccept voters 
     let auto_ac_v = false
-    $(".settings_main").delegate(".auto_accept_voters", "change", async function(e) {
+    $(".settings_").delegate(".auto_accept_voters", "change", async function(e) {
         e.preventDefault() 
         const toggle = $(this).prop("checked")
         if(!auto_ac_v){
@@ -1341,7 +1341,7 @@ $(document).ready(() => {
     })
     //change election autoAccept candidates 
     let auto_ac_c = false
-    $(".settings_main").delegate(".auto_accept_candidates", "change", async function(e) {
+    $(".settings_").delegate(".auto_accept_candidates", "change", async function(e) {
         e.preventDefault() 
         const toggle = $(this).prop("checked")
         if(!auto_ac_c){
@@ -1418,11 +1418,11 @@ $(document).ready(() => {
     })
     // delete election 
     let delete_election = false
-    $(".settings_main").delegate(".election_settings_delete_election", "click", async () => {
+    $(".settings_").delegate(".election_settings_delete_election", "click", async () => {
         const def = $(this).find(".settings_ic").html() 
         if(!delete_election){
             delete_election = true 
-            $(this).find(".settings_ic").html(election.loader())  
+            $(this).find(".settings_ic").html(election.loade    r())  
             Swal.fire({
                 icon: 'question',
                 title: 'Delete Election', 
