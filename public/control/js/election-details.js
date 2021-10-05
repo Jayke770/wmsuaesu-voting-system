@@ -1422,7 +1422,7 @@ $(document).ready(() => {
         const def = $(this).find(".settings_ic").html() 
         if(!delete_election){
             delete_election = true 
-            $(this).find(".settings_ic").html(election.loade    r())  
+            $(this).find(".settings_ic").html(election.loader())  
             Swal.fire({
                 icon: 'question',
                 title: 'Delete Election', 
