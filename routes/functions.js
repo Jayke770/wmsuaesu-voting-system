@@ -270,8 +270,8 @@ module.exports = {
                     for(let i = 0; i < elec.length; i++){
                         const e_start = moment(elec[i].start).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
                         const e_end = moment(elec[i].end).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
-                        const e_deletion = moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
-                        console.log(moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow())
+                        const e_deletion = elec[i].deletetion_status === "" ? false : moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
+                        console.log(elec[i].deletetion_status)
                         //if election is not started and it is the time to start
                         if(elec[i].status === "Not Started" && e_start && !e_end){
                             //start election 
