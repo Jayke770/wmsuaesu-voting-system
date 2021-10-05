@@ -272,6 +272,7 @@ module.exports = {
                         const e_end = moment(elec[i].end).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
                         const e_deletion = elec[i].deletetion_status === undefined ? false : moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
                         console.log(elec[i].deletetion_status)
+                        console.log('del', moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow())
                         //if election is not started and it is the time to start
                         if(elec[i].status === "Not Started" && e_start && !e_end){
                             //start election 
