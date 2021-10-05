@@ -10,6 +10,9 @@
             <% if(election.status === "Ended") { %> 
                 <span data-text="The election ended " data="<%- election.end %>" class="time_txt skeleton w-52 font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal"></span>
             <% } %>
+            <% if(election.status === "Pending for deletion") { %> 
+                <span data-text="The election will be deleted in " data="<%- election.end %>" class="time_txt skeleton w-52 font-medium p-1 dark:text-gray-50 text-purple-700 dark:font-normal"></span>
+            <% } %>
         </div>
         <div class="container flex flex-col justify-center items-center h-full p-2">
             <% if(election.status === "Not Started") { %> 
@@ -20,6 +23,9 @@
             <% } %>
             <% if(election.status === "Ended") { %> 
                 <div id="e_time" class="flipdown" data="<%- election.end %>"></div>
+            <% } %>
+            <% if(election.status === "Pending for deletion") { %> 
+                <div id="e_time" class="flipdown" data="<%- election.deletion_status %>"></div>
             <% } %>
         </div>
     </div>
