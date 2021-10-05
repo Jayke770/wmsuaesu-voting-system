@@ -186,6 +186,7 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
                             created: moment().tz("Asia/Manila").format()
                         }, (err, crtd) => {
                             if(err) throw new err 
+                            console.log(crtd)
                             if(crtd){
                                 return res.send({
                                     created: true, 
