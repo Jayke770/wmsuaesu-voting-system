@@ -268,50 +268,39 @@ module.exports = {
             await election.find({}).then( async (elec) => {
                 if(elec.length !== 0){
                     for(let i = 0; i < elec.length; i++){
-                        // const e_start = moment(elec[i].start).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
-                        // const e_end = moment(elec[i].end).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
-                        // const e_deletion = moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow().search("minute|moment|seconds|hour") !== -1 ? true : false
-                        const elec_t = {
-                            id: elec[i]._id,
-                            title: elec[i].election_title, 
-                            start: elec[i].start, 
-                            start_in_moment: moment(elec[i].start).tz("Asia/Manila").fromNow(),
-                            end: elec[i].end, 
-                            end_in_moment: moment(elec[i].end).tz("Asia/Manila").fromNow(),
-                            deletion: elec[i].deletion_status, 
-                            deletion_in_moment: moment(elec[i].deletion_status).tz("Asia/Manila").fromNow()
+                        const e_start = moment(elec[i].start).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
+                        const e_end = moment(elec[i].end).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
+                        const e_deletion = moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow().search("minute|moment|seconds|hour") !== -1 ? true : false
+                        //if election is not started and it is the time to start
+                        if(elec[i].status === "Not Started" && e_start && !e_end){
+                            //start election 
+                            await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Started"}}).then( (u) => {
+                                console.log(`Election with ID ${elec[i]._id} has been Started\nElection Title : ${elec[i].election_title}`)
+                                res = {electionID: elec[i]._id, status: true, type: "Started"}
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
                         }
-                        console.log(elec_t)
-                        // //if election is not started and it is the time to start
-                        // if(elec[i].status === "Not Started" && e_start && !e_end){
-                        //     //start election 
-                        //     await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Started"}}).then( (u) => {
-                        //         console.log(`Election with ID ${elec[i]._id} has been Started\nElection Title : ${elec[i].election_title}`)
-                        //         res = {electionID: elec[i]._id, status: true, type: "Started"}
-                        //     }).catch( (e) => {
-                        //         throw new Error(e)
-                        //     })
-                        // }
-                        // //if election is not ended and it is the time to end
-                        // if(elec[i].status === "Started" && e_start && e_end){
-                        //     // end election 
-                        //     await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Ended"}}).then( () => {
-                        //         console.log(`Election with ID ${elec[i]._id} has been Ended\nElection Title : ${elec[i].election_title}`)
-                        //         res = {electionID: elec[i]._id, status: true, type: "Ended"}
-                        //     }).catch( (e) => {
-                        //         throw new Error(e)
-                        //     })
-                        // }
-                        // //if election is pending for deleetion 
-                        // if(elec[i].status === "Pending for deletion" && e_deletion && e_start && e_end){
-                        //     //delete election 
-                        //     await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( (d) => {
-                        //         console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
-                        //         res = {electionID: elec[i]._id, status: true, type: "Deleted"}
-                        //     }).catch( (e) => {
-                        //         throw new Error(e)
-                        //     })
-                        // }
+                        //if election is not ended and it is the time to end
+                        if(elec[i].status === "Started" && e_start && e_end){
+                            // end election 
+                            await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Ended"}}).then( () => {
+                                console.log(`Election with ID ${elec[i]._id} has been Ended\nElection Title : ${elec[i].election_title}`)
+                                res = {electionID: elec[i]._id, status: true, type: "Ended"}
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        }
+                        //if election is pending for deleetion 
+                        if(elec[i].status === "Pending for deletion" && e_deletion && e_start && e_end){
+                            //delete election 
+                            await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( (d) => {
+                                console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
+                                res = {electionID: elec[i]._id, status: true, type: "Deleted"}
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        }
                     }
                 } else {
                     return false
