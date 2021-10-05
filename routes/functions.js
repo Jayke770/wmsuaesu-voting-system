@@ -271,6 +271,7 @@ module.exports = {
                         const e_start = moment(elec[i].start).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
                         const e_end = moment(elec[i].end).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
                         const e_deletion = moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
+                        console.log(moment(elec[i].deletetion_status).tz("Asia/Manila").fromNow())
                         //if election is not started and it is the time to start
                         if(elec[i].status === "Not Started" && e_start && !e_end){
                             //start election 
@@ -300,7 +301,7 @@ module.exports = {
                             // }).catch( (e) => {
                             //     throw new Error(e)
                             // })
-                            console.log('del')
+                            console.log('del', e_deletion)
                         }
                     }
                 } else {

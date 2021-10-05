@@ -820,7 +820,7 @@ adminrouter.post('/control/election/settings/stop-election/', limit, isadmin, as
                         return res.send({
                             status: true, 
                             e_status: false,
-                            msg: 'Election terminated successfully'
+                            msg: 'Election ended successfully'
                         })
                     }).catch( (e) => {
                         throw new Error(e)
