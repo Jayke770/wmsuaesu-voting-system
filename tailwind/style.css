@@ -5,7 +5,7 @@
 .lazy-progress {
     transition: 1s ease;
     animation: lazy 2s linear infinite;
-    width: 5%;
+    width: 10%;
     @apply rounded-lg;
 }
 @keyframes lazy {
@@ -68,7 +68,7 @@ html, body{
 .swal2-input, .swal2-textarea{
     @apply rounded-md dark:bg-transparent dark:text-gray-200 border-gray-500 transition-all text-base;
 }
-.swal2-popup {
+.swal2-popup, .swal2-popup.swal2-toast{
     @apply dark:bg-darkBlue-secondary rounded-xl dark:ring-1 dark:ring-purple-600/40;
 }
 .swal2-title{
