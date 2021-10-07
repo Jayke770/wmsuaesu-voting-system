@@ -88,11 +88,7 @@
     </div>
     <!-- Main -->
     <div class="election__ hidden transition-all">
-        <%- include('election/main', {
-            joined: joined, 
-            elections: elections, 
-            userData: userData
-        }) %>
+        <%- !iscandidate ? include('election/main', { joined: joined, elections: elections, userData: userData }) : '' %>
     </div>
     <!-- themes -->
     <div class="themes__ hidden">
@@ -102,6 +98,7 @@
     <div class="file_candidacy hidden">
         <%- include('election/file-candidacy') %> 
     </div>
+    <%- iscandidate ? include('election/candidates', {election: elections, data: data}) : '' %>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/io.js"></script>
     <script src="/js/index.js"></script>

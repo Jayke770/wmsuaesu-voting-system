@@ -63,7 +63,7 @@
                                         <span class="dark:text-gray-300/80 text-base font-medium">Request Status</span>
                                         <div class="flex justify-start w-full" id="voter_election_request">
                                         <% if(electionData.voterStatus(userData.student_id) === 'Pending') { %>
-                                            <span class="dark:bg-amber-700/40 bg-amber-600 dark:text-amber-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg animate-pulse"><%- electionData.voterStatus(userData.student_id) %></span>
+                                            <span class="dark:bg-amber-700/40 bg-amber-600 dark:text-amber-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg motion-safe:animate-pulse"><%- electionData.voterStatus(userData.student_id) %></span>
                                         <% } %> 
                                         <% if(electionData.voterStatus(userData.student_id) === 'Accepted') { %>
                                             <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg"><%- electionData.voterStatus(userData.student_id) %></span>

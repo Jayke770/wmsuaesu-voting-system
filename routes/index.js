@@ -175,6 +175,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
             }
             return res.render('index', {
                 joined: false,
+                iscandidate: false,
                 elections: electionsJoined, 
                 data: {
                     positions: await positions(), 
@@ -188,6 +189,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
         } else {
             return res.render('index', {
                 joined: false,
+                iscandidate: false,
                 elections: electionsJoined, 
                 data: {
                     positions: await positions(), 
@@ -869,6 +871,7 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
                 req.session.electionID = xs(electionID)
                 return res.render('index', {
                     joined: true,
+                    iscandidate: false,
                     elections: elec[0],
                     data: {
                         positions: await positions(), 
@@ -890,7 +893,7 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
     }
 })
 //get all candidates 
-router.post('/home/election/candidates/', normal_limit, isloggedin, async (req, res) => {
+router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin, async (req, res) => {
     const {id} = req.body 
     const {electionID, myid} = req.session 
     const {_id, student_id} = await user_data(myid)
@@ -901,14 +904,18 @@ router.post('/home/election/candidates/', normal_limit, isloggedin, async (req, 
             _id: {$eq: xs(electionID)}, 
             voters: {$elemMatch: {student_id: xs(student_id)}}
         }, {passcode: 0}).then( async (elec) => {
-            return res.render('election/candidates', {
-                election: elec[0], 
+            return res.render('index', {
+                joined: true,
+                iscandidate: true,
+                elections: elec[0], 
                 data: {
                     course: await course(), 
                     year: await year(), 
                     partylists: await partylists(), 
                     positions: await positions(),
                 }, 
+                userData: await user_data(myid), 
+                csrf: req.csrfToken()
             })
         }).catch( (e) => {
             throw new Error(e)

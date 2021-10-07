@@ -1,40 +1,56 @@
 <!-- candidates -->
-<% if(election.candidates.length !==0) { %>
+<% 
+    const Data = {
+        positions: (id) => {
+            let res
+            for(let i = 0; i < data.positions.length; i++){
+                if(data.positions[i].id === id){
+                    res = data.positions[i].type
+                }
+            }
+            return res
+        }
+    }
+%> 
+<% if(election.candidates.length === 0) { %>
     <div class="candidates h-screen pt-[64px] w-full">
         <div class="h-full w-full flex flex-col gap-3 pb-2 overflow-y-auto">
-            <div class="flex flex-col w-full">
-                <div class="flex justify-start items-center py-2 px-3">
-                    <span class="dark:text-gray-300 font-medium text-2xl">President</span>
-                </div>
-                <div class="swiper mySwiper w-full px-3">
-                    <div class="swiper-wrapper">
-                        <% for (let i=0; i < 10; i++) { %>
-                            <div class="swiper-slide h-[500px] dark_border rounded-lg dark:bg-darkBlue-secondary">
-                                <%- i %>
-                            </div>
-                            <% } %>
+            <% for (let i = 0; i < election.positions.length; i++) { %>
+                <div class="flex flex-col w-full">
+                    <div class="flex justify-start items-center py-2 px-3">
+                        <span class="dark:text-gray-300 font-medium text-2xl"><%- Data.positions(election.positions[i].id) %></span>
                     </div>
-                </div>
-            </div>
+                    <div class="swiper mySwiper w-full px-3">
+                        <div class="swiper-wrapper">
+                            <% for (let i=0; i < 10; i++) { %>
+                                <div class="swiper-slide px-2">
+                                    <div class="transition-all h-[calc(100vh-120px)] dark_border rounded-lg dark:bg-darkBlue-secondary">
+                                        <%- i %>    
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>    
+            <% } %>
         </div>
     </div>
     <script>
         const swiper = new Swiper(".mySwiper", {
             slidesPerView: 1,
-            spaceBetween: 10,
             breakpoints: {
                 640: {
                     effect: "cube",
                     slidesPerView: 1,
-                    spaceBetween: 10,
+                    spaceBetween: 2.5,
                 },
                 768: {
                     slidesPerView: 2,
-                    spaceBetween: 10,
+                    spaceBetween: 5,
                 },
                 1024: {
                     slidesPerView: 3,
-                    spaceBetween: 20,
+                    spaceBetween: 10,
                 },
             },
         })
@@ -189,7 +205,7 @@
                             d="M503.829,380.07963a1.51326,1.51326,0,0,1,.326.06843l30.19365,9.91686a1.50014,1.50014,0,0,1-.93555,2.85069l-30.19364-9.91685a1.50039,1.50039,0,0,1,.60952-2.91913Z"
                             transform="translate(-168.64838 -127.60704)" fill="#fff" />
                         <circle cx="457.00322" cy="423.23593" r="12" fill="#f2f2f2" />
-                        <circle class="animate-bounce transition-all" cx="151.00322" cy="467.23593" r="12" fill="#f2f2f2" />
+                        <circle cx="151.00322" cy="467.23593" r="12" fill="#f2f2f2" />
                         <circle cx="401.00322" cy="70.23593" r="12" fill="#f2f2f2" />
                         <path
                             d="M589.34024,397.72852A11.59947,11.59947,0,0,1,573.433,389.7714L532.421,385.62792l13.53022-16.60628,36.87128,6.48065a11.66236,11.66236,0,0,1,6.5177,22.22623Z"
