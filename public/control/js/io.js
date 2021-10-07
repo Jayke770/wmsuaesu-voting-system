@@ -103,12 +103,13 @@ socket.on('new-voter-file-for-candidacy', (data) => {
     }
 })
 //new election started 
-socket.on('new-election-started', async (data) => {
+socket.on('new-election-started', async () => {
     await election.election_status()
     await election.status()
     await election.dt()
 })
-socket.on('new-election-ended', async (data) => {
+//new election ended
+socket.on('new-election-ended', async () => {
     await election.election_status()
     await election.status()
     await election.dt()

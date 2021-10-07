@@ -39,6 +39,9 @@ $(document).ready(() => {
             if($(this).attr("data") === "settings"){
                 election.settingsMenu()
             } 
+            if($(this).attr("data") === "positions"){
+                election.positions()
+            }
         }, 1000)
     })
     $(".e_ac").click( () => {
@@ -793,6 +796,9 @@ $(document).ready(() => {
                 $(".positions_").addClass("hidden")
                 $(".positions_").removeClass("flex")
                 $(".positions_main").removeClass($(".positions_main").attr("animate-out"))
+                $(".positions_").find(".preload_positions").removeClass("hidden")
+                $(".positions_").find(".preload_positions").addClass("flex")
+                $(".positions_").find(".positions_data_list").remove()
             }, 300)
         }
     })
@@ -802,7 +808,136 @@ $(document).ready(() => {
             $(".positions_").addClass("hidden")
             $(".positions_").removeClass("flex")
             $(".positions_main").removeClass($(".positions_main").attr("animate-out"))
+            $(".positions_").find(".preload_positions").removeClass("hidden")
+            $(".positions_").find(".preload_positions").addClass("flex")
+            $(".positions_").find(".positions_data_list").remove()
         }, 300)
+    })
+
+    //add positions 
+    let add_pos = false
+    $(".positions_").delegate(".add_pos_e", "submit", async function (e) {
+        e.preventDefault()
+        const def = $(this).find("button[type='submit']").html()
+        try {
+            add_pos = true 
+            $(this).find("button[type='submit']").html(election.loader()) 
+            const req = await fetchtimeout('/control/elections/add-position/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                }, 
+                body: new FormData(this)
+            })
+            if(req.ok) {
+                const res = await req.json() 
+                socket.emit('election-change', {electionID: $("html").attr("data")})
+                $(this).find("button[type='submit']").html(def) 
+                if(res.status){
+                    toast.fire({
+                        icon: 'success', 
+                        title: res.msg,
+                        timer: 2000
+                    })   
+                    await election.positions()
+                } else {
+                    toast.fire({
+                        icon: 'info', 
+                        title: res.msg,
+                        timer: 2000
+                    })
+                }
+            } else {
+                throw new Error(`${req.status} ${req.statusText}`)
+            }
+        } catch (e) {
+            add_pos = false
+            $(this).find("button[type='submit']").html(def) 
+            toast.fire({
+                icon: 'error', 
+                title: e.message,
+                timer: 2000
+            })
+        }
+    })
+    let remove_pos = false
+    $(".positions_").delegate(".e_remove_position", "click", async function (e) {
+        e.preventDefault() 
+        if(!remove_pos){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Remove Position', 
+                html: 'Are you sure you want to remove this position?', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                confirmButtonText: 'Remove', 
+                showDenyButton: true, 
+                denyButtonText: 'Cancel'
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Removing Position', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false,
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            try {
+                                remove_pos = true 
+                                let data = new FormData() 
+                                data.append("id", $(this).attr("data"))
+                                const req = await fetchtimeout('/control/elections/remove-position/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok) {
+                                    const res = await req.json() 
+                                    remove_pos = false
+                                    if(res.status) {
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        }).then( () => {
+                                            $(".positions_").find(`div[data='position-${$(this).attr("data")}']`).removeClass("animate__fadeInUp")
+                                            $(".positions_").find(`div[data='position-${$(this).attr("data")}']`).addClass("animate__fadeOutDown")
+                                            setTimeout( async () => {
+                                                $(".positions_").find(`div[data='position-${$(this).attr("data")}']`).remove()
+                                                await election.positions()
+                                            }, 500)
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        })
+                                    }
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                remove_pos = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: "Connection Error",
+                                    html: e.message,
+                                    backdrop: true, 
+                                    allowOutsideClick: false
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
     })
     //settings
     $(".settings_").click(function(e) {
@@ -894,6 +1029,7 @@ $(document).ready(() => {
                     const res = await req.json()
                     e_change_title = false
                     $(this).find("button[type='submit']").html(def)
+                    socket.emit('election-change', {electionID: $("html").attr("data")})
                     Swal.fire({
                         icon: res.status ? 'success' : 'info', 
                         title: res.txt,
@@ -937,6 +1073,7 @@ $(document).ready(() => {
                     const res = await req.json() 
                     e_change_description = false
                     $(this).find("button[type='submit']").html(def)
+                    socket.emit('election-change', {electionID: $("html").attr("data")})
                     Swal.fire({
                         icon: res.status ? 'success' : 'info', 
                         title: res.txt,
@@ -1558,6 +1695,31 @@ $(document).ready(() => {
                 }
             }
         }, 
+        positions: async () => {
+            try {
+                const req = await fetchtimeout('/control/elections/position-list/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    $(".positions_").find(".positions_data_list").remove()
+                    $(".positions_").find(".preload_positions").addClass("hidden")
+                    $(".positions_").find(".preload_positions").removeClass("flex")
+                    $(".positions_").find(".positions_e_list").append(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                toast.fire({
+                    icon: 'error',
+                    title: e.message, 
+                    timer: 2000
+                })
+            }
+        },
         loader: () => {
             return '<i class="fad animate-spin fa-spinner-third"></i>'
         }, 

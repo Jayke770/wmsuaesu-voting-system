@@ -27,7 +27,10 @@ adminrouter.get('/control',limit, isadmin, async (req, res) => {
         }).catch( (e) => {
             throw new Error(e)
         })
-        return res.render('control/home', {elections: elections})
+        return res.render('control/home', {
+            elections: elections, 
+            csrf: req.csrfToken()
+        })
     } catch (e) {
         return res.status(500).send()
     }
@@ -232,6 +235,19 @@ adminrouter.post('/control/elections/election-list/', limit, isadmin, async (req
     try {
         await election.find({}, {passcode: 0}).then( (elecs) => {
             return res.render("control/forms/election_list", {elections: elecs, home: false})
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+//all elections using chart 
+adminrouter.post('/control/elections/', limit, isadmin, async (req, res) => {
+    //get all elections 
+    try {
+        await election.find({}, {passcode: 0}).then( (elecs) => {
+            return res.render("control/forms/elections_chart", {elections: elecs})
         }).catch( (e) => {
             throw new Error(e)
         })
@@ -1405,6 +1421,102 @@ adminrouter.post('/control/election/candidates/sort/', limit, isadmin, async (re
             })
         })
     } catch (e) {
+        return res.status(500).send()
+    }
+})
+//get all election positions 
+adminrouter.post('/control/elections/position-list/', limit, isadmin, async (req, res) => {
+    const {currentElection} = req.session 
+    try {
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+        }, {positions: 1}).then( async (elec) => {
+            return res.render('control/forms/election-positions-list', {
+                e_positions: elec.length === 0 ? [] : elec[0].positions,
+                data: {
+                    positions: await positions()
+                }
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//add positions 
+adminrouter.post('/control/elections/add-position/', limit, isadmin, async (req, res) => {
+    const {pos, max_vote} = req.body 
+    const {currentElection} = req.session
+    let new_pos = {
+        id: xs(pos), 
+        maxvote: xs(max_vote)
+    }
+    try {
+        //check if the new position is not in used by the current election 
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            positions: {$elemMatch: {id: {$eq: xs(pos)}}}
+        }).then( async (elec) => {
+            if(elec.length === 0){
+                //save new position 
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}
+                }, {$push: {positions: new_pos}}).then( (u) => {
+                    return res.send({
+                        status: true, 
+                        msg: "Positions added successfully", 
+                        data: new_pos
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Position is already exists"
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//remove position
+adminrouter.post('/control/elections/remove-position/', limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const {currentElection} = req.session 
+    try {
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            positions: {$elemMatch: {id: {$eq: xs(id)}}}
+        }, {positions: {$elemMatch: {id: {$eq: xs(id)}}}}).then( async (elec) => {
+            if(elec.length !== 0){
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}
+                }, {$pull: {positions: {id: {$eq: xs(id)}}}}).then( () => {
+                    return res.send({
+                        status: true, 
+                        msg: 'Position successfully removed'
+                    })
+                }).catch( (e) => {
+                    throw new Eror(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: 'Position Not Found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })

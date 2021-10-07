@@ -1,0 +1,47 @@
+<% 
+    const e_data = {
+        pos: (val) => {
+            for(let i = 0; i < data.positions.length; i++){
+                if(val === data.positions[i].id){
+                    return data.positions[i].type
+                }
+            }
+        }, 
+        selected_pos: (val) => {
+            let res
+            for(let i = 0; i < e_positions.length; i++){
+                if(e_positions[i].id === val){
+                    res = true
+                    break
+                }
+            }
+            return res
+        }
+    }
+%>
+<div class="positions_data_list px-3 h-full flex flex-col gap-3 py-3 overflow-y-auto">   
+    <% for (let i = 0; i < e_positions.length; i++) { %>
+        <div style="animation-delay: <%- i * .150 %>s;" data="position-<%- e_positions[i].id %>" class="cursor-pointer animate__animated animate__fadeInUp dark_border grid grid-cols-2 justify-center items-center dark:bg-darkBlue-secondary shadow-lg dark:text-gray-400 px-3 py-2 rounded-lg">
+            <span><%- e_data.pos(e_positions[i].id) %></span>
+            <div class="flex justify-end items-center">
+                <a data="<%- e_positions[i].id %>" class="e_remove_position rounded-md cursor-pointer text-xl dark:text-red-600 text-red-500">
+                    <i class="fad fa-times-circle"></i>
+                </a>
+            </div>
+        </div>
+    <% } %>          
+</div>
+<form style="animation-delay: .250s;" class="positions_data_list add_pos_e animate__animated animate__fadeInRight ms-500 flex-row gap-1 flex p-2 mt-1">
+    <select required name="pos" class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+        <option value="">Select Position</option>
+        <% for (let i = 0; i < data.positions.length; i++) { %>
+            <% if(!e_data.selected_pos(data.positions[i].id)){ %>
+                <option value="<%- data.positions[i].id %>"><%- e_data.pos(data.positions[i].id) %></option>
+            <% } %>
+        <% } %>
+    </select>
+    <input required placeholder="Max vote" type="number" name="max_vote" class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all"> 
+    <button type="submit" class="rounded-md px-3 ring-0 border-0 focus:outline-none transition-all dark:text-green-500 text-green-600 text-xl">
+        <i class="fad fa-plus-circle"></i>
+    </button>
+</div>  

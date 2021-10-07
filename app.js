@@ -54,7 +54,7 @@ const appsession = session({
        sameSite: 'strict'
     },
     store: store,
-    resave: false,
+    resave: true,
     saveUninitialized: true,
     connectionOptions: {
         useNewUrlParser: true,

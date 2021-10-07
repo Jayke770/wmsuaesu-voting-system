@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" class="font-sans">
+<html lang="en" class="font-sans" elections="<%- elections.length %>">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" class="theme-color" content="#6b21a8">
+    <meta name="csrf-token" content="<%- csrf %>">
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
     <title>Admin Dashboard</title>
-    <%- include('cdn/_home') %>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <%- include('cdn/_home') %>
     <script>
         document.onreadystatechange = () => {
             setTimeout( () => {
@@ -19,7 +20,7 @@
         }
     </script>
 </head>
-<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased overflow-hidden">
     <!-- lazy progressbar -->
     <%- include('../lazy/loading-progress') %>
     <div class="loading flex justify-center w-screen h-screen items-center">
@@ -84,31 +85,10 @@
                 </div>
             </div>
             <div class="mt-16">
-                <div class="elections w-full p-2">
-                    <div class="container text-2xl mb-3 font-semibold dark:text-gray-300">Elections <span class="float-right font-normal"><%- elections.length %></span></div>
-                    <div class="election_list px-1 transition-all grid grid-cols-3 xl:grid-cols-2 md:grid-cols-none gap-3">
-                        <%- include('forms/elections_chart', {elections: elections}) %>
-                    </div>
-                </div>
-                <div class="voters mx-auto w-full p-[10px] mt-4">
-                    <div class="container text-2xl mb-3 font-semibold dark:text-gray-300">All Voters <span class="float-right font-normal">6</span></div>
-                    <div class="grid grid-cols-4 xl:grid-cols-2 my:grid-cols-1 gap-3 transition-all md:max-h-[90vh] md:overflow-y-scroll md:flex md:flex-col md:p-2">
-                        <div data-color="#bdbdbd" class="card rpl dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
-                            <div class="relative">
-                                <img class="icon_e_name h-[60px] w-[60px] object-cover rounded-full" alt="election_ic" src="/assets/image.jpg">
-                                <div class="absolute h-[15px] w-[15px] rounded-full bg-green-600 right-[1px] bottom-1">
-                                </div>
-                            </div>
-                            <div class="user_info md:w-full transition-all flex items-center">
-                                <p class="text-left w-full font-medium text-base ml-2 dark:text-gray-300">Jake Peregrino Velasco
-                                </p>
-                                <div class="ml-10 transition-all hover:bg-gray-500 p-[5px] rounded-md hover:text-gray-100 text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
-                                    <i class="fa fa-ellipsis-h"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="elections w-full h-[calc(100vh-71px)] overflow-y-auto"></div>
+            </div>
+            <div class="mt-16">
+                <div>fafaf</div>
             </div>
         </div>
         <div class="loader container transition-all"></div>
@@ -121,11 +101,12 @@
         <script src="/js/avatar.js "></script>
         <script src="/js/theme.js "></script>
         <script src="/socket.io/socket.io.js"></script> 
-        <script src="/control/js/io.js "></script>
+        <script src="/control/js/io.js"></script>
         <script src="/js/color.js"></script>
         <script src="/js/avatar.js"></script>
-        <script src="/js/audio_file.js "></script>
-        <script src="/js/audio.js "></script>
+        <script src="/js/audio_file.js"></script>
+        <script src="/js/audio.js"></script>
+        <script src="/js/fetch.js"></script>
         <script>
             $(".dark_mode ").click(function() {
                 const theme = localStorage.getItem('theme')
