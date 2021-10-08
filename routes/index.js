@@ -593,6 +593,7 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
         position: xs(pos), 
         platform: xs(platform),
         votes: [],
+        reactions: [],
         status: '?', 
         msg: '',
         created: moment().tz("Asia/Manila").format()
@@ -603,7 +604,7 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
             //check election if exists & the user is a voter of the election
             await election.find({
                 _id: {$eq: xs(electionID)},
-                "voters.id": {$eq: objectid(xs(myid))}
+                "voters.id": {$eq: xs(myid)}
             }, {candidates: 1, autoAccept_candidates: 1, status: 1}).then( async (elec) => {
                 if(elec.length !== 0){
                     const is_ended = elec[0].status === 'Ended' ? true : false 

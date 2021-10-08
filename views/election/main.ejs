@@ -46,7 +46,7 @@
                                             <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg"><%- elections[i].status %></span>
                                         <% } %> 
                                         <% if(elections[i].status === 'Pending for deletion') { %>
-                                            <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg animate-pulse"><%- elections[i].status %></span>
+                                            <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg animate-pulse-2"><%- elections[i].status %></span>
                                         <% } %>
                                         <% if(elections[i].status === 'Ended') { %>
                                             <span class="dark:bg-red-700/40 bg-red-600 dark:text-red-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg"><%- elections[i].status %></span>
@@ -63,7 +63,7 @@
                                         <span class="dark:text-gray-300/80 text-base font-medium">Request Status</span>
                                         <div class="flex justify-start w-full" id="voter_election_request">
                                         <% if(electionData.voterStatus(userData.student_id) === 'Pending') { %>
-                                            <span class="dark:bg-amber-700/40 bg-amber-600 dark:text-amber-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg motion-safe:animate-pulse"><%- electionData.voterStatus(userData.student_id) %></span>
+                                            <span class="dark:bg-amber-700/40 bg-amber-600 dark:text-amber-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg animate-pulse-2"><%- electionData.voterStatus(userData.student_id) %></span>
                                         <% } %> 
                                         <% if(electionData.voterStatus(userData.student_id) === 'Accepted') { %>
                                             <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg"><%- electionData.voterStatus(userData.student_id) %></span>
@@ -180,7 +180,7 @@
                 <div class="flex flex-row gap-2 items-center justify-center">
                     <span class="dark:text-gray-400">Request Status : </span>
                     <% if(electionData.voterStatus(userData.student_id) === 'Pending') { %>
-                        <span class="dark:bg-amber-700/50 bg-amber-600 dark:text-amber-500 text-gray-50 px-3 p-y-2 rounded-lg animate-pulse"><%- electionData.voterStatus(userData.student_id) %></span>
+                        <span class="dark:bg-amber-700/50 bg-amber-600 dark:text-amber-500 text-gray-50 px-3 p-y-2 rounded-lg animate-pulse-2"><%- electionData.voterStatus(userData.student_id) %></span>
                     <% } else if(electionData.voterStatus(userData.student_id) === 'Accepted') { %>
                         <span class="dark:bg-teal-700/50 bg-teal-600 dark:text-teal-500 text-gray-50 px-3 p-y-2 rounded-lg"><%- electionData.voterStatus(userData.student_id) %></span>
                     <% } else if(electionData.voterStatus(userData.student_id) === 'Deleted') { %>

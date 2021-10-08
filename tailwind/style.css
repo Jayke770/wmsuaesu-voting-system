@@ -39,11 +39,24 @@
 }
 /* end of lazy progress */
 /* skeleton loading */
+.animate-pulse-2{
+    animation: p 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 .skeleton {
-    @apply transition-all bg-purple-400 dark:bg-purple-800 p-2 rounded-full animate-pulse;
+    @apply transition-all bg-purple-400 dark:bg-purple-800 p-2 rounded-full;
+    animation: p 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 .skeleton-image{
-    @apply transition-all bg-purple-400 dark:bg-purple-800 p-2 animate-pulse;
+    @apply transition-all bg-purple-400 dark:bg-purple-800 p-2;
+    animation: p 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes p {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: .5;
+    }
 }
 /* skeleton loading end */
 /* remove light blue tap effect in android*/ 
