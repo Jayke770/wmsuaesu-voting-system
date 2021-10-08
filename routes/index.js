@@ -209,7 +209,7 @@ router.get('/logout', normal_limit, async (req, res) => {
     await req.session.destroy()
     return res.redirect('/')
 })
-//post
+// verify student id
 router.post('/verify', normal_limit, async (req, res) => {
     const { id } = req.body
     try {
@@ -217,7 +217,7 @@ router.post('/verify', normal_limit, async (req, res) => {
             return res.send({
                 isvalid: res_id.length === 0 ? false : true,
                 id: xs(id),
-                msg: "Student Id is valid!"
+                msg: res_id.length === 0 ? "Student ID not found" : "Student ID is valid"
             })
         }).catch((e) => {
             throw new Error(e)
@@ -429,10 +429,8 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
                 }
                 //check if the election is found 
                 if(electionData.id !== ''){
-                    const isEnded = electionData.status === 'Ended' ? true : false 
-                    const isPending4deletion = electionData.status === 'Pending for deletion' ? true : false 
-                    //check if the election is not ended or pending for deletion
-                    if(!isEnded && !isPending4deletion){
+                    //check if the election is not started
+                    if(electionData.status === 'Not Started'){
                         //check this election id in the elections feild of user
                         let electionExists = false 
                         for(let i = 0; i < elections.length; i++){
@@ -474,7 +472,7 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
                         return res.send({
                             joined: false, 
                             msg: "You can't join this election",
-                            text: `Election is ${electionData.status}`
+                            text: `Election is already ${electionData.status}`
                         })
                     }
                 } else {

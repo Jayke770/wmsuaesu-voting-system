@@ -258,10 +258,11 @@ $(document).ready(function () {
                                 title: res.msg, 
                                 backdrop: true, 
                                 showConfirmButton: false, 
-                                timer: 2000,
-                                allowOutsideClick: false
-                            }).then( () => {
-                                window.location.reload(true)
+                                allowOutsideClick: false, 
+                                willOpen: () => {
+                                    Swal.showLoading() 
+                                    window.location.reload(true)
+                                }
                             })
                         }
                         else{

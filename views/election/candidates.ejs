@@ -27,7 +27,7 @@
             <% for (let i = 0; i < election.positions.length; i++) { %>
                 <div class="flex flex-col w-full">
                     <div class="flex justify-start items-center py-2 px-3">
-                        <span class="dark:text-purple-600 font-medium text-2xl"><%- Data.positions(election.positions[i].id) %>s</span>
+                        <span class="dark:text-purple-600 font-medium text-2xl"><%- Data.positions(election.positions[i].id) %></span>
                     </div>
                     <div class="swiper mySwiper w-full px-3">
                         <div class="swiper-wrapper">
@@ -37,7 +37,8 @@
                                         <div class="transition-all dark_border rounded-lg dark:bg-darkBlue-secondary">
                                             <div class="flex flex-col h-full">
                                                 <div class="container">
-                                                    <img class="h-60 w-full rounded-t-lg object-cover skeleton-image transition-all" alt="candidate_icon" data="<%- election.candidates[c].fullname.split(" ").length >= 2 ? `${election.candidates[c].fullname.split(" ")[0].charAt(0).toUpperCase()} ${election.candidates[c].fullname.split(" ")[2].charAt(0).toUpperCase()}` : election.candidates[c].fullname.split(" ")[0].charAt(0).toUpperCase() %>">
+                                                    <% const icon = election.candidates[c].fullname.split(" ") %>
+                                                    <img class="h-60 w-full rounded-t-lg object-cover skeleton-image transition-all" data="<%- `${icon[0].charAt(0).toUpperCase()} ${icon[icon.length - 1].charAt(0).toUpperCase()}`%>">
                                                 </div>
                                                 <div class="container h-full">
                                                     <div class="w-full flex flex-col gap-1 py-2 px-4">
@@ -52,13 +53,7 @@
                                                     <div class="h-[calc(100%-76px)]">
                                                         <div class="h-40 overflow-y-auto px-3 py-2 break-words dark:text-gray-300/80"><%- election.candidates[c].platform %></div>
                                                         <div class="px-3 pb-1 pt-4 h-[calc(100%-144px)] grid grid-cols-3 gap-2 justify-start items-end">
-                                                            <a href="#" class="rpl col-span-2 w-full transition-all rounded-md cursor-pointer dark:bg-purple-800 dark:hover:bg-purple-700 dark:text-gray-300 text-bluegray-900 focus:outline-none dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 font-normal px-3 py-1.5 text-center">View Profile</a>
-                                                            <div class="w-full h-full flex flex-row justify-end items-center gap-2">
-                                                                <a class="cursor-pointer dark:text-rose-600 text-2xl">
-                                                                    <i class="fas fa-heart"></i>
-                                                                </a>
-                                                                <span class="dark:text-gray-300 text-sm">100</span>
-                                                            </div>
+                                                            <a href="#" class="rpl col-span-3 w-full transition-all rounded-md cursor-pointer dark:bg-purple-800 dark:hover:bg-purple-700 dark:text-gray-300 text-bluegray-900 focus:outline-none dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 font-normal px-3 py-1.5 text-center">View Profile</a>
                                                         </div>
                                                     </div>
                                                 </div>
