@@ -84,11 +84,13 @@
         </div>
     </div>
     <script>
-        $(".skeleton-image").each( function () {
-            setTimeout( () => {
-                $(this).attr("src", avatar($(this).attr("data"), "#fff", dark()))
-                $(this).removeClass("skeleton-image")
-            }, 500)
+        $(document).ready( function() {
+            $(".skeleton-image").each( function () {
+                setTimeout( () => {
+                    $(this).attr("src", avatar($(this).attr("data"), "#fff", dark()))
+                    $(this).removeClass("skeleton-image")
+                }, 500)
+            })
         })
     </script>
 <% } else { %>

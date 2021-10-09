@@ -33,6 +33,7 @@
 </head>
 
 <body class="bg-gray-200 dark:bg-[#090c10]">
+    <div class="h-screen w-screen fixed" id="particles-js"></div>
     <div class="loading flex justify-center w-screen h-screen items-center">
         <%- include('lazy/loading') %>
     </div>
@@ -254,6 +255,11 @@
     <script src="js/auth.js"></script>
     <script src="/js/toast.js"></script>
     <script src="/js/theme.js"></script>
+    <script>
+        particlesJS.load('particles-js', 'assets/particles.json', function() {
+            console.log('callback - particles.js config loaded');
+        })
+    </script>
 </body>
 
 </html>
