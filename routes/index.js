@@ -545,7 +545,7 @@ router.post('/home/leave-election/', normal_limit, isloggedin, async (req, res) 
     }
 })
 //req for file candidancy form
-router.post('/election/file-candidacy-form/', normal_limit, isloggedin, async (req, res) => {
+router.post('/home/election/file-candidacy-form/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid} =  req.session
     try {
         //check election 
@@ -577,7 +577,7 @@ router.post('/election/file-candidacy-form/', normal_limit, isloggedin, async (r
     }
 })
 // submit candidacy form 
-router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async (req, res) => {
+router.post('/home/election/submit-candidacy-form/', normal_limit, isloggedin, async (req, res) => {
     const {pty, pos, platform} = req.body 
     const {myid, electionID} = req.session
     const data = await user_data(xs(myid))
@@ -667,22 +667,21 @@ router.post('/election/submit-candidacy-form/', normal_limit, isloggedin, async 
     }
 })
 // resubmit candidacy form after rejected by admin 
-router.post('/election/re-submit-candidacy-form/', normal_limit, isloggedin, async (req, res) => {
-    const {id} = req.body 
-    const {electionID} = req.session 
-    
+router.post('/home/election/re-submit-candidacy-form/', normal_limit, isloggedin, async (req, res) => { 
+    const {electionID, myid} = req.session 
+    const {student_id} = await user_data(myid)
     try {
         //check if election & candidate is exist 
         await election.find({
             _id: {$eq: xs(electionID)}, 
-            "candidates.id": {$eq: xs(id)}
+            "candidates.student_id": {$eq: xs(student_id)}
         }, {candidates: 1}).then( async (elec) => {
             //if election & candidate is found 
             if(elec.length !== 0){
                 //update status of candidate to pending 
                 await election.updateOne({
                     _id: {$eq: xs(electionID)}, 
-                    "candidates.id": {$eq: xs(id)}
+                    "candidates.student_id": {$eq: xs(id)}
                 }, {$set: {"candidates.$.status": 'Pending'}}).then( (u) => {
                     return res.send({
                         status: true, 
@@ -705,7 +704,7 @@ router.post('/election/re-submit-candidacy-form/', normal_limit, isloggedin, asy
     }
 })
 // check candidacy form 
-router.post('/election/candidacy-status/', normal_limit, isloggedin, async (req, res) => {
+router.post('/home/election/candidacy-status/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid} = req.session
     const userData = await user_data(myid) 
     try {
@@ -730,8 +729,53 @@ router.post('/election/candidacy-status/', normal_limit, isloggedin, async (req,
         return res.status(500).send()
     }
 })
+//update candidate platform 
+router.post('/home/election/update-candidacy/', normal_limit, isloggedin, async (req, res) => {
+    const {platform} = req.body 
+    const {electionID, myid} = req.session
+    const {_id, student_id} = await user_data(myid)  
+
+    try {
+        //check if the election is exists and voter & candidate is exists 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            voters: {$elemMatch: {id: xs(_id).toString()}}, 
+            candidates: {$elemMatch: {student_id: xs(student_id)}}
+        }, {
+            voters: {$elemMatch: {id: xs(_id).toString()}}, 
+            candidates: {$elemMatch: {student_id: xs(student_id)}}
+        }).then( async (elec) => {
+            if(elec.length > 0){
+                //update candidate platform 
+               await election.updateOne({
+                   _id: {$eq: xs(electionID)}, 
+                   "candidates.student_id": {$eq: xs(student_id)}
+               }, {
+                   $set: {"candidates.$.platform": xs(platform)}
+               }).then( () => {
+                   return res.send({
+                    status: true, 
+                    msg: "Platform successfully updated!"
+                })
+               }).catch( (e) => {
+                   throw new Error(e)
+               })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Candidate / Voter not found"
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
 // delete candidacy form in current user 
-router.post('/election/delete-candidacy/', normal_limit, isloggedin, async (req, res) => {
+router.post('/home/election/delete-candidacy/', normal_limit, isloggedin, async (req, res) => {
     const {candidateID} = req.body
     const {electionID} = req.session
 
@@ -769,7 +813,7 @@ router.post('/election/delete-candidacy/', normal_limit, isloggedin, async (req,
     }
 }) 
 // election status main 
-router.post('/election/status/main/', normal_limit, isloggedin, async (req, res) => {
+router.post('/home/election/status/main/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid} = req.session 
     const userData = await user_data(myid)
     let electionsJoined = []
@@ -825,7 +869,7 @@ router.post('/election/status/main/', normal_limit, isloggedin, async (req, res)
     }
 })
 // election status side menu 
-router.post('/election/status/side-menu/', normal_limit, isloggedin, async (req, res) => {
+router.post('/home/election/status/side-menu/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid} = req.session 
     const userData = await user_data(myid)
     try {
@@ -922,383 +966,6 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
     } catch (e) {
         console.log(e) 
         return res.status(500).send()
-    }
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//get all candidates
-router.post('/candidates', isloggedin, async (req, res) => {
-    const e_id = req.session.election_id
-    const user_id = req.session.myid
-
-    //get all candidates using the election id where is joined
-    await election.find({ _id: e_id }, { candidates: 1, partylist: 1, positions: 1 }, (err, result) => {
-        if (err) {
-            //if theres an error
-            return res.send("")
-        }
-        else {
-            if (result.length != 0) {
-                //if election is found
-                return res.render('election/candidates', { data: result })
-
-            }
-            else {
-                //if election id not found
-                return res.send("")
-            }
-        }
-    })
-})
-//candidates fullname
-router.post('/ca-fullname', isloggedin, async (req, res) => {
-    var { ca_id } = req.body
-    ca_id = xs(ca_id, {
-        whiteList: [],
-        stripIgnoreTag: true,
-        stripIgnoreTagBody: ['script']
-    })
-
-    //get candidates fullname
-    await user.find({ _id: ca_id }, { firstname: 1, middlename: 1, lastname: 1 }, (err, res_fl_name) => {
-        if (err) {
-            return res.send({
-                isvalid: false,
-                msg: "Internal Error"
-            })
-        }
-        else {
-            //if found
-            if (res_fl_name.length != 0) {
-                return res.send({
-                    isvalid: true,
-                    data: res_fl_name
-                })
-            }
-            else {
-                return res.send({
-                    isvalid: false,
-                    msg: "Some Candidates Not Found"
-                })
-            }
-        }
-    })
-})
-//profile comment
-router.post('/profile-comment', isloggedin, async (req, res) => {
-    var { cmt } = req.body
-    const user_id = req.session.myid
-    const visited_id = req.session.visited_id
-    //search if user visited id is exist 
-    await user.find({ _id: visited_id }, { firstname: 1, middlename: 1, lastname: 1 }, (err, isfound) => {
-        user.find({ _id: user_id }, { firstname: 1, middlename: 1, lastname: 1 }, (err, is_found_name) => {
-            if (isfound.length == 1) {
-                //add comment to user data
-                const comment_data = {
-                    cmt_id: uuidv4(),
-                    userid: user_id,
-                    name: is_found_name[0].firstname + ' ' + is_found_name[0].middlename + ' ' + is_found_name[0].lastname,
-                    comment: cmt,
-                    time: Date.now()
-                }
-                user.updateOne({ _id: visited_id }, { $push: { comments: comment_data } }, (err, is_cmt) => {
-                    if (err) {
-                        return res.send({
-                            send: false
-                        })
-                    }
-                    else {
-                        return res.send({
-                            send: true,
-                            msg: cmt
-                        })
-                    }
-                })
-            }
-            else {
-                //user nor found
-                return res.send({
-                    send: false
-                })
-            }
-        })
-    })
-})
-//add bio 
-router.post('/change-bio', isloggedin, async (req, res) => {
-    const { bio } = req.body
-    const userid = req.session.myid
-    if (bio != "") {
-        await user.findByIdAndUpdate({ _id: userid }, { $set: { bio: nl2br(bio) } }, (err, bio_up) => {
-            if (err) {
-                return res.send({
-                    ok: false,
-                    msg: "Internal Error"
-                })
-            }
-            if (!err) {
-                if (bio_up.length != 0) {
-                    return res.send({
-                        ok: true,
-                        msg: 'Bio Saved!'
-                    })
-                }
-                else {
-                    return res.send({
-                        ok: false,
-                        msg: "I can't find you"
-                    })
-                }
-            }
-        })
-    }
-    else {
-
-    }
-})
-//message search user 
-router.post('/search-user', isloggedin, async (req, res) => {
-    var { data } = req.body
-    var invalid = /[°"§%()\[\]{}=\\?´`'#<>|,;.:+_-]+/g
-    const userid = req.session.myid
-    //check if not empty 
-    if (data) {
-        await user.aggregate([
-            {
-                $project: {
-                    "fullname": {
-                        $concat: [
-                            "$firstname", " ", "$middlename", " ", "$lastname"
-                        ]
-                    },
-                    socket_id: 1
-                }
-            },
-            { $match: { fullname: new RegExp('^' + data.replace(invalid, ""), "i") } },
-        ], (err, search) => {
-            if (!err) {
-                res.render('messages/_user_message_search', { search, data, userid: userid })
-            }
-        })
-    }
-})
-//chat user 
-router.post('/chat-user', isloggedin, async (req, res) => {
-    var { data } = req.body
-    const userid = req.session.myid
-    //check if the user want to chat with election bot 
-    if (xs(data) == 'admin') {
-        //check if the user message the bot before 
-        await admin.find({ "messages.id": objectid(userid) }, { messages: 1 }, (err, is_bot_chat) => {
-            if (!err) {
-                if (is_bot_chat.length == 0) {
-                    //if the user did not chat the bot before 
-                    user.find({ _id: userid }, { firstname: 1, middlename: 1, lastname: 1 }, (err, name) => {
-                        if (!err) {
-                            //save user info to admin messages 
-                            const msg = new_msg(userid, name[0].firstname, name[0].middlename, name[0].lastname)
-                            admin.updateOne({ $push: { messages: msg } }, (err, ok) => {
-                                if (!err) {
-                                    req.session.my_ka_chat = 'admin' // userid of bot
-                                    const msg = {
-                                        name: 'Election Bot',
-                                        userid: userid,
-                                        my_ka_chatid: 'admin'
-                                    }
-                                    return res.render('messages/_float_messenger', { msg })
-                                }
-                            })
-                        }
-                    })
-                }
-                else {
-                    req.session.my_ka_chat = 'admin' // userid of bot
-                    const msg = {
-                        name: 'Election Bot',
-                        userid: userid,
-                        my_ka_chatid: 'admin'
-                    }
-                    return res.render('messages/_float_messenger', { msg })
-                }
-            }
-        })
-    }
-    else {
-        //check userid if exist in db 
-        await user.find({ _id: userid }, { _id: 1 }, (err, chat) => {
-            if (err) {
-                return res.send({
-                    ischat: false,
-                    msg: 'Internal Error'
-                })
-            }
-            else {
-                //check if this user is exist in messages feild 
-                user.find({ _id: userid, "messages.id": objectid(data) }, { messages: 1 }, (err, naa) => {
-                    if (err) {
-                        return res.send({
-                            ischat: false,
-                            msg: 'Internal Error'
-                        })
-                    }
-                    else {
-                        //nag chat na sla before
-                        if (naa.length != 0) {
-                            //get previuos chats 
-                            user.find({ _id: { $eq: data } }, { socket_id: 1, firstname: 1, middlename: 1, lastname: 1 }, (err, data_msg) => {
-                                if (err) {
-                                    return res.send({
-                                        ischat: false,
-                                        msg: 'Internal Error'
-                                    })
-                                }
-                                else {
-                                    req.session.my_ka_chat = data_msg[0]._id // userid sa ka chat nya ayeeeiiihhd
-                                    const msg = {
-                                        name: data_msg[0].firstname + ' ' + data_msg[0].middlename + ' ' + data_msg[0].lastname,
-                                        socket: data_msg[0].socket_id,
-                                        userid: userid,
-                                        my_ka_chatid: data
-                                    }
-                                    return res.render('messages/_float_messenger', { msg })
-                                }
-                            })
-                        }
-                        //else wala sila nag chat before
-                        else {
-                            //get the fullname of user they want to chat 
-                            user.find({ _id: { $eq: data } }, { firstname: 1, middlename: 1, lastname: 1 }, (err, fl_name) => {
-                                if (!err) {
-                                    //construct data for chats
-                                    const new_chat = {
-                                        id: fl_name[0]._id,
-                                        fname: fl_name[0].firstname,
-                                        mname: fl_name[0].middlename,
-                                        lname: fl_name[0].lastname,
-                                        created: Date.now(),
-                                        chats: []
-                                    }
-                                    user.updateOne({ _id: userid }, { $push: { messages: new_chat } }, (err, chat_new) => {
-                                        if (err) {
-                                            return res.send({
-                                                ischat: false,
-                                                msg: 'Internal Error'
-                                            })
-                                        }
-                                        else {
-
-                                            user.find({ _id: { $eq: data } }, { socket_id: 1, firstname: 1, middlename: 1, lastname: 1 }, (err, data_msg) => {
-                                                if (err) {
-                                                    return res.send({
-                                                        ischat: false,
-                                                        msg: 'Internal Error'
-                                                    })
-                                                }
-                                                else {
-                                                    req.session.my_ka_chat = data_msg[0]._id // userid sa ka chat nya ayeeeiiihh
-                                                    const msg = {
-                                                        name: data_msg[0].firstname + ' ' + data_msg[0].middlename + ' ' + data_msg[0].lastname,
-                                                        socket: data_msg[0].socket_id,
-                                                        userid: userid,
-                                                        my_ka_chatid: data
-                                                    }
-                                                    return res.render('messages/_float_messenger', { msg })
-                                                }
-                                            })
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                    }
-                })
-            }
-        })
-    }
-})
-//get all chats 
-router.post('/chats', isloggedin, async (req, res) => {
-    const chat_id = req.session.my_ka_chat
-    const userid = req.session.myid
-    if (chat_id == 'admin') {
-        //get all chats 
-        try {
-            await admin.find({ "messages.id": userid }, { messages: 1 }, (err, chats) => {
-                if (!err) {
-                    return res.render('messages/_chats', {
-                        chat: chats[0].messages[0].chats,
-                        fname: 'Bot',
-                        userid: userid
-                    })
-                }
-                else {
-                    return res.send({
-                        ischat: false
-                    })
-                }
-            })
-        } catch (error) {
-            return res.send({
-                ischat: false
-            })
-        }
-    }
-    else {
-        //get all chats 
-        await user.find({ _id: userid, "messages.id": chat_id }, { messages: 1 }, (err, chats) => {
-            if (!err) {
-                for (var i = 0; i < chats[0].messages.length; i++) {
-                    if (chats[0].messages[i].id.toString() == chat_id.toString()) {
-                        fname = chats[0].messages[i].fname
-                        chats = chats[0].messages[i].chats
-                        break
-                    }
-                }
-                return res.render('messages/_chats', {
-                    chat: chats,
-                    fname: fname,
-                    userid: userid
-                })
-            }
-            else {
-                return res.send({
-                    ischat: false
-                })
-            }
-        })
-    }
-})
-//get recent chat id 
-router.post('/chat-id', isloggedin, async (req, res) => {
-    const chat_id = req.session.my_ka_chat
-    if (chat_id) {
-        return res.send({
-            valid: true,
-            id: chat_id
-        })
-    }
-    else {
-        return res.send({
-            valid: false,
-            id: null
-        })
     }
 })
 module.exports = router

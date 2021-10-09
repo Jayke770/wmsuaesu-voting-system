@@ -106,7 +106,7 @@ users_socket.use(sharedsession(appsession, {
 }))
 //admin websocket events
 admin_socket.on('connection', async (socket) => {
-    const {myid, currentElection, user_type, islogin} = socket.handshake.session
+    let {myid, currentElection, user_type, islogin} = socket.handshake.session
     //update admin socket id every connection 
     if(islogin !== "okay" && user_type !== "Admin"){
         socket.disconnect()
@@ -219,10 +219,40 @@ admin_socket.on('connection', async (socket) => {
             elections: await election.countDocuments()
         })
     })
+    //send event to all user in this election that dome information of election is change 
+    socket.on('election-change', async (data) => {
+        //get all voters in this election
+        try {
+            await election.find({
+                _id: {$eq: xs(currentElection)}
+            }, {voters: 1}).then( async (elec) => {
+                if(elec.length > 0){
+                    for(let i = 0; i < elec[0].voters.length; i++){
+                        //get socket id of voter 
+                        await users.find({
+                            student_id: {$eq: xs(elec[0].voters[i].student_id)}
+                        }, {socket_id: 1}).then( (sid) => {
+                            if(sid.length > 0){
+                                if(sid[0].socket_id !== "Offline" || sid[0].socket_id !== "Waiting For Student"){
+                                    users_socket.to(sid[0].socket_id).emit('election-changed', {electionID: xs(data.electionID)})
+                                }
+                            }
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    }
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    })
 })
 //user websocket events
 users_socket.on('connection', async (socket) => {
-    const {myid, electionID, islogin, user_type} = socket.handshake.session 
+    let {myid, electionID, islogin, user_type} = socket.handshake.session 
     const {student_id} = await user_data(myid)
     //update socket id every user connted to server 
     if((islogin && user_type === "Candidate") || islogin && user_type !== "Voter"){

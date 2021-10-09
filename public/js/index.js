@@ -119,7 +119,7 @@ $(document).ready( () => {
             candidacy_form = true 
             $(this).find("button[type='submit']").html(election.loader())
             try {   
-                const req = await fetchtimeout('/election/submit-candidacy-form/', {
+                const req = await fetchtimeout('/home/election/submit-candidacy-form/', {
                     method: 'POST', 
                     headers: {
                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
@@ -195,7 +195,7 @@ $(document).ready( () => {
                             Swal.showLoading() 
                             delete_my_candidacy = true
                             try {
-                                const req = await fetchtimeout('/election/delete-candidacy/', {
+                                const req = await fetchtimeout('/home/election/delete-candidacy/', {
                                     method: 'POST',
                                     headers: {
                                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
@@ -246,8 +246,6 @@ $(document).ready( () => {
     let retry_candidacy = false
     $(".file_candidacy_").delegate(".retry_candidacy", "click", async function (e) {
         e.preventDefault() 
-        let data = new FormData() 
-        data.append("id", $(this).attr("data"))
         if(!retry_candidacy){
             Swal.fire({
                 icon: 'question', 
@@ -269,12 +267,11 @@ $(document).ready( () => {
                             Swal.showLoading()
                             retry_candidacy = true 
                             try {
-                                const req = await fetchtimeout('/election/re-submit-candidacy-form/', {
+                                const req = await fetchtimeout('/home/election/re-submit-candidacy-form/', {
                                     headers: {
                                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
                                     },
                                     method: 'POST', 
-                                    body: data
                                 })
                                 if(req.ok){
                                     const res = await req.json() 
@@ -308,6 +305,94 @@ $(document).ready( () => {
                                     html: e.message, 
                                     backdrop: true, 
                                     allowOutsideClick: false,
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+    //update candidacy 
+    let update_ca = false
+    $(".file_candidacy_").delegate(".update_candidacy", "click", async function (e) {
+        e.preventDefault() 
+        if(!update_ca){
+            Swal.fire({
+                icon: 'info', 
+                title: 'Update Candidacy', 
+                html: 'All Data you have previously submitted cannot be updated, only your platform can be updated',
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showDenyButton: true, 
+                denyButtonText: 'Cancel', 
+                confirmButtonText: 'Update'
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'question', 
+                        title: 'Enter new platform', 
+                        input: 'textarea',
+                        inputPlaceholder: 'Platform',
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showDenyButton: true, 
+                        denyButtonText: 'Cancel', 
+                        confirmButtonText: 'Submit', 
+                        inputValidator: (val) => {
+                            if(val){
+                                Swal.fire({
+                                    icon: 'info', 
+                                    title: 'Updating Platform', 
+                                    html: 'Please wait...', 
+                                    backdrop: true, 
+                                    allowOutsideClick: false, 
+                                    showConfirmButton: false, 
+                                    willOpen: async () => {
+                                        Swal.showLoading()
+                                        update_ca = true
+                                        let data = new FormData() 
+                                        data.append("platform", val)
+                                        try {
+                                            const req = await fetchtimeout('/home/election/update-candidacy/', {
+                                                method: 'POST', 
+                                                headers: {
+                                                    'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                                }, 
+                                                body: data
+                                            })
+                                            if(req.ok){
+                                                update_ca = false
+                                                const res = await req.json() 
+                                                if(res.status){
+                                                    Swal.fire({
+                                                        icon: 'success', 
+                                                        title: res.msg,
+                                                        backdrop: true, 
+                                                        allowOutsideClick: false,  
+                                                    })
+                                                } else {
+                                                    Swal.fire({
+                                                        icon: 'info', 
+                                                        title: res.msg,
+                                                        backdrop: true, 
+                                                        allowOutsideClick: false,  
+                                                    })
+                                                }
+                                            } else {
+                                                throw new Error(`${req.status} ${req.statusText}`)
+                                            }
+                                        } catch (e) {
+                                            update_ca = false
+                                            Swal.fire({
+                                                icon: 'error', 
+                                                title: 'Connection Error', 
+                                                html: e.message, 
+                                                backdrop: true, 
+                                                allowOutsideClick: false,  
+                                            })
+                                        }
+                                    }
                                 })
                             }
                         }
@@ -508,7 +593,7 @@ $(document).ready( () => {
     const election = {
         file_candidacy: async () => {
             try {
-                const req = await fetchtimeout('/election/file-candidacy-form/', {
+                const req = await fetchtimeout('/home/election/file-candidacy-form/', {
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
@@ -539,7 +624,7 @@ $(document).ready( () => {
         }, 
         candidacy_status: async () => {
             try {
-                const req = await fetchtimeout('/election/candidacy-status/', {
+                const req = await fetchtimeout('/home/election/candidacy-status/', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
@@ -577,7 +662,7 @@ $(document).ready( () => {
         }, 
         status: async () => {
             try {
-                const req = await fetchtimeout('/election/status/main/', {
+                const req = await fetchtimeout('/home/election/status/main/', {
                     method: 'POST', 
                     headers: {
                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
@@ -606,7 +691,7 @@ $(document).ready( () => {
         }, 
         status_menu: async () => {
             try {
-                const req = await fetchtimeout('/election/status/side-menu/', {
+                const req = await fetchtimeout('/home/election/status/side-menu/', {
                     method: 'POST', 
                     headers: {
                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")

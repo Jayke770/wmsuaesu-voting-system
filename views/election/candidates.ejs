@@ -22,7 +22,7 @@
     }
 %> 
 <% if(election.candidates.length !== 0) { %>
-    <div class="candidates h-screen pt-[64px] w-full">
+    <div class="candidates h-screen pt-[64px] w-full hidden">
         <div class="h-full w-full flex flex-col gap-3 pb-2 overflow-y-auto">
             <% for (let i = 0; i < election.positions.length; i++) { %>
                 <div class="flex flex-col w-full">
@@ -44,16 +44,18 @@
                                                     <div class="w-full flex flex-col gap-1 py-2 px-4">
                                                         <span class="dark:text-gray-300 text-xl font-medium"><%- election.candidates[c].fullname %></span>
                                                         <div class="w-full flex flex-row items-center gap-2">
-                                                            <i class="ic text-lg dark:text-amber-600">
-                                                                <i class="fad fa-info-circle"></i>
-                                                            </i>
-                                                            <span class="dark:text-gray-300/90 text-base"><%- `Running for ${Data.positions(election.candidates[c].position)} at ${Data.partylist(election.candidates[c].partylist)} Partylist` %></span>
+                                                            <span class="dark:text-gray-300/90 text-sm"><%- `Running for ${Data.positions(election.candidates[c].position)} at ${Data.partylist(election.candidates[c].partylist)} Partylist` %></span>
                                                         </div>
                                                     </div>
                                                     <div class="h-[calc(100%-76px)]">
                                                         <div class="h-40 overflow-y-auto px-3 py-2 break-words dark:text-gray-300/80"><%- election.candidates[c].platform %></div>
-                                                        <div class="px-3 pb-1 pt-4 h-[calc(100%-144px)] grid grid-cols-3 gap-2 justify-start items-end">
-                                                            <a href="#" class="rpl col-span-3 w-full transition-all rounded-md cursor-pointer dark:bg-purple-800 dark:hover:bg-purple-700 dark:text-gray-300 text-bluegray-900 focus:outline-none dark:focus:ring-2 dark:focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 font-normal px-3 py-1.5 text-center">View Profile</a>
+                                                        <div class="px-3 pb-1 pt-4 h-[calc(100%-144px)] flex flex-row gap-2 justify-start items-end">
+                                                            <a data="<%- election.candidates[c].student_id %>" class="rpl py-2 px-3 cursor-pointer dark:text-amber-600 dark:focus:text-amber-500 transition-all text-2xl rounded-full">
+                                                                <i class="fad fa-eye"></i>
+                                                            </a>
+                                                            <a data="<%- election.candidates[c].student_id %>" class="rpl py-2 px-3 cursor-pointer dark:text-rose-600 dark:focus:text-rose-500 transition-all text-2xl rounded-full">
+                                                                <i class="fad fa-heart-circle"></i>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>

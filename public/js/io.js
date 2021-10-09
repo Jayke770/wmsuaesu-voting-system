@@ -36,57 +36,8 @@ socket.on('connect', (data) => {
 socket.on('voter-accepted', async (data) => {
     alertify.notify('Voter request accepted')
     if($("html").attr("joined") === "true"){
-        try {
-            const req = await fetchtimeout('/election/status/main/', {
-                method: 'POST', 
-                headers: {
-                    'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                }
-            })
-            if(req.ok){
-                const res = await req.text() 
-                $(".election__").html('')
-                $(".election__").html(res)
-            } else {
-                throw new Error(`${req.status} ${req.statusText}`)
-            }
-        } catch (e) {
-            Snackbar.show({ 
-                text: `
-                    <div class="flex justify-center items-center gap-2"> 
-                        <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
-                        <span>Failed to get election status</span>
-                    </div>
-                `, 
-                duration: 3000,
-                showAction: false
-            })
-        }
-        try {
-            const req = await fetchtimeout('/election/status/side-menu/', {
-                method: 'POST', 
-                headers: {
-                    'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                }
-            })
-            if(req.ok){
-                const res = await req.text() 
-                $(".e_menu").html(res)
-            } else {
-                throw new Error(`${req.status} ${req.statusText}`)
-            }
-        } catch (e) {
-            Snackbar.show({ 
-                text: `
-                    <div class="flex justify-center items-center gap-2"> 
-                        <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
-                        <span>Failed to get election status</span>
-                    </div>
-                `, 
-                duration: 3000,
-                showAction: false
-            })
-        }
+        await election.status() 
+        await election.status_menu()
     } else {
         socket.emit('election-status', {electionID: data.electionID}, (res) => {
             if (res.status) {
@@ -137,7 +88,7 @@ socket.on('voter-accepted', async (data) => {
 socket.on('candidacy-accepted', async (data) => {
     alertify.notify("Candidacy has been accepted")
     try {
-        const req = await fetchtimeout('/election/candidacy-status/', {
+        const req = await fetchtimeout('/home/election/candidacy-status/', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
@@ -234,10 +185,21 @@ socket.on("new-election-ended", async (data) => {
         await election.status_menu()
     }
 })
+//election changed 
+socket.on("election-changed", async (data) => {
+    const isjoined = $("html").attr("joined")
+    if(isjoined === "false"){
+        await election.status()
+    } else {
+        if($(".election__").text().trim() !== ""){
+            await election.status()
+        }
+    }
+})
 const election = {
     status: async () => {
         try {
-            const req = await fetchtimeout('/election/status/main/', {
+            const req = await fetchtimeout('/home/election/status/main/', {
                 method: 'POST', 
                 headers: {
                     'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
@@ -266,7 +228,7 @@ const election = {
     }, 
     status_menu: async () => {
         try {
-            const req = await fetchtimeout('/election/status/side-menu/', {
+            const req = await fetchtimeout('/home/election/status/side-menu/', {
                 method: 'POST', 
                 headers: {
                     'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
