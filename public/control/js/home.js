@@ -6,21 +6,38 @@ $(document).ready(() => {
         })
     }, 1000)
     //open nav
-    $(".open_nav").click(function () {
-        const nav = $(".nav")
-        nav.addClass(nav.attr("animate-in"))
-        nav.removeClass("xl:hidden")
-        setTimeout(() => {
-            nav.removeClass(nav.attr("animate-in"))
+    $(".open_nav").click( () => {
+        const parent = $(".nav_")
+        const child = $(".nav_main")
+        child.addClass(child.attr("animate-in"))
+        parent.removeClass("hidden")
+        parent.addClass("flex")
+        setTimeout( () => {
+            child.removeClass(child.attr("animate-in"))
         }, 300)
     })
-    $(".close_nav").click(function () {
-        const nav = $(".nav")
-        nav.addClass(nav.attr("animate-out"))
-        setTimeout(() => {
-            nav.addClass("xl:hidden")
-            nav.removeClass(nav.attr("animate-out"))
+    //close nav
+    $(".close_nav").click( () => {
+        const parent = $(".nav_")
+        const child = $(".nav_main")
+        child.addClass(child.attr("animate-out"))
+        setTimeout( () => {
+            parent.removeClass("flex")
+            parent.addClass("hidden")
+            child.removeClass(child.attr("animate-out"))
         }, 300)
+    })
+    $(".nav_").click( function (e) {
+        if($(e.target).hasClass("nav_")){
+            const parent = $(".nav_")
+            const child = $(".nav_main")
+            child.addClass(child.attr("animate-out"))
+            setTimeout( () => {
+                parent.removeClass("flex")
+                parent.addClass("hidden")
+                child.removeClass(child.attr("animate-out"))
+            }, 300)
+        }
     })
     //get all elections in every 10 seconds 
     setInterval( () => {

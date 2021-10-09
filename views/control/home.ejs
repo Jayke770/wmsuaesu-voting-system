@@ -28,59 +28,72 @@
     </div>
     <div class="body_main_content hidden animate__animated animate__fadeIn ms-500 transition-all">
         <div class="main_admin">
-            <div class="nav_main dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0  z-10">
-                <div class="w-full flex flex-row">
-                    <p class="flex-[20%] w-full text-purple-800 dark:text-gray-200 text-xl p-4 font-bold mt-[1px]">Admin Dashboard</p>
-                    <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300"  class="nav transition-all xl:bg-gray-200 xl:dark:bg-darkBlue-secondary md:shadow-xl flex w-full justify-end p-[10px] xl:shadow-lg xl:fixed xl:w-96 md:w-[calc(100%-50px)] xl:right-0 xl:h-screen xl:flex-col xl:justify-start xl:hidden">
-                        <div class="xl:flex justify-end hidden">
-                            <i class="close_nav text-red-600 mr-3 mt-2 dark:text-gray-200 text-2xl cursor-pointer">
-                                <i class="fa fa-times-circle"></i>
-                            </i>
+            <div class="dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0  z-10">
+                <div class="w-full">
+                    <div class="float-left flex w-full justify-center items-center">
+                        <a class="open_nav rpl rounded-lg transition-all py-2.5 px-3 text-gray-900 dark:text-gray-200 text-lg cursor-pointer ml-1">
+                            <i class="fas fa-bars"></i>
+                        </a>
+                        <p class="w-full text-purple-800 dark:text-purple-500 text-xl p-4 pl-1 ml-2 font-bold">Admin Dashboard</p>
+                        <div class="nav_ hidden w-full h-full bg-darkBlue-primary/50 fixed top-0">
+                            <div animate-in="animate__animated animate__fadeInLeft ms-300" animate-out="animate__animated animate__fadeOutLeft ms-300" class="nav_main flex flex-col w-96 sm:w-[calc(100%-50px)] h-full fixed dark:bg-darkBlue-secondary shadow-xl transition-all">
+                                <div class="container dark_border_b ">
+                                    <i class="close_nav rpl py-2 px-3 rounded-full float-right text-red-600 mr-1 mt-1 dark:text-rose-600 text-2xl cursor-pointer">
+                                        <i class="fad fa-times-circle"></i>
+                                    </i>
+                                    <p class="w-full text-purple-800 dark:text-purple-500 text-xl p-4 pl-2 font-bold">Admin Dashboard</p>
+                                </div>
+                                <div class="flex flex-col h-[calc(100%-60px)]">
+                                    <div class="flex-[90%] flex flex-col gap-2 py-2">
+                                        <a href="control/" class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                            <i class="dark:text-teal-500/50 w-9 text-xl">
+                                                <i class="fad fa-home"></i>
+                                            </i>
+                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Home</span>
+                                        </a>
+                                        <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                            <i class="dark:text-amber-500/50 w-9 text-xl">
+                                                <i class="fad fa-users"></i>
+                                            </i>
+                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Users</span>
+                                        </a>
+                                        <a href="elections/" class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                            <i class="dark:text-blue-500/50 w-9 text-xl">
+                                                <i class="fad fa-ballot-check "></i>
+                                            </i>
+                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Manage Elections</span>
+                                        </a>
+                                        <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                            <i class="dark:text-yellow-600 w-9 text-xl">
+                                                <i class="fad fa-bell"></i>
+                                            </i>
+                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Notifications</span>
+                                        </a>
+                                        <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                            <i class="dark:text-green-600 w-9 text-xl">
+                                                <i class="fad fa-comment-lines"></i>
+                                            </i>
+                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Messages</span>
+                                        </a>
+                                        <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                            <i class="dark:text-gray-500/50 w-9 text-xl">
+                                                <i class="fad fa-cog"></i>
+                                            </i>
+                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Settings</span>
+                                        </a>
+                                        <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                            <i class="dark:text-orange-600 w-9 text-xl">
+                                                <i class="fad fa-palette"></i>
+                                            </i>
+                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Themes</span>
+                                        </a>
+                                    </div>
+                                    <div class="flex-[10%] flex justify-center items-end">
+                                        <p class="realtime-time mb-1 dark:text-purple-600 font-medium">Date & Time</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <a class="dark_mode rpl rounded-lg transition-all p-[8px] px-3 text-gray-900 dark:text-yellow-300 text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:mt-2">
-                            <i class="fa fa-sun"></i> 
-                        </a>
-                        <a class="list_btn hover:bg-purple-300 font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] px-3 text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" href="/control">
-                            <i class="hidden xl:block xl:float-right xl:text-green-500">
-                                <i class="fas fa-home text-xl"></i>
-                            </i>
-                            <span class="ml-[1px] transition-all">Home</span>
-                        </a>
-                        <a class="list_btn hover:bg-purple-300 font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] px-3 text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" href="voters/">
-                            <i class="hidden xl:block xl:float-right xl:text-pink-500">
-                                <i class="fas fa-users text-xl"></i>
-                            </i>
-                            <span class="ml-[1px] transition-all">Voters</span>
-                        </a>
-                        <a href="elections/" class="hover:bg-purple-300 font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] px-3 text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl">
-                           <i class="hidden xl:block xl:float-right xl:text-blue-500">
-                              <i class="fas fa-ballot-check text-xl"></i> 
-                           </i>
-                           <span class="ml-[1px] transition-all">Manage Elections</span>
-                        </a>
-                        <a class="list_btn hover:bg-purple-300 font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] px-3 text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" data="settings">
-                            <i class="hidden xl:block xl:float-right xl:text-indigo-500">
-                                <i class="fas fa-cog text-xl"></i>
-                            </i>
-                            <span class="ml-[1px] transition-all">Settings</span>
-                        </a>
-                        <a class="list_btn hover:bg-purple-300 font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] px-3 text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" data="settings">
-                            <i class="hidden xl:block xl:float-right xl:text-violet-500">
-                               <i class="fas fa-bell text-xl"></i> 
-                            </i>
-                            <span class="ml-[1px] transition-all">Notifications</span>
-                        </a>
-                        <a class="list_btn hover:bg-purple-300 font-normal rounded-lg transition-all dark:hover:bg-[#253547] p-[8px] px-3 text-gray-900 dark:text-gray-300 text-lg cursor-pointer mr-2 my:mr-0 my:mt-2 my:hover:tracking-wider rpl" data="settings">
-                            <i class="hidden xl:block xl:float-right xl:text-lime-500">
-                                <i class="fas fa-comment-lines text-xl"></i>
-                            </i>
-                            <span class="ml-[1px] transition-all">Messages</span>
-                        </a>
-                        <a class="ignore list_btn rounded-lg transition-all my:mt-5 my:text-center bg-red-700 dark:bg-red-900 dark:hover:bg-red-700 text-gray-100 py-[8px] px-[15px] text-lg cursor-pointer mr-1 last:mr-0 my:mr-0 my:hover:tracking-wider rpl" href="../../logout"><i class="far fa-sign-out-alt"></i></a>
-                    </div>
-                    <div class="hidden xl:block transition-all p-[10px]">
-                        <div class="open_nav rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-lg cursor-pointer mr-1 last:mr-0">
-                            <i class="fas fa-bars"></i></div>
                     </div>
                 </div>
             </div>
@@ -91,7 +104,6 @@
                 <div>fafaf</div>
             </div>
         </div>
-        <div class="loader container transition-all"></div>
     </div>
 </div>
     <!-- end main -->
@@ -107,6 +119,7 @@
         <script src="/js/audio_file.js"></script>
         <script src="/js/audio.js"></script>
         <script src="/js/fetch.js"></script>
+        <script src="/js/time.js"></script>
         <script>
             $(".dark_mode ").click(function() {
                 const theme = localStorage.getItem('theme')
@@ -133,18 +146,6 @@
                 color: "#a5dc86",
                 multi: false,
                 duration: 0.7,
-                rate: function(pxPerSecond) {
-                    return pxPerSecond;
-                },
-                easing: 'linear'
-            })
-            $.ripple(".rpl-h", {
-                debug: false,
-                on: 'mouseover',
-                opacity: 0.3,
-                color: "auto",
-                multi: false,
-                duration: 0.5,
                 rate: function(pxPerSecond) {
                     return pxPerSecond;
                 },
