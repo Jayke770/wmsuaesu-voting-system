@@ -2662,7 +2662,7 @@ adminrouter.get('/control/users/', limit, isadmin, async (req, res) => {
 adminrouter.post('/control/users/all-users/', limit, isadmin, async (req, res) => {
     try {
         //gte all users in users collection 
-        await user.find({}, {password: 0}).then( async (users) => {
+        await user.find({}, {password: 0}).sort({lastname: 1}).then( async (users) => {
             return res.render('control/forms/users-all', {
                 users: users,
                 data: {
@@ -2749,7 +2749,7 @@ adminrouter.post('/control/users/search-users/', limit, isadmin, async (req, res
     let users_res = []
     try {
         //get all users 
-        await user.find({}, {passcode: 0}).then( async (users) => {
+        await user.find({}, {passcode: 0}).sort({lastname: 1}).then( async (users) => {
             if(users.length > 0){
                 for(let i = 0; i < users.length; i++){
                     const fullname = `${users[i].firstname} ${users[i].middlename} ${users[i].lastname}`
@@ -2787,7 +2787,7 @@ adminrouter.post('/control/users/sort-users/', limit, isadmin, async (req, res) 
         if(sort_val.type === "course"){
             await user.find({
                 course: {$eq: xs(sort_val.id)}
-            }, {passcode: 0}).then( async (users) => {
+            }, {passcode: 0}).sort({lastname: 1}).then( async (users) => {
                 return res.render('control/forms/users-all', {
                     users: users,
                     data: {
@@ -2801,7 +2801,7 @@ adminrouter.post('/control/users/sort-users/', limit, isadmin, async (req, res) 
         } else if(sort_val.type === "year"){
             await user.find({
                 year: {$eq: xs(sort_val.id)}
-            }, {passcode: 0}).then( async (users) => {
+            }, {passcode: 0}).sort({lastname: 1}).then( async (users) => {
                 return res.render('control/forms/users-all', {
                     users: users,
                     data: {
@@ -2819,7 +2819,7 @@ adminrouter.post('/control/users/sort-users/', limit, isadmin, async (req, res) 
                         {socket_id: {$ne: "Waiting For Student"}},
                         {socket_id: {$ne: "Offline"}}
                     ]
-                }, {passcode: 0}).then( async (users) => {
+                }, {passcode: 0}).sort({lastname: 1}).then( async (users) => {
                     return res.render('control/forms/users-all', {
                         users: users,
                         data: {
@@ -2836,7 +2836,7 @@ adminrouter.post('/control/users/sort-users/', limit, isadmin, async (req, res) 
                         {socket_id: {$eq: "Waiting For Student"}},
                         {socket_id: {$eq: "Offline"}}
                     ]
-                }, {passcode: 0}).then( async (users) => {
+                }, {passcode: 0}).sort({lastname: 1}).then( async (users) => {
                     return res.render('control/forms/users-all', {
                         users: users,
                         data: {
