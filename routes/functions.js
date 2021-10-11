@@ -274,7 +274,7 @@ module.exports = {
                         //if election is not started and it is the time to start
                         if(elec[i].status === "Not Started" && e_start && !e_end){
                             //start election 
-                            await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Started"}}).then( (u) => {
+                            await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Started"}}).then( () => {
                                 console.log(`Election with ID ${elec[i]._id} has been Started\nElection Title : ${elec[i].election_title}`)
                                 res = {electionID: elec[i]._id, status: true, type: "Started"}
                             }).catch( (e) => {
@@ -294,11 +294,29 @@ module.exports = {
                         //if election is pending for deleetion 
                         if(elec[i].status === "Pending for deletion" && e_deletion && e_start && e_end){
                             //delete election 
-                            await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( (d) => {
-                                console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
-                                res = {electionID: elec[i]._id, status: true, type: "Deleted"}
-                            }).catch( (e) => {
-                                throw new Error(e)
+                            //get all voters student_id 
+                            await election.find({ _id: {$eq: objectid(xs(elec[i]._id))}}, {voters: 1}).then( async (voters) => {
+                                if(voters.length > 0){
+                                    for(let i = 0; i < voters.length; i++){
+                                        //remove the current election id in the user document 
+                                        await user.updateOne({student_id: {$eq: xs(voters[i].student_id)}}, {$pull: {elections: xs(elec[i]._id)}})
+                                    }
+                                    await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( () => { 
+                                        //delete this election
+                                        console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
+                                        res = {electionID: elec[i]._id, status: true, type: "Deleted"}
+                                    }).catch( (e) => {
+                                        throw new Error(e)
+                                    })
+                                } else {
+                                    await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( () => { 
+                                        //delete this election
+                                        console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
+                                        res = {electionID: elec[i]._id, status: true, type: "Deleted"}
+                                    }).catch( (e) => {
+                                        throw new Error(e)
+                                    })
+                                }
                             })
                         }
                     }
