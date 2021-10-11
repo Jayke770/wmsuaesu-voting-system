@@ -34,7 +34,8 @@
     <% } %>
 </div>
  <div class="preload">
-     <script>
+    <script>
+    $(document).ready( function () {
         setTimeout(() => {
             $(".election_list").find(".skeleton").each(function () {
                 if (!$(this).hasClass("time")) {
@@ -42,12 +43,8 @@
                     $(this).removeClass("skeleton")
                 }
             })
-            $(".election_list").find(".skeleton-image").each(function () {
-                $(this).attr("src", $(this).attr("data-src"))
-                $(this).attr("data-src", '')
-                $(this).removeClass("skeleton-image")
-            })
             $(".election_list").find(".preload").remove()
         }, 1000)
-     </script>
+    })
+    </script>
  </div>

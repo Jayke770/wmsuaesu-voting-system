@@ -20,7 +20,7 @@
         }
     </script>
 </head>
-<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased overflow-hidden">
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
     <!-- lazy progressbar -->
     <%- include('../lazy/loading-progress') %>
     <div class="loading flex justify-center w-screen h-screen items-center">
@@ -28,34 +28,34 @@
     </div>
     <div class="body_main_content hidden animate__animated animate__fadeIn ms-500 transition-all">
         <div class="main_admin">
-            <div class="dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0  z-10">
-                <div class="w-full">
-                    <div class="float-left flex w-full justify-center items-center">
+            <div class="dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0 z-10">
+                <div class="w-full grid grid-cols-4">
+                    <div class="col-span-3 flex w-full justify-start items-center">
                         <a class="open_nav rpl rounded-lg transition-all py-2.5 px-3 text-gray-900 dark:text-gray-200 text-lg cursor-pointer ml-1">
                             <i class="fas fa-bars"></i>
                         </a>
-                        <p class="w-full text-purple-800 dark:text-purple-500 text-xl p-4 pl-1 ml-2 font-bold">Admin Dashboard</p>
+                        <p class="w-full text-purple-800 dark:text-purple-500 text-xl p-4 pl-1 ml-2 font-bold xxsm:hidden">Admin Dashboard</p>
                         <div class="nav_ hidden w-full h-full bg-darkBlue-primary/50 fixed top-0">
                             <div animate-in="animate__animated animate__fadeInLeft ms-300" animate-out="animate__animated animate__fadeOutLeft ms-300" class="nav_main flex flex-col w-96 sm:w-[calc(100%-50px)] h-full fixed dark:bg-darkBlue-secondary shadow-xl transition-all">
                                 <div class="container dark_border_b ">
                                     <i class="close_nav rpl py-2 px-3 rounded-full float-right text-red-600 mr-1 mt-1 dark:text-rose-600 text-2xl cursor-pointer">
                                         <i class="fad fa-times-circle"></i>
                                     </i>
-                                    <p class="w-full text-purple-800 dark:text-purple-500 text-xl p-4 pl-2 font-bold">Admin Dashboard</p>
+                                    <p class="w-full text-purple-800 dark:text-purple-500 text-xl p-4 pl-3 font-bold">Admin Dashboard</p>
                                 </div>
                                 <div class="flex flex-col h-[calc(100%-60px)]">
                                     <div class="flex-[90%] flex flex-col gap-2 py-2">
-                                        <a href="control/" class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                        <a href="/control/" class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                                             <i class="dark:text-teal-500/50 w-9 text-xl">
                                                 <i class="fad fa-home"></i>
                                             </i>
-                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Home</span>
+                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base ">Home</span>
                                         </a>
-                                        <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                        <a href="users/" class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                                             <i class="dark:text-amber-500/50 w-9 text-xl">
                                                 <i class="fad fa-users"></i>
                                             </i>
-                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Users</span>
+                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Manage Users</span>
                                         </a>
                                         <a href="elections/" class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                                             <i class="dark:text-blue-500/50 w-9 text-xl">
@@ -76,16 +76,16 @@
                                             <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Messages</span>
                                         </a>
                                         <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
-                                            <i class="dark:text-gray-500/50 w-9 text-xl">
-                                                <i class="fad fa-cog"></i>
-                                            </i>
-                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Settings</span>
-                                        </a>
-                                        <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                                             <i class="dark:text-orange-600 w-9 text-xl">
                                                 <i class="fad fa-palette"></i>
                                             </i>
                                             <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Themes</span>
+                                        </a>
+                                        <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                            <i class="dark:text-gray-500/50 w-9 text-xl">
+                                                <i class="fad fa-cog"></i>
+                                            </i>
+                                            <span class="dark:text-gray-300 text-purple-800 font-medium text-base">Settings</span>
                                         </a>
                                     </div>
                                     <div class="flex-[10%] flex justify-center items-end">
@@ -95,20 +95,56 @@
                             </div>
                         </div>
                     </div>
+                    <div class="w-full flex items-center justify-end">
+                        <div class="relative px-2">
+                            <a class="open_menu_small rpl transition-all rounded-md flex flex-row gap-2 items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                <i class="dark:text-gray-300 text-xl">
+                                    <i class="fad fa-chevron-circle-down"></i>
+                                </i>
+                            </a>
+                            <div style="display: none;" class="menu_small w-80 h-auto sm:w-[calc(100vw-20px)] transition-all top-[120%] right-2.5 absolute rounded-b-md shadow-xl dark_border dark:bg-darkBlue-secondary">
+                                <div class="flex flex-col w-full justify-center items-center dark_border_b">
+                                    <div class="pt-3 pb-1 px-2">
+                                        <img class="object-cover w-32 h-32 rounded-full" alt="wmsu-logo" src="/assets/logo.png">
+                                    </div>
+                                    <p class="font-medium dark:text-gray-300 py-3 tracking-wider">Admin</p>
+                                </div>
+                                <div class="flex flex-col p-2">
+                                    <a href="/control/logout/" class="rpl dark:bg-bluegray-800 rounded-lg cursor-pointer flex flex-row items-center gap-2 shadow-xl px-2 py-0.5">
+                                        <i class="ic rounded-full dark:text-rose-500/80 text-2xl">
+                                            <i class="fad fa-sign-out-alt"></i>
+                                        </i>
+                                        <span class="dark:text-gray-300">Sign out</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="mt-16">
-                <div class="elections w-full h-[calc(100vh-71px)] overflow-y-auto"></div>
-            </div>
-            <div class="mt-16">
-                <div>fafaf</div>
+                <div class="elections w-full">
+                    <div class="p-1 py-2 transition-all grid grid-cols-3 xl:grid-cols-2 md:grid-cols-none gap-3">
+                        <% for(let i = 0; i < 20; i++){ %> 
+                            <div style="animation-delay: <%- i * .250 %>s;" class="animate__animated animate__fadeInUp ms-500 w-full dark:bg-darkBlue-secondary shadow-md bg-gray-100  px-4 rounded-lg transition-all">
+                                <div class="py-3">
+                                    <div class="flex flex-row gap-3 items-center justify-center float-right skeleton w-3/5"></div>
+                                    <span class="p-2 dark:text-gray-400 text-purple-700 text-xl sm:text-base"></span>
+                                </div>
+                                <div class="container p-1 dark_border_b pb-3 skeleton-image h-48 rounded-md"></div>
+                                <div class="flex flex-row p-2 justify-center items-center">
+                                    <a class="group cursor-pointer dark:text-gray-300 p-2 transition-all rpl rounded-md px-3 hover:text-purple-600 dark:hover:text-purple-500 skeleton w-36"></a>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
     <!-- end main -->
         <script src="/control/js/home.js "></script>
-        <script src="/js/scroll_div.js "></script>
         <script src="/js/time.js "></script>
         <script src="/js/avatar.js "></script>
         <script src="/js/theme.js "></script>
@@ -121,29 +157,11 @@
         <script src="/js/fetch.js"></script>
         <script src="/js/time.js"></script>
         <script>
-            $(".dark_mode ").click(function() {
-                const theme = localStorage.getItem('theme')
-                const sun = '<i class="fa fa-sun "></i>'
-                const moon = '<i class="fa fa-moon "></i>'
-                if (theme == null || theme == "default") {
-                    $(this).html(moon)
-                    localStorage.setItem('theme', 'dark')
-                    $('html').removeClass("default ")
-                    $('html').addClass("dark ")
-                    $(".theme-color").attr("content", "#161b22")
-                } else {
-                    $(this).html(sun)
-                    localStorage.setItem('theme', 'default')
-                    $('html').addClass("default")
-                    $('html').removeClass("dark")
-                    $(".theme-color").attr("content", "#6b21a8")
-                }
-            })
             $.ripple(".rpl", {
                 debug: false,
                 on: 'mousedown',
                 opacity: 0.3,
-                color: "#a5dc86",
+                color: "auto",
                 multi: false,
                 duration: 0.7,
                 rate: function(pxPerSecond) {

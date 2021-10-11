@@ -1,19 +1,29 @@
+<% 
+    const data = {
+        course: (id) => {
+            for(let i = 0; i < course.length; i++){
+                if(id === course[i].id){
+                    return course[i].type
+                }
+            }
+        },
+        year: (id) => {
+            for(let i = 0; i < year.length; i++){
+                if(id === year[i].id){
+                    return year[i].type
+                }
+            }
+        }
+    }
+%>
 <% if(id.length != 0) {
     for( let i = 0; i < id.length; i++ ) {  %>
        <div style="animation-delay: <%- i * .150 %>s;" data="<%- id[i].id %>" class="voter_ids w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
            <div class="w-full">
                <span class="st_id font-normal text-base dark:text-gray-300"><%- id[i].student_id %></span>
                <div class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">
-                    <% for(let c = 0; c < course.length; c++){ 
-                        if(course[c].id === id[i].course){ %>
-                            <span><%- course[c].type  %></span>
-                        <% break }
-                    } %>
-                    <% for(let y = 0; y < course.length; y++){ 
-                        if(year[y].id === id[i].year){ %>
-                            <span><%- year[y].type  %></span>
-                        <% break }
-                    } %>
+                   <span><%- data.course(id[i].course) %></span>
+                   <span><%- data.year(id[i].year) %></span>
                </div>
            </div>
            <div class="mt-2 p-2">

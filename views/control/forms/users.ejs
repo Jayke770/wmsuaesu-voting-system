@@ -1,29 +1,164 @@
-<% if(users.length == 0 ) { %> 
-    <div class="text-xl font-medium text-gray-200">Nothing to fetch</div>
-<% } else { 
-    for(var i = 0; i < users.length; i++){ %>
-        <div class="wmsu_box dash_u_card animate__animated animate__zoomIn <%= users[i]._id %>">
-            <div class="main_dash_u">
-                <table width="100%">
-                    <tr>
-                        <td width="10px"><img class="user_img" alt="user_image" src="/assets/logo.png"></td>
-                        <td>
-                            <span class="u_name">
-                                <%= users[i].firstname + ' ' + users[i].middlename + ' ' + users[i].lastname  %>
-                            </span>
-                        </td>
-                        <td>
-                            <% if(users[i].socket_id == "Offline") { %> 
-                                <div class="badge badge_offline"></div>
-                            <% } else if(users[i].socket_id != "Offline") { %>
-                                <div class="badge"></div>
-                            <% } else { %>
-                                <div class="badge badge_wait"></div>
-                            <% } %>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+<!DOCTYPE html>
+<html lang="en" class="font-sans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" class="theme-color" content="#6b21a8">
+    <meta name="csrf-token" content="<%- csrf %>">
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
+    <title>Users</title>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <%- include('../cdn/_home') %>
+    <script>
+        document.onreadystatechange = () => {
+            setTimeout( () => {
+                $(".loading").remove()
+            }, 500)
+        }
+    </script>
+</head>
+
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <!-- Laxy progress bar -->
+    <%- include('../../lazy/loading-progress') %>
+    <!-- on ready state -->
+    <div class="loading flex justify-center w-screen h-screen items-center">
+        <%- include('../../lazy/loading') %>
+    </div>
+    <!-- Navigation -->
+    <div class="w-full z-10 bg-gray-100 dark:bg-darkBlue-secondary shadow-lg grid grid-cols-2 fixed top-0 p-2 px-0 transition-all">
+        <div class="flex justify-start items-center">
+            <a href="/control" class="rpl ml-2 transition-all dark:text-gray-200 text-bluegray-600 text-2xl px-2 cursor-pointer mr-2">
+                <i class="fa fa-arrow-circle-left"></i>
+            </a>
+            <span class="font-semibold text-purple-800 dark:text-purple-500 text-xl">Users</span>
         </div>
-    <% } %>
-<% } %>
+        <div class="flex items-center justify-end">
+            <a class="add_user_open transition-all dark:hover:bg-bluegray-800 flex flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
+                <span class="text-purple-700 dark:text-purple-500">
+                    <i class="fas fa-plus-circle"></i>
+                </span>
+                <span class="sm:hidden text-[17px] dark:text-purple-500 text-purple-700 font-normal">Add User</span>
+            </a>
+            <a class="rpl mr-3 px-3 py-2 cursor-pointer text-xl rounded-md dark:text-gray-200">
+                <i class="fas fa-bars"></i>
+            </a>
+        </div>
+    </div>
+    <!-- Add user -->
+    <div class="add_user fixed top-0 hidden justify-end items-center p-2 dark:bg-darkBlue-primary/50 w-full h-full z-20">
+        <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="add_user_main dark_border rounded-md w-96 h-full dark:bg-darkBlue-secondary">
+            <div class="w-full dark_border_b flex justify-center items-center py-4">
+                <p class="text-xl font-medium sm:text-lg text-purple-800 dark:text-purple-500 dark:font-semibold">Add User Account</p>
+            </div>
+            <form class="add_user_form h-[calc(100%-61px)] overflow-y-auto">
+                <div class="flex flex-col gap-2 py-2 px-3">
+                    <div class="container transition-all">
+                        <label for="sid" class=" dark:text-gray-300/80">Student ID</label>
+                        <input autocomplete="off" autocapitalize="characters" name="sid" placeholder="Student ID" type="text" class="dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
+                    </div>
+                    <div class="container transition-all grid grid-cols-2 gap-2">
+                        <div>
+                            <label for="fname" class=" dark:text-gray-300/80">Firstname</label>
+                            <input autocomplete="off" name="fname" placeholder="Firstname" type="text" class="dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
+                        </div>
+                        <div>
+                            <label for="mname" class=" dark:text-gray-300/80">Middlename</label>
+                            <input autocomplete="off" name="mname" placeholder="Middlename" type="text" class="dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
+                        </div>
+                    </div>
+                    <div class="flex container transition-all flex-col">
+                        <label for="lname" class=" dark:text-gray-300/80">Lastname</label>
+                        <input autocomplete="off" name="lname" placeholder="Lastname" type="text" class="dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
+                    </div>
+                    <div class="container transition-all grid grid-cols-2 gap-2">
+                        <div>
+                            <label for="fnmae" class=" dark:text-gray-300/80">Course</label>
+                            <select name="crs" class="dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
+                                <option value="">Select Course</option>
+                                <% for(let c = 0; c < data.course.length; c++) { %> 
+                                    <option value="<%- data.course[c].id %>"><%- data.course[c].type %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="yr" class=" dark:text-gray-300/80">Year</label>
+                            <select name="yr" class="dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
+                                <option value="">Select Year</option>
+                                <% for(let y = 0; y < data.year.length; y++) { %> 
+                                    <option value="<%- data.year[y].id %>"><%- data.year[y].type %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container transition-all">
+                        <div>
+                            <label for="fnmae" class=" dark:text-gray-300/80">User Type</label>
+                            <select name="type" class="dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
+                                <option value="">User Type</option>
+                                <option value="Candidate">Candidate</option>
+                                <option value="Voter">Voter</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dark:bg-amber-800/30 dark:border-l-4 dark:border-amber-700 dark:text-amber-600 text-base font-normal p-2">
+                        Username & Password will be generated automatically by the system
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 items-end justify-center h-[calc(100%-470px)] w-full p-2">
+                    <button type="reset" class="hidden">reset</button>
+                    <button type="button" class="close_add_user rpl transition-all text-red-600 dark:text-rose-500 dark:font-medium border border-rose-500 dark:border-rose-600  font-normal py-1 rounded-lg outline-none mt-4 w-full">Close</button>
+                    <button type="submit" class="rpl dark:disabled:bg-purple-600 disabled:bg-purple-500 rpl dark:hover:bg-purple-700 hover:bg-purple-600 dark:bg-purple-800 bg-purple-700 text-white dark:text-gray-200 transition-all font-normal py-1 rounded-lg focus:ring focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-700 focus:ring-purple-500 focus:outline-none focus:shadow-outline mt-4 w-full">Add User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Main -->
+    <div class="container pt-16">
+        <div class="all_users_list grid grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-none gap-3 p-2 transition-all">
+            <% for (let i = 0; i < 20; i++) { %>
+                <div style="animation-delay: <%- i * .250%>s;" class="animate__animated animate__fadeInUp ms-500 dark_border shadow-lg rounded-md dark:bg-darkBlue-secondary p-3">
+                    <div class="flex flex-col gap-2 items-center">
+                        <div class="h-36 w-36 object-cover rounded-full skeleton transition-all"></div>
+                        <div class="flex flex-col justify-center items-center">
+                            <p class="text-lg dark:text-gray-300/90 font-normal mb-1 w-[100px] skeleton"></p>
+                            <p class="text-base dark:text-blue-600 font-normal w-[50px] skeleton"></p>
+                        </div>
+                    </div>
+                    <div class="flex w-full mt-5">
+                        <button class="rpl w-full dark:bg-purple-800/60 py-2 rounded-md focus:outline-none dark:text-gray-300/80 skeleton" type="button"></button>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script> 
+    <script src="/js/color.js"></script>
+    <script src="/control/js/io.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/avatar.js "></script>
+    <script src="/control/js/user.js "></script>
+    <script src="/js/audio_file.js"></script>
+    <script src="/js/audio.js"></script>
+    <script src="/js/fetch.js"></script>
+    <script src="/js/time.js"></script>
+    <script src="/js/toast.js"></script>
+    <script>
+        $.ripple(".rpl", {
+                debug: false,
+                on: 'mousedown',
+                opacity: 0.3,
+                color: "auto",
+                multi: false,
+                duration: 0.7,
+                rate: function(pxPerSecond) {
+                    return pxPerSecond;
+                },
+                easing: 'linear'
+            })
+    </script>
+</body>
+
+</html>

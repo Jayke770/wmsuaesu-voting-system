@@ -59,7 +59,7 @@ const user =  new mongoose.Schema({
         type: Array,
     },
     devices: {
-        type: Boolean,
+        type: Array,
     },
     created: {
         type: Date, 

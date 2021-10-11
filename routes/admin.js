@@ -8,7 +8,7 @@ const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
-const {hash, compareHash, course, year, partylists, positions} = require('./functions')
+const {hash, compareHash, course, year, partylists, positions, toUppercase} = require('./functions')
 const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
@@ -16,6 +16,10 @@ const objectid = require('mongodb').ObjectID
 const moment = require('moment-timezone')
 const nl2br = require('nl2br')
 /*##################################################################################### */
+adminrouter.get('/control/logout/', limit, isadmin, async (req, res) => {
+    req.session.destroy() 
+    return res.redirect('/')
+})
 adminrouter.get('/control',limit, isadmin, async (req, res) => {
     //delete the current election session 
     delete req.session.currentElection 
@@ -2640,37 +2644,103 @@ adminrouter.post('/control/elections/partylist/update-partylist/', normal_limit,
 
 /*##################################################################################### */
 
-//logs 
-adminrouter.post('/control/logs/', isadmin, async (req, res) => {
-    return res.render('control/forms/logs')
+//users main
+adminrouter.get('/control/users/', limit, isadmin, async (req, res) => {
+    try {
+        return res.render('control/forms/users', {
+            data: {
+                course: await course(), 
+                year: await year()
+            },
+            csrf: req.csrfToken()
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
 })
-//get active voters 
-adminrouter.post('/active_voters', isadmin, async (req, res) => {
-    const { id } = req.body
-    //check election id 
-    await election.find({ _id: {$eq: id} }, { voters: 1 }, (err, elec) => {
-        if (!err) {
-            if (elec[0].voters.length == 0) {
-                return res.send({
-                    active: 0
-                })
-            }
-            else {
-                var count = 0
-                //check all the voters if active 
-                for (var i = 0; i < elec[0].voters.length; i++) {
-                    //check if user is active 
-                    user.find({ _id: elec[0].voters[i].id }, { socket_id: 1 }, (err, res_u) => {
-                        if (res_u[0].socket_id != "Offline") {
-                            count = count + 1
-                        }
+//get all users
+adminrouter.post('/control/users/all-users/', limit, isadmin, async (req, res) => {
+    try {
+        //gte all users in users collection 
+        await user.find({}, {password: 0}).then( async (users) => {
+            return res.render('control/forms/users-all', {
+                users: users,
+                data: {
+                    course: await course(), 
+                    year: await year()
+                },
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e){
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//add user 
+adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) => {
+    const {sid, fname, mname, lname, crs, yr, type} = req.body
+    try {
+        if(sid && fname && mname && lname && crs && yr && type){
+            //check if student id, course, & year if exists
+            await data.find({
+                voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}, 
+                voterId: {$elemMatch: {enabled: false}}, 
+                voterId: {$elemMatch: {course: {$eq: xs(crs)}}},
+                voterId: {$elemMatch: {year: {$eq: xs(yr)}}}
+            }, {
+                voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}, 
+                voterId: {$elemMatch: {enabled: false}}, 
+                voterId: {$elemMatch: {course: {$eq: xs(crs)}}},
+                voterId: {$elemMatch: {year: {$eq: xs(yr)}}}
+            }).then( async (s) => {
+                if(s.length > 0){
+                    //add new user 
+                    await user.create({
+                        student_id: xs(sid),
+                        firstname: xs(toUppercase(fname)),
+                        middlename: xs(toUppercase(mname)),
+                        lastname: xs(toUppercase(lname)),
+                        course: xs(crs),
+                        year: xs(yr),
+                        type: xs(type),
+                        socket_id: 'Waiting For Student',
+                        username: `${fname.toUpperCase()}-${xs(sid)}`,
+                        password: await hash(`WMSU-${xs(sid)}`, 10)
+                    }).then( async () => {
+                        //update student id to enabled == true 
+                        await data.updateOne({
+                            "voterId.student_id": { $eq: xs(sid).toUpperCase() }
+                        }, {$set: {"voterId.$.enabled": true}}).then( () => {
+                            return res.send({
+                                status: true, 
+                                msg: "User Successfully Added!"
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                } else {
+                    return res.send({
+                        status: false, 
+                        msg: "Student ID not found"
                     })
                 }
-                return res.send({
-                    active: count
-                })
-            }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            return res.send({
+                status: false, 
+                msg: 'Some feilds is empty'
+            })
         }
-    })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
 })
 module.exports = adminrouter

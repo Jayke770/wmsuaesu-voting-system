@@ -60,6 +60,9 @@
 }
 /* skeleton loading end */
 /* remove light blue tap effect in android*/ 
+select {
+    @apply appearance-none;
+}
 a, button, p, div, span, i, body{
     -webkit-tap-highlight-color: transparent;
 }

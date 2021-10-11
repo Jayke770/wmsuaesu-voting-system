@@ -9,6 +9,7 @@ $(document).ready(() => {
     $(".open_nav").click( () => {
         const parent = $(".nav_")
         const child = $(".nav_main")
+        $(".menu_small").hide()
         child.addClass(child.attr("animate-in"))
         parent.removeClass("hidden")
         parent.addClass("flex")
@@ -38,6 +39,17 @@ $(document).ready(() => {
                 child.removeClass(child.attr("animate-out"))
             }, 300)
         }
+    })
+    //open menu 
+    $(".open_menu_small").click( () => {
+        if($(".menu_small").css("display") ==="none"){
+            $(".menu_small").show()
+        } else {
+            $(".menu_small").hide()
+        }
+    })
+    $(".menu_small").mouseleave( function(){
+        $(this).hide()
     })
     //get all elections in every 10 seconds 
     setInterval( () => {
