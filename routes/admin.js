@@ -1748,13 +1748,14 @@ adminrouter.post('/control/elections/voter-id/year/', normal_limit, isadmin, asy
 //all ids
 adminrouter.post('/control/elections/voter-id/ids/', normal_limit, isadmin, async (req, res) => {
     try {
-       await data.find({}, {voterId: 1, course: 1, year: 1}, (err, data) => {
-           if(err) throw new err 
-           return res.render("control/forms/voter-id_all", {
-               id: data.length != 0 ? data[0].voterId : [], 
-               course: data.length != 0 ? data[0].course : [], 
-               year: data.length != 0 ? data[0].year : [], 
-           })
+       await data.find({}, {voterId: 1}).then( async (data) => {
+            return res.render("control/forms/voter-id_all", {
+                id: data.length != 0 ? data[0].voterId : [], 
+                course: await course(), 
+                year: await year(), 
+            })
+       }).catch( (e) => {
+           throw new Error(e)
        })
     } catch(e) {
         return res.status(500).send()
@@ -1863,22 +1864,37 @@ adminrouter.post('/control/elections/voter-id/delete-voter-id/', isadmin, delete
 })
 //search voter id 
 adminrouter.post('/control/elections/voter-id/search-voter-id/', search_limit, isadmin, async (req, res, next) => {
-    const { id } = req.body
-    const voter_id = xs(id).toUpperCase()
+    const { search } = req.body
+    let ids = []
     try {
-        await data.find({ "voterId.student_id": { '$regex': '^' + voter_id, '$options': 'm' } }, {voterId: 1}, (err, result) => {
-            if (err) throw new err
-            if(result.length === 0){
-                return res.send({
-                    status: true,
-                    data: []
-                })     
+        await data.find({}, {voterId: 1}).then( async (v) => {
+            if(v.length > 0){
+                if(xs(search)){
+                    const voters = v[0].voterId
+                    for(let i = 0; i < voters.length; i++){
+                        if(voters[i].student_id.search(xs(search).toUpperCase()) !== -1){
+                            ids.push(voters[i])
+                        }
+                    }
+                    return res.render("control/forms/voter-id_all", {
+                        id: ids, 
+                        course: await course(), 
+                        year: await year(), 
+                    })
+                } else {
+                    return res.render("control/forms/voter-id_all", {
+                        id: v.length === 0 ? [] : v[0].voterId, 
+                        course: await course(), 
+                        year: await year(), 
+                    })
+                }
             } else {
-                return res.send({
-                    status: true,
-                    data: result[0].voterId
-                })     
-            }      
+                return res.render("control/forms/voter-id_all", {
+                    id: [], 
+                    course: await course(), 
+                    year: await year(), 
+                })
+            }
         })
     } catch (e) {
         return res.status(500).send()

@@ -7,10 +7,6 @@ $(document).ready( () => {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     })
-    var req_id_number = false,
-        add_voter_id = false, 
-        search_voter_id = false, 
-        update_id
     Snackbar.show({ 
         text: `
             <div class="flex justify-center items-center gap-2"> 
@@ -34,7 +30,8 @@ $(document).ready( () => {
             })
             if(res.ok){
                 const data = await res.text()
-                $(".voters_id_all").html(data) 
+                $(".voters_id_all").find(".voters_id_skeleton").hide()
+                $(".voters_id_all").append(data) 
                 Snackbar.show({ 
                     text: "All Voter ID's Fetch",
                     duration: 3000, 
@@ -59,7 +56,6 @@ $(document).ready( () => {
                         duration: false,
                         showAction: false
                     }) 
-                    ids()
                 }
             })
         }
@@ -267,25 +263,19 @@ $(document).ready( () => {
             })
         }
     })
-    $(".search_voter_id").keyup(function(){
-        if($(this).val().trim() !== ""){
-            if(!search_voter_id){
-                search_voter_id = true
-                $.post("search-voter-id/", {
-                    id: $(this).val().trim()
-                }, (res, status) => {
-                    if(res.status){
-                        append(res.data)
-                        search_voter_id = false
-                    }
-                }).fail( (e) => {
-                    Swal.fire({
-                        icon: 'info',
-                        title: e.statusText,
-                        html: `Status Code : ${e.status}`
-                    })
-                })
-            }
+    let search_voter_id = false
+    $(".search_voter_id").keyup(function () {
+        if (!search_voter_id && $(this).val()){
+            setTimeout( async () => {
+                await voter.search($(this).val())
+            }, 500)
+        }
+    })
+    $(".search_voter_id").keydown( function () {
+        if (!search_voter_id && !$(this).val()) {
+            setTimeout( async () => {
+                await voter.search($(this).val())
+            }, 500)
         }
     })
     $(".voters_id_all").delegate(".update_voter_id", "click", function(e) {
@@ -445,6 +435,47 @@ $(document).ready( () => {
         }
     })
     //functions
+    const voter = {
+        search: async (val) => {
+            try {
+                search_voter_id = true
+                $(".voters_id_all").find(".voters_id_skeleton").show()
+                $(".voters_id_all").find(".voter_ids").hide()
+                let data = new FormData() 
+                data.append("search", val)
+                const req = await fetchtimeout('search-voter-id/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    search_voter_id = false 
+                    $(".voters_id_all").find(".voter_ids").remove()
+                    $(".voters_id_all").find(".voters_id_skeleton").hide()
+                    $(".voters_id_all").append(res)
+                } else {
+                    throw new Error(e)
+                }
+            } catch (e) {
+                search_voter_id = false
+                $(".voters_id_all").find(".voter_ids").show()
+                $(".voters_id_all").find(".voters_id_skeleton").hide()
+                Snackbar.show({
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>Connection Error</span>
+                    </div>
+                    `,
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }
+    }
     function append(data){
         if(data.length != 0){
             $(".voters_id_all").html('')
