@@ -249,6 +249,10 @@ admin_socket.on('connection', async (socket) => {
             console.log(e)
         }
     })
+    socket.on('disconnect', () => {
+        console.log("Admin Disonnected with soket Id of ", socket.id)
+        updateAdminSocketID(myid, "Offline")
+    })
 })
 //user websocket events
 users_socket.on('connection', async (socket) => {
@@ -256,12 +260,20 @@ users_socket.on('connection', async (socket) => {
     const {student_id} = await user_data(myid)
     //update socket id every user connted to server 
     if((islogin && user_type === "Candidate") || islogin && user_type !== "Voter"){
-        await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( (s) => {
+        await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( () => {
             console.log("New User Connected with soket Id of ", socket.id)
+            admin_socket.emit('connected', {id: xs(myid)})
         })
     } else {
         socket.disconnect()
     }
+    socket.on('disconnect', async () => {
+        const socket_id = socket.id
+        await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: 'Offline'}}).then( () => {
+            console.log("New User Diconnected with soket Id of ", socket_id)
+            admin_socket.emit('user-disconnected', {id: xs(myid)})
+        })
+    })
     //election events 
     socket.on('success-join-election', async (data) => {
         //notify all admins that their is new voter attempt to join the election 

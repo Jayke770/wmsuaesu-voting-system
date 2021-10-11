@@ -2743,4 +2743,116 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
         return res.status(500).send()
     }
 })
+//search user 
+adminrouter.post('/control/users/search-users/', limit, isadmin, async (req, res) => {
+    const {search} = req.body 
+    let users_res = []
+    try {
+        //get all users 
+        await user.find({}, {passcode: 0}).then( async (users) => {
+            if(users.length > 0){
+                for(let i = 0; i < users.length; i++){
+                    const fullname = `${users[i].firstname} ${users[i].middlename} ${users[i].lastname}`
+                    if(fullname.search(xs(search)) !== -1){
+                        users_res.push(users[i])
+                    }
+                }
+                return res.render('control/forms/users-all', {
+                    users: users_res,
+                    data: {
+                        course: await course(), 
+                        year: await year()
+                    },
+                })
+            } else {
+                return res.render('control/forms/users-all', {
+                    users: [],
+                    data: {
+                        course: await course(), 
+                        year: await year()
+                    },
+                })
+            }
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//sort users 
+adminrouter.post('/control/users/sort-users/', limit, isadmin, async (req, res) => {
+    const {sort} = req.body 
+    const sort_val = JSON.parse(sort)
+    try {
+        if(sort_val.type === "course"){
+            await user.find({
+                course: {$eq: xs(sort_val.id)}
+            }, {passcode: 0}).then( async (users) => {
+                return res.render('control/forms/users-all', {
+                    users: users,
+                    data: {
+                        course: await course(), 
+                        year: await year()
+                    },
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else if(sort_val.type === "year"){
+            await user.find({
+                year: {$eq: xs(sort_val.id)}
+            }, {passcode: 0}).then( async (users) => {
+                return res.render('control/forms/users-all', {
+                    users: users,
+                    data: {
+                        course: await course(), 
+                        year: await year()
+                    },
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else if(sort_val.type === "active_status"){
+            if(sort_val.id === "online"){
+                await user.find({
+                    $and: [
+                        {socket_id: {$ne: "Waiting For Student"}},
+                        {socket_id: {$ne: "Offline"}}
+                    ]
+                }, {passcode: 0}).then( async (users) => {
+                    return res.render('control/forms/users-all', {
+                        users: users,
+                        data: {
+                            course: await course(), 
+                            year: await year()
+                        },
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else if(sort_val.id === "offline") {
+                await user.find({
+                    $or: [
+                        {socket_id: {$eq: "Waiting For Student"}},
+                        {socket_id: {$eq: "Offline"}}
+                    ]
+                }, {passcode: 0}).then( async (users) => {
+                    return res.render('control/forms/users-all', {
+                        users: users,
+                        data: {
+                            course: await course(), 
+                            year: await year()
+                        },
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                throw new Error('Unknown Sort')
+            }
+        }
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
 module.exports = adminrouter

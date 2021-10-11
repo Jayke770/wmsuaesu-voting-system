@@ -18,7 +18,14 @@
 %>
 <% if(users.length > 0) { %> 
     <% for (let i = 0; i < users.length; i++) { %>
-        <div style="animation-delay: <%- i * .250%>s;" class="animate__animated animate__fadeInUp ms-500 dark_border shadow-lg rounded-md dark:bg-darkBlue-secondary p-3">
+        <div data="<%- users[i]._id %>" style="animation-delay: <%- i * .250%>s;" class="user_list_main animate__animated animate__fadeInUp ms-500 relative dark_border shadow-lg rounded-md dark:bg-darkBlue-secondary p-3">
+            <div class="badge-status">
+                <% if(users[i].socket_id === "Waiting For Student" || users[i].socket_id === "Offline"){ %>
+                    <div class="absolute dark:bg-gray-500 h-4 w-4 rounded-full right-3"></div>
+                <% } else { %>
+                    <div class="absolute dark:bg-teal-700 h-4 w-4 rounded-full right-3"></div>
+                <% } %>
+            </div>
             <div class="flex flex-col gap-2 items-center">
                 <img class="h-36 w-36 object-cover rounded-full skeleton-image transition-all" alt="user_icon" data="<%-`${users[i].firstname.split('')[0].toUpperCase()} ${users[i].lastname.split('')[0].toUpperCase()}`%>">
                 <div class="flex flex-col justify-center items-center">
@@ -32,6 +39,13 @@
         </div>
     <% } %>
 <% } else { %> 
+    <div class="user_list_main col-span-full flex justify-center items-center">
+        <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 w-96 sm:w-full dark_border shadow-lg rounded-md dark:bg-darkBlue-secondary p-3">
+            <div class="flex justify-center items-center">
+                <p class="text-lg dark:text-gray-300/90 font-normal mb-1">Nothing To Fetch</p>
+            </div>
+        </div>
+    </div>
 <% } %>
 <script>
     $(document).ready( function () {
