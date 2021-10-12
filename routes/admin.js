@@ -1788,10 +1788,11 @@ adminrouter.post('/control/elections/voter-id/verify/', isadmin, normal_limit, a
 //add voter id
 adminrouter.post('/control/elections/voter-id/add-voter-id/', isadmin, limit, async (req, res, next) => {
     const { id, crs, year } = req.body
+    const new_random_voterID = xs(id) !== "" ? xs(id).toUpperCase() : `ESU-${moment().tz("Asia/Manila").format('YYYY')}-${Math.floor(0000 + Math.random() * 9999)}`
     //new voter ID
     const new_voterId = {
         id: uuid(), 
-        student_id: xs(id).toUpperCase(), //new student id
+        student_id: new_random_voterID, //new student id
         course: xs(crs), 
         year: xs(year), 
         enabled: false
@@ -1816,7 +1817,7 @@ adminrouter.post('/control/elections/voter-id/add-voter-id/', isadmin, limit, as
                            return res.send({
                                status: true, 
                                data: new_voterId, 
-                               msg: "Voter ID Added"
+                               msg: "Voter ID added successfully"
                            })
                         })
                     }
@@ -2867,43 +2868,56 @@ adminrouter.post('/control/users/sort-users/', limit, isadmin, async (req, res) 
                 throw new Error(e)
             })
         } else if(sort_val.type === "active_status"){
-            if(sort_val.id === "online"){
-                await user.find({
-                    $and: [
-                        {socket_id: {$ne: "Waiting For Student"}},
-                        {socket_id: {$ne: "Offline"}}
-                    ]
-                }, {passcode: 0}).sort({lastname: 1}).then( async (users) => {
+            let online = [], offline = []
+            await user.find({}, {passcode: 0}).sort({lastname: 1}).then( async (users) => {
+                if(users.length > 0){
+                    for(let i = 0; i < users.length; i++){
+                        if(users[i].socket_id === "Waiting For Student" || users[i].socket_id === "Offline"){
+                            offline.push(users[i])
+                        }
+                        if(users[i].socket_id !== "Waiting For Student" || users[i].socket_id !== "Offline"){
+                            online.push(users[i])
+                        }
+                    }
+                    if(sort_val.id === "online"){
+                        return res.render('control/forms/users-all', {
+                            users: online,
+                            data: {
+                                course: await course(), 
+                                year: await year()
+                            },
+                        })
+                    } else if(sort_val.id === "offline"){
+                        return res.render('control/forms/users-all', {
+                            users: offline,
+                            data: {
+                                course: await course(), 
+                                year: await year()
+                            },
+                        })
+                    } else if(sort_val.id === "default"){
+                        return res.render('control/forms/users-all', {
+                            users: users,
+                            data: {
+                                course: await course(), 
+                                year: await year()
+                            },
+                        })
+                    } else {
+                        throw new Error("Unknown Sort")
+                    }
+                } else {
                     return res.render('control/forms/users-all', {
-                        users: users,
+                        users: [],
                         data: {
                             course: await course(), 
                             year: await year()
                         },
                     })
-                }).catch( (e) => {
-                    throw new Error(e)
-                })
-            } else if(sort_val.id === "offline") {
-                await user.find({
-                    $or: [
-                        {socket_id: {$eq: "Waiting For Student"}},
-                        {socket_id: {$eq: "Offline"}}
-                    ]
-                }, {passcode: 0}).sort({lastname: 1}).then( async (users) => {
-                    return res.render('control/forms/users-all', {
-                        users: users,
-                        data: {
-                            course: await course(), 
-                            year: await year()
-                        },
-                    })
-                }).catch( (e) => {
-                    throw new Error(e)
-                })
-            } else {
-                throw new Error('Unknown Sort')
-            }
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
         }
     } catch (e) {
         return res.status(500).send()

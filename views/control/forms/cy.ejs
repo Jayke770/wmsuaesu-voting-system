@@ -8,8 +8,8 @@
     <meta name="theme-color" class="theme-color" content="#6b21a8">
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
     <title>Courses & Year</title>
-    <%- include('../cdn/_home') %>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <%- include('../cdn/_home') %>
 </head>
     <body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
         <!-- Laxy progress bar -->
@@ -65,9 +65,9 @@
                 </div>
             </div>
         </div>
-        <div class="add_cy fixed justify-end items-center bg-gray-900/40 dark:bg-gray-900/60 p-2 hidden w-full h-full top-0 z-50">
-            <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="add_cy_main animate__animated animate__fadeInRight ms-300 bg-gray-50 dark:bg-darkBlue-secondary dark_border flex flex-col rounded-lg h-full w-96 sm:w-full">
-                <div class="flex justify-center items-center p-3 dark_border_b border-b border-gray-300">
+        <div class="add_cy fixed justify-end items-center sm:items-end bg-gray-900/40 dark:bg-gray-900/60 p-2 sm:p-0 hidden w-full h-full top-0 z-50">
+            <div animate-in="animate__animated animate__fadeInUp ms-300" animate-out="animate__animated animate__fadeOutDown ms-300" class="add_cy_main bg-gray-50 dark:bg-darkBlue-secondary dark_border flex flex-col rounded-xl sm:rounded-b-none h-full sm:h-auto w-96 sm:w-full">
+                <div class="flex justify-center items-center px-3 py-2.5 dark_border_b border-b border-gray-300">
                     <p class="font-bold text-xl text-purple-500 py-2">Add Course & Year</p>
                 </div>
                 <form class="add_cy grid grid-rows-2 h-[calc(100%-70px)]">

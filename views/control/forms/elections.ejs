@@ -52,25 +52,25 @@
                         </div>
                         <div class="grid grid-rows-2 h-[calc(100%-65px)]">
                             <div class="flex flex-col w-full py-2 gap-2">
-                                <a href="course&year/" title="View, Add, & Update Courses" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                <a href="course&year/" title="View, Add, & Update Courses" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-bluegray-800 hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
                                     <span class="text-base">Courses & Year</span>
                                     <i class="ic flex justify-end items-center w-full text-rose-700 dark:text-rose-600 text-xl">
                                         <i class="fal fa-list-alt"></i>
                                     </i>
                                 </a>
-                                <a href="positions/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                <a href="positions/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-bluegray-800 hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
                                     <span class="text-base">Positions </span>
                                     <i class="ic flex justify-end items-center w-full text-green-700 dark:text-green-600 text-xl">
                                         <i class="fas fa-list-ol"></i>
                                     </i>
                                 </a>
-                                <a href="voter-id/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                <a href="voter-id/" title="View, Add, & Update Positions" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-bluegray-800 hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
                                     <span class="text-base">Voter ID </span>
                                     <i class="ic flex justify-end items-center w-full text-fuchsia-700 dark:text-fuchsia-600 text-xl">
                                         <i class="fas fa-id-card"></i>
                                     </i>
                                 </a>
-                                <a href="partylist/" title="View, Add, & Update Partylist" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-[#253547] hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
+                                <a href="partylist/" title="View, Add, & Update Partylist" class="settings_btn rpl dark:text-gray-200 font-normal dark:hover:bg-bluegray-800 hover:bg-purple-200 grid grid-cols-2 rounded-sm w-full text-[16px] cursor-pointer appearance-none outline-none transition-all p-[8px] px-3 border-none text-gray-900 md:text-lg">
                                     <span class="text-base">Partylist </span>
                                     <i class="ic flex justify-end items-center w-full text-amber-700 dark:text-amber-600 text-xl">
                                         <i class="fas fa-ballot"></i>
@@ -110,12 +110,12 @@
                 </div>
             </div>
         </div>
-        <div class="create_election p-2 z-20 dark:bg-darkBlue-primary/60 bg-gray-900/60 hidden justify-center items-center fixed top-0 w-full h-full">
+        <div class="create_election p-2 sm:p-0 z-20 dark:bg-darkBlue-primary/60 bg-gray-900/60 hidden justify-center items-center sm:items-end fixed top-0 w-full h-full">
             <input type="hidden" name="default-course" value='<%- JSON.stringify(course) %>'>
             <input type="hidden" name="default-year" value='<%- JSON.stringify(year) %>'>
             <input type="hidden" name="default-pos" value='<%- JSON.stringify(positions) %>'>
             <input type="hidden" name="default-pty" value='<%- JSON.stringify(partylists) %>'>
-            <div class="create_election_main ms-500 w-[70%] h-[90%] lg:w-[85%] md:w-full md:h-full bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl" animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp">
+            <div class="create_election_main ms-500 w-[70%] h-[90%] lg:w-[85%] md:w-full sm:h-[90%] bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl sm:rounded-b-none overflow-y-auto" animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp">
                 <div class="flex flex-row w-full">
                     <div class="w-[95%] flex flex-col">
                         <p class="font-medium transition-all relative text-purple-600 dark:text-purple-500 text-3xl md:text-2xl py-2 px-3 after:absolute after:bottom-0 after:left-3 after:bg-purple-600 dark:after:bg-purple-700 after:w-6/12 md:after:w-9/12 after:h-[3px]">Create Election</p>

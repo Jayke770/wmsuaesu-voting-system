@@ -39,109 +39,44 @@ $(document).ready( () => {
         }
     })
     //submit add voter id
-    $(".add_voter_id_form").submit(function(e){
+    let add_voter_id = false
+    $(".add_voter_id_form").submit(async function(e){
         e.preventDefault()
-        const submit_btn_text = $(this).find("button[type='submit']").text()
-        const icon = `<i style="font-size: 1.25rem;" class="fad fa-spin fa-spinner-third"></i>`
-        let data = new FormData() 
-        data.append('id', $(this).find("input[name='id']").val())
-        $(this).find("button[type='submit']").text("Checking Voter ID...")
-        $(this).find("button[type='submit']").prop('disabled', true)
-        $.ajax({
-            url: 'verify/', 
-            method: 'POST', 
-            cache: false, 
-            processData: false, 
-            contentType: false,
-            data: data,
-            success: (res) => {
-                if(res.status){
-                    $(this).find("button[type='submit']").html(icon)
-                    $.ajax({
-                        url: 'add-voter-id/',
-                        method: 'POST',
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        data: new FormData(this),
-                        success: (res) => {
-                            if (res.status) {
-                                toast.fire({
-                                    icon: 'success',
-                                    timer: 2000,
-                                    title: res.msg
-                                }).then( () => {
-                                    $(".reset_voter_id_form").click()
-                                    $(this).find("button[type='submit']").prop('disabled', false)
-                                    $(this).find("button[type='submit']").text(submit_btn_text)
-                                    ids()
-                                })
-                            } else {
-                                toast.fire({
-                                    icon: 'error', 
-                                    timer: 2000,
-                                    title: res.msg
-                                }).then( () => {
-                                    $(this).find("button[type='submit']").prop('disabled', false)
-                                    $(this).find("button[type='submit']").text(submit_btn_text)
-                                })
-                            }
-                        },
-                        error: (e) => {
-                            if(e.statusText === 'timeout'){
-                                toast.fire({
-                                    icon: 'error', 
-                                    timer: 1500,
-                                    title: `Connection ${e.statusText}`
-                                }).then( () => {
-                                    $(this).find("button[type='submit']").text(submit_btn_text)
-                                    $(this).find("button[type='submit']").prop('disabled', false)
-                                })
-                            } else {
-                                toast.fire({
-                                    icon: 'error', 
-                                    timer: 1500,
-                                    title: `${e.status} ${e.statusText}`
-                                }).then( () => {
-                                    $(this).find("button[type='submit']").text(submit_btn_text)
-                                    $(this).find("button[type='submit']").prop('disabled', false)
-                                })
-                            }
-                        }
+        const def = $(this).find("button[type='submit']").html() 
+        if(!add_voter_id){
+            try {
+                add_voter_id = true 
+                $(this).find("button[type='submit']").html(voter.loader())
+                const req = await fetchtimeout("/control/elections/voter-id/add-voter-id/", {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    add_voter_id = false
+                    $(this).find("button[type='submit']").html(def)
+                    toast.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.msg, 
+                        timer: 2000
                     })
+                    await voter.ids(false)
                 } else {
-                    toast.fire({
-                        icon: 'info', 
-                        timer: 1500,
-                        title: res.msg
-                    }).then( () => {
-                        $(this).find("button[type='submit']").text(submit_btn_text)
-                        $(this).find("button[type='submit']").prop('disabled', false)
-                    })
+                    throw new Error(`${req.status} ${req.statusText}`)
                 }
-            }, 
-            error: (e) => {
-                if(e.statusText === 'timeout'){
-                    toast.fire({
-                        icon: 'error', 
-                        timer: 1500,
-                        title: `Connection ${e.statusText}`
-                    }).then( () => {
-                        $(this).find("button[type='submit']").text(submit_btn_text)
-                        $(this).find("button[type='submit']").prop('disabled', false)
-                    })
-                } else {
-                    toast.fire({
-                        icon: 'error', 
-                        timer: 1500,
-                        title: `${e.status} ${e.statusText}`
-                    }).then( () => {
-                        $(this).find("button[type='submit']").text(submit_btn_text)
-                        $(this).find("button[type='submit']").prop('disabled', false)
-                    })
-                }
+            } catch (e) {
+                add_voter_id = false
+                $(this).find("button[type='submit']").html(def)
+                toast.fire({
+                    icon: 'error', 
+                    title: res.msg, 
+                    timer: 3000
+                })
             }
-        })
+        }
     })
     //delete voter id 
     let delete_voter_id = false
@@ -186,7 +121,7 @@ $(document).ready( () => {
                                     backdrop: true, 
                                     allowOutsideClick: false,
                                 })
-                                await voter.ids()
+                                await voter.ids(false)
                             } else {
                                 throw new Error(`${req.status} ${req.statusText}`)
                             }
@@ -264,7 +199,7 @@ $(document).ready( () => {
                         title: res.msg, 
                         timer: 3000
                     })
-                    await voter.ids()
+                    await voter.ids(false)
                 } else {
                     throw new Error(e)
                 }
@@ -311,7 +246,7 @@ $(document).ready( () => {
             duration: false,
             showAction: false
         })
-        await voter.ids()
+        await voter.ids(true)
     }, 1000) 
     //functions
     const voter = {
@@ -392,7 +327,7 @@ $(document).ready( () => {
                 })
             }
         }, 
-        ids: async () => {
+        ids: async (snackbar) => {
             try {
                 const res = await fetchtimeout('/control/elections/voter-id/ids/', {
                     headers: {
@@ -405,11 +340,11 @@ $(document).ready( () => {
                     $(".voters_id_all").find(".voters_id_skeleton").hide()
                     $(".voters_id_all").find(".voter_ids").remove()
                     $(".voters_id_all").append(data) 
-                    Snackbar.show({ 
+                    snackbar ? Snackbar.show({ 
                         text: "All Voter ID's Fetch",
                         duration: 2000, 
                         actionText: 'Okay'
-                    })
+                    }) : console.log('SnackBar is Hidden')
                 } else {
                     throw new Error(`${res.status} ${res.statusText}`)
                 }
@@ -436,45 +371,5 @@ $(document).ready( () => {
         loader: () => {
             return '<i class="fad animate-spin fa-spinner-third"></i>'
         }, 
-    }
-    function append(data){
-        if(data.length != 0){
-            $(".voters_id_all").html('')
-            for(let i = 0; i < data.length; i++){
-                let badge = "dark:bg-amber-700 bg-amber-600", text_badge = "Not Used"
-                if(data[i].enabled){
-                    badge = "dark:bg-green-700 bg-green-600"
-                    text_badge = "Used"
-                } 
-                $(".voters_id_all").append(`
-                <div style="animation-delay: ${i * .150}s;" data="${data[i]._id}" class="w-full animate__animated animate__fadeInUp p-3 bg-warmgray-100 dark:bg-[#161b22] dark:border dark:border-gray-800 rounded-lg cursor-pointer">
-                    <div class="w-full">
-                        <span class="st_id font-normal text-base dark:text-gray-300">${data[i].student_id}</span>
-                        <div class="cr float-right font-medium text-fuchsia-600 dark:text-fuchsia-500">
-                            <span course="${data.course}">...</span>
-                            <span year="${data.year}">...</span>
-                        </div>
-                    </div>
-                    <div class="mt-2 p-2">
-                        <a data="${data[i]._id}" class="update_voter_id rpl text-lg rounded-md text-purple-600 dark:text-purple-500 p-2">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a data="${data[i]._id}" class="delete_voter_id rpl text-lg rounded-md  text-rose-600 dark:text-rose-500 p-2">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
-                        <span class="${badge} float-right text-sm mt-3 px-3 py-[2px] rounded-full text-gray-100">${text_badge}</span>
-                    </div>
-                </div>
-            `)
-            }
-        } else {
-            $(".voters_id_all").html(`
-                <div class="empty_voter_id col-span-4 animate__animated animate__fadeInUp flex items-center justify-center transition-all">
-                    <div class=" text-center w-[350px] md:mt-12 mt-36 py-9 bg-rose-500 dark:bg-darkBlue-secondary rounded-2xl cursor-pointer">
-                        <span class="font-bold text-gray-50">Nothing To Fetch</span>
-                    </div>
-                </div>
-            `)
-        }
     }
 })
