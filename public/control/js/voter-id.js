@@ -7,59 +7,6 @@ $(document).ready( () => {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     })
-    Snackbar.show({ 
-        text: `
-            <div class="flex justify-center items-center gap-2"> 
-                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
-                <span>Fetching Voter ID's</span>
-            </div>
-        `, 
-        duration: false,
-        showAction: false
-    })
-    setTimeout(() => {
-        ids()
-    }, 2000) 
-    async function ids() {
-        try {
-            const res = await fetchtimeout('ids/', {
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                method: 'POST'
-            })
-            if(res.ok){
-                const data = await res.text()
-                $(".voters_id_all").find(".voters_id_skeleton").hide()
-                $(".voters_id_all").append(data) 
-                Snackbar.show({ 
-                    text: "All Voter ID's Fetch",
-                    duration: 3000, 
-                    actionText: 'Okay'
-                })
-            } else {
-                throw new Error(`${res.status} ${res.statusText}`)
-            }
-        } catch (e) {
-            Snackbar.show({ 
-                text: 'Connection Error',
-                actionText: 'Retry',
-                duration: false, 
-                onActionClick: () => {
-                    Snackbar.show({ 
-                        text: `
-                            <div class="flex justify-center items-center gap-2"> 
-                                <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
-                                <span>Retrying...</span>
-                            </div>
-                        `, 
-                        duration: false,
-                        showAction: false
-                    }) 
-                }
-            })
-        }
-    }
     $(".add_voter").click( () => {
         if($(".popup").hasClass("hidden")){
             $(".add_voter_id").addClass($(".add_voter_id").attr("animate-in"))
@@ -197,72 +144,75 @@ $(document).ready( () => {
         })
     })
     //delete voter id 
+    let delete_voter_id = false
     $(".voters_id_all").delegate(".delete_voter_id", "click", function(e){
         e.preventDefault()
         Swal.fire({
-            icon: 'question',
-            title: 'Delete Voter ID ?', 
-            showConfirmButton: true,
-            showCancelButton: true,
-            backdrop: true,
-        }).then( (res) => {
-            if(res.isConfirmed){
+            icon: 'question', 
+            title: 'Delete Voter ID', 
+            html: 'Are you sure you want to delete this Voter ID', 
+            backdrop: true, 
+            allowOutsideClick: false,
+            showDenyButton: true, 
+        }).then( (a) => {
+            if(a.isConfirmed){
                 Swal.fire({
-                    title: 'Deleting', 
-                    html: 'Please Wait',
-                    showConfirmButton: false, 
-                    backdrop: true,
-                    willOpen: () => {
+                    icon: 'info', 
+                    title: 'Deleting Voter ID', 
+                    html: 'Please wait...', 
+                    backdrop: true, 
+                    allowOutsideClick: false, 
+                    showConfirmButton: false,
+                    willOpen: async () => {
                         Swal.showLoading()
-                        $.post("delete-voter-id/", {
-                            id: $(this).attr("data")
-                        }).done( (res) => {
-                            if(res.status){
+                        try {
+                            delete_voter_id = true
+                            let data = new FormData() 
+                            data.append("id", $(this).attr("data"))
+                            const req = await fetchtimeout("/control/elections/voter-id/delete-voter-id/", {
+                                method: 'POST', 
+                                headers: {
+                                    'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                }, 
+                                body: data
+                            })
+                            if(req.ok) {
+                                const res = await req.json()
+                                delete_voter_id = false
                                 Swal.fire({
-                                    icon: 'success', 
-                                    title: res.msg, 
+                                    icon: res.status ? 'success' : 'info', 
+                                    title: res.txt, 
+                                    html: res.msg,
                                     backdrop: true, 
-                                    allowOutsideClick: true
-                                }).then( () => {
-                                    //remove div containing the voter id 
-                                    $(`div[data="${$(this).attr("data")}"]`).remove()
+                                    allowOutsideClick: false,
                                 })
+                                await voter.ids()
+                            } else {
+                                throw new Error(`${req.status} ${req.statusText}`)
                             }
-                            if(!res.status){
-                                Swal.fire({
-                                    icon: 'error', 
-                                    title: res.msg,
-                                    html: res.text, 
-                                    backdrop: true, 
-                                    allowOutsideClick: true
-                                })
-                            }
-                        }).fail( (e) => {
+                        } catch (e) {
+                            delete_voter_id = false
                             Swal.fire({
                                 icon: 'error', 
-                                title: 'Connection error',
-                                html: `${e.status} ${e.statusText}`,
+                                title: 'Connection Error', 
+                                html: e.message, 
                                 backdrop: true, 
                                 allowOutsideClick: false,
                             })
-                        })
-                    },
-                    allowOutsideClick: () => !Swal.isLoading()
+                        }
+                    }
                 })
             }
         })
     })
-    $(".sort_voter_id").change(function(){
-        if($(this).val().trim() !== ""){
-            $.post("sort-voter-id/", {
-                srt: $(this).val().trim()
-            }, (res) => {
-                if(res.status){
-                    append(res.data)
-                }
-            })
+    //sort
+    let sort_voter_id = false
+    $(".sort_voter_id").change(async function(){
+        if(!sort_voter_id && $(this).val()){
+            await voter.sort($(this).val())
         }
     })
+    //search
     let search_voter_id = false
     $(".search_voter_id").keyup(function () {
         if (!search_voter_id && $(this).val()){
@@ -280,160 +230,89 @@ $(document).ready( () => {
     })
     $(".voters_id_all").delegate(".update_voter_id", "click", function(e) {
         e.preventDefault() 
-        const icon = `<i style="font-size: 1.50rem; margin-right: 1rem; color: green;" class="fad fa-spin fa-spinner-third"></i>`
-        let data = new FormData() 
-        data.append("id", $(this).attr("data"))
-        update_id = $(this).attr("data")
-        //get voter id data 
-        toast.fire({
-            title: `${icon} Checking Voter ID...`, 
-            willOpen: () => {
-                $.ajax({
-                    url: 'get-voter-id/', 
-                    method: 'POST',
-                    data: data, 
-                    cache: false, 
-                    processData: false, 
-                    contentType: false,
-                    success: (res) => {
-                        if (res.status) {
-                            setTimeout( () => {
-                                toast.close()
-                                $(".edit_voter_id_form").find('input[name="id"]').attr("placeholder", res.data.student_id)
-                                $(".edit_form").addClass($(".edit_form").attr("animate-in"))
-                                $(".popup_2").removeClass("hidden")
-                                setTimeout(() => {
-                                    $(".edit_form").removeClass($(".edit_form").attr("animate-in"))
-                                }, 700)
-                            }, 1000)
-                        } else {
-                            toast.fire({
-                                icon: 'info', 
-                                title: res.msg, 
-                                timer: 1000,
-                            })
-                        }
-                    }, 
-                    error: (e) => {
-                        if(e.statusText === 'timeout'){
-                            toast.fire({
-                                icon: 'error', 
-                                timer: 1500,
-                                title: `Connection ${e.statusText}`
-                            })
-                        } else {
-                            toast.fire({
-                                icon: 'error', 
-                                timer: 1500,
-                                title: `${e.status} ${e.statusText}`
-                            })
-                        }
-                    },
-                })
-            },
-        })
+        $(".edit_form").addClass($(".edit_form").attr("animate-in"))
+        $(".popup_2").removeClass("hidden")
+        $(".popup_2").attr("data", $(this).attr("data"))
+        setTimeout(() => {
+            $(".edit_form").removeClass($(".edit_form").attr("animate-in"))
+        }, 500)
     })
-    $(".edit_voter_id_form").submit(function(e){
+    let edit_v_id = false
+    $(".edit_voter_id_form").submit(async function(e){
         e.preventDefault() 
-        $.ajax({
-            url: 'update-voter-id/', 
-            method: 'POST', 
-            cache: false, 
-            processData: false,
-            contentType: false, 
-            data: new FormData(this), 
-            success: (res) => {
-                if(res.status){
+        const def = $(this).find("button[type='submit']").html()
+        let data = new FormData(this)
+        data.append("id", $(".popup_2").attr("data")) 
+        if(!edit_v_id){
+            edit_v_id = true
+            $(this).find("button[type='submit']").html(voter.loader())
+            try {
+                const req = await fetchtimeout("/control/elections/voter-id/update-voter-id/", {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    edit_v_id = false
+                    $(this).find("button[type='submit']").html(def)
+                    $(this).find("button[type='reset']").click()
                     toast.fire({
-                        icon: 'success', 
+                        icon: res.status ? 'success' : 'info', 
                         title: res.msg, 
-                        timer: 1000
-                    }).then( () => {
-                        let data = new FormData() 
-                        data.append("srt", "default")
-                        $.ajax({
-                            url: 'sort-voter-id/', 
-                            method: 'POST', 
-                            cache: false, 
-                            processData: false, 
-                            contentType: false, 
-                            timer: 10000,
-                            data: data, 
-                            success: (res) => {
-                                if(res.status){
-                                    $(".edit_form").addClass($(".edit_form").attr("animate-out"))
-                                    setTimeout( () => {
-                                        $(".popup_2").addClass("hidden")
-                                        $(".edit_form").removeClass($(".edit_form").attr("animate-out"))
-                                        append(res.data) 
-                                    }, 700)
-                                } else {
-                                    toast.fire({
-                                        icon: 'info', 
-                                        title: res.msg
-                                    }).then( () => {
-                                        $(this).find('button[type="reset"').click()
-                                    })
-                                }
-                            }, 
-                            error: (e) => {
-                                if(e.statusText === 'timeout'){
-                                    toast.fire({
-                                        icon: 'error', 
-                                        timer: 1500,
-                                        title: `Connection ${e.statusText}`
-                                    })
-                                } else {
-                                    toast.fire({
-                                        icon: 'error', 
-                                        timer: 1500,
-                                        title: `${e.status} ${e.statusText}`
-                                    })
-                                }
-                            }
-                        })    
+                        timer: 3000
                     })
+                    await voter.ids()
                 } else {
-                    toast.fire({
-                        icon: 'info', 
-                        timer: 1500,
-                        title: res.msg
-                    })
+                    throw new Error(e)
                 }
-            }, 
-            error: (e) => {
-                if(e.statusText === 'timeout'){
-                    toast.fire({
-                        icon: 'error', 
-                        timer: 1500,
-                        title: `Connection ${e.statusText}`
-                    })
-                } else {
-                    toast.fire({
-                        icon: 'error', 
-                        timer: 1500,
-                        title: `${e.status} ${e.statusText}`
-                    })
-                }
+            } catch (e) {
+                edit_v_id = false
+                $(this).find("button[type='submit']").html(def)
+                Snackbar.show({
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>Connection Error</span>
+                     </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
             }
-        })
+        }
     })
     $(".close_edit_voter").click( () => {
         $(".edit_form").addClass($(".edit_form").attr("animate-out"))
         setTimeout( () => {
             $(".popup_2").addClass("hidden")
             $(".edit_form").removeClass($(".edit_form").attr("animate-out"))
-        }, 700)
+        }, 500)
     })
-    $(".popup_2").click( (e) => {
+    $(".popup_2").click( function(e) {
         if($(e.target).hasClass("edit_form")){
             $(".edit_form").addClass($(".edit_form").attr("animate-out"))
             setTimeout( () => {
                 $(".popup_2").addClass("hidden")
                 $(".edit_form").removeClass($(".edit_form").attr("animate-out"))
-            }, 700)
+            }, 500)
         }
     })
+    setTimeout(async () => {
+        Snackbar.show({ 
+            text: `
+                <div class="flex justify-center items-center gap-2"> 
+                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                    <span>Fetching Voter ID's</span>
+                </div>
+            `, 
+            duration: false,
+            showAction: false
+        })
+        await voter.ids()
+    }, 1000) 
     //functions
     const voter = {
         search: async (val) => {
@@ -443,7 +322,7 @@ $(document).ready( () => {
                 $(".voters_id_all").find(".voter_ids").hide()
                 let data = new FormData() 
                 data.append("search", val)
-                const req = await fetchtimeout('search-voter-id/', {
+                const req = await fetchtimeout('/control/elections/voter-id/search-voter-id/', {
                     method: 'POST', 
                     headers: {
                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
@@ -474,7 +353,89 @@ $(document).ready( () => {
                     showAction: false
                 })
             }
-        }
+        }, 
+        sort: async (val) => {
+            try {
+                let data = new FormData() 
+                data.append("sort", val)
+                $(".voters_id_all").find(".voters_id_skeleton").show()
+                $(".voters_id_all").find(".voter_ids").hide()
+                const req = await fetchtimeout('/control/elections/voter-id/sort-voter-id/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    search_voter_id = false 
+                    $(".voters_id_all").find(".voter_ids").remove()
+                    $(".voters_id_all").find(".voters_id_skeleton").hide()
+                    $(".voters_id_all").append(res)
+                } else {
+                    throw new Error(e)
+                }
+            } catch (e) {
+                sort_voter_id = false
+                $(".voters_id_all").find(".voter_ids").show()
+                $(".voters_id_all").find(".voters_id_skeleton").hide()
+                Snackbar.show({
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>Connection Error</span>
+                     </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }, 
+        ids: async () => {
+            try {
+                const res = await fetchtimeout('/control/elections/voter-id/ids/', {
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    method: 'POST'
+                })
+                if(res.ok){
+                    const data = await res.text()
+                    $(".voters_id_all").find(".voters_id_skeleton").hide()
+                    $(".voters_id_all").find(".voter_ids").remove()
+                    $(".voters_id_all").append(data) 
+                    Snackbar.show({ 
+                        text: "All Voter ID's Fetch",
+                        duration: 2000, 
+                        actionText: 'Okay'
+                    })
+                } else {
+                    throw new Error(`${res.status} ${res.statusText}`)
+                }
+            } catch (e) {
+                Snackbar.show({ 
+                    text: 'Connection Error',
+                    actionText: 'Retry',
+                    duration: false, 
+                    onActionClick: () => {
+                        Snackbar.show({ 
+                            text: `
+                                <div class="flex justify-center items-center gap-2"> 
+                                    <i style="font-size: 1.25rem;" class="fad animate-spin fa-spinner-third"></i>
+                                    <span>Retrying...</span>
+                                </div>
+                            `, 
+                            duration: false,
+                            showAction: false
+                        }) 
+                    }
+                })
+            }
+        }, 
+        loader: () => {
+            return '<i class="fad animate-spin fa-spinner-third"></i>'
+        }, 
     }
     function append(data){
         if(data.length != 0){

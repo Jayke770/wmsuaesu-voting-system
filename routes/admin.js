@@ -1834,36 +1834,50 @@ adminrouter.post('/control/elections/voter-id/add-voter-id/', isadmin, limit, as
     }
 })
 //delete voter id 
-adminrouter.post('/control/elections/voter-id/delete-voter-id/', isadmin, delete_limit, async (req, res, next) => {
+adminrouter.post('/control/elections/voter-id/delete-voter-id/', isadmin, delete_limit, async (req, res) => {
     const { id } = req.body
-    const voter_id = xs(id)
-    //check voter id if not used
-    try{
-        await data.find({ "voterId.id": {$eq: voter_id}, "voterId.enabled": {$eq: false}}, (err, result) => {
-            if (err) throw new err 
-            //meaning the user id is not enabled
-            if(result.length != 0){
-                data.updateOne({}, {$pull: {voterId: {id: {$eq: voter_id}}}}, (err, del) => {
-                    if(err) throw new err 
-                    return res.send({
-                        status: true, 
-                        msg: "Voter ID Deleted"
+    try {
+        //check voter id if in used
+        await data.find({
+            voterId: {$elemMatch: {id: {$eq: xs(id)}}}
+        }, {
+            voterId: {$elemMatch: {id: {$eq: xs(id)}}}
+        }).then( async (v) => {
+            if(v.length > 0){
+                if(!v[0].voterId[0].enabled){
+                    //delete voter id if it is not used
+                    await data.updateOne({}, {$pull: {voterId: {id: {$eq: xs(id)}}}}).then( (d) => {
+                        console.log(d)
+                        return res.send({
+                            status: true, 
+                            txt: "Voter ID deleted successfully"
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
                     })
-                })
+                } else {
+                    return res.send({
+                        status: false, 
+                        txt: "Your Can't delete this Voter ID", 
+                        msg: "Voter ID is in used!"
+                    })
+                }
             } else {
                 return res.send({
                     status: false, 
-                    msg: "Can't Delete Voter ID", 
-                    text: "Voter ID is enabled"
+                    txt: "Voter ID not found"
                 })
             }
+        }).catch( (e) => {
+            throw new Error(e)
         })
     } catch (e) {
+        console.log(e) 
         return res.status(500).send()
     }
 })
 //search voter id 
-adminrouter.post('/control/elections/voter-id/search-voter-id/', search_limit, isadmin, async (req, res, next) => {
+adminrouter.post('/control/elections/voter-id/search-voter-id/', search_limit, isadmin, async (req, res) => {
     const { search } = req.body
     let ids = []
     try {
@@ -1901,119 +1915,117 @@ adminrouter.post('/control/elections/voter-id/search-voter-id/', search_limit, i
     }
 })
 //sort
-adminrouter.post('/control/elections/voter-id/sort-voter-id/', isadmin, normal_limit, async (req, res, next) => {
-    const { srt } = req.body
-    let sort, isJson
-    //try if the sort value can be converted to json
+adminrouter.post('/control/elections/voter-id/sort-voter-id/', isadmin, normal_limit, async (req, res) => {
+    const {sort} = req.body 
+    const sorting = JSON.parse(xs(sort))
     try {
-        sort = JSON.parse(srt) 
-        isJson = true
-    } catch (e) {
-        sort = xs(srt)
-        isJson = false 
-    }
-    //check sort value
-    try {
-        if(!isJson){
-            if (sort === "used" || sort === "not used") {
-                let final_sort = false
-                if (sort === "used") {
-                    final_sort = true
-                }
-
-                //get all voter id that is already enabled
-                await data.find({ "voterId.enabled": {$eq: final_sort} }, {voterId: 1}, (err, result) => {
-                    if (err) throw new err
-                    if(result.length === 0){
-                        return res.send({
-                            status: true,
-                            data: []
-                        })
-                    } else {
-                        return res.send({
-                            status: true,
-                            data: result[0].voterId
-                        })
-                    }
-                })
-            }
-            if (sort === "default") {
-                await data.find({}, {voterId: 1}, (err, result) => {
-                    if (err) throw new err
-                    if(result.length === 0){
-                        return res.send({
-                            status: true,
-                            data: []
-                        })
-                    } else {
-                        return res.send({
-                            status: true,
-                            data: result[0].voterId
-                        })
-                    }
-                })
-            }
-        } else {
-            const array_sort = sort
-            let s = []
-            //convert json to array
-            for(let i in array_sort){
-                s.push(i, array_sort[i])
-            }
-            //get sort value 
-            if(s.length === 2){
-                //check is fisrt index is equal to course 
-                if(s[0] === "course"){
-                    //sort all voter id with the given course
-                    data.find({"voterId.course": {$eq: xs(s[1])}}, {voterId: 1}, (err, result) => {
-                        if(err) throw new err 
-                        if(result.length === 0){
-                            return res.send({
-                                status: true,
-                                data: []
-                            })
-                        } else {
-                            return res.send({
-                                status: true,
-                                data: result[0].voterId
-                            })
+        if(sorting.type === 'status'){
+            let used = [], notUsed = [], defaultIds = []
+            await data.find({}, {voterId: 1}).then( async (voterID) => {
+                if(voterID.length > 0){
+                    const voterid = voterID[0].voterId
+                    for(let i = 0; i < voterid.length; i++){
+                        defaultIds.push(voterid[i])
+                        if(voterid[i].enabled){
+                            used.push(voterid[i])
                         }
+                        if(!voterid[i].enabled){
+                            notUsed.push(voterid[i])
+                        }
+                    }
+                    if(sorting.id === "used"){
+                        return res.render("control/forms/voter-id_all", {
+                            id: used, 
+                            course: await course(), 
+                            year: await year(), 
+                        })
+                    } 
+                    if(sorting.id === "not-used"){
+                        return res.render("control/forms/voter-id_all", {
+                            id: notUsed, 
+                            course: await course(), 
+                            year: await year(), 
+                        })
+                    } 
+                    if(sorting.id === "default"){
+                        return res.render("control/forms/voter-id_all", {
+                            id: defaultIds, 
+                            course: await course(), 
+                            year: await year(), 
+                        })
+                    }
+                } else {
+                    return res.render("control/forms/voter-id_all", {
+                        id: [], 
+                        course: await course(), 
+                        year: await year(), 
                     })
-                } else if(s[0] === "year") {
-                    //sort all voter id with the given year
-                    data.find({"voterId.year": {$eq: xs(s[1])}}, {voterId: 1}, (err, result) => {
-                        if(err) throw new err 
-                        if(result.length === 0){
-                            return res.send({
-                                status: true,
-                                data: []
-                            })
-                        } else {
-                            return res.send({
-                                status: true,
-                                data: result[0].voterId
-                            })
+                }
+            })
+        } else if(sorting.type === 'course') {
+            await data.find({}, {voterId: 1}).then( async (voterID) => {
+                if(voterID.length > 0){
+                    let courses = [] 
+                    const voterid = voterID[0].voterId
+                    for(let c = 0; c < voterid.length; c++){
+                        if(sorting.id === voterid[c].course){
+                            courses.push(voterid[c])
                         }
+                    }
+                    return res.render("control/forms/voter-id_all", {
+                        id: courses, 
+                        course: await course(), 
+                        year: await year(), 
                     })
                 } else {
-                    return res.send({
-                        status: false,
-                        msg: "Something went wrong"
+                    return res.render("control/forms/voter-id_all", {
+                        id: [], 
+                        course: await course(), 
+                        year: await year(), 
                     })
                 }
-            } else {
-                return res.send({
-                    status: false,
-                    msg: "Something went wrong"
-                })
-            }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else if(sorting.type === "year") {
+            await data.find({}, {voterId: 1}).then( async (voterID) => {
+                if(voterID.length > 0){
+                    let yrs = [] 
+                    const voterid = voterID[0].voterId
+                    for(let y = 0; y < voterid.length; y++){
+                        if(sorting.id === voterid[y].year){
+                            yrs.push(voterid[y])
+                        }
+                    }
+                    return res.render("control/forms/voter-id_all", {
+                        id: yrs, 
+                        course: await course(), 
+                        year: await year(), 
+                    })
+                } else {
+                    return res.render("control/forms/voter-id_all", {
+                        id: [], 
+                        course: await course(), 
+                        year: await year(), 
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            return res.render("control/forms/voter-id_all", {
+                id: [], 
+                course: await course(), 
+                year: await year(), 
+            })
         }
-    } catch (e) {
+    } catch (e){
+        console.log(e)
         return res.status(500).send()
     }
 })
 //get voter id use for checking if voter ID is valid
-adminrouter.post('/control/elections/voter-id/get-voter-id/', limit, isadmin, async (req, res, next) => {
+adminrouter.post('/control/elections/voter-id/get-voter-id/', limit, isadmin, async (req, res) => {
     const { id } = req.body
     const voter_id = xs(id)
 
@@ -2045,57 +2057,83 @@ adminrouter.post('/control/elections/voter-id/get-voter-id/', limit, isadmin, as
     }
 })
 //update voter id 
-adminrouter.post('/control/elections/voter-id/update-voter-id/', limit, isadmin, async (req, res, next) => {
-    const { id, course, year } = req.body
-    const voter_id_session = req.session.voter_id_to_update
-    const student_id = xs(id).toUpperCase() // new student id
-    const voter_course = xs(course)
-    const voter_year = xs(year)
-    //check if voter is exists
+adminrouter.post('/control/elections/voter-id/update-voter-id/', limit, isadmin, async (req, res) => {
+    const {sid, course, year, id} = req.body 
+    let student_id
     try {
-        await data.find({ "voterId.id": {$eq: voter_id_session} }, {voterId: 1}, (err, result_check) => {
-            if (err) throw new err
-            if (result_check.length === 0) {
-                return res.send({
-                    status: false,
-                    msg: "Voter ID not found"
-                })
-            } else {
-                //then check if the new student id is not used with another student id
-                data.find({"voterId.student_id": {$eq: student_id}}, {voterId: 1}, (err, f) => {
-                    if(err) throw new err 
-                    if(f.length === 0){
-                        //if all feilds is not empty
-                        if(student_id !== "" && voter_course != "" && voter_year != ""){
-                            data.updateOne({
-                                "voterId.id": {$eq: voter_id_session}
-                            }, {$set: {
-                                "voterId.$.student_id": student_id, 
-                                "voterId.$.course": voter_course, 
-                                "voterId.$.year": voter_year, 
-                            }}, (err, u) => {
-                                if(err) throw new err
-                                return res.send({
-                                    status: true,
-                                    msg: "Updated Successfully"
+        //check id if exists 
+        await data.find({
+            voterId: {$elemMatch: {id: {$eq: xs(id)}}}
+        }, {voterId: {$elemMatch: {id: {$eq: xs(id)}}}}).then( async (v) => {
+            //if voter id is found
+            if(v.length > 0){
+                student_id = v[0].voterId[0].student_id
+                //check if the new course & year is valid 
+                await data.find({
+                    course: {$elemMatch: {id: {$eq: xs(course)}}}, 
+                    year: {$elemMatch: {id: {$eq: xs(year)}}}
+                }, {
+                    course: {$elemMatch: {id: {$eq: xs(course)}}}, 
+                    year: {$elemMatch: {id: {$eq: xs(year)}}}
+                }).then( async (cy) => {
+                    //if the new course & year is valid
+                    if(cy.length > 0){
+                        //check if the new voter id is not the same to others 
+                        await data.find({
+                            voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}
+                        }, {voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}}).then( async (sidFound) => {
+                            if(sidFound.length === 0){
+                                //update voter id 
+                                await data.updateOne({
+                                    "voterId.id": {$eq: xs(id)}
+                                }, {$set: {
+                                    "voterId.$.student_id": xs(sid).toUpperCase(), 
+                                    "voterId.$.course": xs(course), 
+                                    "voterId.$.year": xs(year)
+                                }}).then( async () => {
+                                    //update user details who use this voter id 
+                                    await user.updateOne({
+                                        student_id: {$eq: xs(student_id)}
+                                    }, {$set: {
+                                        student_id: xs(sid).toUpperCase(), 
+                                        course: xs(course), 
+                                        year: xs(year)
+                                    }}).then( () => {
+                                        return res.send({
+                                            status: true, 
+                                            msg: "Voter Id successfully updated!"
+                                        })
+                                    }).catch( (e) => {
+                                        throw new Error(e)
+                                    })
+                                }).catch( (e) => {
+                                    throw new Error(e)
                                 })
-                            })
-                        } else {
-                            return res.send({
-                                status: false,
-                                msg: "Some feilds is empty"
-                            })
-                        }
+                            } else {
+                                return res.send({
+                                    status: false, 
+                                    msg: "Voter ID is already in used"
+                                })
+                            }
+                        })
                     } else {
                         return res.send({
-                            status: false,
-                            msg: "Voter ID is already in used"
+                            status: false, 
+                            msg: "Invalid Course / Year"
                         })
                     }
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Voter ID not found!"
                 })
             }
         })
-    } catch(e) {
+    } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })
