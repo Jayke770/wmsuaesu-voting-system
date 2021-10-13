@@ -147,6 +147,8 @@ $(document).ready( function (){
     const Data = {
         users: async () => {
             try {
+                $(".all_users_list").find(".user_list_main").hide()
+                $(".all_users_list").find(".user_list_skeleton").show()
                 const req = await fetchtimeout("/control/users/all-users/", {
                     method: 'POST',
                     headers: {
@@ -156,6 +158,7 @@ $(document).ready( function (){
                 if(req.ok){
                     const res = await req.text() 
                     setTimeout( () => {
+                        $(".all_users_list").find(".user_list_main").remove()
                         $(".all_users_list").find(".user_list_skeleton").hide()
                         $(".all_users_list").append(res)
                         Snackbar.show({ 

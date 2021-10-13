@@ -1,11 +1,8 @@
 <% if(voters.length !== 0) { 
     for (let i = 0; i < voters.length; i++) { %>
-        <div data="<%- voters[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="voters animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
+        <div data="<%- voters[i].id %>" style="animation-delay: <%- i * .150 %>s;" class="voters animate__animated animate__fadeInUp ms-300 h-auto dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
             <div class="flex flex-row w-full">
-                <div class="relative">
-                    <img class="h-[60px] w-[60px] rounded-full object-cover" src="/assets/image.jpg" alt="user profile">
-                    <div class="absolute h-[15px] w-[15px] rounded-full bg-green-600 right-[1px] bottom-1"></div>
-                </div>
+                <img class="h-[60px] w-[60px] rounded-full object-cover skeleton-image" data="<%- `${voters[i].fullname.split(" ")[0].split("")[0]}${voters[i].fullname.split(" ")[2].split("")[0]}` %>" alt="user profile">
                 <div class="grid grid-flow-col flex-[80%]">
                     <div class="justify-center gap-1 w-full flex flex-col pl-3">
                         <span class="text-base dark:text-gray-400"><%- voters[i].fullname %></span>
@@ -22,8 +19,18 @@
                 </div> 
             </div>
         </div>
-    <% }
-} else { %>
+    <% } %>
+    <script>
+        $(document).ready( function () {
+            setTimeout(() => {
+                $(".skeleton-image").each(function () {
+                    $(this).attr("src", avatar($(this).attr("data"), "#fff", dark(), 'bold 100px Assistant'))
+                    $(this).removeClass("skeleton-image")
+                })
+            }, 1000)
+        })
+    </script>
+<% } else { %>
     <div style="animation-delay: .150s;" class="voters col-span-3 animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
         <div class="flex w-full justify-center items-center">
             <span class="dark:text-gray-300 text-lg">No pending voters</span>

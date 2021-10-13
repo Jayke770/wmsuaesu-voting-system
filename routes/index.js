@@ -605,9 +605,7 @@ router.post('/home/election/submit-candidacy-form/', normal_limit, isloggedin, a
                 "voters.id": {$eq: xs(myid)}
             }, {candidates: 1, autoAccept_candidates: 1, status: 1}).then( async (elec) => {
                 if(elec.length !== 0){
-                    const is_ended = elec[0].status === 'Ended' ? true : false 
-                    const is_pend_for_del = !is_ended && elec[0].status === 'Pending for deletion' ? true : false
-                    if(!is_ended && !is_pend_for_del){
+                    if(elec[0].status === "Not Started"){
                         //if the auto accept candidates feature is enabled to this election accept the candidate automatically 
                         elec[0].autoAccept_candidates ? new_candidate.status = 'Accepted' : new_candidate.status = 'Pending'
                         //check the new candidate is not candidate 
@@ -681,7 +679,7 @@ router.post('/home/election/re-submit-candidacy-form/', normal_limit, isloggedin
                 //update status of candidate to pending 
                 await election.updateOne({
                     _id: {$eq: xs(electionID)}, 
-                    "candidates.student_id": {$eq: xs(id)}
+                    "candidates.student_id": {$eq: xs(student_id)}
                 }, {$set: {"candidates.$.status": 'Pending'}}).then( (u) => {
                     return res.send({
                         status: true, 
@@ -700,6 +698,7 @@ router.post('/home/election/re-submit-candidacy-form/', normal_limit, isloggedin
             throw new Error(e)
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })
@@ -932,7 +931,7 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
             throw new Error(e)
         })
     } catch (e) {
-        return res.status(500).send()
+        return res.redirect('/home')
     }
 })
 //get all candidates 
@@ -964,8 +963,7 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e) 
-        return res.status(500).send()
+        return res.redirect('/home')
     }
 })
 module.exports = router

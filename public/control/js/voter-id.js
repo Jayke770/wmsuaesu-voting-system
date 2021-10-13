@@ -89,6 +89,7 @@ $(document).ready( () => {
             backdrop: true, 
             allowOutsideClick: false,
             showDenyButton: true, 
+            confirmButtonText: 'Yes'
         }).then( (a) => {
             if(a.isConfirmed){
                 Swal.fire({
@@ -121,7 +122,7 @@ $(document).ready( () => {
                                     backdrop: true, 
                                     allowOutsideClick: false,
                                 })
-                                await voter.ids(false)
+                                res.status ? $(`.voter_ids[data='${$(this).attr("data")}']`).remove() : $(`.voter_ids[data='${$(this).attr("data")}']`).attr("data", $(this).attr("data"))
                             } else {
                                 throw new Error(`${req.status} ${req.statusText}`)
                             }

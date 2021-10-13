@@ -23,7 +23,7 @@ const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
-const {updateAdminSocketID, user_socket_id, election_handler, user_data} = require('./routes/functions') 
+const {updateAdminSocketID, user_socket_id, election_handler, user_data, users_election_handler} = require('./routes/functions') 
 //models 
 const election = require('./models/election')
 const users = require('./models/user')
@@ -338,40 +338,55 @@ users_socket.on('connection', async (socket) => {
 })
 start()
 //check election every 10 seconds
-setInterval( async () => {
-   const election_status = await election_handler() 
-   if(election_status !== undefined){
-       //if there is new election started
-       if(election_status.status && election_status.type === "Started"){
-           //send event to admin & user that there is new election has been started 
-           admin_socket.emit('new-election-started', {electionID: election_status.electionID})
-           users_socket.emit('new-election-started', {electionID: election_status.electionID})
-       }
-        //if there is new election ended
-        if(election_status.status && election_status.type === "Ended"){
+setInterval(async () => {
+    await users_election_handler()
+    const election_status = await election_handler()
+    if (election_status !== undefined) {
+        //if there is new election started
+        if (election_status.status && election_status.type === "Started") {
             //send event to admin & user that there is new election has been started 
-            admin_socket.emit('new-election-ended', {electionID: election_status.electionID})
-            users_socket.emit('new-election-ended', {electionID: election_status.electionID})
+            admin_socket.emit('new-election-started', { electionID: election_status.electionID })
+            //get all voter in this election and notify 
+            await election.find({_id: {$eq: xs(election_status.electionID)}}, {voters: 1}).then( async (elec) => {
+                if(elec.length > 0){
+                   const voters = elec[0].voters 
+                   if(voters.length > 0){
+                       for(let i = 0; i < voters.length; i++){
+                           await users.find({student_id: {$eq: xs(voters[i].student_id)}}, {socket_id: 1}).then( (s) => {
+                               if(s[0].socket_id !== "Offline" || s[0].socket_id !== "Waiting For Student"){
+                                users_socket.to(s[0].socket_id).emit('new-election-started', { electionID: election_status.electionID })
+                               }
+                           })
+                       }
+                   }
+                }
+            })
         }
-        
-   }
+        //if there is new election ended
+        if (election_status.status && election_status.type === "Ended") {
+            //send event to admin & user that there is new election has been started 
+            admin_socket.emit('new-election-ended', { electionID: election_status.electionID })
+            //get all voter in this election and notify 
+            await election.find({_id: {$eq: xs(election_status.electionID)}}, {voters: 1}).then( async (elec) => {
+                if(elec.length > 0){
+                   const voters = elec[0].voters 
+                   if(voters.length > 0){
+                       for(let i = 0; i < voters.length; i++){
+                           await users.find({student_id: {$eq: xs(voters[i].student_id)}}, {socket_id: 1}).then( (s) => {
+                               if(s[0].socket_id !== "Offline" || s[0].socket_id !== "Waiting For Student"){
+                                users_socket.to(s[0].socket_id).emit('new-election-ended', { electionID: election_status.electionID })
+                               }
+                           })
+                       }
+                   }
+                }
+            })
+        }
+
+    }
 }, 2000)
 async function start() {
     await election_handler()
+    await users_election_handler()
     http.listen(port, console.log('Server Started on port ' + port))
-    // if (process.env.NODE_ENV !== 'production') {
-    //     http.listen(port, console.log('Server Started on port ' + port))
-    // }
-    // else{
-    //     console.log("Connecting to FTP Server \n")
-    //     if (await ftp()) {
-    //         http.listen(port, console.log('Server Started on port ' + port))
-    //         console.log("Connected to FTP Server \n")
-    //     } else {
-    //         //retry to connect 
-    //         console.log("Can't connect to FTP Server \n")
-    //         console.log("Reconnecting \n")
-    //         http.listen(port, console.log('Server Started on port ' + port))
-    //     }
-    // }
 }

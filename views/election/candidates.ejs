@@ -48,7 +48,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="h-[calc(100%-76px)]">
-                                                        <div class="h-40 overflow-y-auto px-3 py-2 break-words dark:text-gray-300/80"><%- election.candidates[c].platform %></div>
+                                                        <div class="h-40 mx-2 overflow-y-auto px-2 py-1 break-words dark:text-gray-300/80 border-l-4 dark:border-amber-800/50"><%- election.candidates[c].platform %></div>
                                                         <div class="px-3 pb-1 pt-4 h-[calc(100%-144px)] flex flex-row gap-2 justify-start items-end">
                                                             <a data="<%- election.candidates[c].student_id %>" class="rpl py-2 px-3 cursor-pointer dark:text-amber-600 dark:focus:text-amber-500 transition-all text-2xl rounded-full">
                                                                 <i class="fad fa-eye"></i>
@@ -85,7 +85,7 @@
                 },
                 1024: {
                     slidesPerView: 3,
-                    spaceBetween: 10,
+                    spaceBetween: 40,
                 },
             },
         })

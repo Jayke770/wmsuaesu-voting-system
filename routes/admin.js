@@ -887,7 +887,8 @@ adminrouter.post('/control/election/settings/edit-starting-dt/', limit, isadmin,
                     await election.updateOne({
                         _id: {$eq: xs(electionID)}
                     }, {$set: {
-                        start: xs(time)
+                        start: xs(time), 
+                        status: "Not Started"
                     }}).then( () => {
                         return res.send({
                             status: true, 
@@ -2735,22 +2736,30 @@ adminrouter.post('/control/users/all-users/', limit, isadmin, async (req, res) =
 })
 //add user 
 adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) => {
-    const {sid, fname, mname, lname, crs, yr, type} = req.body
+    const { sid, fname, mname, lname, crs, yr, type } = req.body
     try {
-        if(sid && fname && mname && lname && crs && yr && type){
+        if (sid && fname && mname && lname && crs && yr && type) {
             //check if student id, course, & year if exists
             await data.find({
-                voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}, 
-                voterId: {$elemMatch: {enabled: false}}, 
-                voterId: {$elemMatch: {course: {$eq: xs(crs)}}},
-                voterId: {$elemMatch: {year: {$eq: xs(yr)}}}
+                voterId: {
+                    $elemMatch: {
+                        student_id: { $eq: xs(sid.toUpperCase()) },
+                        course: { $eq: xs(crs) },
+                        year: { $eq: xs(yr) },
+                        enabled: false
+                    }
+                }
             }, {
-                voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}, 
-                voterId: {$elemMatch: {enabled: false}}, 
-                voterId: {$elemMatch: {course: {$eq: xs(crs)}}},
-                voterId: {$elemMatch: {year: {$eq: xs(yr)}}}
-            }).then( async (s) => {
-                if(s.length > 0){
+                voterId: {
+                    $elemMatch: {
+                        student_id: { $eq: xs(sid.toUpperCase()) },
+                        course: { $eq: xs(crs) },
+                        year: { $eq: xs(yr) },
+                        enabled: false
+                    }
+                }
+            }).then(async (v) => {
+                if (v.length > 0) {
                     //add new user 
                     await user.create({
                         student_id: xs(sid),
@@ -2763,33 +2772,83 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                         socket_id: 'Waiting For Student',
                         username: `${fname.toUpperCase()}-${xs(sid)}`,
                         password: await hash(`WMSU-${xs(sid)}`, 10)
-                    }).then( async () => {
+                    }).then(async () => {
                         //update student id to enabled == true 
                         await data.updateOne({
                             "voterId.student_id": { $eq: xs(sid).toUpperCase() }
-                        }, {$set: {"voterId.$.enabled": true}}).then( () => {
+                        }, { $set: { "voterId.$.enabled": true } }).then(() => {
                             return res.send({
-                                status: true, 
+                                status: true,
                                 msg: "User Successfully Added!"
                             })
-                        }).catch( (e) => {
+                        }).catch((e) => {
                             throw new Error(e)
                         })
-                    }).catch( (e) => {
+                    }).catch((e) => {
                         throw new Error(e)
                     })
                 } else {
-                    return res.send({
-                        status: false, 
-                        msg: "Student ID not found"
+                    //create new voter id and save the new user
+                    //check if the course & year is available 
+                    await data.find({
+                        $and: [
+                            { course: {
+                                $elemMatch: {id: {$eq: xs(crs)}}
+                            }}, 
+                            { year: {
+                                $elemMatch: {id: {$eq: xs(yr)}}
+                            }}
+                        ]
+                    }).then( async (cy) => {
+                        if(cy.length > 0){
+                            //create new voter id 
+                            const new_voterId = {
+                                id: uuid(), 
+                                student_id: xs(sid).toUpperCase(),
+                                course: xs(crs), 
+                                year: xs(year), 
+                                enabled: true
+                            }
+                            await data.updateOne({}, {$push: {voterId: new_voterId}}).then( async (v) => {
+                                //add new user 
+                                await user.create({
+                                    student_id: xs(sid),
+                                    firstname: xs(toUppercase(fname)),
+                                    middlename: xs(toUppercase(mname)),
+                                    lastname: xs(toUppercase(lname)),
+                                    course: xs(crs),
+                                    year: xs(yr),
+                                    type: xs(type),
+                                    socket_id: 'Waiting For Student',
+                                    username: `${fname.toUpperCase()}-${xs(sid)}`,
+                                    password: await hash(`WMSU-${xs(sid)}`, 10)
+                                }).then( (crt) => {
+                                    return res.send({
+                                        status: true, 
+                                        msg: 'New user added successfully'
+                                    })
+                                }).catch( (e) => {
+                                    throw new Error(e)
+                                })
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        } else {
+                            return res.send({
+                                status: false, 
+                                msg: 'Course & Year is not found'
+                            })
+                        }
+                    }).catch( (e) => {
+                        throw new Error(e)
                     })
                 }
-            }).catch( (e) => {
+            }).catch((e) => {
                 throw new Error(e)
             })
         } else {
             return res.send({
-                status: false, 
+                status: false,
                 msg: 'Some feilds is empty'
             })
         }
