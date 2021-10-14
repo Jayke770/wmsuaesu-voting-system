@@ -592,6 +592,7 @@ router.post('/home/election/submit-candidacy-form/', normal_limit, isloggedin, a
         platform: xs(platform),
         votes: [],
         reactions: [],
+        views: [],
         status: '?', 
         msg: '',
         created: moment().tz("Asia/Manila").format()
@@ -964,6 +965,69 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
         })
     } catch (e) {
         return res.redirect('/home')
+    }
+})
+router.post('/home/election/id/:electionID/candidates/react-candidate/', normal_limit, isloggedin, async (req, res) => {
+    const {caID} = req.body 
+    const {electionID, myid} = req.session
+    const {student_id} = await user_data(myid)
+    try {
+        //check if the recently reacted this candidate 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            candidates: {$elemMatch: {id: {$eq: xs(caID)}}}, 
+            voters: {$elemMatch: {student_id: {$eq:  xs(student_id)}}}
+        }, {
+            candidates: {$elemMatch: {id: {$eq: xs(caID)}}}, 
+            voters: {$elemMatch: {student_id: {$eq:  xs(student_id)}}}
+        }).then( async (react_ca) => {
+            if(react_ca.length > 0){
+                const cv = react_ca[0]
+                let reacted = false
+                //check if the voter is already reacted this candidate 
+                for(let i = 0; i < cv.candidates[0].reactions.length; i++){
+                    if(myid.toString() === cv.candidates[0].reactions[i]){
+                        reacted = true 
+                        break
+                    }
+                }
+                if(!reacted){
+                    await election.updateOne({
+                        _id: {$eq: xs(electionID)}, 
+                        candidates: {$elemMatch: {id: {$eq: xs(caID)}}}
+                    },{$push: {"candidates.$.reactions": xs(myid).toString()}}).then( () => {
+                        return res.send({
+                            status: true, 
+                            msg: 'Successfully Reacted'
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                } else {
+                    await election.updateOne({
+                        _id: {$eq: xs(electionID)}, 
+                        candidates: {$elemMatch: {id: {$eq: xs(caID)}}}
+                    },{$pull: {"candidates.$.reactions": xs(myid).toString()}}).then( () => {
+                        return res.send({
+                            status: true, 
+                            msg: 'Your Reaction Successfully Reacted'
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Voter / Candidate not found"
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
     }
 })
 module.exports = router

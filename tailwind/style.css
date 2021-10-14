@@ -80,6 +80,9 @@ video {
 html, body{
     @apply selection:bg-purple-900 selection:text-gray-200;
 }
+html:focus-within, body:focus-within{
+    scroll-behavior: smooth;
+}
 /* Sweetalert dark theme */ 
 /* .swal2-input, .swal2-textarea{
     @apply rounded-md dark:bg-transparent dark:text-gray-200 border-gray-500 transition-all text-base;

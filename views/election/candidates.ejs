@@ -23,73 +23,85 @@
 %> 
 <% if(election.candidates.length !== 0) { %>
     <div class="candidates h-screen pt-[64px] w-full hidden">
-        <div class="h-full w-full flex flex-col gap-3 pb-2 overflow-y-auto">
+        <div class="h-full w-full flex flex-col gap-2 pb-2 overflow-y-auto">
             <% for (let i = 0; i < election.positions.length; i++) { %>
-                <div class="flex flex-col w-full">
-                    <div class="flex justify-start items-center py-2 px-3">
-                        <span class="dark:text-purple-600 font-medium text-2xl"><%- Data.positions(election.positions[i].id) %></span>
-                    </div>
-                    <div class="swiper mySwiper w-full px-3">
-                        <div class="swiper-wrapper">
-                            <% for (let c = 0; c < election.candidates.length; c++) { %>
-                                <% if(election.positions[i].id === election.candidates[c].position && election.candidates[c].status === "Accepted") { %> 
-                                    <div class="swiper-slide px-2">
-                                        <div class="transition-all dark_border rounded-lg dark:bg-darkBlue-secondary">
-                                            <div class="flex flex-col h-full">
-                                                <div class="container">
-                                                    <% const icon = election.candidates[c].fullname.split(" ") %>
-                                                    <img class="h-60 w-full rounded-t-lg object-cover skeleton-image transition-all" data="<%- `${icon[0].charAt(0).toUpperCase()} ${icon[icon.length - 1].charAt(0).toUpperCase()}`%>">
-                                                </div>
-                                                <div class="container h-full">
-                                                    <div class="w-full flex flex-col gap-1 py-2 px-4">
-                                                        <span class="dark:text-gray-300 text-xl font-medium"><%- election.candidates[c].fullname %></span>
-                                                        <div class="w-full flex flex-row items-center gap-2">
-                                                            <span class="dark:text-gray-300/90 text-sm"><%- `Running for ${Data.positions(election.candidates[c].position)} at ${Data.partylist(election.candidates[c].partylist)} Partylist` %></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="h-[calc(100%-76px)]">
-                                                        <div class="h-40 mx-2 overflow-y-auto px-2 py-1 break-words dark:text-gray-300/80 border-l-4 dark:border-amber-800/50"><%- election.candidates[c].platform %></div>
-                                                        <div class="px-3 pb-1 pt-4 h-[calc(100%-144px)] flex flex-row gap-2 justify-start items-end">
-                                                            <a data="<%- election.candidates[c].student_id %>" class="rpl py-2 px-3 cursor-pointer dark:text-amber-600 dark:focus:text-amber-500 transition-all text-2xl rounded-full">
-                                                                <i class="fad fa-eye"></i>
-                                                            </a>
-                                                            <a data="<%- election.candidates[c].student_id %>" class="rpl py-2 px-3 cursor-pointer dark:text-rose-600 dark:focus:text-rose-500 transition-all text-2xl rounded-full">
-                                                                <i class="fad fa-heart-circle"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> 
+                <div class="p-2 grid grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-none gap-2 transition-all">
+                    <% for (let c = 0; c < election.candidates.length; c++) { %>
+                        <% if(election.positions[i].id === election.candidates[c].position && election.candidates[c].status === "Accepted") { %> 
+                            <div class="w-full flex flex-col dark:bg-darkBlue-secondary rounded-lg">
+                                <div class="flex w-full items-center justify-center px-2 py-5">
+                                    <% const icon = election.candidates[c].fullname.split(" ") %>
+                                    <img class="h-36 w-36 ring-2 dark:ring-gray-600 rounded-full object-cover skeleton-image" data="<%- `${icon[0].charAt(0).toUpperCase()} ${icon[icon.length - 1].charAt(0).toUpperCase()}`%>">
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex flex-col gap-1 justify-center items-center">
+                                        <p class="dark:text-gray-300 font-medium text-base"><%- election.candidates[c].fullname %></p>
+                                        <p class="dark:text-gray-400 font-normal text-sm"><%- `${Data.positions(election.positions[i].id)} at ${Data.partylist(election.candidates[c].partylist)}` %></p>
+                                    </div>
+                                    <div class="break-words p-2 text-center dark:text-gray-500 text-base">
+                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, laudantium corporis! Alias molestias officiis veniam, nostrum, natus iste minima quibusdam repellat porro sint libero ipsa aperiam optio, beatae dolorem enim.
+                                    </div>
+                                    <div class="grid grid-cols-2 px-2 gap-2 sm:py-3">
+                                        <div class="flex items-center justify-end border-r-2 border-bluegray-600 pr-4">
+                                            <span class="dark:text-gray-300/70" data="reaction-<%- election.candidates[c].id %>"><%- election.candidates[c].reactions.length > 1 ? `${election.candidates[c].reactions.length} Reactions` : `${election.candidates[c].reactions.length} Reaction` %></span>
+                                        </div>
+                                        <div class="flex items-center justify-start pl-2">
+                                            <span class="dark:text-gray-300/70">1000 views</span>
                                         </div>
                                     </div>
-                                <% } %>
-                            <% } %>
-                        </div>
-                    </div>
-                </div>    
+                                    <div class="grid grid-cols-2 gap-1 px-2 py-2 sm:pt-4">
+                                        <div class="flex justify-start items-center">
+                                            <a data="<%- election.candidates[c].id %>" class="react_ca rpl dark:text-rose-600 rounded-full cursor-pointer text-2xl px-2 py-1 w-auto">
+                                                <i class="fad fa-heart-circle"></i>
+                                            </a>
+                                        </div>
+                                        <div class="flex justify-end items-center">
+                                            <a data="<%- election.candidates[c].id %>" class="view_ca rpl dark:text-blue-600 rounded-full cursor-pointer text-2xl px-2 py-1 w-auto">
+                                                <i class="fad fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    <% } %>    
+                </div>   
             <% } %>
         </div>
     </div>
-    <script>
-        const swiper = new Swiper(".mySwiper", {
-            slidesPerView: 1,
-            grabCursor: true,
-            breakpoints: {
-                640: {
-                    slidesPerView: 1,
-                    spaceBetween: 2.5,
-                },
-                768: {
-                    slidesPerView: 2,
-                    spaceBetween: 5,
-                },
-                1024: {
-                    slidesPerView: 3,
-                    spaceBetween: 40,
-                },
-            },
-        })
-    </script>
+    <!-- view candidate -->
+    <div class="view_ca_ fixed top-0 w-full h-full hidden justify-center items-end z-50 bg-darkBlue-primary/40">
+        <div animate-in="animate__animated animate__fadeInUp ms-300" animate-out="animate__animated animate__fadeOutDown ms-300 " class="view_ca_main dark:bg-darkBlue-secondary w-[70%] h-[85%] sm:w-full dark_border rounded-t-xl transition-all">
+            <div class="flex flex-col dark_border_b">
+                <p class="px-2.5 py-3 dark:text-purple-600 text-xl font-medium">Candidate Information</p>
+            </div>
+            <div class="flex flex-col h-[calc(100%-52px)]">
+                <div class="flex-[90%]">
+                    h
+                </div>
+                <div class="flex-[10%]">
+                    <div class="grid grid-cols-2 gap-2 h-full items-end pb-0.5">
+                        <div class="flex flex-row gap-2 justify-center">
+                            <a class="cursor-pointer flex items-center gap-1 w-full text-center justify-center px-3 py-2 rpl dark:text-gray-300">
+                                <i class="ic dark:text-amber-700 text-xl xsm:text-2xl">
+                                    <i class="fad fa-info-circle"></i>
+                                </i>
+                                <span class="text-base xsm:hidden">Candidate Details</span>
+                            </a>
+                        </div>
+                        <div class="flex flex-row gap-2 justify-center">
+                            <a class="cursor-pointer flex items-center gap-1 w-full text-center justify-center px-3 py-2 rpl dark:text-gray-300">
+                                <i class="ic dark:text-teal-700 text-xl xsm:text-2xl">
+                                    <i class="fad fa-user-circle"></i>
+                                </i>
+                                <span class="text-base xsm:hidden">Candidate Profile</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 <% } else { %>
     <div class="h-screen pt-[64px] flex justify-center items-center overflow-hidden">
         <div class="flex flex-col gap-5">

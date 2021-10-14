@@ -261,7 +261,7 @@ users_socket.on('connection', async (socket) => {
     //update socket id every user connted to server 
     if((islogin && user_type === "Candidate") || islogin && user_type !== "Voter"){
         await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( () => {
-            console.log("New User Connected with soket Id of ", socket.id)
+            console.warn("New User Connected with soket Id of ", socket.id,)
             admin_socket.emit('connected', {id: xs(myid)})
         })
     } else {
@@ -332,6 +332,27 @@ users_socket.on('connection', async (socket) => {
                 status: false, 
                 data: {},
                 msg: "Something went wrong"
+            })
+        }
+    })
+    //candiates total reactions & views 
+    socket.on('candidates-reactions&views', async (res) => {
+        try {
+            //get all candidates reaction & views 
+            await election.find({
+                _id: {$eq: xs(electionID)}
+            }, {"candidates.id": 1, "candidates.reactions": 1, "candidates.views": 1}).then( (elec) => {
+                res({
+                    status: true, 
+                    candidates: elec[0].candidates
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            res({
+                status: false, 
+                msg: "Internal Error"
             })
         }
     })

@@ -590,7 +590,90 @@ $(document).ready( () => {
             }
         })
     })
+    //react ca 
+    let react_ca  = false
+    $(".react_ca").click( async function (e) {
+        e.preventDefault() 
+        const def = $(this).html() 
+        if(!react_ca){
+            react_ca = true 
+            $(this).html(election.loader()) 
+            try {
+                let data = new FormData() 
+                data.append("caID", $(this).attr("data"))
+                const req = await fetchtimeout("react-candidate/", {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.json()
+                    $(this).html(def)
+                    react_ca = false
+                    Snackbar.show({ 
+                        text: res.msg, 
+                        duration: 2000,
+                        showAction: false
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                react_ca = false 
+                $(this).html(def)
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>Failed to react!</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }
+    })
+    let view_ca = false 
+    $(".view_ca").click( async function (e) {
+        e.preventDefault() 
+        const parent = $(".view_ca_")
+        const child = $(".view_ca_main") 
+        child.addClass(child.attr("animate-in"))
+        parent.addClass("flex")
+        parent.removeClass("hidden")
+        setTimeout( () => {
+            child.removeClass(child.attr("animate-in"))
+        }, 300)
+    })
+    $(".view_ca_").click( function (e) {
+        if($(e.target).hasClass("view_ca_")){
+            e.preventDefault() 
+            const parent = $(".view_ca_")
+            const child = $(".view_ca_main") 
+            child.addClass(child.attr("animate-out"))
+            setTimeout( () => {
+                child.removeClass(child.attr("animate-out"))
+                parent.addClass("hidden")
+                parent.removeClass("flex")
+            }, 300)
+        }
+    })
     //socket events 
+    //get total reactions & views of all candidates 
+    setInterval( () => {
+        if($(".candidates").length > 0){
+            socket.emit("candidates-reactions&views", (res) => {
+                if(res.status){
+                    for(let i = 0; i < res.candidates.length; i++){
+                        $(`[data='reaction-${res.candidates[i].id}']`).html(res.candidates[i].reactions.length > 1 ? `${res.candidates[i].reactions.length} Reactions` : `${res.candidates[i].reactions.length} Reaction`)
+                    }
+                }
+            })
+        }
+    }, 1000)
     //new election started 
     socket.on("new-election-started", async (data) => {
         const electionID = $("meta[name='electionID']").attr("content")
