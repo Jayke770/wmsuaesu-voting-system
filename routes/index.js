@@ -967,7 +967,8 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
         return res.redirect('/home')
     }
 })
-router.post('/home/election/id/:electionID/candidates/react-candidate/', normal_limit, isloggedin, async (req, res) => {
+//react candidate
+router.post('/home/election/id/*/candidates/react-candidate/', normal_limit, isloggedin, async (req, res) => {
     const {caID} = req.body 
     const {electionID, myid} = req.session
     const {student_id} = await user_data(myid)
@@ -1026,7 +1027,57 @@ router.post('/home/election/id/:electionID/candidates/react-candidate/', normal_
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
+        return res.status(500).send()
+    }
+})
+//view candidate 
+router.post('/home/election/id/*/candidates/view-candidate/', normal_limit, isloggedin, async (req, res) => {
+    const {caID} = req.body
+    const {electionID, myid} = req.session 
+    try {
+        // check election, voter & candidate if exists 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}, 
+            candidates: {$elemMatch: {id: xs(caID)}}
+        }).then( async (elec) => {
+            if(elec.length > 0){
+                //add candidate views 
+                await election.updateOne({
+                    _id: {$eq: xs(electionID)}, 
+                    candidates: {$elemMatch: {id: {$eq: xs(caID)}}}
+                },{$push: {"candidates.$.views": xs(myid).toString()}}).then( async (b) => {
+                    await election.find({
+                        _id: {$eq: xs(electionID)}, 
+                        voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}, 
+                        candidates: {$elemMatch: {id: xs(caID)}}
+                    }, {
+                        voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}, 
+                        candidates: {$elemMatch: {id: xs(caID)}}
+                    }).then( async (elecs) => {
+                        return res.render('election/candidates-view-info', {
+                            candidateInfo: elecs[0].candidates[0], 
+                            candidatesUserInfo: await user_data(myid), 
+                            data: {
+                                positions: await positions(),
+                                partylists: await partylists(), 
+                                year: await year(), 
+                                course: await course()
+                            }
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                throw new Error('Not Found')
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
         return res.status(500).send()
     }
 })

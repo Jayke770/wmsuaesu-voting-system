@@ -44,7 +44,7 @@
                                             <span class="dark:text-gray-300/70" data="reaction-<%- election.candidates[c].id %>"><%- election.candidates[c].reactions.length > 1 ? `${election.candidates[c].reactions.length} Reactions` : `${election.candidates[c].reactions.length} Reaction` %></span>
                                         </div>
                                         <div class="flex items-center justify-start pl-2">
-                                            <span class="dark:text-gray-300/70">1000 views</span>
+                                            <span class="dark:text-gray-300/70" data="view-<%- election.candidates[c].id %>"><%- election.candidates[c].views.length > 1 ? `${election.candidates[c].views.length} Views` : `${election.candidates[c].views.length} View` %></span>
                                         </div>
                                     </div>
                                     <div class="grid grid-cols-2 gap-1 px-2 py-2 sm:pt-4">
@@ -74,13 +74,15 @@
                 <p class="px-2.5 py-3 dark:text-purple-600 text-xl font-medium">Candidate Information</p>
             </div>
             <div class="flex flex-col h-[calc(100%-52px)]">
-                <div class="flex-[90%]">
-                    h
+                <div class="tabs_ca flex-[90%] overflow-y-auto py-3">
+                    <div class="loader_ca flex h-full w-full justify-center items-center">
+                        <i class="fad animate-spin fa-spinner-third text-6xl dark:text-purple-800"></i>
+                    </div>
                 </div>
                 <div class="flex-[10%]">
                     <div class="grid grid-cols-2 gap-2 h-full items-end pb-0.5">
                         <div class="flex flex-row gap-2 justify-center">
-                            <a class="cursor-pointer flex items-center gap-1 w-full text-center justify-center px-3 py-2 rpl dark:text-gray-300">
+                            <a data="ca_details" class="ca_tab transition-all cursor-pointer flex items-center gap-1 w-full text-center justify-center px-3 py-2 rpl dark:text-gray-300">
                                 <i class="ic dark:text-amber-700 text-xl xsm:text-2xl">
                                     <i class="fad fa-info-circle"></i>
                                 </i>
@@ -88,7 +90,7 @@
                             </a>
                         </div>
                         <div class="flex flex-row gap-2 justify-center">
-                            <a class="cursor-pointer flex items-center gap-1 w-full text-center justify-center px-3 py-2 rpl dark:text-gray-300">
+                            <a data="ca_profile" class="ca_tab transition-all cursor-pointer flex items-center gap-1 w-full text-center justify-center px-3 py-2 rpl dark:text-gray-300">
                                 <i class="ic dark:text-teal-700 text-xl xsm:text-2xl">
                                     <i class="fad fa-user-circle"></i>
                                 </i>

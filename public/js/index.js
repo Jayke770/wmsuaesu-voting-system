@@ -641,12 +641,51 @@ $(document).ready( () => {
         e.preventDefault() 
         const parent = $(".view_ca_")
         const child = $(".view_ca_main") 
-        child.addClass(child.attr("animate-in"))
-        parent.addClass("flex")
-        parent.removeClass("hidden")
-        setTimeout( () => {
-            child.removeClass(child.attr("animate-in"))
-        }, 300)
+        const def = $(this).html()
+        if(!view_ca){
+            try {
+                view_ca = true 
+                $(this).html(election.loader())
+                let data = new FormData() 
+                data.append("caID", $(this).attr("data"))
+                const req = await fetchtimeout('view-candidate/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.text()
+                    view_ca = false 
+                    $(this).html(def)
+                    child.addClass(child.attr("animate-in"))
+                    parent.addClass("flex")
+                    parent.removeClass("hidden")
+                    setTimeout( () => {
+                        child.removeClass(child.attr("animate-in"))
+                    }, 300)
+                    $(".view_ca_").find(".loader_ca").hide() 
+                    $(".view_ca_").find(".ca_tabs").remove()
+                    $(".view_ca_").find(".tabs_ca").append(res)
+                } else {
+                    throw new Error(e)
+                }
+            } catch (e) {
+                view_ca = false
+                $(this).html(def)
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>Failed to get candidate information</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }
     })
     $(".view_ca_").click( function (e) {
         if($(e.target).hasClass("view_ca_")){
@@ -661,6 +700,13 @@ $(document).ready( () => {
             }, 300)
         }
     })
+    //candidate tab 
+    $(".ca_tab").click( async function (e) {
+        e.preventDefault() 
+        //hide all tabs 
+        $(".ca_tabs").hide() 
+        $(`.${$(this).attr("data")}`).show()
+    })
     //socket events 
     //get total reactions & views of all candidates 
     setInterval( () => {
@@ -669,6 +715,7 @@ $(document).ready( () => {
                 if(res.status){
                     for(let i = 0; i < res.candidates.length; i++){
                         $(`[data='reaction-${res.candidates[i].id}']`).html(res.candidates[i].reactions.length > 1 ? `${res.candidates[i].reactions.length} Reactions` : `${res.candidates[i].reactions.length} Reaction`)
+                        $(`[data='view-${res.candidates[i].id}']`).html(res.candidates[i].views.length > 1 ? `${res.candidates[i].views.length} Views` : `${res.candidates[i].views.length} View`)
                     }
                 }
             })
