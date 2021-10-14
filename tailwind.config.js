@@ -37,7 +37,8 @@ module.exports = {
       rose: colors.rose,
       darkBlue: {
         primary: '#090c10',
-        secondary: '#161b22'
+        secondary: '#161b22',
+        dark: '#101318'
       },
     },
     fontFamily: {
