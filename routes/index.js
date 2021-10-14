@@ -1040,34 +1040,49 @@ router.post('/home/election/id/*/candidates/view-candidate/', normal_limit, islo
             _id: {$eq: xs(electionID)}, 
             voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}, 
             candidates: {$elemMatch: {id: xs(caID)}}
+        }, {
+            voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}, 
+            candidates: {$elemMatch: {id: xs(caID)}}
         }).then( async (elec) => {
             if(elec.length > 0){
-                //add candidate views 
-                await election.updateOne({
-                    _id: {$eq: xs(electionID)}, 
-                    candidates: {$elemMatch: {id: {$eq: xs(caID)}}}
-                },{$push: {"candidates.$.views": xs(myid).toString()}}).then( async (b) => {
-                    await election.find({
-                        _id: {$eq: xs(electionID)}, 
-                        voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}, 
-                        candidates: {$elemMatch: {id: xs(caID)}}
-                    }, {
-                        voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}, 
-                        candidates: {$elemMatch: {id: xs(caID)}}
-                    }).then( async (elecs) => {
-                        return res.render('election/candidates-view-info', {
-                            candidateInfo: elecs[0].candidates[0], 
-                            candidatesUserInfo: await user_data(myid), 
-                            data: {
-                                positions: await positions(),
-                                partylists: await partylists(), 
-                                year: await year(), 
-                                course: await course()
-                            }
+                let ca_profile_id
+                //get profile id 
+                await user.find({
+                    student_id: {$eq: xs(elec[0].candidates[0].student_id)}
+                }, {_id: 1}).then( async (sid) => {
+                    if(sid.length > 0){
+                        //add candidate views 
+                        await election.updateOne({
+                            _id: {$eq: xs(electionID)}, 
+                            candidates: {$elemMatch: {id: {$eq: xs(caID)}}}
+                        },{$push: {"candidates.$.views": xs(myid).toString()}}).then( async (b) => {
+                            await election.find({
+                                _id: {$eq: xs(electionID)}, 
+                                voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}, 
+                                candidates: {$elemMatch: {id: xs(caID)}}
+                            }, {
+                                voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}, 
+                                candidates: {$elemMatch: {id: xs(caID)}}
+                            }).then( async (elecs) => {
+                                return res.render('election/candidates-view-info', {
+                                    candidateInfo: elecs[0].candidates[0], 
+                                    candidatesUserInfo: await user_data(sid[0]._id), 
+                                    data: {
+                                        positions: await positions(),
+                                        partylists: await partylists(), 
+                                        year: await year(), 
+                                        course: await course()
+                                    }
+                                })
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
                         })
-                    }).catch( (e) => {
-                        throw new Error(e)
-                    })
+                    } else {
+                        throw new Error("User Not Found")
+                    }
                 }).catch( (e) => {
                     throw new Error(e)
                 })
