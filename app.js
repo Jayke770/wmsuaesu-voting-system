@@ -261,7 +261,7 @@ users_socket.on('connection', async (socket) => {
     //update socket id every user connted to server 
     if((islogin && user_type === "Candidate") || islogin && user_type !== "Voter"){
         await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( () => {
-            console.warn("New User Connected with soket Id of ", socket.id,)
+            console.log("New User Connected with soket Id of ", socket.id,)
             admin_socket.emit('connected', {id: xs(myid)})
         })
     } else {

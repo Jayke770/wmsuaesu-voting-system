@@ -123,7 +123,7 @@ html:focus-within, body:focus-within{
 /* width */
 
 ::-webkit-scrollbar {
-	@apply w-2 h-2;
+	@apply w-2 h-2 sm:w-0.5 sm:h-0.5;
 }
 
 /* Track */
