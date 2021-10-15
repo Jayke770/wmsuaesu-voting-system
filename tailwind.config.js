@@ -38,7 +38,8 @@ module.exports = {
       darkBlue: {
         primary: '#090c10',
         secondary: '#161b22',
-        dark: '#101318'
+        100: '#1d242e', 
+        200: '#13171e'
       },
     },
     fontFamily: {

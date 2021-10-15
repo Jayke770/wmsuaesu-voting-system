@@ -20,7 +20,7 @@
                 }
             %> 
             <% for (let i = 0; i < elections.length; i++) { %>
-                <div data="election-<%- elections[i]._id %>" style="animation-delay: <%- i * .250 %>s;" class="animate__animated animate__fadeInUp ms-500 rounded-xl dark_border dark:bg-darkBlue-secondary">
+                <div data="election-<%- elections[i]._id %>" style="animation-delay: <%- i * .250 %>s;" class="animate__animated animate__fadeInUp ms-500 rounded-xl shadow-xl dark_border dark:bg-darkBlue-secondary bg-gray-100">
                         <div class="grid grid-cols-2 sm:flex sm:flex-col">
                             <div class="container">
                                 <img class="object-cover w-full h-full sm:h-52 rounded-tl-xl rounded-bl-xl sm:rounded-bl-none sm:rounded-tr-xl skeleton-image" alt="election_icon" data="<%- elections[i].election_title.split(" ").length >= 2 ? `${elections[i].election_title.split(" ")[0].charAt(0).toUpperCase()} ${elections[i].election_title.split(" ")[1].charAt(0).toUpperCase()}` : elections[i].election_title.split(" ")[0].charAt(0).toUpperCase() %>">
