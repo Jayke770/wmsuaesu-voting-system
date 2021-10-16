@@ -1,0 +1,46 @@
+<% 
+    const Data = {
+        position: (id) => {
+            for(let i = 0; i < data.positions.length; i++){
+                if(id === data.positions[i].id){
+                    return data.positions[i].type
+                }
+            }
+        }
+    }
+%>
+<div class="voter_form hidden w-full h-full pt-16 px-3 sm:px-1.5">
+    <div class="flex flex-col justify-center items-center py-3 gap-3">
+        <p style="animation-delay: .250s;" class="dark:text-purple-600 text-purple-700 text-xl font-semibold animate__animated animate__fadeInUp">Election will end in</p>
+        <div style="animation-delay: .500s;" id="e_time" class="flipdown animate__animated animate__fadeIn" data="<%- elections.end %>"></div>
+    </div>
+    <form  class="submit-vote flex flex-col gap-2 mt-5 dark_border rounded-md p-2">
+        <% for(let p = 0; p < elections.positions.length; p++) { %> 
+           <div class="pos">
+               <div style="animation-delay: <%- p * .50 %>s;" class="animate__animated animate__fadeIn ms-500 flex items-center justify-start px-1 py-2">
+                   <span class="dark:text-purple-700 text-xl font-normal"><%- Data.position(elections.positions[p].id) %></span>
+               </div>
+               <div style="animation-delay: .100s;" class="animate__animated animate__fadeIn ms-500 grid grid-cols-3 lg:grid-cols-2 sm:grid-cols-none gap-3 transition-all">
+                    <% for (let c = 0; c < elections.candidates.length; c++) { %>
+                        <% if(elections.positions[p].id === elections.candidates[c].position){ %> 
+                            <div style="animation-delay: <%- c * .150%>s;" class="rpl animate__animated animate__fadeInUp ms-500 dark:bg-darkBlue-secondary flex flex-row rounded-xl shadow-lg cursor-pointer">
+                                <div class="flex-[10%] flex justify-center items-center p-1.5">
+                                    <img class="object-cover w-16 h-16 rounded-full" alt="candidate_profile" src="/assets/image.jpg">
+                                </div>
+                                <div class="flex-[90%] flex flex-col items-center justify-start"></div>
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+           </div>
+        <% } %>
+    </form>
+    <br>
+</div>
+<script>
+    //get the election starting time  
+    new FlipDown((new Date($("#e_time").attr("data")).getTime() / 1000), "e_time").start().ifEnded( () => {})
+    //set the theme of flipdown 
+    $("#e_time").removeClass(localStorage.getItem('theme') === "dark" ? 'flipdown__theme-dark' : 'flipdown__theme-light')
+    $("#e_time").addClass(localStorage.getItem('theme') === "dark"? 'flipdown__theme-light' : 'flipdown__theme-dark')
+</script>

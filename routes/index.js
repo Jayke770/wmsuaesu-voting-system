@@ -176,6 +176,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
             return res.render('index', {
                 joined: false,
                 iscandidate: false,
+                isvoting: false,
                 elections: electionsJoined, 
                 data: {
                     positions: await positions(), 
@@ -190,6 +191,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
             return res.render('index', {
                 joined: false,
                 iscandidate: false,
+                isvoting: false,
                 elections: electionsJoined, 
                 data: {
                     positions: await positions(), 
@@ -729,51 +731,6 @@ router.post('/home/election/candidacy-status/', normal_limit, isloggedin, async 
         return res.status(500).send()
     }
 })
-//update candidate platform 
-router.post('/home/election/update-candidacy/', normal_limit, isloggedin, async (req, res) => {
-    const {platform} = req.body 
-    const {electionID, myid} = req.session
-    const {_id, student_id} = await user_data(myid)  
-
-    try {
-        //check if the election is exists and voter & candidate is exists 
-        await election.find({
-            _id: {$eq: xs(electionID)}, 
-            voters: {$elemMatch: {id: xs(_id).toString()}}, 
-            candidates: {$elemMatch: {student_id: xs(student_id)}}
-        }, {
-            voters: {$elemMatch: {id: xs(_id).toString()}}, 
-            candidates: {$elemMatch: {student_id: xs(student_id)}}
-        }).then( async (elec) => {
-            if(elec.length > 0){
-                //update candidate platform 
-               await election.updateOne({
-                   _id: {$eq: xs(electionID)}, 
-                   "candidates.student_id": {$eq: xs(student_id)}
-               }, {
-                   $set: {"candidates.$.platform": xs(platform)}
-               }).then( () => {
-                   return res.send({
-                    status: true, 
-                    msg: "Platform successfully updated!"
-                })
-               }).catch( (e) => {
-                   throw new Error(e)
-               })
-            } else {
-                return res.send({
-                    status: false, 
-                    msg: "Candidate / Voter not found"
-                })
-            }
-        }).catch( (e) => {
-            throw new Error(e)
-        })
-    } catch (e) {
-        console.log(e)
-        return res.status(500).send()
-    }
-})
 // delete candidacy form in current user 
 router.post('/home/election/delete-candidacy/', normal_limit, isloggedin, async (req, res) => {
     const {candidateID} = req.body
@@ -915,6 +872,7 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
                 return res.render('index', {
                     joined: true,
                     iscandidate: false,
+                    isvoting: false,
                     elections: elec[0],
                     data: {
                         positions: await positions(), 
@@ -950,6 +908,7 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
             return res.render('index', {
                 joined: true,
                 iscandidate: true,
+                isvoting: false,
                 elections: elec[0], 
                 data: {
                     course: await course(), 
@@ -1094,6 +1053,46 @@ router.post('/home/election/id/*/candidates/view-candidate/', normal_limit, islo
         })
     } catch (e) {
         return res.status(500).send()
+    }
+})
+//vote 
+router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, res) => {
+    const {electionID, myid} = req.session 
+    
+    try {
+        //get election details 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}
+        }, {voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}, passcode: 0}).then( async (elec) => {
+            if(elec.length > 0){
+                //check if election started 
+                if(elec[0].status === "Started"){
+                    return res.render('index', {
+                        elections: elec[0],
+                        joined: true,
+                        isvoting: true,
+                        iscandidate: false,
+                        data: {
+                            positions: await positions(), 
+                            partylists: await partylists(), 
+                            course: await course(), 
+                            year: await year()
+                        }, 
+                        userData: await user_data(myid),
+                        csrf: req.csrfToken()
+                    })
+                } else {
+                    return res.status(401).send('fasff')
+                }
+            } else {
+                return res.status(404).render('error/404')
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+
     }
 })
 module.exports = router

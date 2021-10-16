@@ -1,6 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* swiper js */
+@media (max-width: 639px){
+    .hide {
+        display: none !important;
+    }  
+}
 /* lazy progress */
 .lazy-progress {
     transition: 1s ease;
@@ -106,7 +112,7 @@ html:focus-within, body:focus-within{
     color: rgba(228, 228, 231, var(--tw-text-opacity)) !important;
 }
 .swal2-popup, .swal2-popup.swal2-toast{
-    @apply dark:bg-darkBlue-secondary rounded-xl dark:ring-1 dark:ring-purple-600/40;
+    @apply dark:bg-darkBlue-secondary rounded-xl;
 }
 .swal2-title{
     @apply dark:text-gray-200;

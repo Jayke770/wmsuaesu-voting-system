@@ -52,7 +52,7 @@
             <div class="flex justify-start px-3 py-2 break-words dark:text-gray-300/80"><%- candidateInfo.platform %></div>
         </div>
     </div>
-    <div style="animation-delay: .750s;"class="animate__animated animate__fadeInUp ms-500 grid grid-cols-3 md:grid-cols-none gap-2 px-3 mt-3">
+    <div style="animation-delay: .750s;"class="animate__animated animate__fadeInUp ms-500 flex flex-col gap-2 px-3 mt-3">
         <div class="dark:bg-darkBlue-100 rounded-lg flex flex-col shadow-md">
             <p class="dark:text-purple-600 text-base font-medium px-3 py-2">Reactions</p>
             <div class="flex justify-start px-3 py-1">
@@ -87,7 +87,16 @@
             <div class="flex justify-start px-3 py-1 break-words dark:text-gray-300/80"><%- candidatesUserInfo.bio %></div>
         </div>
     </div>
-    <div style="animation-delay: .750s;"class="animate__animated animate__fadeInUp ms-500 grid grid-cols-3 md:grid-cols-none gap-2 px-3 mt-3">
-        
+    <div style="animation-delay: .750s;"class="animate__animated animate__fadeInUp ms-500 flex flex-col gap-2 px-3 mt-3">
+        <div class="dark:bg-darkBlue-100 rounded-lg flex flex-col shadow-md">
+            <p class="dark:text-purple-600 text-base font-medium px-3 py-2">Active Status</p>
+            <div class="flex justify-start px-3 pb-3 break-words dark:text-gray-300/80">
+                <% if(candidatesUserInfo.socket_id !== "Offline") { %> 
+                    <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">Online</span>
+                <% } else { %>
+                    <span class="dark:bg-gray-700 bg-gray-600  text-gray-300 px-4 py-0.5 text-sm rounded-lg">Offline</span>
+                <% } %>
+            </div>
+        </div>
     </div>
 </div>

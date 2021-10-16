@@ -1,11 +1,11 @@
 const colors = require("tailwindcss/colors")
 const { themeVariants } = require("tailwindcss-theme-variants")
 module.exports = {
-  mode: "jit",
+  mode: 'jit',
   purge: {
     content: ['./views/**/*.ejs']
   },
-  darkMode: 'class', // or 'media' or 'class'
+  darkMode: 'class',
   theme: {
     extend: {},
     colors: {

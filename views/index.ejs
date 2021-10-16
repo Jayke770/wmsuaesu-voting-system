@@ -32,7 +32,7 @@
         document.onreadystatechange = function () {
             setTimeout( () => {
                 $(".loading").remove() 
-                $(".file_candidacy, .election__, .themes__, .candidates").removeClass("hidden")
+                $(".file_candidacy, .election__, .themes__, .candidates, .voter_form").removeClass("hidden")
             }, 500)
         }
     </script>
@@ -88,18 +88,22 @@
         </div>
     </div>
     <!-- Main -->
-    <div class="election__ hidden transition-all">
-        <%- !iscandidate ? include('election/main', { joined: joined, elections: elections, userData: userData }) : '' %>
-    </div>
+    <% if(!isvoting) { %> 
+        <div class="election__ hidden transition-all">
+            <%- !iscandidate ? include('election/main', { joined: joined, elections: elections, userData: userData }) : '' %>
+        </div>
+        <%- iscandidate ? include('election/candidates', {election: elections, data: data}) : '' %>
+    <% } else { %>
+        <%- include('election/vote-form', {election: elections}) %>
+    <% } %>
     <!-- themes -->
     <div class="themes__ hidden">
         <%- include('theme/theme') %>
     </div>
     <!-- file candidacy -->
     <div class="file_candidacy hidden">
-        <%- include('election/file-candidacy') %> 
+        <%- joined ?  include('election/file-candidacy') : '' %> 
     </div>
-    <%- iscandidate ? include('election/candidates', {election: elections, data: data}) : '' %>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/io.js"></script>
     <script src="/js/index.js"></script>
