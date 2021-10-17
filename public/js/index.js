@@ -619,6 +619,49 @@ $(document).ready( () => {
         $(".ca_tabs").hide() 
         $(`.${$(this).attr("data")}`).show()
     })
+    //voter 
+    let vote = false
+    $(".submit-vote").submit( async function (e) {
+        e.preventDefault()
+        const def = $(this).find("button[type='submit']").html() 
+        if(!vote){
+            $(this).find("button[type='submit']").html(election.loader()) 
+            vote = true
+            try {
+                const req = await fetchtimeout('submit-vote/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    $(this).find("button[type='submit']").html(def) 
+                    vote = false
+                    Swal.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.txt, 
+                        html: res.msg, 
+                        backdrop: true, 
+                        allowOutsideClick: false
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                $(this).find("button[type='submit']").html(def) 
+                vote = false
+                Swal.fire({
+                    icon: 'error', 
+                    title: "Connection Error", 
+                    html: e.message, 
+                    backdrop: true, 
+                    allowOutsideClick: false
+                })
+            }
+        }
+    })
     //socket events 
     //get total reactions & views of all candidates 
     setInterval( () => {

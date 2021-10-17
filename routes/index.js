@@ -10,7 +10,7 @@ const admin = require('../models/admin')
 const data = require('../models/data')
 const election = require('../models/election')
 const { authenticated, isadmin, isloggedin, take_photo, get_face } = require('./auth')
-const { toUppercase, chat, bot, new_msg, new_nty, hash, course, year, partylists, positions, user_data, mycourse, myyear, compareHash} = require('./functions')
+const { toUppercase, chat, bot, new_msg, new_nty, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash} = require('./functions')
 const { normal_limit } = require('./rate-limit')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
@@ -1093,6 +1093,65 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
         })
     } catch (e) {
 
+    }
+})
+//submit vote 
+router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, async (req, res) => {
+    const {vote, positionType} = req.body 
+    const {electionID, myid} = req.session
+    const {} = await user_data(myid)
+    try {
+        //check position type 
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            positions: {$elemMatch: {id: {$eq: xs(positionType)}}}
+        }, {
+            positions: {$elemMatch: {id: {$eq: xs(positionType)}}}
+        }).then( async (elec_p) => {
+            if(elec_p.length > 0){
+                if(xs(vote)){
+                    if(parseInt(elec_p[0].positions[0].maxvote) >= vote.length){
+                        //check if the user already voted to this tier of candidates 
+                        // let isvoted = false 
+                        // await election.find({
+                        //     _id: {$eq: xs(electionID)}, 
+                        //     "candidates.position": {$eq: xs(positionType)}
+                        // }, {"candidates.position": {$eq: xs(positionType)}}).then( (ca_elec) => {
+                        //     console.log(ca_elec)
+                        // }).catch( (e) => {
+                        //     throw new Error(e)
+                        // })
+                        return res.send({
+                            status: false, 
+                            txt: "Attention", 
+                            msg: "Submitting votes is currently not available"
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            txt: "Invalid Vote", 
+                            msg: `Please select up to ${parseInt(elec_p[0].positions[0].maxvote)} candidate for ${await myposition(xs(positionType))}`
+                        })
+                    }
+                } else {
+                    return res.send({
+                        status: false, 
+                        txt: "Invalid Vote", 
+                        msg: `Please choose up to ${parseInt(elec_p[0].positions[0].maxvote)} candidate for ${await myposition(xs(positionType))}`
+                    })
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Position Not Found',
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
     }
 })
 module.exports = router

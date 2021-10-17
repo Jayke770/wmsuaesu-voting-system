@@ -260,6 +260,25 @@ module.exports = {
         }
         return res
     },
+    myposition: async (id) => {
+        let res
+        try {
+            await data.find({}, {positions: 1}).then( (p) =>{
+                const pos = p.length === 0 ? [] : p[0].positions
+                for(let i = 0; i < pos.length; i++){
+                    if(pos[i].id === id){
+                        res = pos[i].type 
+                        break
+                    }
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            res = false
+        }
+        return res
+    },
     //update all election status 
     election_handler: async () => {
         let res
