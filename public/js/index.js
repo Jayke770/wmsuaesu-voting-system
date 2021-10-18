@@ -638,6 +638,7 @@ $(document).ready( () => {
                 if(req.ok){
                     const res = await req.json() 
                     $(this).find("button[type='submit']").html(def) 
+                    $(this).find("button[type='reset']").click()
                     vote = false
                     Swal.fire({
                         icon: res.status ? 'success' : 'info', 
