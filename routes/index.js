@@ -1099,7 +1099,7 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
 router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, async (req, res) => {
     const {vote, positionType} = req.body 
     const {electionID, myid} = req.session
-    const {} = await user_data(myid)
+    const {firstname} = await user_data(myid)
     try {
         //check position type 
         await election.find({
@@ -1112,19 +1112,61 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
                 if(xs(vote)){
                     if(parseInt(elec_p[0].positions[0].maxvote) >= vote.length){
                         //check if the user already voted to this tier of candidates 
-                        // let isvoted = false 
-                        // await election.find({
-                        //     _id: {$eq: xs(electionID)}, 
-                        //     "candidates.position": {$eq: xs(positionType)}
-                        // }, {"candidates.position": {$eq: xs(positionType)}}).then( (ca_elec) => {
-                        //     console.log(ca_elec)
-                        // }).catch( (e) => {
-                        //     throw new Error(e)
-                        // })
-                        return res.send({
-                            status: false, 
-                            txt: "Attention", 
-                            msg: "Submitting votes is currently not available"
+                        let isvoted = false, ca_in_position = []
+                        //get all candidates 
+                        await election.find({_id: {$eq: xs(electionID)}}, {candidates: 1}).then( async (ca_elec) => {
+                            if(ca_elec.length > 0){
+                                const candidates = ca_elec[0].candidates 
+                                for(let c = 0; c < candidates.length; c++){
+                                    if(candidates[c].position === xs(positionType)){
+                                        ca_in_position.push(candidates[c].votes)
+                                    }
+                                }
+                                //check if the user already voted with this position 
+                                if(ca_in_position.length > 0){
+                                    for(let v = 0; v < ca_in_position.length; v++){
+                                        for(let vote = 0; vote < ca_in_position[v].length; vote++){
+                                            if(ca_in_position[v][vote] === xs(myid).toString()){
+                                                isvoted = true
+                                            }
+                                        }
+                                    }
+                                    //if the user is not voted
+                                    if(!isvoted){
+                                        for(let k = 0; k < vote.length; k++){
+                                            //insert new vote 
+                                            await election.updateOne({
+                                                _id: {$eq: xs(electionID)}, 
+                                                "candidates.id": {$eq: xs(vote[k])}
+                                            }, {$push: {"candidates.$.votes": xs(myid).toString()}}).then( () => {
+                                                return res.send({
+                                                    status: true, 
+                                                    txt: 'Vote submitted successfully', 
+                                                    msg: `Have a nice day ${firstname}!`
+                                                })
+                                            }).catch( (e) => {
+                                                throw new Error(e)
+                                            })
+                                        }
+                                    } else {
+                                        return res.send({
+                                            status: false,
+                                            txt: "Oops..", 
+                                            msg: `You already submitted a vote for ${await myposition(xs(positionType))}`
+                                        })
+                                    }
+                                } else {
+                                    return res.send({
+                                        status: false,
+                                        txt: "Candidates Not Found", 
+                                        msg: "Please refresh the app!"
+                                    })
+                                }
+                            } else {
+                                throw new Error("Election Not Found")
+                            }
+                        }).catch( (e) => {
+                            throw new Error(e)
                         })
                     } else {
                         return res.send({

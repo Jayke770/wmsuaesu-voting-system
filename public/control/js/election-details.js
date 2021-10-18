@@ -1627,6 +1627,92 @@ $(document).ready(() => {
             })
         }
     })
+    //socket 
+    //get election data every 10 secs
+    let election_deleted = false
+    setInterval( () => {
+        const id = $("html").attr("data")
+        function electionData(id){
+            if(!election_deleted){
+                socket.emit('election-data', {id: id}, async (res) => {
+                    if(await res.status){
+                        //update partylist count
+                        $("body").find("#partylist_count").html(res.data.partylists)
+                        //update positions count 
+                        $("body").find("#positions_count").html(res.data.positions)
+                        //update candidates accpted count 
+                        $("body").find("#accepted_candidates_count").html(res.data.candidates.accepted)
+                        //update candidates counts 
+                        if(res.data.candidates.pending !== 0){
+                            $("#candidates_nav_count").append(`
+                                <div class="e_pend_count_ca absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm">${res.data.candidates.pending}</div>
+                            `)
+                            $(".candidates_tab[data='pend']").find(".e_pend_count_ca").remove() 
+                            $(".candidates_tab[data='pend']").append(`
+                                <div class="e_pend_count_ca absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm">${res.data.candidates.pending}</div>
+                            `)
+                        }
+                        if(res.data.candidates.pending === 0){
+                            $("#candidates_nav_count").find(".e_pend_count_ca").remove() 
+                            $(".candidates_tab[data='pend']").find(".e_pend_count_ca").remove() 
+                        }
+                        //update voters count
+                        if(res.data.voters.pending === 0){
+                            $("a.election_btn[data='voters'], .e_pend").find(".e_pend_count").remove() 
+                        } else {
+                            $("a.election_btn[data='voters'], .e_pend").find(".e_pend_count").remove()  
+                            $("a.election_btn[data='voters'], .e_pend").append(`
+                                <div class="e_pend_count absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm">${res.data.voters.pending}</div>
+                            `)
+                        }
+                        //update voters count 
+                        $("body").find("#accepted_voter_count").html(res.data.voters.accepted)
+                        //update voters voted count 
+                        $("body").find("#voter_voter_count").html(res.data.voters.voted)
+                        e_data = false
+                    } else {
+                        election_deleted = true
+                        Swal.fire({
+                            icon: 'info', 
+                            title: 'This election was deleted', 
+                            html: 'System detected that this election is already Pending for deletion', 
+                            backdrop: true,
+                            allowOutsideClick: false, 
+                            confirmButtonText: 'Go Home'
+                        }).then( () => {
+                            window.location.assign('/control')
+                        })
+                    }
+                })
+            }
+        }
+    }, 2000)
+    // new voter joined the election 
+    socket.on('new-user-join-election', (data) => {
+        const election = data.election 
+        if(election === currentElection){
+            alertify.notify('New voter joined the election!')
+        }
+    })
+    //new voter file for candidacy 
+    socket.on('new-voter-file-for-candidacy', (data) => {
+        const election = data.election 
+        if(election === currentElection){
+            alertify.notify('New voter filed for candidacy!')
+        }
+    })
+    //new election started 
+    socket.on('new-election-started', async () => {
+        await election.election_status()
+        await election.status()
+        await election.dt()
+    })
+    //new election ended
+    socket.on('new-election-ended', async () => {
+        await election.election_status()
+        await election.status()
+        await election.dt()
+    })
     //functions 
     const election = {
         voters: async (link) => {
@@ -1863,8 +1949,4 @@ $(document).ready(() => {
             }
         }
     }
-    //get election data every 10 secs
-    setInterval( () => {
-        electionData($("html").attr("data"))
-    }, 2500)
 })

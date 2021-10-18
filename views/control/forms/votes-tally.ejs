@@ -24,7 +24,6 @@
 <div class="container mt-3">
     <div class="grid grid-cols-2 gap-3 md:grid-cols-none transition-all">
         <% for(let i = 0; i < election.positions.length; i++) { %>
-            
             <div id="election_positions" data="<%- `c${i}` %>" class="w-full dark:bg-darkBlue-secondary shadow-md bg-gray-200 rounded-md  transition-all">
                 <div class="p-2">
                     <span class="p-2 dark:text-gray-300 text-purple-700 text-xl"><%- electionData.pos(election.positions[i].id) %></span>
@@ -34,15 +33,14 @@
                 </div>
             </div>
             <script>
-                var <%- `ca_in_pos_${i}` %> = '<%- electionData.candidates(election.positions[i].id) %>'
                 var ctx = document.getElementById("<%- `chart-${i}` %>")
                 var <%- `c${i}` %> = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: [],
+                        labels: null,
                         datasets: [{
-                            label: 'Total Votes',
-                            data: [100, 200, 500],
+                            label: '<%- electionData.pos(election.positions[i].id) %>',
+                            data: null,
                             backgroundColor: [
                                 'rgba(255, 99, 132, 0.2)',
                                 'rgba(54, 162, 235, 0.2)',
@@ -65,15 +63,20 @@
                     options: {
                         responsive: true
                     }
-                    })
-                setTimeout( () => {
-                    //push name in chart labels 
-                    for(let i = 0; i < <%- `ca_in_pos_${i}` %>.split(",").length; i++){
-                        <%- `c${i}` %>.data.labels.push(<%- `ca_in_pos_${i}` %>.split(",")[i])
+                })
+                setInterval( () => {
+                    let data = {
+                        id: '<%- election._id %>', 
+                        position: '<%- election.positions[i].id %>'
                     }
-                    //update chart 
-                    <%- `c${i}` %>.update()
-                }, 2000)
+                    socket.emit('candidate-names', data, (res) => {
+                        if(res.status){
+                            <%- `c${i}` %>.data.labels = res.data.names
+                            <%- `c${i}` %>.data.datasets[0].data = res.data.votes
+                            <%- `c${i}` %>.update()
+                        }
+                    })
+                }, 1000)
             </script>
         <% } %>
     </div>

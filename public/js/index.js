@@ -644,6 +644,7 @@ $(document).ready( () => {
                         title: res.txt, 
                         html: res.msg, 
                         backdrop: true, 
+                        confirmButtonText: res.status ? 'Thank You' : 'OK',
                         allowOutsideClick: false
                     })
                 } else {
