@@ -449,5 +449,5 @@ setInterval(async () => {
 async function start() {
     await election_handler()
     await users_election_handler()
-    http.listen(port, '192.168.1.18', console.log('Server Started on port ' + port))
+    http.listen(port, console.log('Server Started on port ' + port))
 }
