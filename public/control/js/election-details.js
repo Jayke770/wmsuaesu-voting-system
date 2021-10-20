@@ -42,6 +42,9 @@ $(document).ready(() => {
             if($(this).attr("data") === "positions"){
                 election.positions()
             }
+            if($(this).attr("data") === "courses"){
+                election.courses()
+            }
         }, 1000)
     })
     $(".e_ac").click( () => {
@@ -831,7 +834,7 @@ $(document).ready(() => {
             })
             if(req.ok) {
                 const res = await req.json() 
-                socket.emit('election-change', {electionID: $("html").attr("data")})
+                add_pos = false
                 $(this).find("button[type='submit']").html(def) 
                 if(res.status){
                     toast.fire({
@@ -925,6 +928,156 @@ $(document).ready(() => {
                                 }
                             } catch (e) {
                                 remove_pos = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: "Connection Error",
+                                    html: e.message,
+                                    backdrop: true, 
+                                    allowOutsideClick: false
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+    //course 
+    $(".courses_").click( function(e) {
+        if($(e.target).hasClass("courses_")){
+            $(".courses_main").addClass($(".courses_main").attr("animate-out"))
+            setTimeout(() => {
+                $(".courses_").addClass("hidden")
+                $(".courses_").removeClass("flex")
+                $(".courses_main").removeClass($(".courses_main").attr("animate-out"))
+                $(".courses_").find(".courses").removeClass("hidden")
+                $(".courses_").find(".courses").addClass("flex")
+                $(".courses_").find(".courses_data_list").remove()
+            }, 300)
+        }
+    })
+    $(".courses").click( () => {
+        $(".courses_main").addClass($(".courses_main").attr("animate-out"))
+        setTimeout(() => {
+            $(".courses_").addClass("hidden")
+            $(".courses_").removeClass("flex")
+            $(".courses_main").removeClass($(".courses_main").attr("animate-out"))
+            $(".courses_").find(".courses").removeClass("hidden")
+            $(".courses_").find(".courses").addClass("flex")
+            $(".courses_").find(".courses_data_list").remove()
+        }, 300)
+    })
+    //add course
+    let add_crs = false
+    $(".courses_").delegate(".add_crs_e", "submit", async function (e) {
+        e.preventDefault()
+        const def = $(this).find("button[type='submit']").html()
+        try {
+            add_crs = true 
+            $(this).find("button[type='submit']").html(election.loader()) 
+            const req = await fetchtimeout('/control/elections/add-course/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                }, 
+                body: new FormData(this)
+            })
+            if(req.ok) {
+                const res = await req.json() 
+                add_crs = false
+                $(this).find("button[type='submit']").html(def) 
+                if(res.status){
+                    toast.fire({
+                        icon: 'success', 
+                        title: res.msg,
+                        timer: 2000
+                    })   
+                    await election.courses()
+                } else {
+                    toast.fire({
+                        icon: 'info', 
+                        title: res.msg,
+                        timer: 2000
+                    })
+                }
+            } else {
+                throw new Error(`${req.status} ${req.statusText}`)
+            }
+        } catch (e) {
+            add_crs = false
+            $(this).find("button[type='submit']").html(def) 
+            toast.fire({
+                icon: 'error', 
+                title: e.message,
+                timer: 2000
+            })
+        }
+    })
+    let remove_crs = false
+    $(".courses_").delegate(".e_remove_course", "click", async function (e) {
+        e.preventDefault() 
+        if(!remove_pos){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Remove Course', 
+                html: 'Are you sure you want to remove this course?', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                confirmButtonText: 'Remove', 
+                showDenyButton: true, 
+                denyButtonText: 'Cancel'
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Removing Course', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false,
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            try {
+                                remove_crs = true 
+                                let data = new FormData() 
+                                data.append("id", $(this).attr("data"))
+                                const req = await fetchtimeout('/control/elections/remove-course/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok) {
+                                    const res = await req.json() 
+                                    remove_crs = false
+                                    if(res.status) {
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        }).then( () => {
+                                            $(".courses_").find(`div[data='course-${$(this).attr("data")}']`).removeClass("animate__fadeInUp")
+                                            $(".courses_").find(`div[data='course-${$(this).attr("data")}']`).addClass("animate__fadeOutDown")
+                                            setTimeout( async () => {
+                                                $("course_").find(`div[data='course-${$(this).attr("data")}']`).remove()
+                                                await election.courses()
+                                            }, 500)
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        })
+                                    }
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                remove_crs = false
                                 Swal.fire({
                                     icon: 'error', 
                                     title: "Connection Error",
@@ -1795,6 +1948,31 @@ $(document).ready(() => {
                     $(".positions_").find(".preload_positions").addClass("hidden")
                     $(".positions_").find(".preload_positions").removeClass("flex")
                     $(".positions_").find(".positions_e_list").append(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                toast.fire({
+                    icon: 'error',
+                    title: e.message, 
+                    timer: 2000
+                })
+            }
+        },
+        courses: async () => {
+            try {
+                const req = await fetchtimeout('/control/elections/courses-list/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    $(".courses_").find(".courses_data_list").remove()
+                    $(".courses_").find(".preload_courses").addClass("hidden")
+                    $(".courses_").find(".preload_courses").removeClass("flex")
+                    $(".courses_").find(".courses_e_list").append(res)
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
                 }

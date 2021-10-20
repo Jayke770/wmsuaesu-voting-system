@@ -113,6 +113,8 @@ html:focus-within, body:focus-within{
 }
 .swal2-popup, .swal2-popup.swal2-toast{
     @apply dark:bg-darkBlue-secondary rounded-xl;
+    box-shadow: none !important;
+    border: .1px solid #653394 !important;
 }
 .swal2-title{
     @apply dark:text-gray-200;
@@ -129,7 +131,7 @@ html:focus-within, body:focus-within{
 /* width */
 
 ::-webkit-scrollbar {
-	@apply w-2 h-2 sm:w-0.5 sm:h-0.5;
+	@apply w-1 h-1 sm:w-0.5 sm:h-0.5 ;
 }
 
 /* Track */
@@ -141,7 +143,7 @@ html:focus-within, body:focus-within{
 /* Handle */
 
 ::-webkit-scrollbar-thumb {
-	@apply dark:bg-purple-900 bg-gray-500 rounded-full cursor-pointer;
+	@apply dark:bg-purple-900 bg-gray-500 cursor-pointer;
 }
 
 /* animate.css duration */

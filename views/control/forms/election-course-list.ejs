@@ -1,0 +1,46 @@
+<% 
+    const e_data = {
+        crs: (val) => {
+            for(let i = 0; i < data.course.length; i++){
+                if(val === data.course[i].id){
+                    return data.course[i].type
+                }
+            }
+        }, 
+        selected_crs: (val) => {
+            let res
+            for(let i = 0; i < e_course.length; i++){
+                if(e_course[i] === val){
+                    res = true
+                    break
+                }
+            }
+            return res
+        }
+    }
+%>
+<div class="courses_data_list px-3 h-full flex flex-col gap-3 py-3 overflow-y-auto">   
+    <% for (let i = 0; i < e_course.length; i++) { %>
+        <div style="animation-delay: <%- i * .150 %>s;" data="course-<%- e_course[i] %>" class="cursor-pointer animate__animated animate__fadeInUp dark_border grid grid-cols-2 justify-center items-center dark:bg-darkBlue-secondary shadow-lg dark:text-gray-400 px-3 py-2 rounded-lg">
+            <span><%- e_data.crs(e_course[i]) %></span>
+            <div class="flex justify-end items-center">
+                <a data="<%- e_course[i] %>" class="e_remove_course rounded-md cursor-pointer text-xl dark:text-red-600 text-red-500">
+                    <i class="fad fa-times-circle"></i>
+                </a>
+            </div>
+        </div>
+    <% } %>          
+</div>
+<form style="animation-delay: .250s;" class="courses_data_list add_crs_e animate__animated animate__fadeInRight ms-500 flex-row gap-1 flex p-2 mt-1">
+    <select required name="crs" class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+        <option value="">Select Course</option>
+        <% for (let i = 0; i < data.course.length; i++) { %>
+            <% if(!e_data.selected_crs(data.course[i].id)){ %> 
+                <option value="<%- data.course[i].id %>"><%- data.course[i].type %></option>
+            <% } %>
+        <% } %>
+    </select>
+    <button type="submit" class="rounded-md px-3 ring-0 border-0 focus:outline-none transition-all dark:text-green-500 text-green-600 text-xl">
+        <i class="fad fa-plus-circle"></i>
+    </button>
+</div>  

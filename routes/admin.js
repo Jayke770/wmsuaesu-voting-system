@@ -98,67 +98,9 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
                     txt: "Partylist must be more than one"
                 })
             }
-            //get the submitted course & check if it exists in db 
-            for(let i = 0; i < crs.length; i++){
-                //get each index and find to db 
-                await data.find({"course.id": {$eq: crs[i]}}, {course:{id : 1}}, (err, f) => {
-                    if(err) throw new err 
-                    //if the course is not found
-                    if(f.length === 0) {
-                        e_crs = false 
-                        return res.send({
-                            created: false, 
-                            msg: "Invalid Course", 
-                            txt: "Please check the courses or do not edit the value of the element"
-                        })
-                    }
-                })
-            }
-            //get the submitted year & check if it exists in db 
-            for(let i = 0; i < yr.length; i++){
-                await data.find({"year.id": {$eq: yr[i]}}, {year:{id : 1}}, (err, f) => {
-                    if(err) throw new err 
-                    //if the year is not found
-                    if(f.length === 0) {
-                        e_yr = false 
-                        return res.send({
-                            created: false, 
-                            msg: "Invalid Year", 
-                            txt: "Please check the year or do not edit the value of the element"
-                        })
-                    }
-                })
-            }
-            //get the submitted positions & check if it exists in db 
-            for(let i = 0; i < pos.length; i++){
-                await data.find({"positions.id": {$eq: pos[i].id}}, {positions:{id : 1}}, (err, f) => {
-                    if(err) throw new err 
-                    //if the position is not found
-                    if(f.length === 0) {
-                        e_pos = false 
-                        return res.send({
-                            created: false, 
-                            msg: "Invalid positions", 
-                            txt: "Please check the positions or do not edit the value of the element"
-                        })
-                    }
-                })
-            }
-            //get the submitted partylist & check if it exists in db 
-            for(let i = 0; i < pty.length; i++){
-                await data.find({"partylists.id": {$eq: pty[i]}}, {partylists:{id : 1}}, (err, f) => {
-                    if(err) throw new err 
-                    //if the partylist is not found
-                    if(f.length === 0) {
-                        e_pty = false 
-                        return res.send({
-                            created: false, 
-                            msg: "Invalid partylists", 
-                            txt: "Please check the partylist or do not edit the value of the element"
-                        })
-                    }
-                })
-            }
+            /*
+                remove positions, partylist, course and year checking
+            */
             //check if the starting time is valid 
             if(start_time[2] === "ago" || end_time[2] === "ago"){
                 e_strt = false
@@ -224,6 +166,7 @@ adminrouter.post('/control/elections/create-election/', limit, isadmin, async (r
                 })
             }
         } catch(e) {
+            console.log(e)
             return res.status(500).send()
         }
     } else {
@@ -1525,6 +1468,98 @@ adminrouter.post('/control/elections/remove-position/', limit, isadmin, async (r
         return res.status(500).send()
     }
 })
+//get all election courses
+adminrouter.post('/control/elections/courses-list/', limit, isadmin, async (req, res) => {
+    const {currentElection} = req.session 
+    try {
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+        }, {courses: 1}).then( async (elec) => {
+            
+            return res.render('control/forms/election-course-list', {
+                e_course: elec.length === 0 ? [] : elec[0].courses,
+                data: {
+                    course: await course()
+                }
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//add positions 
+adminrouter.post('/control/elections/add-course/', limit, isadmin, async (req, res) => {
+    const {crs} = req.body 
+    const {currentElection} = req.session
+    try {
+        //check if the new position is not in used by the current election 
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            courses: {$elemMatch: {$eq: xs(crs)}}
+        }).then( async (elec) => {
+            if(elec.length === 0){
+                //save new position 
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}
+                }, {$push: {courses: xs(crs)}}).then( (u) => {
+                    return res.send({
+                        status: true, 
+                        msg: "Course added successfully"
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Course is already exists"
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//remove position
+adminrouter.post('/control/elections/remove-course/', limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const {currentElection} = req.session 
+    try {
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            courses: {$elemMatch: {$eq: xs(id)}}
+        }, {courses: {$elemMatch: {$eq: xs(id)}}}).then( async (elec) => {
+            if(elec.length !== 0){
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}
+                }, {$pull: {courses: xs(id)}}).then( () => {
+                    return res.send({
+                        status: true, 
+                        msg: 'Course successfully removed'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: 'Course Not Found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
 /*##################################################################################### */
 
 //positions 
@@ -2806,7 +2841,7 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                                 id: uuid(), 
                                 student_id: xs(sid).toUpperCase(),
                                 course: xs(crs), 
-                                year: xs(year), 
+                                year: xs(yr), 
                                 enabled: true
                             }
                             await data.updateOne({}, {$push: {voterId: new_voterId}}).then( async (v) => {

@@ -402,12 +402,14 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
         course: await mycourse(course), 
         year: await myyear(year),
         status: '?',
-        voted: false,
+        voted: [],
         created: moment().tz("Asia/Manila").format()
     },  
     electionData = {
         id: '',
         title: '', 
+        course: null, 
+        year: null,
         isjoined: false,
         autoAccept: null,
         status: ''
@@ -415,7 +417,7 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
 
     try {
         //get all elections and compare the given passcode of user  
-        await election.find({}, {passcode: 1, election_title: 1, status: 1, autoAccept_voters: 1,}).then( async (elec) => {
+        await election.find({}, {passcode: 1, election_title: 1, status: 1, autoAccept_voters: 1, courses: 1, year: 1}).then( async (elec) => {
             //check if theres any election found in query 
             if(elec.length !== 0){
                 //get all the passcode and compare 
@@ -426,55 +428,77 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
                         electionData.isjoined = true 
                         electionData.status = elec[i].status
                         electionData.autoAccept = elec[i].autoAccept_voters
+                        electionData.course = elec[i].courses
+                        electionData.year = elec[i].year
                         break
                     }
                 }
                 //check if the election is found 
                 if(electionData.id !== ''){
-                    //check if the election is not started
-                    if(electionData.status === 'Not Started'){
-                        //check this election id in the elections feild of user
-                        let electionExists = false 
-                        for(let i = 0; i < elections.length; i++){
-                            if(elections[i] === electionData.id){
-                                electionExists = true
-                            }
+                    let c = false, y = false
+                    //check if the user course & year is eligble for this election 
+                    for(let c = 0; c < electionData.course.length; c++){
+                        if(electionData.course[c] === course){
+                            c = true
                         }
-                        //if election id not found in user elections feild 
-                        if(!electionExists){
-                            //insert new voter 
-                            electionData.autoAccept ? new_voter.status = 'Accepted' : new_voter.status = 'Pending'
-                            await election.updateOne({
-                                _id: {$eq: xs(electionData.id)}
-                            }, {$push: {voters: new_voter}}).then( async () => {
-                                //push the election id to user elections feild 
-                                await user.updateOne({
-                                    _id: {$eq: xs(_id)}
-                                }, {$push: {elections: xs(electionData.id)}}).then( () => {
-                                    return res.send({
-                                        joined: true,
-                                        electionID: xs(electionData.id),
-                                        msg: `Welcome to ${electionData.title}`,
-                                        text: new_voter.status === 'Pending' ? "Please wait for the admin to accept your voter request" : "Your request was accepted!"
+                    }
+                    for(let y = 0; y < electionData.course.length; y++){
+                        if(electionData.year[y] === year){
+                            y = true
+                        }
+                    }
+                    //check if the election is not started
+                    if(c && y){
+                        if(electionData.status === 'Not Started'){
+                            //check this election id in the elections feild of user
+                            let electionExists = false 
+                            for(let i = 0; i < elections.length; i++){
+                                if(elections[i] === electionData.id){
+                                    electionExists = true
+                                }
+                            }
+                            //if election id not found in user elections feild 
+                            if(!electionExists){
+                                //insert new voter 
+                                electionData.autoAccept ? new_voter.status = 'Accepted' : new_voter.status = 'Pending'
+                                await election.updateOne({
+                                    _id: {$eq: xs(electionData.id)}
+                                }, {$push: {voters: new_voter}}).then( async () => {
+                                    //push the election id to user elections feild 
+                                    await user.updateOne({
+                                        _id: {$eq: xs(_id)}
+                                    }, {$push: {elections: xs(electionData.id)}}).then( () => {
+                                        return res.send({
+                                            joined: true,
+                                            electionID: xs(electionData.id),
+                                            msg: `Welcome to ${electionData.title}`,
+                                            text: new_voter.status === 'Pending' ? "Please wait for the admin to accept your voter request" : "Your request was accepted!"
+                                        })
+                                    }).catch( (e) => {
+                                        throw new Error(e)
                                     })
                                 }).catch( (e) => {
                                     throw new Error(e)
                                 })
-                            }).catch( (e) => {
-                                throw new Error(e)
-                            })
+                            } else {
+                                return res.send({
+                                    joined: false, 
+                                    msg: "You already joined this election", 
+                                    text: "Please refresh the app"
+                                })
+                            }
                         } else {
                             return res.send({
                                 joined: false, 
-                                msg: "You already joined this election", 
-                                text: "Please refresh the app"
+                                msg: "You can't join this election",
+                                text: `Election is already ${electionData.status}`
                             })
                         }
                     } else {
                         return res.send({
-                            joined: false, 
-                            msg: "You can't join this election",
-                            text: `Election is already ${electionData.status}`
+                            joined: false,
+                            msg: "Oopps..", 
+                            text: `${await mycourse(course)} ${await myyear(year)} is not eligible for this election`
                         })
                     }
                 } else {

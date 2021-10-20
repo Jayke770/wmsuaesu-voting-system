@@ -80,7 +80,7 @@
                     <span class="dark:text-gray-300 text-2xl">Dashboard</span>
                 </div>
                 <div class="container mt-6">
-                    <div class="gap-3 grid grid-cols-4 xl:gap-4 my:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all ">
+                    <div class="gap-3 grid grid-cols-3 xl:gap-4 my:grid-cols-2 md:grid-cols-1 sm:grid-cols-none transition-all ">
                         <div title="Total count of accepted voters" data="voters" class="election_btn cursor-pointer w-full rpl dark:bg-green-700/50 bg-green-600/70 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
@@ -157,7 +157,7 @@
                     }
                 %>
                 <div class="grid md:flex md:flex-col grid-cols-4 gap-3 xl:grid-cols-3 md:grid-cols-2 xl:gap-4 transition-all">
-                    <div class="shadow-md bg-gray-50 dark:bg-emerald-700/50 bg-emerald-600/50 rounded-md p-3 transition-all">
+                    <div data="courses" class="election_btn cursor-pointer rpl shadow-md bg-gray-50 dark:bg-emerald-700/50 bg-emerald-600/50 rounded-md p-3 transition-all">
                         <div class="container flex">
                             <span class="font-medium p-1 dark:text-gray-50 dark:font-normal text-white">Eligible Courses</span>
                         </div>
@@ -214,16 +214,17 @@
             pending_candidates: pending_candidates
         }) %>
         <!-- election positions -->
-        <%- include('election-positions', {
-            e_positions: election.positions, 
-            positions: data.positions
-        }) %>
+        <%- include('election-positions') %>
         <!-- election settings -->
         <div class="election_settings">
             <%- include('election-settings') %>
         </div>
         <!-- candidacy info -->
         <div class="candidacy-info"></div>
+        <!-- election course -->
+        <div class="course">
+            <%- include('election-course', {election_courses: election.courses, data: data}) %>
+        </div>
     </div>
     <script src="/js/theme.js "></script>
     <script src="/js/avatar.js "></script>

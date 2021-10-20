@@ -121,7 +121,7 @@
             <input type="hidden" name="default-year" value='<%- JSON.stringify(year) %>'>
             <input type="hidden" name="default-pos" value='<%- JSON.stringify(positions) %>'>
             <input type="hidden" name="default-pty" value='<%- JSON.stringify(partylists) %>'>
-            <div class="create_election_main ms-500 w-[70%] h-[90%] lg:w-[85%] md:w-full sm:h-[90%] bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl sm:rounded-b-none overflow-y-auto" animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp">
+            <div class="create_election_main ms-500 w-[70%] h-[90%] lg:w-[85%] md:w-full sm:h-[90%] bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-xl sm:rounded-b-none sm:overflow-y-auto" animate-out="animate__animated animate__fadeOutDown" animate-in="animate__animated animate__fadeInUp">
                 <div class="flex flex-row w-full">
                     <div class="w-[95%] flex flex-col">
                         <p class="font-medium transition-all relative text-purple-600 dark:text-purple-500 text-3xl md:text-2xl py-2 px-3 after:absolute after:bottom-0 after:left-3 after:bg-purple-600 dark:after:bg-purple-700 after:w-6/12 md:after:w-9/12 after:h-[3px]">Create Election</p>
@@ -166,26 +166,26 @@
                                 </i>
                             </a>
                         </div>
-                        <form class="create_election_form w-[calc(100%-15rem)] md:h-full md:w-full overflow-x-hidden overflow-y-auto md:py-2">
+                        <form class="create_election_form w-[calc(100%-15rem)] md:h-full md:w-full overflow-x-hidden md:overflow-y-auto md:py-2">
                             <input type="reset" class="hidden">
                             <div class="e_info px-2 h-full pl-3 md:pl-0">
                                 <div class="flex flex-col py-3 gap-5 h-full">
                                     <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-2/5 lg:w-10/12 md:w-full px-4 ">
                                         <label for="e_title" class="dark:text-gray-300 text-base">Election Title</label>
-                                        <input required type="text" name="e_title" placeholder="e.g SSG Election" autocomplete="off" class="text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
+                                        <input required type="text" name="e_title" placeholder="e.g SSG Election" autocomplete="off" class="text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none dark:focus:border-purple-600 transition-all rounded-lg">
                                     </div>
                                     <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start flex-col w-10/12 md:w-full px-4 ">
                                         <label for="e_title" class="dark:text-gray-300 text-base">Description</label>
-                                        <textarea rows="5" name="e_description" placeholder="e.g, Connecting people" autocomplete="off" class="text-input resize-none w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg"></textarea>
+                                        <textarea rows="5" name="e_description" placeholder="e.g, Connecting people" autocomplete="off" class="text-input resize-none w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none dark:focus:border-purple-600 transition-all rounded-lg"></textarea>
                                     </div>
                                     <div class="grid grid-rows-2 gap-4 px-4 w-full">
                                         <div style="animation-delay: .350s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
                                             <label for="e_start" class="dark:text-gray-300 text-base">Start Date & Time</label>
-                                            <input required placeholder="Starting Date & Time" type="text" name="e_start" autocomplete="off" class="dt text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
+                                            <input required placeholder="Starting Date & Time" type="text" name="e_start" autocomplete="off" class="dt text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none dark:focus:border-purple-600 transition-all rounded-lg">
                                         </div>
                                         <div style="animation-delay: .450s;" class="animate__animated animate__fadeInUp ms-500 flex w-1/2 md:w-full flex-col ">
                                             <label for="e_end" class="dark:text-gray-300 text-base">End Date & Time</label>
-                                            <input required placeholder="Ending Date & Time" type="text" name="e_end" autocomplete="off" class="dt text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all rounded-lg">
+                                            <input required placeholder="Ending Date & Time" type="text" name="e_end" autocomplete="off" class="dt text-input w-full p-[8px] border dark:text-gray-200 border-gray-300 dark_border dark:bg-transparent outline-none dark:focus:border-purple-600 transition-all rounded-lg">
                                         </div>
                                     </div>
                                 </div>
