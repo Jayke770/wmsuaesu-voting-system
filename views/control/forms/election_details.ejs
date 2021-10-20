@@ -159,26 +159,26 @@
                 <div class="grid md:flex md:flex-col grid-cols-4 gap-3 xl:grid-cols-3 md:grid-cols-2 xl:gap-4 transition-all">
                     <div data="courses" class="election_btn cursor-pointer rpl shadow-md bg-gray-50 dark:bg-emerald-700/50 bg-emerald-600/50 rounded-md p-3 transition-all">
                         <div class="container flex">
-                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal text-white">Eligible Courses</span>
+                            <span class="font-medium p-1 dark:text-gray-300 dark:font-normal text-white">Eligible Courses</span>
                         </div>
-                        <div class="p-1 flex flex-wrap gap-2">
+                        <div class="e_course_list p-1 flex flex-wrap gap-2">
                             <% const e_crs = election.courses %>
                             <% for (let i = 0; i < e_crs.length; i++) { %>
                                 <div style="border-color: rgba(126, 34, 206, 1)" class="border p-1 px-3 rounded-full cursor-pointer">
-                                    <span class="dark:text-gray-300 font-medium text-gray-100"><%- c(e_crs[i]) %></span>
+                                    <span class="dark:text-gray-300/90 text-gray-100"><%- c(e_crs[i]) %></span>
                                 </div> 
                             <% } %>
                         </div>
                     </div>
-                    <div class="shadow-md bg-gray-50 dark:bg-pink-700/50 bg-pink-600/50 rounded-md p-3 transition-all">
+                    <div data="year" class="election_btn rpl cursor-pointer shadow-md bg-gray-50 dark:bg-pink-700/50 bg-pink-600/50 rounded-md p-3 transition-all">
                         <div class="container flex">
-                            <span class="font-medium p-1 dark:text-gray-50 dark:font-normal text-white">Eligible Year</span>
+                            <span class="font-medium p-1 dark:text-gray-300 dark:font-normal text-white">Eligible Year</span>
                         </div>
-                        <div class="p-1 flex flex-wrap gap-2">
+                        <div class="e_year_list p-1 flex flex-wrap gap-2">
                             <% const e_yr = election.year %>
                             <% for (let i = 0; i < e_yr.length; i++) { %>
                                 <div style="border-color: rgba(126, 34, 206, 1)" class="border p-1 px-3 rounded-full cursor-pointer">
-                                    <span class="text-gray-100 dark:text-gray-300 font-medium"><%- y(e_yr[i]) %></span>
+                                    <span class="text-gray-100 dark:text-gray-300/90"><%- y(e_yr[i]) %></span>
                                 </div> 
                             <% } %>
                         </div>
@@ -223,7 +223,11 @@
         <div class="candidacy-info"></div>
         <!-- election course -->
         <div class="course">
-            <%- include('election-course', {election_courses: election.courses, data: data}) %>
+            <%- include('election-course') %>
+        </div>
+        <!-- election year -->
+        <div class="year">
+            <%- include('election-year') %>
         </div>
     </div>
     <script src="/js/theme.js "></script>

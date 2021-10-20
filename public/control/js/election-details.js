@@ -45,7 +45,10 @@ $(document).ready(() => {
             if($(this).attr("data") === "courses"){
                 election.courses()
             }
-        }, 1000)
+            if($(this).attr("data") === "year"){
+                election.year()
+            }
+        }, 500)
     })
     $(".e_ac").click( () => {
         voters_tab = 'ac'
@@ -956,7 +959,7 @@ $(document).ready(() => {
             }, 300)
         }
     })
-    $(".courses").click( () => {
+    $(".close_courses").click( () => {
         $(".courses_main").addClass($(".courses_main").attr("animate-out"))
         setTimeout(() => {
             $(".courses_").addClass("hidden")
@@ -993,6 +996,7 @@ $(document).ready(() => {
                         timer: 2000
                     })   
                     await election.courses()
+                    election.get_courses()
                 } else {
                     toast.fire({
                         icon: 'info', 
@@ -1016,7 +1020,7 @@ $(document).ready(() => {
     let remove_crs = false
     $(".courses_").delegate(".e_remove_course", "click", async function (e) {
         e.preventDefault() 
-        if(!remove_pos){
+        if(!remove_crs){
             Swal.fire({
                 icon: 'question', 
                 title: 'Remove Course', 
@@ -1063,6 +1067,7 @@ $(document).ready(() => {
                                             setTimeout( async () => {
                                                 $("course_").find(`div[data='course-${$(this).attr("data")}']`).remove()
                                                 await election.courses()
+                                                election.get_courses()
                                             }, 500)
                                         })
                                     } else {
@@ -1092,6 +1097,163 @@ $(document).ready(() => {
             })
         }
     })
+    //year 
+    $(".year_").click( function(e) {
+        if($(e.target).hasClass("year_")){
+            $(".year_main").addClass($(".year_main").attr("animate-out"))
+            setTimeout(() => {
+                $(".year_").addClass("hidden")
+                $(".year_").removeClass("flex")
+                $(".year_main").removeClass($(".year_main").attr("animate-out"))
+                $(".year_").find(".year").removeClass("hidden")
+                $(".year_").find(".year").addClass("flex")
+                $(".year_").find(".year_data_list").remove()
+            }, 300)
+        }
+    })
+    $(".close_year").click( () => {
+        $(".year_main").addClass($(".year_main").attr("animate-out"))
+        setTimeout(() => {
+            $(".year_").addClass("hidden")
+            $(".year_").removeClass("flex")
+            $(".year_main").removeClass($(".year_main").attr("animate-out"))
+            $(".year_").find(".year").removeClass("hidden")
+            $(".year_").find(".year").addClass("flex")
+            $(".year_").find(".year_data_list").remove()
+        }, 300)
+    })
+    //add course
+    let add_yr = false
+    $(".year_").delegate(".add_year_e", "submit", async function (e) {
+        e.preventDefault()
+        const def = $(this).find("button[type='submit']").html()
+        try {
+            add_yr = true 
+            $(this).find("button[type='submit']").html(election.loader()) 
+            const req = await fetchtimeout('/control/elections/add-year/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                }, 
+                body: new FormData(this)
+            })
+            if(req.ok) {
+                const res = await req.json() 
+                add_yr = false
+                $(this).find("button[type='submit']").html(def) 
+                if(res.status){
+                    toast.fire({
+                        icon: 'success', 
+                        title: res.msg,
+                        timer: 2000
+                    })   
+                    await election.year()
+                    election.get_year()
+                } else {
+                    toast.fire({
+                        icon: 'info', 
+                        title: res.msg,
+                        timer: 2000
+                    })
+                }
+            } else {
+                throw new Error(`${req.status} ${req.statusText}`)
+            }
+        } catch (e) {
+            add_yr = false
+            $(this).find("button[type='submit']").html(def) 
+            toast.fire({
+                icon: 'error', 
+                title: e.message,
+                timer: 2000
+            })
+        }
+    })
+    let remove_yr = false
+    $(".year_").delegate(".e_remove_year", "click", async function (e) {
+        e.preventDefault() 
+        if(!remove_yr){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Remove Year', 
+                html: 'Are you sure you want to remove this year?', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                confirmButtonText: 'Remove', 
+                showDenyButton: true, 
+                denyButtonText: 'Cancel'
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Removing Year', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false,
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            try {
+                                remove_yr = true 
+                                let data = new FormData() 
+                                data.append("id", $(this).attr("data"))
+                                const req = await fetchtimeout('/control/elections/remove-year/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok) {
+                                    const res = await req.json() 
+                                    remove_yr = false
+                                    if(res.status) {
+                                        Swal.fire({
+                                            icon: 'success', 
+                                            title: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        }).then( () => {
+                                            $(".cyear_").find(`div[data='year-${$(this).attr("data")}']`).removeClass("animate__fadeInUp")
+                                            $(".cyear_").find(`div[data='year-${$(this).attr("data")}']`).addClass("animate__fadeOutDown")
+                                            setTimeout( async () => {
+                                                $("year_").find(`div[data='year-${$(this).attr("data")}']`).remove()
+                                                await election.year()
+                                                election.get_year()
+                                            }, 500)
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        })
+                                    }
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                remove_yr = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: "Connection Error",
+                                    html: e.message,
+                                    backdrop: true, 
+                                    allowOutsideClick: false
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+    //get updated courses & year every 10seconds 
+    setInterval( () => {
+        election.get_year()
+        election.get_courses()
+    }, 10000)
     //settings
     $(".settings_").click(function(e) {
         if($(e.target).hasClass("settings_")){
@@ -1983,6 +2145,55 @@ $(document).ready(() => {
                     timer: 2000
                 })
             }
+        },
+        get_courses: async () => {
+            socket.emit('get-courses', (res) => {
+                $(".e_course_list").html('')
+                for(let i = 0; i < res.data.length; i++){
+                    $(".e_course_list").append(`
+                        <div style="border-color: rgba(126, 34, 206, 1)" class="border p-1 px-3 rounded-full cursor-pointer">
+                            <span class="dark:text-gray-300/90 text-gray-100">${res.data[i]}</span>
+                        </div> 
+                    `)
+                }
+            })
+        },
+        year: async () => {
+            try {
+                const req = await fetchtimeout('/control/elections/year-list/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    $(".year_").find(".year_data_list").remove()
+                    $(".year_").find(".preload_year").addClass("hidden")
+                    $(".year_").find(".preload_year").removeClass("flex")
+                    $(".year_").find(".year_e_list").append(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                toast.fire({
+                    icon: 'error',
+                    title: e.message, 
+                    timer: 2000
+                })
+            }
+        },
+        get_year: async () => {
+            socket.emit('get-year', (res) => {
+                $(".e_year_list").html('')
+                for(let i = 0; i < res.data.length; i++){
+                    $(".e_year_list").append(`
+                        <div style="border-color: rgba(126, 34, 206, 1)" class="border p-1 px-3 rounded-full cursor-pointer">
+                            <span class="dark:text-gray-300/90 text-gray-100">${res.data[i]}</span>
+                        </div> 
+                    `)
+                }
+            })
         },
         loader: () => {
             return '<i class="fad animate-spin fa-spinner-third"></i>'

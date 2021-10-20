@@ -23,7 +23,7 @@ const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
-const {updateAdminSocketID, user_socket_id, election_handler, user_data, users_election_handler} = require('./routes/functions') 
+const {updateAdminSocketID, user_socket_id, election_handler, user_data, users_election_handler, course, mycourse, year, myyear} = require('./routes/functions') 
 //models 
 const election = require('./models/election')
 const users = require('./models/user')
@@ -253,6 +253,7 @@ admin_socket.on('connection', async (socket) => {
         console.log("Admin Disonnected with soket Id of ", socket.id)
         updateAdminSocketID(myid, "Offline")
     })
+    //election candidate names
     socket.on('candidate-names', async (data, res) => {
         let ca_data = {
             names: [], 
@@ -292,7 +293,50 @@ admin_socket.on('connection', async (socket) => {
             })
         }
     }) 
-    
+    //election courses 
+    socket.on('get-courses', async (res) => {
+        let e_courses = [] 
+        await election.find({
+            _id: {$eq: xs(currentElection)}
+        }, {courses: 1}).then( async (elec) => {
+            if(elec.length > 0){
+                for(let c = 0; c < elec[0].courses.length; c++){
+                    e_courses.push(await mycourse(elec[0].courses[c]))
+                }
+                res({
+                    status: true, 
+                    data: e_courses
+                })
+            }
+        }).catch( (e) => {
+            res({
+                status: false, 
+                data: e.message
+            })
+        })
+    })
+    //election year
+    socket.on('get-year', async (res) => {
+        let e_year = [] 
+        await election.find({
+            _id: {$eq: xs(currentElection)}
+        }, {year: 1}).then( async (elec) => {
+            if(elec.length > 0){
+                for(let y = 0; y < elec[0].year.length; y++){
+                    e_year.push(await myyear(elec[0].year[y]))
+                }
+                res({
+                    status: true, 
+                    data: e_year
+                })
+            }
+        }).catch( (e) => {
+            res({
+                status: false, 
+                data: e.message
+            })
+        })
+    })
 })
 //user websocket events
 users_socket.on('connection', async (socket) => {
@@ -449,5 +493,5 @@ setInterval(async () => {
 async function start() {
     await election_handler()
     await users_election_handler()
-    http.listen(port, '192.168.1.18', console.log('Server Started on port ' + port))
+    http.listen(port, console.log('Server Started on port ' + port))
 }

@@ -435,20 +435,22 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
                 }
                 //check if the election is found 
                 if(electionData.id !== ''){
-                    let c = false, y = false
+                    let crs = false, yr = false
                     //check if the user course & year is eligble for this election 
                     for(let c = 0; c < electionData.course.length; c++){
                         if(electionData.course[c] === course){
-                            c = true
+                            crs = true
+                            break
                         }
                     }
-                    for(let y = 0; y < electionData.course.length; y++){
+                    for(let y = 0; y < electionData.year.length; y++){
                         if(electionData.year[y] === year){
-                            y = true
+                            yr = true
+                            break
                         }
                     }
                     //check if the election is not started
-                    if(c && y){
+                    if(crs && yr){
                         if(electionData.status === 'Not Started'){
                             //check this election id in the elections feild of user
                             let electionExists = false 

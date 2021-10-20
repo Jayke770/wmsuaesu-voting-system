@@ -1490,18 +1490,18 @@ adminrouter.post('/control/elections/courses-list/', limit, isadmin, async (req,
         return res.status(500).send()
     }
 })
-//add positions 
+//add election course
 adminrouter.post('/control/elections/add-course/', limit, isadmin, async (req, res) => {
     const {crs} = req.body 
     const {currentElection} = req.session
     try {
-        //check if the new position is not in used by the current election 
+        //check if the new course is not in used by the current election 
         await election.find({
             _id: {$eq: xs(currentElection)}, 
             courses: {$elemMatch: {$eq: xs(crs)}}
         }).then( async (elec) => {
             if(elec.length === 0){
-                //save new position 
+                //save new course
                 await election.updateOne({
                     _id: {$eq: xs(currentElection)}
                 }, {$push: {courses: xs(crs)}}).then( (u) => {
@@ -1526,7 +1526,7 @@ adminrouter.post('/control/elections/add-course/', limit, isadmin, async (req, r
         return res.status(500).send()
     }
 })
-//remove position
+//remove election course
 adminrouter.post('/control/elections/remove-course/', limit, isadmin, async (req, res) => {
     const {id} = req.body 
     const {currentElection} = req.session 
@@ -1550,6 +1550,97 @@ adminrouter.post('/control/elections/remove-course/', limit, isadmin, async (req
                 return res.send({
                     status: false, 
                     msg: 'Course Not Found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//get all election year
+adminrouter.post('/control/elections/year-list/', limit, isadmin, async (req, res) => {
+    const {currentElection} = req.session 
+    try {
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+        }, {year: 1}).then( async (elec) => {
+            return res.render('control/forms/election-year-list', {
+                e_year: elec.length === 0 ? [] : elec[0].year,
+                data: {
+                    year: await year()
+                }
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//add election year
+adminrouter.post('/control/elections/add-year/', limit, isadmin, async (req, res) => {
+    const {yr} = req.body 
+    const {currentElection} = req.session
+    try {
+        //check if the new year is not in used by the current election 
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            year: {$elemMatch: {$eq: xs(yr)}}
+        }).then( async (elec) => {
+            if(elec.length === 0){
+                //save new year
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}
+                }, {$push: {year: xs(yr)}}).then( (u) => {
+                    return res.send({
+                        status: true, 
+                        msg: "Year added successfully"
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Year is already exists"
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//remove elction year
+adminrouter.post('/control/elections/remove-year/', limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const {currentElection} = req.session 
+    try {
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            year: {$elemMatch: {$eq: xs(id)}}
+        }, {year: {$elemMatch: {$eq: xs(id)}}}).then( async (elec) => {
+            if(elec.length !== 0){
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}
+                }, {$pull: {year: xs(id)}}).then( () => {
+                    return res.send({
+                        status: true, 
+                        msg: 'Year successfully removed'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: 'Year Not Found'
                 })
             }
         }).catch( (e) => {
