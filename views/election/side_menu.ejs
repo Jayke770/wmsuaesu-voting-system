@@ -18,13 +18,13 @@
     <i class="ic dark:text-amber-600 w-9 text-xl text-amber-500">
         <i class="fad fa-home"></i>
     </i>
-    <span class="dark:text-gray-300 text-purple-900 font-medium">Home</span>
+    <span class="dark:text-gray-300 text-purple-800">Home</span>
 </a>
 <a class="cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
     <i class="ic dark:text-teal-600 w-9 text-xl text-teal-500">
         <i class="fad fa-user"></i>
     </i>
-    <span class="dark:text-gray-300 text-purple-900  font-medium">My Profile</span>
+    <span class="dark:text-gray-300 text-purple-800">My Profile</span>
 </a>
 <% if(joined) { %> 
     <% if(elections.status === "Started") { %>
@@ -32,7 +32,7 @@
             <i class="ic dark:text-yellow-600 w-9 text-xl text-yellow-500">
                 <i class="fad fa-person-booth"></i>
             </i>
-            <span class="dark:text-gray-300 text-purple-900  font-medium">Vote Now</span>
+            <span class="dark:text-gray-300 text-purple-800">Vote Now</span>
         </a>
     <% } %>
     <% if(elections.status === "Ended") { %>
@@ -40,32 +40,32 @@
             <i class="ic dark:text-yellow-600 w-9 text-xl text-yellow-500">
                 <i class="fad fa-poll-people"></i>
             </i>
-            <span class="dark:text-gray-300 text-purple-900 font-medium">Election Results</span>
+            <span class="dark:text-gray-300 text-bluegray-900">Election Results</span>
         </a>
     <% } %>
     <a href="/home/election/id/<%- elections._id %>" class="cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
         <i class="ic dark:text-cyan-700 w-9 text-xl text-cyan-500">
             <i class="fad fa-info-circle"></i>
         </i>
-        <span class="dark:text-gray-300 text-purple-900 font-medium">Election Status</span>
+        <span class="dark:text-gray-300 text-purple-800">Election Status</span>
     </a>
     <a class="<%- electionData.voterStatus(userData.student_id) && userData.type === "Candidate" ? " cursor-pointer rpl hover:bg-purple-200 dark:hover:bg-bluegray-800/70 file_candidacy_open " : "cursor-not-allowed opacity-50 " %> transition-all py-2 px-4 flex flex-row items-center">
         <i class="ic dark:text-blue-400 w-9 text-xl text-blue-500">
             <i class="fad fa-ballot-check"></i>
         </i>
-        <span class="dark:text-gray-300 text-purple-900  font-medium">File for candidacy</span>
+        <span class="dark:text-gray-300  text-purple-800">File for candidacy</span>
     </a>
     <a <%- electionData.voterStatus(userData.student_id) ? `href='/home/election/id/${elections._id}/candidates/'` : '' %> class="<%- electionData.voterStatus(userData.student_id) ? " cursor-pointer rpl hover:bg-purple-200 dark:hover:bg-bluegray-800/70 candidates_open " : " cursor-not-allowed opacity-50 " %> transition-all py-2 px-4 flex flex-row items-center">
         <i class="ic dark:text-violet-400 w-9 text-xl text-violet-500">
             <i class="fad fa-list-ol"></i>
         </i>
-        <span class="dark:text-gray-300 text-purple-900  font-medium">Candidates</span>
+        <span class="dark:text-gray-300  text-purple-800">Candidates</span>
     </a>
     <a class="e_left_election cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
         <i class="ic dark:text-rose-700 w-9 text-xl text-rose-500">
             <i class="fad fa-sign-out-alt"></i>
         </i>
-        <span class="dark:text-gray-300 text-purple-900  font-medium">Leave Election</span>
+        <span class="dark:text-gray-300  text-purple-800">Leave Election</span>
     </a>
 <% } %>
 <% if(!joined) { %> 
@@ -73,24 +73,24 @@
         <i class="ic dark:text-green-400 w-9 text-xl text-green-500">
             <i class="fad fa-sign-in-alt"></i>
         </i>
-        <span class="dark:text-gray-300 text-purple-900  font-medium">Join Election</span>
+        <span class="dark:text-gray-300  text-purple-800">Join Election</span>
     </a>
 <% } %>
-<a class="cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+<a class="account_settings_open cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
     <i class="ic dark:text-gray-400 w-9 text-xl text-gray-700">
         <i class="fad fa-cog"></i>
     </i>
-    <span class="dark:text-gray-300 text-purple-900  font-medium">Settings</span>
+    <span class="dark:text-gray-300 text-purple-800">Settings</span>
 </a>
 <a class="theme_open cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
     <i class="ic dark:text-orange-600 w-9 text-xl text-orange-600">
         <i class="fad fa-palette"></i>
     </i>
-    <span class="dark:text-gray-300 text-purple-900  font-medium">Themes</span>
+    <span class="dark:text-gray-300 text-purple-800">Themes</span>
 </a>
-<a href="/logout" class="cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+<a href="/home/logout" class="cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
     <i class="ic dark:text-red-600 w-9 text-xl text-red-500">
         <i class="fad fa-sign-out-alt"></i>
     </i>
-    <span class="dark:text-gray-300 text-purple-900 font-medium">Sign out</span>
+    <span class="dark:text-gray-300 text-purple-800">Sign out</span>
 </a>

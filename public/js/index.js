@@ -664,6 +664,43 @@ $(document).ready( () => {
             }
         }
     })
+    //open account settings 
+    $(".account_settings_open").click( async () => {
+        const parent = $(".account_settings_")
+        const child =  $(".account_settings_main")
+        child.addClass(child.attr("animate-in"))
+        parent.removeClass("hidden")
+        parent.addClass("flex")
+        await user.settingsMenu()
+        setTimeout( () => {
+            child.removeClass(child.attr("animate-in"))
+        }, 500)
+    })
+    $(".cls_ac_settings").click( async () => {
+        const parent = $(".account_settings_")
+        const child =  $(".account_settings_main")
+        child.addClass(child.attr("animate-out"))
+        setTimeout( () => {
+            child.removeClass(child.attr("animate-out"))
+            parent.removeClass("flex")
+            parent.addClass("hidden")
+        }, 500)
+    })
+    $(".account_settings_").click( function (e) {
+        if($(e.target).hasClass("account_settings_")){
+            e.preventDefault()
+            const parent = $(".account_settings_")
+            const child =  $(".account_settings_main")
+            child.addClass(child.attr("animate-out"))
+            setTimeout( () => {
+                child.removeClass(child.attr("animate-out"))
+                parent.removeClass("flex")
+                parent.addClass("hidden")
+                $(".account_settings_menu").find(".account_settings_menu").remove()
+                $(".account_settings_menu").find(".account_settings_preload").show()
+            }, 500)
+        }
+    })
     //socket events 
     //get total reactions & views of all candidates 
     setInterval( () => {
@@ -757,6 +794,38 @@ $(document).ready( () => {
             })
         }
     })
+    //user 
+    const user = {
+        settingsMenu: async () => {
+            try {
+                const req = await fetchtimeout('/account/settings-menu/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                })
+                if(req.ok){
+                    const res = await req.text()
+                    $(".account_settings_menu").find(".account_settings_preload").hide() 
+                    $(".account_settings_menu").find(".account_settings_menu").remove()
+                    $(".account_settings_menu").append(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }
+    }
     //election
     const election = {
         file_candidacy: async () => {

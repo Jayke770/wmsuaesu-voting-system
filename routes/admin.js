@@ -2935,27 +2935,41 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                                 year: xs(yr), 
                                 enabled: true
                             }
-                            await data.updateOne({}, {$push: {voterId: new_voterId}}).then( async (v) => {
-                                //add new user 
-                                await user.create({
-                                    student_id: xs(sid),
-                                    firstname: xs(toUppercase(fname)),
-                                    middlename: xs(toUppercase(mname)),
-                                    lastname: xs(toUppercase(lname)),
-                                    course: xs(crs),
-                                    year: xs(yr),
-                                    type: xs(type),
-                                    socket_id: 'Waiting For Student',
-                                    username: `${fname.toUpperCase()}-${xs(sid)}`,
-                                    password: await hash(`WMSU-${xs(sid)}`, 10)
-                                }).then( (crt) => {
-                                    return res.send({
-                                        status: true, 
-                                        msg: 'New user added successfully'
+                            //check if new student is is not exists 
+                            await data.find({
+                                voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}
+                            }).then( async (v) => {
+                                if(v.length === 0){
+                                    await data.updateOne({}, {$push: {voterId: new_voterId}}).then( async (v) => {
+                                        //add new user 
+                                        await user.create({
+                                            student_id: xs(sid),
+                                            firstname: xs(toUppercase(fname)),
+                                            middlename: xs(toUppercase(mname)),
+                                            lastname: xs(toUppercase(lname)),
+                                            course: xs(crs),
+                                            year: xs(yr),
+                                            type: xs(type),
+                                            socket_id: 'Waiting For Student',
+                                            username: `${fname.toUpperCase()}-${xs(sid)}`,
+                                            password: await hash(`WMSU-${xs(sid)}`, 10)
+                                        }).then( (crt) => {
+                                            return res.send({
+                                                status: true, 
+                                                msg: 'New user added successfully'
+                                            })
+                                        }).catch( (e) => {
+                                            throw new Error(e)
+                                        })
+                                    }).catch( (e) => {
+                                        throw new Error(e)
                                     })
-                                }).catch( (e) => {
-                                    throw new Error(e)
-                                })
+                                } else {
+                                    return res.send({
+                                        status: false, 
+                                        msg: 'Student ID is alreadt exists!'
+                                    })
+                                }
                             }).catch( (e) => {
                                 throw new Error(e)
                             })
@@ -3057,10 +3071,10 @@ adminrouter.post('/control/users/sort-users/', limit, isadmin, async (req, res) 
             await user.find({}, {passcode: 0}).sort({lastname: 1}).then( async (users) => {
                 if(users.length > 0){
                     for(let i = 0; i < users.length; i++){
-                        if(users[i].socket_id === "Waiting For Student" || users[i].socket_id === "Offline"){
+                        if(users[i].socket_id === "Offline"){
                             offline.push(users[i])
                         }
-                        if(users[i].socket_id !== "Waiting For Student" || users[i].socket_id !== "Offline"){
+                        if(users[i].socket_id !== "Offline"){
                             online.push(users[i])
                         }
                     }

@@ -29,7 +29,7 @@
                     <div class="swiper-wrapper">
                         <% for (let c = 0; c < election.candidates.length; c++) { %>
                             <% if(election.positions[i].id === election.candidates[c].position && election.candidates[c].status === "Accepted") { %> 
-                                <div class="swiper-slide w-full flex flex-col dark:bg-darkBlue-200 bg-gray-100 rounded-lg">
+                                <div class="swiper-slide w-full flex flex-col dark:bg-darkBlue-secondary bg-gray-100 rounded-lg dark_border">
                                     <div class="flex w-full items-center justify-center px-2 py-5">
                                         <% const icon = election.candidates[c].fullname.split(" ") %>
                                         <img class="h-36 w-36 ring-2 dark:ring-gray-600 rounded-full object-cover skeleton-image" data="<%- `${icon[0].charAt(0).toUpperCase()} ${icon[icon.length - 1].charAt(0).toUpperCase()}`%>">

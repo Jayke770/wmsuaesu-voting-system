@@ -25,7 +25,7 @@ module.exports = {
         if(req.session.islogin && req.session.user_type !== "admin"){
             return next()
         }
-        return res.redirect('/logout')
+        return res.redirect('/home/logout')
     },
     take_photo: (req, res, next) => {
         if (req.session.take_photo && req.session.islogin) {

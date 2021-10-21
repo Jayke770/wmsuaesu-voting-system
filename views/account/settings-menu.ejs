@@ -1,0 +1,128 @@
+<% 
+    const Data = {
+        course: (id) => {
+            for(let c = 0; c < data.courses.length; c++){
+                if(data.courses[c].id === id){
+                    return data.courses[c].type
+                }
+            }
+        }, 
+        year: (id) => {
+            for(let y = 0; y < data.year.length; y++){
+                if(data.year[y].id === id){
+                    return data.year[y].type
+                }
+            }
+        }
+    }
+%> 
+<div class="account_settings_menu container flex flex-col gap-3">
+    <div class="w-full flex flex-col gap-2">
+        <div style="animation-delay: .250s;"  class="animate__animated animate__fadeIn:eft ms-500 flex justify-start items-center">
+            <span class="dark:text-gray-300">General</span>
+        </div>
+        <div class="flex flex-col gap-3">
+            <div style="animation-delay: .300s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                <div class="flex flex-col col-span-2">
+                    <p class="dark:text-gray-300 text-bluegray-900">Name</p>
+                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- `${user.firstname} ${user.middlename} ${user.lastname}` %></p>
+                </div>
+                <div class="flex items-center flex-row justify-end">
+                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                        <i class="fad fa-chevron-circle-right"></i>
+                    </i>
+                </div>
+            </div>
+            <div style="animation-delay: .350s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                <div class="flex flex-col col-span-2">
+                    <p class="dark:text-gray-300 text-bluegray-900">Course & Year</p>
+                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- `${Data.course(user.course)} ${Data.year(user.year)}` %></p>
+                </div>
+                <div class="flex items-center flex-row justify-end">
+                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                        <i class="fad fa-chevron-circle-right"></i>
+                    </i>
+                </div>
+            </div>
+            <div style="animation-delay: .400s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                <div class="flex flex-col col-span-2">
+                    <p class="dark:text-gray-300 text-bluegray-900">User Type</p>
+                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- user.type %></p>
+                </div>
+                <div class="flex items-center flex-row justify-end">
+                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                        <i class="fad fa-chevron-circle-right"></i>
+                    </i>
+                </div>
+            </div>
+            <div style="animation-delay: .450s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                <div class="flex flex-col col-span-2">
+                    <p class="dark:text-gray-300 text-bluegray-900">Student ID</p>
+                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- user.student_id %></p>
+                </div>
+                <div class="flex items-center flex-row justify-end">
+                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                        <i class="fad fa-chevron-circle-right"></i>
+                    </i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-full flex flex-col gap-2">
+        <div style="animation-delay: .500s" class="animate__animated animate__fadeInLeft ms-500  flex justify-start items-center">
+            <span class="dark:text-gray-300">Security</span>
+        </div>
+        <div class="flex flex-col gap-3">
+            <div style="animation-delay: .600s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                <div class="flex flex-col col-span-2">
+                    <p class="dark:text-gray-300 text-bluegray-900">Email</p>
+                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- user.email ? user.email : 'No email' %></p>
+                </div>
+                <div class="flex items-center flex-row justify-end">
+                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                        <i class="fad fa-chevron-circle-right"></i>
+                    </i>
+                </div>
+            </div>
+            <div style="animation-delay: .650s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                <div class="flex flex-col col-span-2">
+                    <p class="dark:text-gray-300 text-bluegray-900">Username</p>
+                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- user.username %></p>
+                </div>
+                <div class="flex items-center flex-row justify-end">
+                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                        <i class="fad fa-chevron-circle-right"></i>
+                    </i>
+                </div>
+            </div>
+            <div style="animation-delay: .700s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                <div class="flex flex-col col-span-2">
+                    <p class="dark:text-gray-300 text-bluegray-900">Password</p>
+                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" >****************</p>
+                </div>
+                <div class="flex items-center flex-row justify-end">
+                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                        <i class="fad fa-chevron-circle-right"></i>
+                    </i>
+                </div>
+            </div>
+            <div style="animation-delay: .750s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                <div class="flex flex-col col-span-2">
+                    <p class="dark:text-gray-300 text-bluegray-900">Devices</p>
+                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" >Current: SM-A125F</p>
+                </div>
+                <div class="flex items-center flex-row justify-end">
+                    <i class="settings_ic dark:text-purple-500 text-purple-600">
+                        <i class="fad fa-chevron-circle-right"></i>
+                    </i>
+                </div>
+            </div>
+            <div style="animation-delay: .800s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+                <div class="flex flex-col col-span-2">
+                    <p class="dark:text-gray-300 text-bluegray-900">Socket ID</p>
+                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- user.socket_id %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

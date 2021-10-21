@@ -10,7 +10,7 @@ const admin = require('../models/admin')
 const data = require('../models/data')
 const election = require('../models/election')
 const { authenticated, isadmin, isloggedin, take_photo, get_face } = require('./auth')
-const { toUppercase, chat, bot, new_msg, new_nty, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash} = require('./functions')
+const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash} = require('./functions')
 const { normal_limit } = require('./rate-limit')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
@@ -21,6 +21,7 @@ const fs = require('fs-extra')
 const base64ToImage = require('base64-to-image')
 const ftp = require('basic-ftp')
 const moment = require('moment-timezone')
+const uaParser = require('ua-parser-js')
 //profile 
 router.get('/profile/:id', normal_limit, isloggedin, async (req, res) => {
     const id = req.params.id
@@ -159,7 +160,7 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
     delete req.session.electionID
-    const {myid} = req.session 
+    const {myid} = req.session  
     const {elections} = await user_data(myid)
     let electionsJoined = []
     try {
@@ -207,7 +208,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
         return res.status(500).send()
     }
 })
-router.get('/logout', normal_limit, async (req, res) => {
+router.get('/home/logout/', normal_limit, async (req, res) => {
     await req.session.destroy()
     return res.redirect('/')
 })
@@ -1213,6 +1214,33 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
                     status: false, 
                     txt: 'Position Not Found',
                 })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//###################################################################
+//account settings menu
+router.post('/account/settings-menu/', normal_limit, isloggedin, async (req, res) => {
+    const {myid} = req.session 
+    try {
+        //get user informtion 
+        await user.find({_id: {$eq: xs(myid)}}, {password: 0, messages: 0, notifications: 0, hearts: 0, visitors: 0, comments: 0}).then( async (userData) => {
+            if(userData.length > 0){
+                console.log(await course())
+                return res.render('account/settings-menu', {
+                    user: userData[0], 
+                    data: {
+                        courses: await course(), 
+                        year: await year()
+                    }
+                })
+            } else {
+                return res.status(404).send()
             }
         }).catch( (e) => {
             throw new Error(e)

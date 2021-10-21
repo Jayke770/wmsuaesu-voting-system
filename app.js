@@ -268,7 +268,7 @@ admin_socket.on('connection', async (socket) => {
                     //get all candidates that match in the sent position 
                     const candidates = elec[0].candidates 
                     for(let c = 0; c < candidates.length; c++){
-                        if(candidates[c].position === xs(data.position)){
+                        if(candidates[c].position === xs(data.position) && candidates[c].status === "Accepted"){
                             ca_data.names.push(candidates[c].fullname.split(" ")[0])
                             ca_data.votes.push(candidates[c].votes.length)
                         }
@@ -337,13 +337,52 @@ admin_socket.on('connection', async (socket) => {
             })
         })
     })
+    //total election voters & voters active 
+    socket.on('election-voters-total', async (data, res) => {
+        const {id} = data 
+        try {
+            await election.find({
+                _id: {$eq: xs(id)}
+            }, {voters: 1}).then( async (elec) => {
+                if(elec.length > 0){
+                    const voters = elec[0].voters
+                    let online_voters = 0
+                    for(let v = 0; v < voters.length; v++){
+                        await users.find({
+                            student_id: {$eq: xs(voters[v].student_id)}
+                        }, {socket_id: 1}).then( (status) => {
+                            if(status.length > 0){
+                                status[0].socket_id !== "Offline" ? online_voters += 1 : online_voters = online_voters
+                            }
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    }
+                    res({
+                        status: true, 
+                        data: {
+                            voters: voters.length, 
+                            active_voters: online_voters
+                        }
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e){
+            res({
+                status: false, 
+                data: e.message
+            })
+        }
+    })
 })
 //user websocket events
 users_socket.on('connection', async (socket) => {
     let {myid, electionID, islogin, user_type} = socket.handshake.session 
     const {student_id} = await user_data(myid)
     //update socket id every user connted to server 
-    if((islogin && user_type === "Candidate") || islogin && user_type !== "Voter"){
+    if(islogin && user_type === "Candidate" || islogin && user_type === "Voter"){
         await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( () => {
             console.log("New User Connected with soket Id of ", socket.id,)
             admin_socket.emit('connected', {id: xs(myid)})

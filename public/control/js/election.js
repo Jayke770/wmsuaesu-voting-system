@@ -443,7 +443,7 @@ $(document).ready(() => {
         } else {
             clearInterval()
         }
-    }, 5000)
+    }, 5000) 
     //type writer effect
     var app = document.querySelector('#e_creating')
     var typewriter = new Typewriter(app, {

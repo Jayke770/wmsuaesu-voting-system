@@ -61,6 +61,23 @@ const user =  new mongoose.Schema({
     devices: {
         type: Array,
     },
+    email: {
+        type: String,
+    },
+    settings:{
+        name: {
+            status: '',
+            edit: false
+        },
+        courseAndyear: {
+            status: '',
+            edit: false
+        }, 
+        usertype: {
+            status: '', 
+            edit: false
+        }
+    },
     created: {
         type: Date, 
         default: Date.now()

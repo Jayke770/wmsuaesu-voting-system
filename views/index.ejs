@@ -104,6 +104,10 @@
     <div class="file_candidacy hidden">
         <%- joined ?  include('election/file-candidacy') : '' %> 
     </div>
+    <!-- account settings -->
+    <div class="account_settings">
+        <%- include('account/settings') %>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/io.js"></script>
     <script src="/js/index.js"></script>

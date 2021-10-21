@@ -9,7 +9,7 @@
         </div>
     <% } else { %>
         <% elections.forEach((election, i) => { %>
-            <div data="<%- election._id %>" style="animation-delay: <%- i * .200 %>s;" class="<%- election.status === 'Pending for deletion' ? 'animate-pulse-2 ring-2 ring-rose-500 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary' : '' %> animate__animated animate__fadeInUp card w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
+            <div data="election-<%- election._id %>" style="animation-delay: <%- i * .200 %>s;" class="<%- election.status === 'Pending for deletion' ? 'animate-pulse-2 ring-2 ring-rose-500 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary' : '' %> animate__animated animate__fadeInUp card w-full cursor-pointer grid grid-cols-2 md:grid-cols-none shadow-xl bg-gray-100 dark:bg-[#161b22] rounded-2xl transition-all">
                 <div class="img flex w-full">
                     <img class="icon_e_name md:w-full md:rounded-bl-none md:rounded-tr-2xl md:h-[250px] w-[325px] h-full object-cover rounded-tl-2xl rounded-bl-2xl skeleton-image" data="<%- election.election_title.split(" ").length >= 2 ? `${election.election_title.split(" ")[0].charAt(0).toUpperCase()} ${election.election_title.split(" ")[1].charAt(0).toUpperCase()}` : election.election_title.split(" ")[0].charAt(0).toUpperCase() %>">
                 </div>
@@ -18,7 +18,7 @@
                         <p class="text-left text-lg font-medium skeleton text-purple-700 dark:text-purple-500 md:text-center" data="<%- election.election_title %>"></p>
                     </div>
                     <div class="container mt-4 transition-all">
-                        <div class="container mt-3 dark:text-gray-400">Voters <span class="dark:text-gray-300 float-right font-semibold skeleton" data="<%- election.voters.length %>"></span></div>
+                        <div class="container mt-3 dark:text-gray-400">Voters <span class="dark:text-gray-300 float-right font-semibold skeleton voters" data="<%- election.voters.length %>"></span></div>
                         <div class="container mt-3 dark:text-gray-400">Active Voters <span class="dark:text-gray-300 float-right font-semibold active_voters" data="<%- election._id %>">...</span></div>
                         <div class="container mt-3 dark:text-gray-400">Status <span class="dark:text-gray-300 float-right font-semibold skeleton"  data="<%- election.status %>"></span>
                         </div>
@@ -30,6 +30,17 @@
                     </div>
                 </div>
             </div>
+            <script>
+                //get total election voters every seconds and voters online 
+                setInterval( () => {
+                    socket.emit('election-voters-total', {id: '<%- election._id %>'}, (res) => {
+                        if(res.status){
+                            $(`div[data='election-<%- election._id %>']`).find(".voters").text(res.data.voters)
+                            $(`div[data='election-<%- election._id %>']`).find(".active_voters").text(res.data.active_voters)
+                        }
+                    })
+                }, 1000)
+            </script>
         <% }) %>
     <% } %>
 </div>
