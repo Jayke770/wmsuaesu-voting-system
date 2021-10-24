@@ -16,13 +16,13 @@
         }
     }
 %> 
-<div class="account_settings_menu container flex flex-col gap-3">
+<div class="account_settings_menu_items container flex flex-col gap-3">
     <div class="w-full flex flex-col gap-2">
         <div style="animation-delay: .250s;"  class="animate__animated animate__fadeIn:eft ms-500 flex justify-start items-center">
             <span class="dark:text-gray-300">General</span>
         </div>
         <div class="flex flex-col gap-3">
-            <div style="animation-delay: .300s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+            <div data="fullname" style="animation-delay: .300s;" class="account_settings_menu_open animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                 <div class="flex flex-col col-span-2">
                     <p class="dark:text-gray-300 text-bluegray-900">Name</p>
                     <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- `${user.firstname} ${user.middlename} ${user.lastname}` %></p>
@@ -33,7 +33,7 @@
                     </i>
                 </div>
             </div>
-            <div style="animation-delay: .350s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+            <div data="cy" style="animation-delay: .350s;" class="account_settings_menu_open animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                 <div class="flex flex-col col-span-2">
                     <p class="dark:text-gray-300 text-bluegray-900">Course & Year</p>
                     <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- `${Data.course(user.course)} ${Data.year(user.year)}` %></p>
@@ -44,7 +44,7 @@
                     </i>
                 </div>
             </div>
-            <div style="animation-delay: .400s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+            <div data="usertype" style="animation-delay: .400s;" class="account_settings_menu_open animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                 <div class="flex flex-col col-span-2">
                     <p class="dark:text-gray-300 text-bluegray-900">User Type</p>
                     <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- user.type %></p>
@@ -60,11 +60,6 @@
                     <p class="dark:text-gray-300 text-bluegray-900">Student ID</p>
                     <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- user.student_id %></p>
                 </div>
-                <div class="flex items-center flex-row justify-end">
-                    <i class="settings_ic dark:text-purple-500 text-purple-600">
-                        <i class="fad fa-chevron-circle-right"></i>
-                    </i>
-                </div>
             </div>
         </div>
     </div>
@@ -73,10 +68,17 @@
             <span class="dark:text-gray-300">Security</span>
         </div>
         <div class="flex flex-col gap-3">
-            <div style="animation-delay: .600s;" class="animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+            <div data="email" style="animation-delay: .600s;" class="account_settings_menu_open animate__animated animate__fadeInUp ms-500 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
                 <div class="flex flex-col col-span-2">
                     <p class="dark:text-gray-300 text-bluegray-900">Email</p>
-                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" ><%- user.email ? user.email : 'No email' %></p>
+                    <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" >
+                        <% const emails = user.email %>
+                        <% for(let em = 0; em < emails.length; em++){ %>
+                            <% if(emails[em].status === "Verified"){ %> 
+                                <%- emails[em].email %>
+                            <% } %>
+                        <% } %>
+                    </p>
                 </div>
                 <div class="flex items-center flex-row justify-end">
                     <i class="settings_ic dark:text-purple-500 text-purple-600">

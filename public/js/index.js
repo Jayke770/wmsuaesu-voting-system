@@ -701,6 +701,208 @@ $(document).ready( () => {
             }, 500)
         }
     })
+    $(".account_settings").delegate(".back_account_settings", "click", async function () {
+        const def = $(this).html()
+        $(this).html(election.loader()) 
+        await user.settingsMenu()
+        $(".account_settings").find('.account_settings_item').remove()
+        $(this).html(def)
+        $(this).hide() 
+    })
+    $(".account_settings").delegate(".account_settings_menu_open", "click", async function () {
+        const def = $(this).find('.settings_ic').html() 
+        $(this).find('.settings_ic').html(election.loader())
+        await user.settings($(this).attr("data"))
+        $(".back_account_settings").show()
+    })
+    //change name 
+    let change_name = false
+    $(".account_settings").delegate(".change_name", "submit", async function (e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html() 
+        if(!change_name){
+            try {
+                change_name = true 
+                $(this).find("button[type='submit']").html(election.loader()) 
+                const req = await fetchtimeout('/account/settings/menu/change-name/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json()
+                    toast.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.msg, 
+                        timer: 2000
+                    }).then( async () => {
+                        res.status ? await user.settings($(this).attr("data")) : ''
+                        change_name = false
+                        $(this).find("button[type='submit']").html(def) 
+                        $(this).find("button[type='reset']").click()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                change_name = false
+                $(this).find("button[type='submit']").html(def) 
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }
+    })
+    //change course & year 
+    let change_cy = false 
+    $(".account_settings").delegate(".change_cy", "submit", async function (e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html() 
+        if(!change_cy){
+            try {
+                change_cy = true 
+                $(this).find("button[type='submit']").html(election.loader()) 
+                const req = await fetchtimeout('/account/settings/menu/change-cy/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json()
+                    toast.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.msg, 
+                        timer: 2000
+                    }).then( async () => {
+                        res.status ? await user.settings($(this).attr("data")) : ''
+                        change_cy = false
+                        $(this).find("button[type='submit']").html(def) 
+                        $(this).find("button[type='reset']").click()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                change_cy = false
+                $(this).find("button[type='submit']").html(def) 
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }
+    })
+    //change user type 
+    let change_type = false 
+    $(".account_settings").delegate(".change_usertype", "submit", async function (e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html() 
+        if(!change_type){
+            try {
+                change_type = true 
+                $(this).find("button[type='submit']").html(election.loader()) 
+                const req = await fetchtimeout('/account/settings/menu/change-user-type/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json()
+                    toast.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.msg, 
+                        timer: 2000
+                    }).then( async () => {
+                        res.status ? await user.settings($(this).attr("data")) : ''
+                        change_type = false
+                        $(this).find("button[type='submit']").html(def) 
+                        $(this).find("button[type='reset']").click()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                change_type = false
+                $(this).find("button[type='submit']").html(def) 
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }
+    })
+    //change user type 
+    let change_mail = false 
+    $(".account_settings").delegate(".change_email", "submit", async function (e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html() 
+        if(!change_mail){
+            try {
+                change_mail = true 
+                $(this).find("button[type='submit']").html(election.loader()) 
+                const req = await fetchtimeout('/account/settings/menu/change-e-mail/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json()
+                    Swal.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.txt, 
+                        html: res.msg,
+                    }).then( async () => {
+                        res.status ? await user.settings($(this).attr("data")) : ''
+                        change_mail = false
+                        $(this).find("button[type='submit']").html(def) 
+                        $(this).find("button[type='reset']").click()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                change_mail = false
+                $(this).find("button[type='submit']").html(def) 
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }
+    })
     //socket events 
     //get total reactions & views of all candidates 
     setInterval( () => {
@@ -809,6 +1011,37 @@ $(document).ready( () => {
                     $(".account_settings_menu").find(".account_settings_preload").hide() 
                     $(".account_settings_menu").find(".account_settings_menu").remove()
                     $(".account_settings_menu").append(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>${e.message}</span>
+                        </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            }
+        }, 
+        settings: async (menu) => {
+            try {
+                $(".account_settings").find('.account_settings_item').remove()
+                const req = await fetchtimeout(`/account/settings/${menu}/`, {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    $(".account_settings").find('.account_settings_preload').removeClass('flex') 
+                    $(".account_settings").find('.account_settings_preload').removeClass('hidden') 
+                    $(".account_settings").find('.account_settings_menu_items').remove()
+                    $(".account_settings").find('.account_settings_menu').append(res)
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
                 }

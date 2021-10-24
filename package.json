@@ -23,6 +23,7 @@
     "helmet": "^4.6.0",
     "image-to-base64": "^2.2.0",
     "io-session-handler": "^1.0.74",
+    "is-email": "^1.0.2",
     "moment-timezone": "^0.5.33",
     "mongoose": "^5.12.14",
     "morgan": "^1.10.0",

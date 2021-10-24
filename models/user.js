@@ -62,20 +62,36 @@ const user =  new mongoose.Schema({
         type: Array,
     },
     email: {
-        type: String,
+        type: Array,
     },
     settings:{
         name: {
-            status: '',
-            edit: false
+            status: {
+                type: String, 
+                default: ''
+            }, 
+            value: {
+                type: String
+            }
         },
         courseAndyear: {
-            status: '',
-            edit: false
+            status: {
+                type: String, 
+                default: ''
+            }, 
+            value: {
+                type: String
+            }
         }, 
         usertype: {
-            status: '', 
-            edit: false
+            status: {
+                type: String, 
+                default: ''
+            }, 
+            value: {
+                type: String, 
+                default: ''
+            }
         }
     },
     created: {

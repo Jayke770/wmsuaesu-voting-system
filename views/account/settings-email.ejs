@@ -1,0 +1,29 @@
+<div class="account_settings_item animate__animated animate__fadeInDown ms-500 overflow-x-hidden overflow-y-auto flex flex-col text-coolgray-50">
+    <form data="email" class="change_email flex flex-col gap-3 p-2">
+        <button type="reset"></button>
+        <div class="container flex flex-col gap-1">
+            <label class="text-bluegray-900 dark:text-gray-300" for="nmail">New E-mail</label>
+            <input name="nmail" required placeholder="Email" type="email" class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+        </div>
+        <div class="container flex flex-col gap-1">
+            <label class="text-bluegray-900 dark:text-gray-300" for="pass">Password</label>
+            <input name="pass" required placeholder="Enter Password to continue" type="password" class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+        </div>
+        <div class="container flex justify-center items-center">
+            <button type="submit" class="w-full rpl dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-200 transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary focus:ring-purple-600 dark:focus:ring-purple-800">Change E-mail</button>
+        </div>
+    </form>
+    <div class="px-2">
+        <div style="animation-delay: .250s;" class="animate__animated animate__fadeInDown ms-500 mt-4 dark_border grid grid-cols-3 px-3 py-2 cursor-pointer rpl dark:bg-darkBlue-secondary rounded-lg shadow-lg">
+            <div class="flex flex-col col-span-2">
+                <p class="dark:text-gray-300 text-bluegray-900">Your E-mails</p>
+                <p class="dark:text-gray-400 text-bluegray-500 text-sm ml-1 mt-1" >View or remove your emails</p>
+            </div>
+            <div class="flex items-center flex-row justify-end">
+                <i class="settings_ic dark:text-purple-500 text-purple-600">
+                    <i class="fad fa-chevron-circle-right"></i>
+                </i>
+            </div>
+        </div>
+    </div>
+</div>
