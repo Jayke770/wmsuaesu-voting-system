@@ -343,6 +343,7 @@ module.exports = {
             if(error){
                 return false
             } else {
+                console.log("Sent", info)
                 return true
             }
         })

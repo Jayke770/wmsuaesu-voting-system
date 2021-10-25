@@ -1274,97 +1274,6 @@ router.post('/account/settings/:menu/', normal_limit, isloggedin, async (req, re
         return res.status(500).send()
     }
 })
-//change name
-router.post('/account/settings/menu/change-name/', normal_limit, isloggedin, async (req, res) =>  {
-    const {fname, mname, lname} = req.body 
-    const {myid} = req.session 
-
-    try {
-        await user.find({_id: {$eq: xs(myid)}}, {"settings.name": 1}).then( async (c_name) => {
-            if(c_name.length > 0){
-                if(c_name[0].settings.name.status === 'Pending'){
-                    return res.send({
-                        status: false, 
-                        msg: 'Request is already pending'
-                    })
-                } else {
-                    await user.updateOne({
-                        _id: {$eq: xs(myid)}
-                    }, {$set: {
-                        "settings.name.status": 'Pending', 
-                        "settings.name.value": `${toUppercase(xs(fname))}, ${toUppercase(xs(mname))}, ${toUppercase(xs(lname))}`
-                    }}).then( (f) => {
-                        return res.send({
-                            status: true, 
-                            msg: 'Request submitted'
-                        })
-                    }).catch( (e) => {
-                        throw new Error(e)
-                    })
-                }
-            } else {
-                return res.send({
-                    status: false, 
-                    msg: 'User ID not found'
-                })
-            }
-        }).catch( (e) => {
-            throw new Error(e)
-        })
-    } catch (e) {
-        return res.status(500).send()
-    }
-})
-//change course & year 
-router.post('/account/settings/menu/change-cy/', normal_limit, isloggedin, async (req, res) => {
-    const {crs, yr} = req.body
-    const {myid} = req.session 
-
-    try {
-        if(crs && yr){
-            await user.find({_id: {$eq: xs(myid)}}, {"settings.courseAndyear": 1}).then( async (cy) => {
-                if(cy.length > 0){
-                    if(cy[0].settings.courseAndyear.status === 'Pending'){
-                        return res.send({
-                            status: false, 
-                            msg: 'Request is already pending'
-                        })
-                    } else {
-                        await user.updateOne({
-                            _id: {$eq: xs(myid)}
-                        }, {$set: {
-                            "settings.courseAndyear.status": 'Pending', 
-                            "settings.courseAndyear.value": `${xs(crs)}, ${xs(yr)}` 
-                        }}).then( (f) => {
-                            console.log(f)
-                            return res.send({
-                                status: true, 
-                                msg: 'Request submitted'
-                            })
-                        }).catch( (e) => {
-                            throw new Error(e)
-                        })
-                    }
-                } else {
-                    return res.send({
-                        status: false, 
-                        msg: 'User ID not found'
-                    })
-                }
-            }).catch( (e) => {
-                throw new Error(e)
-            })
-        } else {
-            return res.send({
-                status: false, 
-                msg: 'Select new course & year'
-            })
-        }
-    } catch (e) {
-        console.log(e)
-        return res.status(500).send()
-    }
-})
 //change user type
 router.post('/account/settings/menu/change-user-type/', normal_limit, isloggedin, async (req, res) => {
     const {type} = req.body
@@ -1372,28 +1281,35 @@ router.post('/account/settings/menu/change-user-type/', normal_limit, isloggedin
 
     try {
         if(type){
-            await user.find({_id: {$eq: xs(myid)}}, {"settings.usertype": 1}).then( async (cy) => {
-                if(cy.length > 0){
-                    if(cy[0].settings.usertype.status === 'Pending'){
+            await user.find({_id: {$eq: xs(myid)}}, {"settings.usertype": 1}).then( async (usertype) => {
+                if(usertype.length > 0){
+                    if(usertype[0].settings.usertype.status === 'Accepted'){
                         return res.send({
                             status: false, 
-                            msg: 'Request is already pending'
+                            msg: 'User Type already changed'
                         })
                     } else {
-                        await user.updateOne({
-                            _id: {$eq: xs(myid)}
-                        }, {$set: {
-                            "settings.usertype.status": 'Pending', 
-                            "settings.usertype.value": xs(type) 
-                        }}).then( (f) => {
-                            console.log(f)
+                        if(usertype[0].settings.usertype.status === 'Pending'){
                             return res.send({
-                                status: true, 
-                                msg: 'Request submitted'
+                                status: false, 
+                                msg: 'Request is already pending'
                             })
-                        }).catch( (e) => {
-                            throw new Error(e)
-                        })
+                        } else {
+                            await user.updateOne({
+                                _id: {$eq: xs(myid)}
+                            }, {$set: {
+                                "settings.usertype.status": 'Pending', 
+                                "settings.usertype.value": xs(type), 
+                                "settings.usertype.requested": moment().tz("Asia/Manila").format()
+                            }}).then( () => {
+                                return res.send({
+                                    status: true, 
+                                    msg: 'Request submitted'
+                                })
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        }
                     }
                 } else {
                     return res.send({
@@ -1428,29 +1344,29 @@ router.post('/account/settings/menu/change-e-mail', normal_limit, isloggedin, as
                 if(userData.length > 0){
                     //check password
                     if(await compareHash(xs(pass), userData[0].password)){
-                        //check if the new email is the same in the old email use by this user
-                        const emails = userData[0].email 
-                        let the_same = false
-                        for(let em = 0; em < emails.length; em++){
-                            emails[em].email === xs(nmail) ? the_same = true : the_same = false
-                        }
-                        if(!the_same){
-                            //check if the new email is not the same in another user email 
+                        if(userData[0].email.email){
+                            return res.send({
+                                status: false, 
+                                txt: "You already added an email", 
+                                msg: 'If you want to change your email please remove the old one'
+                            }) 
+                        } else {
                             await user.find({
                                 _id: {$ne: xs(myid)}, 
-                                "email.email": {$eq: xs(nmail)}
+                                email: {email: {$eq: xs(nmail)}}
                             }).then( async (the_same) => {
-                                if (the_same.length === 0) {
-                                    const new_email = {
-                                        id: uuidv4(),
-                                        email: xs(nmail),
-                                        status: 'Not Verified'
-                                    }
+                                if(the_same.length === 0){
+                                    const email_id = uuidv4()
                                     await user.updateOne({
                                         _id: { $eq: xs(myid) }
-                                    }, { $push: { email: new_email } }).then(() => {
+                                    }, {$set: {
+                                        "email.id": email_id, 
+                                        "email.email": xs(nmail), 
+                                        "email.status": "Not Verified", 
+                                        "email.added": moment().tz("Asia/Manila").format()
+                                    }}).then(() => {
                                         //send verification  
-                                        send_verification_email(firstname, xs(nmail), xs(myid.toString()), new_email.id)
+                                        send_verification_email(firstname, xs(nmail), xs(myid.toString()), email_id)
                                         return res.send({
                                             status: true,
                                             txt: "Verification Sent Successfully",
@@ -1466,13 +1382,9 @@ router.post('/account/settings/menu/change-e-mail', normal_limit, isloggedin, as
                                         msg: 'Please use another e-mail, This email is already in used by another user'
                                     })
                                 }
+                            }).catch( (e) => {
+                                throw new Error(e)
                             })
-                        } else {
-                            return res.send({
-                                status: false, 
-                                txt: "You already used this email", 
-                                msg: 'Please use another e-mail'
-                            }) 
                         }
                     } else {
                         return res.send({
@@ -1509,9 +1421,9 @@ router.get('/account/settings/verify-email/:email/:emailID/:id/', normal_limit, 
         await user.find({
             _id: {$eq: xs(id)}, 
             $and: [
-                {email: {$elemMatch: {id: {$eq: xs(emailID)}}}}, 
-                {email: {$elemMatch: {email: {$eq: xs(email)}}}}, 
-                {email: {$elemMatch: {status: 'Not Verified'}}}
+                {"email.id": {$eq: xs(emailID)}}, 
+                {"email.email": {$eq: xs(email)}}, 
+                {"email.status": 'Not Verified'}
             ]
         }).then( (em) => {
             if(em.length > 0){
@@ -1537,31 +1449,12 @@ router.post('/account/settings/verify-email/:email/:emailID/:id/', normal_limit,
             if(userData.length > 0){
                 //check password 
                 if(await compareHash(xs(pass), userData[0].password)){
-                    //check email, emailID, & id 
-                    const emails = userData[0].email 
-                    let found = false 
-                    for(let em = 0; em < emails.length; em++){
-                        if(emails[em].id === xs(emailID) && emails[em].email === xs(email) && emails[em].status === 'Not Verified'){
-                            found = true
-                            break
-                        }
-                    }
-                    if(found){
-                        //update all verified emails and set to old 
-                        for(let i = 0; i < emails.length; i++){
-                            if(emails[i].id !== xs(emailID)){
-                                await user.updateOne({
-                                    _id: {$eq: xs(id)}, 
-                                    "email.id": {$eq: xs(emails[i].id)}
-                                }, {$set: {"email.$.status": "Old Email"}})
-                            }
-                        }
+                    if(userData[0].email.id === xs(emailID) && userData[0].email.status === "Not Verified" && userData[0].email.email === xs(email)){
                         //update email to verified 
                         await user.updateOne({
                             _id: {$eq: xs(id)}, 
                             "email.id": {$eq: xs(emailID)}
-                        }, {$set: {"email.$.status": 'Verified'}}).then( async () => {
-                            //pull all old emails
+                        }, {$set: {"email.status": 'Verified'}}).then( async () => {
                             return res.send({
                                 status: true, 
                                 txt: 'Email Successfully Verified', 

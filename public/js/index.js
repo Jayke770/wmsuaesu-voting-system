@@ -715,53 +715,6 @@ $(document).ready( () => {
         await user.settings($(this).attr("data"))
         $(".back_account_settings").show()
     })
-    //change name 
-    let change_name = false
-    $(".account_settings").delegate(".change_name", "submit", async function (e) {
-        e.preventDefault() 
-        const def = $(this).find("button[type='submit']").html() 
-        if(!change_name){
-            try {
-                change_name = true 
-                $(this).find("button[type='submit']").html(election.loader()) 
-                const req = await fetchtimeout('/account/settings/menu/change-name/', {
-                    method: 'POST', 
-                    headers: {
-                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                    }, 
-                    body: new FormData(this)
-                })
-                if(req.ok){
-                    const res = await req.json()
-                    toast.fire({
-                        icon: res.status ? 'success' : 'info', 
-                        title: res.msg, 
-                        timer: 2000
-                    }).then( async () => {
-                        res.status ? await user.settings($(this).attr("data")) : ''
-                        change_name = false
-                        $(this).find("button[type='submit']").html(def) 
-                        $(this).find("button[type='reset']").click()
-                    })
-                } else {
-                    throw new Error(`${req.status} ${req.statusText}`)
-                }
-            } catch (e) {
-                change_name = false
-                $(this).find("button[type='submit']").html(def) 
-                Snackbar.show({ 
-                    text: `
-                        <div class="flex justify-center items-center gap-2"> 
-                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
-                            <span>${e.message}</span>
-                        </div>
-                    `, 
-                    duration: 3000,
-                    showAction: false
-                })
-            }
-        }
-    })
     //change course & year 
     let change_cy = false 
     $(".account_settings").delegate(".change_cy", "submit", async function (e) {

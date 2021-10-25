@@ -23,11 +23,13 @@ $(document).ready( function () {
                     }).then( () => {
                         submit_ = false 
                         $(this).find("button[type='submit']").html(def)
-                        $(this).remove()
-                        $(".txt").remove()
-                        $(".em").removeClass("hidden")
-                        $(".em").addClass("flex")
-                        $(".em").find(".em_status").text(res.txt)
+                        if(res.status){
+                            $(this).remove()
+                            $(".txt").remove()
+                            $(".em").removeClass("hidden")
+                            $(".em").addClass("flex")
+                            $(".em").find(".em_status").text(res.txt)
+                        }
                     })
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)

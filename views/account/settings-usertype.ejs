@@ -14,25 +14,38 @@
                 <% } %>
             </select>
         </div>
+        <div class="container border-l-4 dark:border-orange-700 dark:bg-orange-700/40 dark:text-coolgray-300 text-sm px-2 py-1">You can only change your user type once</div>
         <div class="container border-l-4 dark:border-amber-700 dark:bg-amber-700/40 dark:text-coolgray-300 text-sm px-2 py-1">Your User Type will be updated once the admin accept your request</div>
-        <% if(userData.settings.usertype.status) { %>
-            <div class="grid grid-cols-2 items-center">
-                <span class="text-sm dark:text-gray-400">Request Status</span>
-                <div class="flex justify-end items-center">
-                    <% if(userData.settings.usertype.status === 'Pending') { %>
-                        <span class="dark:bg-amber-700/40 animate-pulse-2 bg-amber-600 dark:text-amber-500 text-gray-50 px-3 py-0.5 text-sm rounded-full"><%- userData.settings.usertype.status %></span>
-                    <% } %> 
-                    <% if(userData.settings.usertype.status === 'Accepted') { %>
-                        <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-3 py-0.5 text-sm rounded-full"><%- userData.settings.usertype.status %></span>
-                    <% } %> 
-                    <% if(userData.settings.usertype.status === 'Rejected') { %>
-                        <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-3 py-0.5 text-sm rounded-full"><%- userData.settings.usertype.status %></span>
-                    <% } %>
-                </div>
-            </div>
-        <% } %>
         <div class="container flex justify-center items-center">
             <button type="submit" class="w-full rpl dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-200 transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary focus:ring-purple-600 dark:focus:ring-purple-800">Request Change</button>
         </div>
+        <% if(userData.settings.usertype.status) { %>
+            <div class="flex flex-col gap-3 p-3 dark_border rounded-md">
+                <div class="grid grid-cols-2 items-center">
+                    <span class="text-sm dark:text-gray-400">Request Status</span>
+                    <div class="flex justify-end items-center">
+                        <% if(userData.settings.usertype.status === 'Pending') { %>
+                            <span class="dark:bg-amber-700/40 animate-pulse-2 bg-amber-600 dark:text-amber-500 text-gray-50 px-3 py-0.5 text-sm rounded-full"><%- userData.settings.usertype.status %></span>
+                        <% } %> 
+                        <% if(userData.settings.usertype.status === 'Accepted') { %>
+                            <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-3 py-0.5 text-sm rounded-full"><%- userData.settings.usertype.status %></span>
+                        <% } %> 
+                        <% if(userData.settings.usertype.status === 'Rejected') { %>
+                            <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-3 py-0.5 text-sm rounded-full"><%- userData.settings.usertype.status %></span>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 items-center">
+                    <span class="text-sm dark:text-gray-400">User Type</span>
+                    <div class="flex justify-end items-center dark:text-gray-300">
+                        <%- userData.settings.usertype.value %>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 items-center">
+                    <span class="text-sm dark:text-gray-400">Requested</span>
+                    <div class="flex justify-end items-center dark:text-gray-300 time" data="<%- userData.settings.usertype.requested %>"></div>
+                </div>
+            </div>
+        <% } %>
     </form>
 </div>

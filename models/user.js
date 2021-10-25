@@ -62,27 +62,20 @@ const user =  new mongoose.Schema({
         type: Array,
     },
     email: {
-        type: Array,
+        id: {
+            type: String
+        }, 
+        email: {
+            type: String
+        }, 
+        status: {
+            type: String
+        }, 
+        added: {
+            type: String
+        }
     },
     settings:{
-        name: {
-            status: {
-                type: String, 
-                default: ''
-            }, 
-            value: {
-                type: String
-            }
-        },
-        courseAndyear: {
-            status: {
-                type: String, 
-                default: ''
-            }, 
-            value: {
-                type: String
-            }
-        }, 
         usertype: {
             status: {
                 type: String, 
@@ -91,6 +84,9 @@ const user =  new mongoose.Schema({
             value: {
                 type: String, 
                 default: ''
+            },
+            requested: {
+                type: String
             }
         }
     },

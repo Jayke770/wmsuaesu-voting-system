@@ -30,17 +30,20 @@
         <div class="main w-96 sm:w-full animate__animated animate__bounceIn transition-all rounded-md hidden bg-gray-50 dark:bg-darkBlue-secondary shadow-lg">
             <div class="flex w-full flex-col py-2 px-1">
                 <div class="txt flex items-center justify-start pt-2 px-3">
-                    <span class="text-bluegray-900 dark:text-gray-300 text-lg">E-mail Verification</span>
+                    <span class="text-bluegray-900 dark:text-purple-600 text-xl">E-mail Verification</span>
                 </div>
                 <form class="submit_email flex flex-col gap-3 pb-2 px-3">
                     <button type="reset"></button>
                     <div class="container flex flex-col gap-1">
-                        <label class="text-bluegray-900 dark:text-gray-300" for="nmail">E-mail</label>
+                        <label class="text-bluegray-900 dark:text-gray-300" for="nmail">New E-mail</label>
                         <input value="<%- email %>" name="nmail" readonly disabled placeholder="Email" type="email" class="cursor-not-allowed disabled:text-gray-700 disabled:border-purple-600/50 w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
                     </div>
                     <div class="container flex flex-col gap-1">
                         <label class="text-bluegray-900 dark:text-gray-300" for="pass">Password</label>
                         <input name="pass" required placeholder="Enter Password to continue" type="password" class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+                    </div>
+                    <div class="container flex flex-col gap-1">
+                        <div class="container border-l-4 dark:border-amber-700 dark:bg-amber-700/40 dark:text-coolgray-300 text-sm px-2 py-1">To verify your new e-mail please enter your password and submit</div>
                     </div>
                     <div class="container flex justify-center items-center">
                         <button type="submit" class="w-full rpl dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-200 transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary focus:ring-purple-600 dark:focus:ring-purple-800">Submit</button>
