@@ -831,6 +831,8 @@ $(document).ready( () => {
                         icon: res.status ? 'success' : 'info', 
                         title: res.txt, 
                         html: res.msg,
+                        backdrop: true, 
+                        allowOutsideClick: false,
                     }).then( async () => {
                         res.status ? await user.settings($(this).attr("data")) : ''
                         change_mail = false
@@ -854,6 +856,77 @@ $(document).ready( () => {
                     showAction: false
                 })
             }
+        }
+    })
+    //remove email 
+    let remove_email = false 
+    $(".account_settings").delegate(".remove_email", "click", async function (e) {
+        e.preventDefault() 
+        const def = $(this).html()
+        if(!remove_email){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Remove E-mail ?', 
+                html: 'Are you sure you want to remove this email', 
+                showDenyButton: true, 
+                confirmButtonText: 'Remove', 
+                denyButtonText: 'Cancel',
+                backdrop: true, 
+                allowOutsideClick: false
+            }).then( (s) => {
+                if(s.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Removing E-mail', 
+                        html: 'Please wait...',
+                        allowOutsideClick: false,
+                        backdrop: true,
+                        showConfirmButton: false,
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            try {
+                                $(this).html(election.loader())
+                                remove_email = true 
+                                let data = new FormData() 
+                                data.append("id", $(this).attr("data"))
+                                const req = await fetchtimeout("/account/settings/email/remove-email/", {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    $(this).html(def)
+                                    remove_email = false  
+                                    Swal.fire({
+                                        icon: res.status ? 'success' : 'info', 
+                                        title: res.txt, 
+                                        html: res.msg, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false, 
+                                    }).then( async () => {
+                                        await user.settings($(this).attr("data-settings"))
+                                    })
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e){
+                                $(this).html(def)
+                                remove_email = false 
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false, 
+                                })
+                            }
+                        }
+                    })
+                }
+            })
         }
     })
     //socket events 

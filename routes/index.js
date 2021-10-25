@@ -1492,4 +1492,40 @@ router.post('/account/settings/verify-email/:email/:emailID/:id/', normal_limit,
         return res.status(500).send()
     }
 })
+//remove email 
+router.post('/account/settings/email/remove-email/', normal_limit, isloggedin, async (req, res) => {
+    const {id} = req.body 
+    const {myid} = req.session
+    try {
+        await user.find({
+            _id: {$eq: xs(myid)}, 
+            "email.id": {$eq: xs(id)}
+        }, {email: 1}).then( async (user_email) => {
+            if(user_email.length > 0){
+                await user.updateOne({
+                    _id: {$eq: xs(myid)}, 
+                }, {$set: {email: {}}}).then( () => {
+                    return res.send({
+                        status: true, 
+                        txt: 'Email Successfully Removed', 
+                        msg: 'But we suggest to add email to your account for security'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Email ID not found', 
+                    msg: 'Please refresh you browser'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
 module.exports = router
