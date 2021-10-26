@@ -61,16 +61,16 @@ $(document).ready(function () {
             allowOutsideClick: () => !Swal.isLoading()
         })
     })
-    //effects
-    $("input[type='password']").on("keyup keydown", function () {
-        var attr = $(this).attr("show-pass")
-        if (attr == "true") {
-            if ($(this).val() !== "") {
-                $(".show_pass").removeClass("hidden")
-            }
-            else {
-                $(".show_pass").addClass("hidden")
-            }
+    //show password 
+    $(".show_pass").click(function () {
+        const show = `<i class="fas fa-eye dark:text-indigo-600 cursor-pointer"></i>`
+        const hide = `<i class="fas fa-eye-slash dark:text-indigo-600 cursor-pointer"></i>`
+        if($(this).prev().attr("type") === "password"){
+            $(this).prev().attr("type", "text")
+            $(this).html(hide)
+        } else {
+            $(this).prev().attr("type", "password")
+            $(this).html(show)
         }
     })
     //verify student id
@@ -177,24 +177,6 @@ $(document).ready(function () {
             }, 
             allowOutsideClick: () => !Swal.isLoading()
         })
-    })
-
-    //show password
-    $(".show_pass").click(function () {
-        var input = $('input[show-pass=true]')
-        var icon = '<i class="fas fa-eye-slash dark:text-gray-100 cursor-pointer"></i>'
-        var icon_2 = '<i class="fas fa-eye dark:text-gray-100 cursor-pointer"></i>'
-        if(input.attr("type") === "password"){
-            $(this).html(icon_2)
-            input.attr("type", "text")
-        }
-        else if(input.attr("type") === "text"){
-            $(this).html(icon)
-            input.attr("type", "password")
-        }
-        else{
-            console.error("Unknown Input : ", input)
-        }
     })
     //register button 
     $(".register").click(function (e) {

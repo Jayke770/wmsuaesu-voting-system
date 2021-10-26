@@ -1,6 +1,7 @@
 const theme = localStorage.getItem('theme')
 const sun = '<i class="fa fa-sun"></i>'
 const moon = '<i class="fa fa-moon"></i>'
+localStorage.setItem('theme', 'dark')
 if (theme == null) {
     //set to default theme if null 
     localStorage.setItem('theme', 'default')

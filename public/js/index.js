@@ -30,6 +30,19 @@ $(document).ready( () => {
             }, 300)
         }
     })
+    const container = document.querySelector('.nav')
+    SwipeListener(container)
+    container.addEventListener('swipe', function (e) {
+        if(e.detail.directions.left){
+            const parent = $(".nav") 
+            const child = $(".nav_main") 
+            child.addClass(child.attr("animate-out")) 
+            setTimeout( () => {
+                parent.addClass("hidden") 
+                child.removeClass(child.attr("animate-out")) 
+            }, 300)
+        }
+    })
     //check selected theme 
     if(gettheme() === 'dark'){
         $(".theme_dark").addClass("active-b-green")
@@ -686,6 +699,18 @@ $(document).ready( () => {
             parent.addClass("hidden")
         }, 500)
     })
+     //show password 
+    $(".account_settings_").delegate(".show_pass", "click", function () {
+        const show = `<i class="fas fa-eye dark:text-indigo-600 cursor-pointer"></i>`
+        const hide = `<i class="fas fa-eye-slash dark:text-indigo-600 cursor-pointer"></i>`
+        if($(this).prev().attr("type") === "password"){
+            $(this).prev().attr("type", "text")
+            $(this).html(hide)
+        } else {
+            $(this).prev().attr("type", "password")
+            $(this).html(show)
+        }
+    })
     $(".account_settings_").click( function (e) {
         if($(e.target).hasClass("account_settings_")){
             e.preventDefault()
@@ -927,6 +952,93 @@ $(document).ready( () => {
                     })
                 }
             })
+        }
+    })
+    //cahnge username 
+    let change_username = false 
+    $(".account_settings").delegate(".change_username", "submit", async function (e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html() 
+        if(!change_username){
+            try {   
+                $(this).find("button[type='submit']").html(election.loader()) 
+                change_username = true
+                const req = await fetchtimeout('/account/settings/username/change-username/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    $(this).find("button[type='reset']").click()
+                    $(this).find("button[type='submit']").html(def) 
+                    change_username = false
+                    Swal.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.txt, 
+                        html: res.msg, 
+                        backdrop: true, 
+                        allowOutsideClick: false
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                $(this).find("button[type='submit']").html(def) 
+                change_username = false
+                Swal.fire({
+                    icon: 'error', 
+                    title: 'Connection error', 
+                    html: e.message, 
+                    backdrop: true, 
+                    allowOutsideClick: false
+                })
+            }
+        }
+    })
+    let change_password = false
+    $(".account_settings").delegate(".change_password", "submit", async function (e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html() 
+        if(!change_password) {
+            try {   
+                $(this).find("button[type='submit']").html(election.loader()) 
+                change_password = true
+                const req = await fetchtimeout('/account/settings/password/change-password/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    $(this).find("button[type='reset']").click()
+                    $(this).find("button[type='submit']").html(def) 
+                    change_password = false
+                    Swal.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.txt, 
+                        html: res.msg, 
+                        backdrop: true, 
+                        allowOutsideClick: false
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                $(this).find("button[type='submit']").html(def) 
+                change_password = false
+                Swal.fire({
+                    icon: 'error', 
+                    title: 'Connection error', 
+                    html: e.message, 
+                    backdrop: true, 
+                    allowOutsideClick: false
+                })
+            }
         }
     })
     //socket events 

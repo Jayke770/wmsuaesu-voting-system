@@ -23,125 +23,6 @@ const ftp = require('basic-ftp')
 const moment = require('moment-timezone')
 const uaParser = require('ua-parser-js')
 const emailValidator = require('is-email')
-//profile 
-router.get('/profile/:id', normal_limit, isloggedin, async (req, res) => {
-    const id = req.params.id
-    let courses, year
-    try {
-        //get courses & years 
-        await data.find({},{course: 1, year: 1}).then( (cy) => {
-            courses = cy[0].length === 0 ? [] : cy[0].course
-            year = cy[0].length === 0 ? [] : cy[0].year
-        }).catch( (e) => {
-            throw new Error(e)
-        })
-        await user.find({ _id: { $eq: xs(id) } }).then((p) => {
-            if (p.length === 0) {
-                return res.status(404).render('error/404')
-            } else {
-                return res.render('profile/profile', {
-                    data: p[0], 
-                    course: courses, 
-                    year: year
-                })
-            }
-        }).catch((e) => {
-            throw new Error(e)
-        })
-    } catch (e) {
-        return res.status(500).send()
-    }
-})
-//face recognination 
-router.get('/security', async (req, res) => {
-    // img2base64(`${process.cwd()}/images/Sharine/1.jpg`).then((data) => {
-    //     const ext = path.extname(`${process.cwd()}/images/Sharine/1.jpg`);
-    //     const img = `data:image/${ext.split('.').pop()};base64,${data}`
-
-    // })
-    res.render('security')
-})
-router.get('/register_face', take_photo, async (req, res) => {
-    res.render('register_face')
-})
-//register face
-router.post('/register-face', take_photo, async (req, res, next) => {
-    const image = req.body.image
-    const id = req.session.myid.toString()
-    var face_reg = false
-    //check if the user is already registered his/her face before, this will happen if the user try to visit this url, or the user try to trick the system 
-    await user.find({ _id: id }, { face: 1 }, (err, is_face_reg) => {
-        if (err) {
-            return next()
-        }
-        if (!err && is_face_reg[0].face) {
-            face_reg = true
-        }
-    })
-    if (!face_reg) {
-        //create dir temporary dir 
-        fs.mkdir(`./images/${id}/`, async (err) => {
-            if (err) {
-                return res.send({
-                    reg: false,
-                    msg: "Can't upload face"
-                })
-            }
-            else {
-                //temporarily save to disk 
-                var path = `${process.cwd()}/images/${id}/`
-                var optionalObj = { 'fileName': id, 'type': 'png' }
-                if (await base64ToImage(image, path, optionalObj)) {
-                    //upload to ftp 
-                    const client = new ftp.Client()
-                    try {
-                        await client.access({
-                            host: process.env.ftp_host,
-                            port: process.env.ftp_port,
-                            user: process.env.ftp_username,
-                            password: process.env.ftp_password
-                        })
-                        await client.ensureDir(`/htdocs/files/${id}`)
-                        await client.clearWorkingDir()
-                        await client.uploadFromDir(`./images/${id}`)
-                    }
-                    catch (err) {
-                        console.log(err)
-                        return res.send({
-                            reg: false,
-                            msg: "Internal Error",
-                            line: 78
-                        })
-                    }
-                    client.close()
-                    //delete dir in node server 
-                    fs.remove(`./images/${id}/`, async (err) => {
-                        if (!err) {
-                            //set user face feild to true 
-                            await user.updateOne({ _id: id }, { $set: { face: true } }, (err, done) => {
-                                if (!err) {
-                                    delete req.session.take_photo
-                                    return res.send({
-                                        reg: true,
-                                        msg: "Face Registered"
-                                    })
-                                }
-                                return next()
-                            })
-                        }
-                    })
-                }
-                else {
-                    return res.send({
-                        reg: false,
-                        msg: "Internal Error",
-                        line: 97
-                    })
-                }
-            }
-        })
-    }
-})
 //welcome page  contains login page ang registration
 router.get('/', authenticated, normal_limit, async (req, res) => {
     try {
@@ -230,11 +111,11 @@ router.post('/verify', normal_limit, async (req, res) => {
         return res.status(500).send()
     }
 })
-router.post('/login', async (req, res) => {
+router.post('/login', normal_limit, async (req, res) => {
     const { auth_usr, auth_pass } = req.body
+    const ua = req.headers['user-agent']
     try {
-        if (xs(auth_usr) !== "" && xs(auth_pass) !== "") {
-
+        if (xs(auth_usr) && xs(auth_pass)) {
             if (auth_usr == process.env.admin_username && auth_pass == process.env.admin_password) {
                 await admin.find({}, (err, doc) => {
                     if (doc.length == 0) {
@@ -262,36 +143,39 @@ router.post('/login', async (req, res) => {
                         })
                     }
                 })
-            } else {
-                user.find({ username: auth_usr }, async (err, result) => {
-                    if (result.length == 0) {
+            } 
+            else {
+                await user.find({$or: [
+                    {username: {$eq: xs(auth_usr)}}, 
+                    {"email.email": {$eq: xs(auth_usr)}}
+                ]}, {password: 1, firstname: 1, type: 1}).then( async (usp) => {
+                    if(usp.length > 0){
+                        if(await compareHash(xs(auth_pass), usp[0].password)){
+                            //session
+                            req.session.islogin = true // determine if logged
+                            req.session.user_type = usp[0].type // user type
+                            req.session.myid = usp[0]._id // user id
+                            req.session.data = await user_data(usp[0]._id)
+                            return res.send({
+                                islogin: true,
+                                msg: "Welcome " + usp[0].firstname
+                            })
+                        } else {
+                            return res.send({
+                                islogin: false,
+                                msg: "Incorrect Password"
+                            })
+                        }
+                    } else {
                         return res.send({
                             islogin: false,
                             msg: "Account Not Found"
                         })
                     }
-                    for (var i = 0; i < result.length; i++) {
-                        const match_password = await bcrypt.compare(auth_pass, result[i].password)
-                        if (match_password) {
-                            //session
-                            req.session.islogin = true // determine if logged
-                            req.session.user_type = result[i].type // user type
-                            req.session.myid = result[i]._id // user id
-                            req.session.data = await user_data(result[i]._id)
-                            return res.send({
-                                islogin: true,
-                                msg: "Welcome " + result[i].firstname
-                            })
-                        } else {
-                            return res.send({
-                                islogin: false,
-                                msg: "Incorrect Password!"
-                            })
-                        }
-                    }
+                }).catch( (e) => {
+                    throw new Error(e)
                 })
             }
-
         } else {
             return res.send({
                 islogin: false,
@@ -299,6 +183,7 @@ router.post('/login', async (req, res) => {
             })
         }
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })
@@ -345,7 +230,7 @@ router.post('/register', async (req, res) => {
                                 course: xs(course),
                                 year: xs(yr),
                                 type: xs(type),
-                                socket_id: 'Waiting For Student',
+                                socket_id: 'Offline',
                                 username: xs(usr),
                                 password: hash_password
                             }).then(async (c) => {
@@ -1339,65 +1224,79 @@ router.post('/account/settings/menu/change-e-mail', normal_limit, isloggedin, as
     try {
         //check if the is valid
         if(emailValidator(xs(nmail))){
-            //get email & password
-            await user.find({_id: {$eq: xs(myid)}}, {password: 1, email: 1}).then( async (userData) => {
-                if(userData.length > 0){
-                    //check password
-                    if(await compareHash(xs(pass), userData[0].password)){
-                        if(userData[0].email.email){
-                            return res.send({
-                                status: false, 
-                                txt: "You already added an email", 
-                                msg: 'If you want to change your email please remove the old one'
-                            }) 
-                        } else {
-                            await user.find({
-                                _id: {$ne: xs(myid)}, 
-                                email: {email: {$eq: xs(nmail)}}
-                            }).then( async (the_same) => {
-                                if(the_same.length === 0){
-                                    const email_id = uuidv4()
-                                    await user.updateOne({
-                                        _id: { $eq: xs(myid) }
-                                    }, {$set: {
-                                        "email.id": email_id, 
-                                        "email.email": xs(nmail), 
-                                        "email.status": "Not Verified", 
-                                        "email.added": moment().tz("Asia/Manila").format()
-                                    }}).then(() => {
-                                        //send verification  
-                                        send_verification_email(firstname, xs(nmail), xs(myid.toString()), email_id)
-                                        return res.send({
-                                            status: true,
-                                            txt: "Verification Sent Successfully",
-                                            msg: 'Please check your E-mail inbox'
-                                        })
-                                    }).catch((e) => {
-                                        throw new Error(e)
-                                    })
-                                } else {
-                                    return res.send({
-                                        status: false,
-                                        txt: "This email is already in used",
-                                        msg: 'Please use another e-mail, This email is already in used by another user'
-                                    })
-                                }
-                            }).catch( (e) => {
-                                throw new Error(e)
-                            })
-                        }
-                    } else {
-                        return res.send({
-                            status: false, 
-                            txt: "Incorrect Password", 
-                            msg: 'Please Try Again'
-                        })
-                    }
-                } else {
+            //check if the email is not the same in another use 
+            await user.find({
+                _id: {$ne: xs(myid)}, 
+                "email.email": {$eq:xs(nmail)}
+            }).then( async (em_status) => {
+                if(em_status.length > 0){
                     return res.send({
                         status: false, 
-                        txt: "User ID not found", 
-                        msg: 'Please Refresh your browser'
+                        txt: "Invalid E-mail", 
+                        msg: 'E-mail is already in used by another user'
+                    })
+                } else {
+                    //get email & password
+                    await user.find({_id: {$eq: xs(myid)}}, {password: 1, email: 1}).then( async (userData) => {
+                        if(userData.length > 0){
+                            //check password
+                            if(await compareHash(xs(pass), userData[0].password)){
+                                if(userData[0].email.email){
+                                    return res.send({
+                                        status: false, 
+                                        txt: "You already added an email", 
+                                        msg: 'If you want to change your email please remove the old one'
+                                    }) 
+                                } else {
+                                    await user.find({
+                                        _id: {$ne: xs(myid)}, 
+                                        email: {email: {$eq: xs(nmail)}}
+                                    }).then( async (the_same) => {
+                                        if(the_same.length === 0){
+                                            const email_id = uuidv4()
+                                            await user.updateOne({
+                                                _id: { $eq: xs(myid) }
+                                            }, {$set: {
+                                                "email.id": email_id, 
+                                                "email.email": xs(nmail), 
+                                                "email.status": "Not Verified", 
+                                                "email.added": moment().tz("Asia/Manila").format()
+                                            }}).then(() => {
+                                                //send verification  
+                                                send_verification_email(firstname, xs(nmail), xs(myid.toString()), email_id)
+                                                return res.send({
+                                                    status: true,
+                                                    txt: "Verification Sent Successfully",
+                                                    msg: 'Please check your E-mail inbox'
+                                                })
+                                            }).catch((e) => {
+                                                throw new Error(e)
+                                            })
+                                        } else {
+                                            return res.send({
+                                                status: false,
+                                                txt: "This email is already in used",
+                                                msg: 'Please use another e-mail, This email is already in used by another user'
+                                            })
+                                        }
+                                    }).catch( (e) => {
+                                        throw new Error(e)
+                                    })
+                                }
+                            } else {
+                                return res.send({
+                                    status: false, 
+                                    txt: "Incorrect Password", 
+                                    msg: 'Please Try Again'
+                                })
+                            }
+                        } else {
+                            return res.send({
+                                status: false, 
+                                txt: "User ID not found", 
+                                msg: 'Please Refresh your browser'
+                            })
+                        }
                     })
                 }
             })
@@ -1523,6 +1422,121 @@ router.post('/account/settings/email/remove-email/', normal_limit, isloggedin, a
         }).catch( (e) => {
             throw new Error(e)
         })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//change username 
+router.post('/account/settings/username/change-username/', normal_limit, isloggedin, async (req, res) => {
+    const {nuname, pass} = req.body
+    const {myid} = req.session
+    try {
+        await user.find({_id: {$eq: xs(myid)}}, {password: 1, username: 1}).then( async (usp) => {
+            if(usp.length > 0){
+                if(await compareHash(xs(pass), usp[0].password)){
+                    if(xs(nuname) !== usp[0].username){
+                        await user.find({_id: {$ne: xs(myid)}, username: xs(nuname)}, {_id: 1}).then( async (usr) => {
+                            if(usr.length === 0){
+                                await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {username: xs(nuname)}}).then( () => {
+                                    return res.send({
+                                        status: true, 
+                                        txt: 'Username Successfully Changed', 
+                                        msg: 'You can now login with your new username'
+                                    })
+                                }).catch( (e) => {
+                                    throw new Error(e)
+                                })
+                            } else {
+                                return res.send({
+                                    status: false, 
+                                    txt: 'Username is already taken', 
+                                    msg: 'Please use another username'
+                                })
+                            }
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            txt: 'You already use this Username', 
+                            msg: 'Please use another username and try again'
+                        })
+                    }
+                } else {
+                    return res.send({
+                        status: false, 
+                        txt: 'Incorrect Password', 
+                        msg: 'Please check your password and try again'
+                    })
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'User ID not found', 
+                    msg: 'Please refresh your browser'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//change password 
+router.post('/account/settings/password/change-password/', normal_limit, isloggedin, async (req, res) => {
+    const {cpass, pass1, pass2} = req.body 
+    const {myid} = req.session 
+    try {
+        if(xs(pass1) === xs(pass2)){
+            if(xs(pass1).length > 8){
+                await user.find({_id: {$eq: xs(myid)}}, {password: 1}).then( async (u_pass) => {
+                    if(u_pass.length > 0){
+                        if(await compareHash(xs(cpass), u_pass[0].password)){
+                            const new_pass = await hash(xs(pass1), 10) 
+                            await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {password: new_pass}}).then( () => {
+                                return res.send({
+                                    status: true, 
+                                    txt: 'Password Succcessfully Changed', 
+                                    msg: 'You can now login with your new password'
+                                })
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        } else {
+                            return res.send({
+                                status: false, 
+                                txt: 'Incorrect Password', 
+                                msg: 'Your current password is incorrect'
+                            })
+                        }
+                    } else {
+                        return res.send({
+                            status: false, 
+                            txt: 'User ID not found', 
+                            msg: 'Please refresh your browser'
+                        })
+                    }
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Password is too short', 
+                    msg: 'Password must be 8 characters long'
+                })
+            }
+        } else {
+            return res.send({
+                status: false, 
+                txt: 'Password Not Match', 
+                msg: 'Please check your new password '
+            })
+        }
     } catch (e) {
         console.log(e)
         return res.status(500).send()
