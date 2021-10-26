@@ -5,7 +5,6 @@
     <img src="https://github.com/Jayke770/wmsuaesu-voting-system/blob/master/public/assets/logo.png">
 </p>
 <hr>
-<br>
 <p align="center"> 
   <a href="https://github.com/Jayke770/wmsuaesu-voting-system/issues> 
     <img src="https://img.shields.io/github/issues/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
@@ -45,7 +44,7 @@
 </p>
 
 ## Production Links  
-| Provider | Link |
-| -------- | ---- |
-| Heroku | https://wmsuaesu-voting-system.herokuapp.com |
-| Qovery | https://z1a4d3581-z7f9663f2-gtw.qovery.io |
+| Server | Link Status |
+| -------- | ---------- |
+| Heroku | <a href="https://wmsuaesu-voting-system.herokuapp.com"> <img src="https://img.shields.io/website?down_message=Offline&label=Production%20Status&style=for-the-badge&up_message=Online&url=https%3A%2F%2Fwmsuaesu-voting-system.herokuapp.com"> </a> |
+| Qovery | <a href="https://z1a4d3581-z7f9663f2-gtw.qovery.io"> <img src="https://img.shields.io/website?down_message=Offline&label=Production%20Status&style=for-the-badge&up_message=Online&url=https%3A%2F%2Fz1a4d3581-z7f9663f2-gtw.qovery.io"> </a> |
