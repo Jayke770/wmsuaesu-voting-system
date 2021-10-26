@@ -7,9 +7,6 @@
 <hr>
 <br>
 <p align="center"> 
-  <a href="https://wmsuaesu-voting-system.herokuapp.com/"> 
-     <img src="https://img.shields.io/website?down_message=Offline&label=Production%20website&style=for-the-badge&up_message=Online&url=https%3A%2F%2Fwmsuaesu-voting-system.herokuapp.com">
-   </a>
   <a href="https://github.com/Jayke770/wmsuaesu-voting-system/issues> 
     <img src="https://img.shields.io/github/issues/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
   </a> 
@@ -46,3 +43,9 @@
     <img src="https://img.shields.io/github/last-commit/Jayke770/wmsuaesu-voting-system?style=for-the-badge"> 
   </a>
 </p>
+
+## Production Links 
+ Heroku 
+ https://wmsuaesu-voting-system.herokuapp.com/home
+ Qovery 
+ https://z1a4d3581-z7f9663f2-gtw.qovery.io/
