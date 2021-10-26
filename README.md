@@ -44,8 +44,8 @@
   </a>
 </p>
 
-## Production Links 
- Heroku 
- https://wmsuaesu-voting-system.herokuapp.com/home
- Qovery 
- https://z1a4d3581-z7f9663f2-gtw.qovery.io/
+## Production Links  
+| Provider | Link |
+| -------- | ---- |
+| Heroku | https://wmsuaesu-voting-system.herokuapp.com |
+| Qovery | https://z1a4d3581-z7f9663f2-gtw.qovery.io |
