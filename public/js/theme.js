@@ -25,3 +25,4 @@ if (theme == "dark") {
 function gettheme() {
     return localStorage.getItem('theme')
 }
+$('html').addClass("dark")

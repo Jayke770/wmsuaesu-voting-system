@@ -80,6 +80,7 @@ $(document).ready(function () {
         const parent = `.${$(this).attr("parent")}`
         $(".check_id").attr("disabled", true)
         Swal.fire({
+            icon: 'info',
             title: 'Please Wait', 
             html: 'Checking Student ID',
             showConfirmButton: false,

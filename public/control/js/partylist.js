@@ -119,9 +119,9 @@ $(document).ready(() => {
                         timer: 2000,
                         icon: 'success',
                         title: res.msg
-                    }).then(() => {
+                    }).then(async () => {
                         submit_btn.prop("disabled", false)
-                        append_pty(res.data)
+                        await pty()
                         $(".total_pty").text($(".pty").length)
                     })
                 }
@@ -313,23 +313,4 @@ $(document).ready(() => {
             },
         })
     })
-    function append_pty(data) {
-        const pty = $(".pty_all")
-        $(".empty_pty").remove()
-        const element = `
-        <div data="${data.id}" class="pty dark:bg-darkBlue-secondary sm:last:mb-4 group animate__animated animate__fadeInUp p-3 grid grid-cols-2 bg-gray-100 rounded-xl cursor-pointe">
-            <div>
-                <span class="text-bluegray-900 dark:text-gray-300 text-base font-normal break-all">${data.type}</span>
-            </div>
-            <div class="hidden group-hover:flex animate__animated animate__fadeInLeft ms-200 transition-all justify-end items-center gap-1">
-                <a data="${data.id}" class="rpl px-2 up_pos cursor-pointer text-green-600">
-                    <i class="fas fa-edit"></i>
-                </a>
-                <a data="${data.id}" class="rpl px-2 del_pos cursor-pointer text-rose-600">
-                    <i class="fas fa-trash"></i>
-                </a>
-            </div>
-        </div>`
-        pty.append(element)
-    }
 })

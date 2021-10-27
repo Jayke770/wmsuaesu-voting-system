@@ -101,7 +101,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
         return res.status(500).send()
     }
 })
-router.get('/home/logout/', normal_limit, isloggedin, (req, res) => {
+router.get('/home/logout/', normal_limit, (req, res) => {
     req.session.destroy()
     return res.redirect('/')
 })
@@ -109,10 +109,10 @@ router.get('/home/logout/', normal_limit, isloggedin, (req, res) => {
 router.post('/verify', normal_limit, async (req, res) => {
     const { id } = req.body
     try {
-        await data.find({ "voterId.enabled": { $eq: false }, "voterId.student_id": { $eq: xs(id) } }).then((res_id) => {
+        await data.find({ "voterId.enabled": { $eq: false }, "voterId.student_id": { $eq: xs(id).toUpperCase() } }).then((res_id) => {
             return res.send({
                 isvalid: res_id.length === 0 ? false : true,
-                id: xs(id),
+                id: xs(id).toUpperCase(),
                 msg: res_id.length === 0 ? "Student ID not found" : "Student ID is valid"
             })
         }).catch((e) => {
@@ -268,6 +268,7 @@ router.post('/login', normal_limit, async (req, res) => {
 router.post('/register', async (req, res) => {
     const { student_id, fname, mname, lname, course, yr, type, usr, pass } = req.body
     const hash_password = await bcrypt.hash(xs(pass), 10)
+    const ua = xs(req.headers['user-agent'])
     const device = {
         id: uuidv4(),
         browser: `${uaParser(ua).browser.name} Browser on ${uaParser(ua).os.name}`, 
@@ -277,90 +278,98 @@ router.post('/register', async (req, res) => {
         status: 'Online',
         verified: false
     }
-    //check if all feilds is not empty
     try {
-        if (fname != "" && mname != "" && lname != "" && course != "" && yr != "" && type != "") {
-            //re-check voter id 
-            await data.find(
-                {
-                    "voterId.student_id": { $eq: xs(student_id) },
-                    "voterId.course": { $eq: xs(course) },
-                    "voterId.year": { $eq: xs(yr) },
-                    "voterId.enabled": { $eq: false }
-                }
-            ).then(async (v) => {
-                if (v.length !== 0) {
-                    //check if the username is not taken
-                    await user.find({ username: { $eq: xs(usr) } }).then(async (u) => {
-                        if (u.length !== 0) {
-                            return res.send({
-                                islogin: false,
-                                msg: "Username is already taken"
-                            })
-                        }
-                        //check if the student id is not registered 
-                        await user.find({ student_id: { $eq: xs(student_id) } }).then(async (s) => {
-                            if (s.length !== 0) {
-                                return res.send({
-                                    islogin: false,
-                                    msg: "Student ID already registered"
-                                })
-                            }
-                            //if the student id is not registered 
-                            //save the new data 
-                            await user.create({
-                                student_id: xs(student_id),
-                                firstname: xs(toUppercase(fname)),
-                                middlename: xs(toUppercase(mname)),
-                                lastname: xs(toUppercase(lname)),
-                                course: xs(course),
-                                year: xs(yr),
-                                type: xs(type),
-                                socket_id: 'Offline',
-                                username: xs(usr),
-                                password: hash_password, 
-                                devices: [device]
-                            }).then(async (c) => {
-                                //sessions
-                                req.session.myid = c._id //session for student
-                                req.session.islogin = true // to determine that user is now logged in
-                                req.session.user_type = xs(type) //to determine the user type
-                                req.session.data = c
-                                //update the voter id and set enabled to true 
-                                await data.updateOne({ "voterId.student_id": { $eq: xs(student_id) } }, { $set: { "voterId.$.enabled": true } }).then((vu) => {
+        //check voter id
+        await data.find({
+            voterId: {$elemMatch: {student_id: {$eq: xs(student_id).toUpperCase()}}}
+        }, {
+            voterId: {$elemMatch: {student_id: {$eq: xs(student_id).toUpperCase()}}}
+        }).then( async (v) => {
+            if(v.length > 0){
+                const voterId = v[0].voterId[0]
+                //check if the voter is not enabled 
+                if(!voterId.enabled){
+                    //check course 
+                    if(voterId.course === xs(course)){
+                        //check year 
+                        if(voterId.year === xs(yr)){
+                            //check username if already taken 
+                            await user.find({username: {$eq: xs(usr)}}, {username: 1}).then( async (username) => {
+                                if(username.length > 0){
                                     return res.send({
-                                        islogin: true,
-                                        msg: `Welcome ${xs(toUppercase(fname))}`
+                                        status: false, 
+                                        msg: 'Username is already taken', 
+                                        text: 'Please use another username'
                                     })
-                                }).catch((e) => {
-                                    throw new Error(e)
-                                })
-                            }).catch((e) => {
+                                } else {
+                                    //save new user 
+                                    await user.create({
+                                        student_id: xs(student_id).toUpperCase(),
+                                        firstname: xs(toUppercase(fname)),
+                                        middlename: xs(toUppercase(mname)),
+                                        lastname: xs(toUppercase(lname)),
+                                        course: xs(course),
+                                        year: xs(yr),
+                                        type: xs(type),
+                                        socket_id: 'Offline',
+                                        username: xs(usr),
+                                        password: hash_password, 
+                                        devices: [device]
+                                    }).then(async (new_user) => {
+                                        const userData = await user_data(new_user._id)
+                                        req.session.device = device
+                                        req.session.myid = userData._id //session for student
+                                        req.session.islogin = true // to determine that user is now logged in
+                                        req.session.user_type = userData.type //to determine the user type
+                                        req.session.data = userData
+                                        await data.updateOne({ "voterId.student_id": { $eq: xs(student_id) } }, { $set: { "voterId.$.enabled": true } }).then((vu) => {
+                                            return res.send({
+                                                islogin: true,
+                                                msg: `Welcome ${xs(toUppercase(fname))}`
+                                            })
+                                        }).catch((e) => {
+                                            throw new Error(e)
+                                        })
+                                    }).catch( (e) => {
+                                        throw new Error(e)
+                                    })
+                                }
+                            }).catch( (e) => {
                                 throw new Error(e)
                             })
-                        }).catch((e) => {
-                            throw new Error(e)
+                        } else {
+                            return res.send({
+                                status: false, 
+                                msg: 'Invalid Year', 
+                                text: 'Please make sure that your year is match with your Voter ID'
+                            })
+                        }
+                    } else {
+                        return res.send({
+                            status: false, 
+                            msg: 'Invalid Course', 
+                            text: 'Please make sure that your course is match with your Voter ID'
                         })
-                    }).catch((e) => {
-                        throw new Error(e)
-                    })
+                    }
                 } else {
                     return res.send({
-                        islogin: false,
-                        msg: "Invalid Course / Year",
-                        text: "Please re-check your Course & Year"
+                        status: false, 
+                        msg: 'Student Id is already taken', 
+                        text: 'Please make sure that this Voter ID is belongs to you'
                     })
                 }
-            }).catch((e) => {
-                throw new Error(e)
-            })
-        } else {
-            return res.send({
-                islogin: false,
-                msg: 'All Feilds Is Required'
-            })
-        }
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: 'Voter Id not found', 
+                    text: 'Please check your Voter ID'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })
@@ -857,7 +866,7 @@ router.post('/home/election/status/side-menu/', normal_limit, isloggedin, async 
 //when user try to enter the election he/she joined
 router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (req, res) => {
     const {electionID} = req.params
-    const {myid} = req.session 
+    const {myid, device} = req.session 
     const {student_id} = await user_data(myid)
     try {
         await election.find({
@@ -880,6 +889,7 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
                         course: await course(), 
                         year: await  year()
                     }, 
+                    device: device,
                     userData: await user_data(myid), 
                     csrf: req.csrfToken()
                 })
