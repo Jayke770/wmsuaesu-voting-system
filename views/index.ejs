@@ -108,6 +108,8 @@
     <div class="account_settings">
         <%- include('account/settings') %>
     </div>
+    <!-- verify device -->
+    <%- !device.verified ? include('account/verify-device',{ userData: userData, device: device}) : 'fjashf' %>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/io.js"></script>
     <script src="/js/index.js"></script>

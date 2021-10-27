@@ -1,12 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* swiper js */
-@media (max-width: 639px){
-    .hide {
-        display: none !important;
-    }  
-}
 /* lazy progress */
 .lazy-progress {
     transition: 1s ease;

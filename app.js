@@ -21,6 +21,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
+const requestIp = require('request-ip')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
 const {updateAdminSocketID, user_socket_id, election_handler, user_data, users_election_handler, course, mycourse, year, myyear} = require('./routes/functions') 
@@ -69,6 +70,7 @@ app.use(
 )
 app.use(morgan(':status :remote-addr :method :url :response-time ms', { stream: log_stream }))
 app.use(express.static(dir))
+app.use(requestIp.mw())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.json()) // json 
 app.use(uploader.array())
@@ -532,5 +534,7 @@ setInterval(async () => {
 async function start() {
     await election_handler()
     await users_election_handler()
-    http.listen(port, console.log('Server Started on port ' + port))
+    http.listen(port, '192.168.1.18', () => {
+        console.log(`Server Started on ${port}`)
+    })
 }
