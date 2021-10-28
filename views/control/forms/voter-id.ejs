@@ -168,13 +168,13 @@
                                 <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Voter ID</label>
                                 <input type="text" name="sid"
                                     class="edit_voter_id dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 "
-                                    placeholder="Voter ID" autocomplete="off" required>
+                                    placeholder="Voter ID" autocomplete="off">
                             </div>
                             <div class="form-group mt-2 first:mt-0">
                                 <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Course</label>
                                 <select name="course"
                                     class="edit_course dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 "
-                                    placeholder="Course" autocomplete="off" required>
+                                    placeholder="Course" autocomplete="off">
                                     <option value="">Select Course</option>
                                     <% if(course.length !=0) { for(let i=0; i < course.length; i++) { %>
                                         <option value="<%- course[i].id %>">
@@ -187,7 +187,7 @@
                                 <label for="id" class="text-gray-900 text-lg dark:text-gray-300">Year</label>
                                 <select name="year"
                                     class="edit_year dark:bg-darkBlue-secondary appearance-none dark:text-gray-200 dark_border dark:focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md focus:border-purple-600  transition-all py-2 px-3 text-gray-900 "
-                                    placeholder="Year" autocomplete="off" required>
+                                    placeholder="Year" autocomplete="off">
                                     <option value="">Select Year</option>
                                     <% if(year.length !=0) { for(let i=0; i < year.length; i++) { %>
                                         <option value="<%- year[i].id %>">

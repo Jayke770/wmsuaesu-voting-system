@@ -481,6 +481,16 @@ users_socket.on('connection', async (socket) => {
             })
         }
     })
+    //email status 
+    socket.on('email-status', async (res) => {
+        const {email} = await user_data(myid) 
+        if(email.status === "Verified") {
+            res({status: true})
+        }
+        if(email.status === "Not Verified") {
+            res({status: false})
+        }
+    })
 })
 start()
 //check election every 10 seconds
@@ -534,7 +544,7 @@ setInterval(async () => {
 async function start() {
     await election_handler()
     await users_election_handler()
-    http.listen(port, '192.168.254.154', () => {
+    http.listen(port,  () => {
         console.log(`Server Started on port ${port}`)
     })
 }

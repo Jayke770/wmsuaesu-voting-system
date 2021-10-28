@@ -2189,77 +2189,78 @@ adminrouter.post('/control/elections/voter-id/update-voter-id/', limit, isadmin,
     const {sid, course, year, id} = req.body 
     let student_id
     try {
-        //check id if exists 
-        await data.find({
-            voterId: {$elemMatch: {id: {$eq: xs(id)}}}
-        }, {voterId: {$elemMatch: {id: {$eq: xs(id)}}}}).then( async (v) => {
-            //if voter id is found
-            if(v.length > 0){
-                student_id = v[0].voterId[0].student_id
-                //check if the new course & year is valid 
-                await data.find({
-                    course: {$elemMatch: {id: {$eq: xs(course)}}}, 
-                    year: {$elemMatch: {id: {$eq: xs(year)}}}
-                }, {
-                    course: {$elemMatch: {id: {$eq: xs(course)}}}, 
-                    year: {$elemMatch: {id: {$eq: xs(year)}}}
-                }).then( async (cy) => {
-                    //if the new course & year is valid
-                    if(cy.length > 0){
-                        //check if the new voter id is not the same to others 
-                        await data.find({
-                            voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}
-                        }, {voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}}).then( async (sidFound) => {
-                            if(sidFound.length === 0){
-                                //update voter id 
-                                await data.updateOne({
-                                    "voterId.id": {$eq: xs(id)}
-                                }, {$set: {
-                                    "voterId.$.student_id": xs(sid).toUpperCase(), 
-                                    "voterId.$.course": xs(course), 
-                                    "voterId.$.year": xs(year)
-                                }}).then( async () => {
-                                    //update user details who use this voter id 
-                                    await user.updateOne({
-                                        student_id: {$eq: xs(student_id)}
-                                    }, {$set: {
-                                        student_id: xs(sid).toUpperCase(), 
-                                        course: xs(course), 
-                                        year: xs(year)
-                                    }}).then( () => {
-                                        return res.send({
-                                            status: true, 
-                                            msg: "Voter Id successfully updated!"
-                                        })
-                                    }).catch( (e) => {
-                                        throw new Error(e)
-                                    })
-                                }).catch( (e) => {
-                                    throw new Error(e)
-                                })
-                            } else {
-                                return res.send({
-                                    status: false, 
-                                    msg: "Voter ID is already in used"
-                                })
-                            }
-                        })
-                    } else {
-                        return res.send({
-                            status: false, 
-                            msg: "Invalid Course / Year"
-                        })
-                    }
-                }).catch( (e) => {
-                    throw new Error(e)
-                })
-            } else {
-                return res.send({
-                    status: false, 
-                    msg: "Voter ID not found!"
-                })
-            }
-        })
+        //check voter id 
+        
+        // await data.find({
+        //     voterId: {$elemMatch: {id: {$eq: xs(id)}}}
+        // }, {voterId: {$elemMatch: {id: {$eq: xs(id)}}}}).then( async (v) => {
+        //     //if voter id is found
+        //     if(v.length > 0){
+        //         student_id = v[0].voterId[0].student_id
+        //         //check if the new course & year is valid 
+        //         await data.find({
+        //             course: {$elemMatch: {id: {$eq: xs(course)}}}, 
+        //             year: {$elemMatch: {id: {$eq: xs(year)}}}
+        //         }, {
+        //             course: {$elemMatch: {id: {$eq: xs(course)}}}, 
+        //             year: {$elemMatch: {id: {$eq: xs(year)}}}
+        //         }).then( async (cy) => {
+        //             //if the new course & year is valid
+        //             if(cy.length > 0){
+        //                 //check if the new voter id is not the same to others 
+        //                 await data.find({
+        //                     voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}
+        //                 }, {voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}}).then( async (sidFound) => {
+        //                     if(sidFound.length === 0){   
+        //                         //update voter id 
+        //                         await data.updateOne({
+        //                             "voterId.id": {$eq: xs(id)}
+        //                         }, {$set: {
+        //                             "voterId.$.student_id": xs(sid).toUpperCase(), 
+        //                             "voterId.$.course": xs(course), 
+        //                             "voterId.$.year": xs(year)
+        //                         }}).then( async () => {
+        //                             //update user details who use this voter id 
+        //                             await user.updateOne({
+        //                                 student_id: {$eq: xs(student_id)}
+        //                             }, {$set: {
+        //                                 student_id: xs(sid).toUpperCase(), 
+        //                                 course: xs(course), 
+        //                                 year: xs(year)
+        //                             }}).then( () => {
+        //                                 return res.send({
+        //                                     status: true, 
+        //                                     msg: "Voter Id successfully updated!"
+        //                                 })
+        //                             }).catch( (e) => {
+        //                                 throw new Error(e)
+        //                             })
+        //                         }).catch( (e) => {
+        //                             throw new Error(e)
+        //                         })
+        //                     } else {
+        //                         return res.send({
+        //                             status: false, 
+        //                             msg: "Voter ID is already in used"
+        //                         })
+        //                     }
+        //                 })
+        //             } else {
+        //                 return res.send({
+        //                     status: false, 
+        //                     msg: "Invalid Course / Year"
+        //                 })
+        //             }
+        //         }).catch( (e) => {
+        //             throw new Error(e)
+        //         })
+        //     } else {
+        //         return res.send({
+        //             status: false, 
+        //             msg: "Voter ID not found!"
+        //         })
+        //     }
+        // })
     } catch (e) {
         console.log(e)
         return res.status(500).send()

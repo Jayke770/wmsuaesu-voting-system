@@ -951,53 +951,8 @@ $(document).ready( () => {
             })
         }
     })
-    //add email in secure page 
-    let secure_add_email = false
-    $(".secure_add_email").submit( async function (e) {
-        e.preventDefault() 
-        const def = $(this).find("button[type='submit']").html()
-        if(!secure_add_email){
-            try {
-                secure_add_email = true 
-                $(this).find("button[type='submit']").html(election.loader()) 
-                const req = await fetchtimeout('/account/settings/secure/add-email/', {
-                    method: 'POST', 
-                    headers: {
-                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                    }, 
-                    body: new FormData(this)
-                })
-                if(req.ok){
-                    const res = await req.json()
-                    Swal.fire({
-                        icon: res.status ? 'success' : 'info', 
-                        title: res.txt, 
-                        html: res.msg,
-                        backdrop: true, 
-                        allowOutsideClick: false,
-                    }).then( async () => {
-                        secure_add_email = false
-                        $(this).find("button[type='submit']").html(def) 
-                        $(this).find("button[type='reset']").click()
-                    })
-                } else {
-                    throw new Error(`${req.status} ${req.statusText}`)
-                }
-            } catch (e) {
-                secure_add_email = false
-                $(this).find("button[type='submit']").html(def) 
-                Swal.fire({
-                    icon: 'error', 
-                    title: 'Connection error', 
-                    html: e.message, 
-                    backdrop: true, 
-                    allowOutsideClick: false, 
-                })
-            }
-        }
-    })
     //cahnge username 
-    let change_username = false 
+    let change_username = false
     $(".account_settings").delegate(".change_username", "submit", async function (e) {
         e.preventDefault() 
         const def = $(this).find("button[type='submit']").html() 

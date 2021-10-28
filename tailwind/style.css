@@ -3,10 +3,8 @@
 @tailwind utilities;
 /* lazy progress */
 .lazy-progress {
-    transition: 1s ease;
     animation: lazy 2s linear infinite;
     width: 10%;
-    @apply rounded-lg;
 }
 @keyframes lazy {
     20%{

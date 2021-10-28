@@ -1,4 +1,15 @@
 $(document).ready( function () {
+    $("body").delegate(".show_pass", "click", function () {
+        const show = `<i class="fas fa-eye dark:text-indigo-600 cursor-pointer"></i>`
+        const hide = `<i class="fas fa-eye-slash dark:text-indigo-600 cursor-pointer"></i>`
+        if($(this).prev().attr("type") === "password"){
+            $(this).prev().attr("type", "text")
+            $(this).html(hide)
+        } else {
+            $(this).prev().attr("type", "password")
+            $(this).html(show)
+        }
+    })
     let submit_ = false
     $(".submit_email").submit( async function (e) {
         e.preventDefault()

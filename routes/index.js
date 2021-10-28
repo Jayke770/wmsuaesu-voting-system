@@ -52,7 +52,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
             "devices.id": {$eq: xs(device.id)}
         }, {$set: {"devices.$.ip": xs(req.clientIp)}}).then( async () => {
             //check if the user joined any election 
-            if(elections.length !== 0){
+            if(elections.length > 0){
                 //get all elections 
                 for(let i = 0; i < elections.length; i++){
                     await election.find({_id: {$eq: xs(elections[i])}}, {passcode: 0}).then( (elec) => {
@@ -97,8 +97,8 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
-        return res.status(500).send()
+        req.session.destroy()
+        return res.redirect('/')
     }
 })
 router.get('/home/logout/', normal_limit, (req, res) => {
@@ -275,6 +275,7 @@ router.post('/register', async (req, res) => {
         devicename: `${uaParser(ua).device.vendor} ${uaParser(ua).device.model}`, 
         os: `${uaParser(ua).os.name} ${uaParser(ua).os.version}`,
         ip: req.clientIp,
+        last_seen: moment().tz("Asia/Manila").format(),
         status: 'Online',
         verified: false
     }
@@ -1675,8 +1676,7 @@ router.post('/account/settings/secure/add-email/', normal_limit, isloggedin, asy
                                         "email.status": "Not Verified",
                                         "email.added": moment().tz("Asia/Manila").format()
                                     }
-                                }).then((h) => {
-                                    console.log(h)
+                                }).then(() => {
                                     //send verification  
                                     send_verification_email(firstname, xs(nmail), xs(myid.toString()), email_id)
                                     return res.send({
@@ -1727,6 +1727,7 @@ router.post('/account/settings/secure/add-email/', normal_limit, isloggedin, asy
         return res.status(500).send()
     }
 })
+//verify user through email
 router.post('/account/settings/secure/verify/', normal_limit, isloggedin, async (req, res) => {
     const {myid, device} = req.session 
     try {
@@ -1744,6 +1745,22 @@ router.post('/account/settings/secure/verify/', normal_limit, isloggedin, async 
             }
         }).catch( (e) => {
             throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+//resend email verification 
+router.post('/account/settings/*/resend-email-verification/', normal_limit, isloggedin, async (req, res) => {
+    const {myid} = req.session 
+    const {email, firstname} = await user_data(myid)
+    try {
+        //resend email verification 
+        send_verification_email(firstname, email.email, myid.toString(), email.id)
+        return res.send({
+            status: true,
+            txt: "Email Verification Resend Successfully",
+            msg: 'Please check your Email Inbox'
         })
     } catch (e) {
         return res.status(500).send()
