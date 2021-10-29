@@ -44,6 +44,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
     delete req.session.electionID
     const {myid, device} = req.session  
     const {elections, devices} = await user_data(myid)
+
     let electionsJoined = []
     try {
         let device_verified
@@ -914,8 +915,15 @@ router.post('/home/election/status/side-menu/', normal_limit, isloggedin, async 
 router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (req, res) => {
     const {electionID} = req.params
     const {myid, device} = req.session 
-    const {student_id} = await user_data(myid)
+    const {student_id, devices} = await user_data(myid)
     try {
+        let device_data
+        for(let i = 0; i < devices.length; i++){
+            if(devices[i].id === device){
+                device_data = devices[i]
+                break
+            }
+        }
         await election.find({
             _id: {$eq: xs(electionID)}, 
             voters: {$elemMatch: {student_id: {$eq: xs(student_id)}}}
@@ -936,7 +944,7 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
                         course: await course(), 
                         year: await  year()
                     }, 
-                    device: device,
+                    device: device_data,
                     userData: await user_data(myid), 
                     csrf: req.csrfToken()
                 })
@@ -953,10 +961,17 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
 //get all candidates 
 router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin, async (req, res) => {
     const {id} = req.body 
-    const {electionID, myid} = req.session 
-    const {_id, student_id} = await user_data(myid)
+    const {electionID, myid, device} = req.session 
+    const {_id, student_id, devices} = await user_data(myid)
 
     try {
+        let device_data
+        for(let i = 0; i < devices.length; i++){
+            if(devices[i].id === device){
+                device_data = devices[i]
+                break
+            }
+        }
         //check if election & voter is exists 
         await election.find({
             _id: {$eq: xs(electionID)}, 
@@ -973,6 +988,7 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
                     partylists: await partylists(), 
                     positions: await positions(),
                 }, 
+                device: device_data,
                 userData: await user_data(myid), 
                 csrf: req.csrfToken()
             })
@@ -980,6 +996,7 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
             throw new Error(e)
         })
     } catch (e) {
+        console.log(e)
         return res.redirect('/home')
     }
 })
@@ -1114,9 +1131,16 @@ router.post('/home/election/id/*/candidates/view-candidate/', normal_limit, islo
 })
 //vote 
 router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, res) => {
-    const {electionID, myid} = req.session 
-    
+    const {electionID, myid, device} = req.session 
+    const {devices} = await user_data(myid)
     try {
+        let device_data
+        for(let i = 0; i < devices.length; i++){
+            if(devices[i].id === device){
+                device_data = devices[i]
+                break
+            }
+        }
         //get election details 
         await election.find({
             _id: {$eq: xs(electionID)}, 
@@ -1136,6 +1160,7 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
                             course: await course(), 
                             year: await year()
                         }, 
+                        device: device_data,
                         userData: await user_data(myid),
                         csrf: req.csrfToken()
                     })
