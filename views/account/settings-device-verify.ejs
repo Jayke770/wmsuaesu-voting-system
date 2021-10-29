@@ -5,7 +5,7 @@
     <meta name="csrf-token" content="<%- csrf %>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-mail Verification</title>
+    <title>Verify Device</title>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
     <%- include('../cdn/_index') %>
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
@@ -30,21 +30,10 @@
         <div class="main w-96 sm:w-full animate__animated animate__fadeInUp transition-all rounded-md hidden bg-gray-50 dark:bg-darkBlue-secondary shadow-lg">
             <div class="flex w-full flex-col py-2 px-1">
                 <div class="txt flex items-center justify-start pt-2 px-3">
-                    <span class="text-bluegray-900 dark:text-purple-600 text-xl">E-mail Verification</span>
+                    <span class="text-bluegray-900 dark:text-purple-600 text-xl">Device Verification</span>
                 </div>
-                <form class="submit_email flex flex-col gap-3 pb-2 px-3">
+                <form class="verify_device flex flex-col gap-3 pb-2 px-3" method="POST">
                     <button type="reset"></button>
-                    <div class="container flex flex-col gap-1">
-                        <label class="text-bluegray-900 dark:text-gray-300" for="nmail">New E-mail</label>
-                        <div class="relative flex w-full flex-wrap items-stretch mb-2">
-                            <span
-                                class="z-10 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                                <i class="fas fa-envelope dark:text-amber-600"></i>
-                            </span>
-                            <input value="<%- email %>" name="nmail" type="email" autocomplete="off" placeholder="New Email" required
-                                class="dark:border-gray-800 disabled:cursor-not-allowed px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none dark:focus:border-purple-700 transition-all w-full pl-10" />
-                        </div>
-                    </div>
                     <div class="container flex flex-col gap-1">
                         <label class="text-bluegray-900 dark:text-gray-300" for="pass">Password</label>
                         <div class="relative flex w-full flex-wrap items-stretch mb-2">
@@ -61,23 +50,21 @@
                             </span>
                         </div>
                     </div>
-                    <div class="container flex flex-col gap-1">
-                        <div class="container border-l-4 dark:border-amber-700 dark:bg-amber-700/40 dark:text-coolgray-300 text-sm px-2 py-1">To verify your new e-mail please enter your password and submit</div>
-                    </div>
                     <div class="container flex justify-center items-center">
-                        <button type="submit" class="w-full rpl dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-200 transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary focus:ring-purple-600 dark:focus:ring-purple-800">Submit</button>
+                        <button type="submit" class="w-full rpl dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-200 transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary focus:ring-purple-600 dark:focus:ring-purple-800">Verify Device</button>
                     </div>
                 </form>
-                <div class="em hidden animate__animated animate__bounceIn ms-500 flex-col justify-center items-center gap-2 py-3">
+                <div class="device hidden animate__animated animate__bounceIn ms-500 flex-col justify-center items-center gap-2 py-3">
                     <i class="fad fa-check-circle dark:text-teal-500 text-5xl"></i>
-                    <span class="em_status dark:text-gray-300 text-gray-300 text-base"></span>
+                    <span class="device_status dark:text-gray-300 text-gray-300 text-base"></span>
                 </div>
             </div>
         </div>
     </div>
     <script src="/js/theme.js"></script>
     <script src="/js/fetch.js"></script>
-    <script src="/js/email-verify.js"></script>
+    <script src="/js/time.js"></script>
+    <script src="/js/verify-device.js"></script>
     <script>
         $.ripple(".rpl", {
                 debug: false,

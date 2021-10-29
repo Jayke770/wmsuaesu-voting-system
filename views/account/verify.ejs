@@ -34,11 +34,15 @@
             </div>
             <% if(userData.email.status === "Not Verified") { %> 
                 <div class="container grid grid-cols-2 gap-2">
-                    <span class="dark:text-gray-400">Verification Status</span>
+                    <span class="dark:text-gray-400">Status</span>
                     <div class="flex justify-end items-center">
                         <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-3 py-0.5 text-sm rounded-full"><%- userData.email.status %></span>
                     </div>
+                    <div class="col-span-full flex justify-end items-center">
+                        <button type="button" class="change_email rpl dark:bg-teal-900 dark:hover:bg-teal-800 dark:text-gray-200 transition-all text-center px-4 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-800 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary focus:ring-teal-600 dark:focus:ring-teal-800">Change Email</button>
+                    </div>
                 </div>
+
             <% } %> 
             <div class="container flex justify-center items-center">
                 <button type="submit" class="w-full rpl dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-200 transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary focus:ring-purple-600 dark:focus:ring-purple-800">
@@ -50,58 +54,68 @@
 <% } else { %>
     <div style="animation-delay: .500s;" class="secure_verify_item animate__animated animate__fadeInRight ms-500">
         <div class="border-l-4 dark:border-amber-800 dark:bg-amber-800/40 p-2 dark:text-gray-300 text-sm break-words">
-            Verify your new device to secure your account
+            <%- device.status !== "Verifying" ? "Verify your new device to secure your account" : "You will be redirected once your is device is verified" %>
         </div>
-        <div class="flex flex-col gap-3 mt-5">
-            <div class="grid grid-cols-2 md:grid-cols-1 gap-3">
-                <div class="p-2 rounded-md shadow-lg dark:bg-darkBlue-100">
-                    <div class="flex justify-start items-center py-0.5 px-2">
-                        <span class="dark:text-gray-300">Browser</span>
+        <form class="verify_device flex flex-col gap-3 mt-5">
+            <input type="hidden" name="deviceID" value="<%- device.id %>">
+            <% if(device.status !== "Verifying") { %> 
+                <div class="grid grid-cols-2 md:grid-cols-1 gap-3">
+                    <div class="p-2 rounded-md shadow-lg dark:bg-darkBlue-100">
+                        <div class="flex justify-start items-center py-0.5 px-2">
+                            <span class="dark:text-gray-300">Browser</span>
+                        </div>
+                        <div class="dark:text-gray-400 px-2 py-2.5 pb-1"><%- device.browser %></div>
                     </div>
-                    <div class="dark:text-gray-400 px-2 py-2.5 pb-1"><%- device.browser %></div>
-                </div>
-                <div class="p-2 rounded-md shadow-lg dark:bg-darkBlue-100">
-                    <div class="flex justify-start items-center py-0.5 px-2">
-                        <span class="dark:text-gray-300">Device</span>
-                    </div>
-                    <div class="dark:text-gray-400 px-2 py-2.5 pb-1">
-                        <% for(let i = 0; i < device.devicename.split(" ").length; i++){ %>
-                            <% if(device.devicename.split(" ")[i] !== "undefined") { %> 
-                                <%- device.devicename.split(" ")[i] %>
+                    <div class="p-2 rounded-md shadow-lg dark:bg-darkBlue-100">
+                        <div class="flex justify-start items-center py-0.5 px-2">
+                            <span class="dark:text-gray-300">Device</span>
+                        </div>
+                        <div class="dark:text-gray-400 px-2 py-2.5 pb-1">
+                            <% for(let i = 0; i < device.devicename.split(" ").length; i++){ %>
+                                <% if(device.devicename.split(" ")[i] !== "undefined") { %> 
+                                    <%- device.devicename.split(" ")[i] %>
+                                <% } %>
                             <% } %>
-                        <% } %>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-1 gap-3">
-                <div class="p-2 rounded-md shadow-lg dark:bg-darkBlue-100">
-                    <div class="flex justify-start items-center py-0.5 px-2">
-                        <span class="dark:text-gray-300">Operating System</span>
-                    </div>
-                    <div class="dark:text-gray-400 px-2 py-2.5 pb-1">
-                        <% for(let i = 0; i < device.os.split(" ").length; i++){ %>
-                            <% if(device.os.split(" ")[i] !== "undefined") { %> 
-                                <%- device.os.split(" ")[i] %>
+                <div class="grid grid-cols-2 md:grid-cols-1 gap-3">
+                    <div class="p-2 rounded-md shadow-lg dark:bg-darkBlue-100">
+                        <div class="flex justify-start items-center py-0.5 px-2">
+                            <span class="dark:text-gray-300">Operating System</span>
+                        </div>
+                        <div class="dark:text-gray-400 px-2 py-2.5 pb-1">
+                            <% for(let i = 0; i < device.os.split(" ").length; i++){ %>
+                                <% if(device.os.split(" ")[i] !== "undefined") { %> 
+                                    <%- device.os.split(" ")[i] %>
+                                <% } %>
                             <% } %>
-                        <% } %>
+                        </div>
+                    </div>
+                    <div class="p-2 rounded-md shadow-lg dark:bg-darkBlue-100">
+                        <div class="flex justify-start items-center py-0.5 px-2">
+                            <span class="dark:text-gray-300">IP Address</span>
+                        </div>
+                        <div class="dark:text-gray-400 px-2 py-2.5 pb-1"><%- device.ip %></div>
                     </div>
                 </div>
-                <div class="p-2 rounded-md shadow-lg dark:bg-darkBlue-100">
-                    <div class="flex justify-start items-center py-0.5 px-2">
-                        <span class="dark:text-gray-300">IP Address</span>
+                <div class="grid grid-cols-2 md:grid-cols-1 gap-3">
+                    <div class="p-2 col-span-full rounded-md shadow-lg dark:bg-darkBlue-100">
+                        <div class="flex justify-start items-center py-0.5 px-2">
+                            <span class="dark:text-gray-300">Last Seen</span>
+                        </div>
+                        <div class="dark:text-gray-400 px-2 py-2.5 pb-1 time skeleton" data="<%- device.last_seen %>"></div>
                     </div>
-                    <div class="dark:text-gray-400 px-2 py-2.5 pb-1"><%- device.ip %></div>
                 </div>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-1 gap-3">
-                <div class="p-2 col-span-full rounded-md shadow-lg dark:bg-darkBlue-100">
-                    <div class="flex justify-start items-center py-0.5 px-2">
-                        <span class="dark:text-gray-300">Last Seen</span>
-                    </div>
-                    <div class="dark:text-gray-400 px-2 py-2.5 pb-1 time skeleton" data="<%- device.last_seen %>"></div>
+            <% } else { %>
+                <input type="hidden" name="verifying" value="<%- device.id %>">
+                <div class="flex justify-center items-center p-4">
+                    <i class="dark:text-purple-600 text-purple-700 animate-pulse animate-spin text-7xl fad fa-spinner-third"></i>
                 </div>
-            </div>
-            <button type="button" class="mb-6 w-full rpl dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-200 transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary focus:ring-purple-600 dark:focus:ring-purple-800">Verify</button>
-        </div>
+            <% } %>
+            <button type="submit" class="mb-6 w-full rpl dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-gray-200 transition-all text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-50 dark:ring-offset-darkBlue-secondary focus:ring-purple-600 dark:focus:ring-purple-800">
+                <%- device.status !== "Verifying" ? "Verify Device" : "Resend Verification" %>
+            </button>
+        </form>
     </div>  
 <% } %>

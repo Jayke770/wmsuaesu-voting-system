@@ -9,7 +9,7 @@ const user = require('../models/user')
 const admin = require('../models/admin')
 const data = require('../models/data')
 const election = require('../models/election')
-const { authenticated, isadmin, isloggedin, take_photo, get_face, send_verification_email} = require('./auth')
+const { authenticated, isadmin, isloggedin, take_photo, get_face, send_verification_email, verify_device} = require('./auth')
 const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash} = require('./functions')
 const { normal_limit } = require('./rate-limit')
 const { v4: uuidv4 } = require('uuid')
@@ -43,14 +43,67 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
     delete req.session.electionID
     const {myid, device} = req.session  
-    const {elections} = await user_data(myid)
+    const {elections, devices} = await user_data(myid)
     let electionsJoined = []
     try {
-        //update current  device 
-        await user.updateOne({
-            _id: {$eq: xs(myid)}, 
-            "devices.id": {$eq: xs(device.id)}
-        }, {$set: {"devices.$.ip": xs(req.clientIp)}}).then( async () => {
+        let device_verified
+        for(let i = 0; i < devices.length; i++){
+            if(devices[i].id === device){
+                device_verified = devices[i]
+                break
+            }
+        }
+        if(device_verified.verified){
+            await user.updateOne({
+                _id: {$eq: xs(myid)}, 
+                devices: {$elemMatch: {id: xs(device)}}
+            }, {$set: {"devices.$.ip": req.clientIp, "devices.$.last_seen": moment().tz("Asia/Manila").format()}}).then( async (u) => {
+                //check if the user joined any election 
+                if(elections.length > 0){
+                    //get all elections 
+                    for(let i = 0; i < elections.length; i++){
+                        await election.find({_id: {$eq: xs(elections[i])}}, {passcode: 0}).then( (elec) => {
+                            elec.length === 0 ? electionsJoined.push() : electionsJoined.push(elec[0])
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    }
+                    return res.render('index', {
+                        joined: false,
+                        iscandidate: false,
+                        isvoting: false,
+                        elections: electionsJoined, 
+                        data: {
+                            positions: await positions(), 
+                            partylists: await partylists(), 
+                            course: await course(), 
+                            year: await  year()
+                        }, 
+                        device: device_verified,
+                        userData: await user_data(myid), 
+                        csrf: req.csrfToken()
+                    })
+                } else {
+                    return res.render('index', {
+                        joined: false,
+                        iscandidate: false,
+                        isvoting: false,
+                        elections: electionsJoined, 
+                        data: {
+                            positions: await positions(), 
+                            partylists: await partylists(), 
+                            course: await course(), 
+                            year: await  year()
+                        }, 
+                        device: device_verified,
+                        userData: await user_data(myid), 
+                        csrf: req.csrfToken()
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
             //check if the user joined any election 
             if(elections.length > 0){
                 //get all elections 
@@ -72,7 +125,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                         course: await course(), 
                         year: await  year()
                     }, 
-                    device: device,
+                    device: device_verified,
                     userData: await user_data(myid), 
                     csrf: req.csrfToken()
                 })
@@ -88,15 +141,14 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                         course: await course(), 
                         year: await  year()
                     }, 
-                    device: device,
+                    device: device_verified,
                     userData: await user_data(myid), 
                     csrf: req.csrfToken()
                 })
             }
-        }).catch( (e) => {
-            throw new Error(e)
-        })
+        }
     } catch (e) {
+        console.log(e)
         req.session.destroy()
         return res.redirect('/')
     }
@@ -185,10 +237,7 @@ router.post('/login', normal_limit, async (req, res) => {
                                     }
                                     //if device was found 
                                     if(device_data){
-                                        req.session.device = {
-                                            id: device_data.id, 
-                                            verified: device_data.verified
-                                        }
+                                        req.session.device = device_data.id
                                         req.session.islogin = true // determine if logged
                                         req.session.user_type = usp[0].type // user type
                                         req.session.myid = usp[0]._id // user id
@@ -199,10 +248,7 @@ router.post('/login', normal_limit, async (req, res) => {
                                         })
                                     } else {
                                         await user.updateOne({_id: {$eq: xs(usp[0]._id)}}, {$push: {devices: device}}).then( async (new_d) => {
-                                            req.session.device = {
-                                                id: device.id, 
-                                                verified: device.verified
-                                            }
+                                            req.session.device = device.id
                                             req.session.islogin = true // determine if logged
                                             req.session.user_type = usp[0].type // user type
                                             req.session.myid = usp[0]._id // user id
@@ -265,7 +311,7 @@ router.post('/login', normal_limit, async (req, res) => {
     }
 })
 //register
-router.post('/register', async (req, res) => {
+router.post('/register', normal_limit, async (req, res) => {
     const { student_id, fname, mname, lname, course, yr, type, usr, pass } = req.body
     const hash_password = await bcrypt.hash(xs(pass), 10)
     const ua = xs(req.headers['user-agent'])
@@ -318,7 +364,7 @@ router.post('/register', async (req, res) => {
                                         devices: [device]
                                     }).then(async (new_user) => {
                                         const userData = await user_data(new_user._id)
-                                        req.session.device = device
+                                        req.session.device = device.id
                                         req.session.myid = userData._id //session for student
                                         req.session.islogin = true // to determine that user is now logged in
                                         req.session.user_type = userData.type //to determine the user type
@@ -1525,6 +1571,28 @@ router.post('/account/settings/email/remove-email/', normal_limit, isloggedin, a
         return res.status(500).send()
     }
 })
+//change email 
+router.post('/account/settings/email/change-email/', normal_limit, isloggedin, async (req, res) => {
+    const {myid} = req.session 
+    try {
+        //delete email 
+        await user.updateOne({
+            _id: {$eq: xs(myid)}
+        }, {$set: {email: {}}}).then( (k) => {
+            console.log(k)
+            return res.send({
+                status: true, 
+                txt: "You can now change your email",
+                msg: ""
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
 //change username 
 router.post('/account/settings/username/change-username/', normal_limit, isloggedin, async (req, res) => {
     const {nuname, pass} = req.body
@@ -1730,22 +1798,23 @@ router.post('/account/settings/secure/add-email/', normal_limit, isloggedin, asy
 //verify user through email
 router.post('/account/settings/secure/verify/', normal_limit, isloggedin, async (req, res) => {
     const {myid, device} = req.session 
+    const {devices} = await user_data(myid)
     try {
-        await user.find({
-            _id: {$eq: xs(myid)}, 
-            devices: {$elemMatch: {id: {$eq: xs(device.id)}}}
-        }, {devices: {$elemMatch: {id: {$eq: xs(device.id)}}}}).then( async (user_device) => {
-            if(user_device.length > 0){
-                return res.render('account/verify', {
-                    userData: await user_data(myid),
-                    device: user_device[0].devices[0]
-                })
-            } else {
-                return res.status(404).send()
+        let deviceData
+        for(let i = 0; i < devices.length; i++){
+            if(devices[i].id === device){
+                deviceData = devices[i]
+                break
             }
-        }).catch( (e) => {
-            throw new Error(e)
-        })
+        }
+        if(deviceData){
+            return res.render('account/verify', {
+                userData: await user_data(myid),
+                device: deviceData
+            })
+        } else {
+            return res.status(404).send()
+        }
     } catch (e) {
         return res.status(500).send()
     }
@@ -1762,6 +1831,104 @@ router.post('/account/settings/*/resend-email-verification/', normal_limit, islo
             txt: "Email Verification Resend Successfully",
             msg: 'Please check your Email Inbox'
         })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+//verify device 
+router.post('/account/settings/secure/verify-device/', normal_limit, isloggedin, async (req, res) => {
+    const {deviceID} = req.body 
+    const {myid} = req.session 
+    const {firstname, devices, email} = await user_data(myid)
+    try {
+        let deviceData
+        for(let i = 0; i < devices.length; i++){
+            if(devices[i].id === xs(deviceID)){
+                deviceData = devices[i]
+                break
+            }
+        }
+        if(deviceData){
+            await user.updateOne({
+                _id: {$eq: xs(myid)}, 
+                devices: {$elemMatch: {id: xs(deviceData.id)}}
+            }, {$set: {"devices.$.status": "Verifying"}}).then( () => {
+                verify_device(firstname, email.email, deviceData, myid)
+                return res.send({
+                    status: true, 
+                    txt: 'Verification Sent Successfully', 
+                    msg: 'Please check your email inbox'
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            return res.send({
+                status: false, 
+                txt: 'Device Not Found', 
+                msg: 'Please refresh you browser'
+            })
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//verify device by email 
+router.get('/account/settings/verify-device/:deviceID/:userID/', normal_limit, async (req, res) => {
+    const {deviceID, userID} = req.params
+    const {devices} = await user_data(userID)
+    try {
+        let device_found
+        for(let i = 0; i < devices.length; i++){
+            if(devices[i].id === deviceID) {
+                device_found = devices[i]
+                break
+            }
+        }
+        if(device_found){
+            return res.render('account/settings-device-verify', {
+                device: device_found,
+                csrf: req.csrfToken()
+            })
+        } else {
+            return res.status(404).render('error/404')
+        }
+    } catch (e) {
+        res.status(500).redirect('/')
+    }
+})
+// verify now 
+router.post('/account/settings/verify-device/:deviceID/:userID/', normal_limit, async (req, res) => { 
+    const {deviceID, userID} = req.params 
+    const {devices} = await user_data(userID)
+    try {
+        let device_found
+        for(let i = 0; i < devices.length; i++){
+            if(devices[i].id === deviceID){
+                device_found = devices[i]
+                break
+            }
+        }
+        if(device_found){
+            await user.updateOne({
+                _id: {$eq: xs(userID)}, 
+                devices: {$elemMatch: {id: device_found.id}}
+            }, {$set: {
+                "devices.$.status": "Online", 
+                "devices.$.verified": true
+            }}).then( () => {
+                return res.send({
+                    status: true, 
+                    txt: 'Device Successfully Verified', 
+                    msg: 'You can now close this tab'
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            return res.status(404).send()
+        }
     } catch (e) {
         return res.status(500).send()
     }

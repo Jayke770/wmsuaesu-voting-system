@@ -491,6 +491,20 @@ users_socket.on('connection', async (socket) => {
             res({status: false})
         }
     })
+    //device status 
+    socket.on('device-status', async (data, res) => {
+        const {devices} = await user_data(myid) 
+        let device_status = false
+        for(let i = 0; i < devices.length; i++){
+            if(devices[i].id === data.id && devices[i].verified){
+                device_status = true
+                break
+            }
+        }
+        res({
+            status: device_status
+        })
+    })
 })
 start()
 //check election every 10 seconds
@@ -544,7 +558,7 @@ setInterval(async () => {
 async function start() {
     await election_handler()
     await users_election_handler()
-    http.listen(port,  () => {
+    http.listen(port, '192.168.1.18', () => {
         console.log(`Server Started on port ${port}`)
     })
 }
