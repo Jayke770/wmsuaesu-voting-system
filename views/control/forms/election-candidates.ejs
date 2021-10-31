@@ -34,13 +34,13 @@
         }
     }
 %>
-<div class="candidates_ p-2 z-30 fixed top-0 bg-darkBlue-primary/60 w-full h-full hidden items-center justify-end">
-    <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="candidates_main w-96 sm:w-full h-full bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-lg transition-all">
+<div class="candidates_ p-2 sm:p-0 z-30 fixed top-0 bg-darkBlue-primary/60 w-full h-full hidden items-center sm:items-end justify-end">
+    <div animate-in="animate__animated animate__fadeInUp ms-300" animate-out="animate__animated animate__fadeOutDown ms-300" class="candidates_main w-96 sm:w-full h-full sm:h-5/6 bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-lg transition-all">
         <div class="w-full py-[10px] px-2 dark_border_b">
             <a class="close_candidates rpl float-right rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600 text-rose-700">
                 <i class="fad fa-times-circle"></i>
             </a>
-            <span class="dark:text-purple-500 text-purple-700 text-2xl p-1">Candidates</span>
+            <span class="dark:text-purple-500 text-purple-700 text-xl p-1">Candidates</span>
         </div>
         <div class="container mt-2 px-3 flex flex-col gap-1">
             <div class="grid grid-cols-3 gap-2 w-full">
