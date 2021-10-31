@@ -670,6 +670,33 @@ adminrouter.post("/control/elections/add-voter/", limit, isadmin, async (req, re
         return res.status(500).send()
     }
 })
+//search users in election 
+adminrouter.post("/control/elections/search-user/", limit, isadmin, async (req, res) => {
+    const {search} = req.body 
+    const {currentElection} = req.session 
+    let result = []
+    try {
+        await user.find({elections: {$ne: xs(currentElection)}}, {firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, student_id: 1, _id: 1}).then( async (userData) => {
+            for(let i = 0; i < userData.length; i++){
+                if(userData[i].student_id.search(xs(search).toUpperCase()) !== -1){
+                    result.push(userData[i])
+                }
+            }
+            return res.render('control/forms/list_users', {
+                users: result, 
+                data: {
+                    course: await course(), 
+                    year: await year()
+                }
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
 //election settings 
 adminrouter.post('/control/elections/settings/:settings/', limit, isadmin, async (req, res) => {
     const {settings} = req.params

@@ -211,6 +211,35 @@ $(document).ready(() => {
             }
         }
     })
+    //search user 
+    let user_search = false
+    $(".add_election_voters_").delegate(".search_user_student_id", "keyup", async function (e) {
+        if(!user_search && $(this).val().length > 2){
+            try {
+                $(".add_election_voters_").find(".list_users").html('')
+                user_search = true 
+                let data = new FormData() 
+                data.append("search", $(this).val())
+                const req = await fetchtimeout("/control/elections/search-user/", {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    user_search = false 
+                    $(".add_election_voters_").find(".list_users").html(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                $(".add_election_voters_").find(".list_users").html('')
+                user_search = false
+            }
+        }
+    })
     $(".election_btn").click(function (e) {
         e.preventDefault()
         const parent = $(`.${$(this).attr("data")}_`)
@@ -2236,7 +2265,7 @@ $(document).ready(() => {
                     $(".acp_voters").find(".voters").remove()
                     $(".acp_voters").append(res)
                     $(".voters_").find(".search_acp, .acp_voters").removeClass("hidden")
-                    $(".voters_").find(".acp_voters").addClass("grid")
+                    $(".voters_").find(".acp_voters").addClass("flex")
                     $(".voters_").find(".add_voter").hide()
                 } else {
                     throw new Error(`${ac.status} ${ac.statusText}`)
