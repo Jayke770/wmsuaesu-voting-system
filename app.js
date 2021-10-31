@@ -85,8 +85,8 @@ app.use(appsession)
 app.use(route) //all user req
 app.use(admin) //all admin req 
 //http 404 req
-app.use(function(req, res, next) { 
-    res.status(404).render('error/404')
+app.use(function(req, res) { 
+    req.method === "GET" ? res.status(404).render('error/404') : res.status(404).send()
 })
 io.use(sharedsession(appsession, {
     autoSave: true,

@@ -3,6 +3,7 @@
 @tailwind utilities;
 /* lazy progress */
 .lazy-progress {
+    transition: 1s ease;
     animation: lazy 2s linear infinite;
     width: 10%;
 }

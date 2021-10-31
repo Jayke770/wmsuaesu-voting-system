@@ -194,7 +194,8 @@
         </div>
         <!-- election voters -->
         <%- include('election_voters', {
-            pending: pending_voters
+            pending: pending_voters, 
+            data: data
         }) %>
         <!-- election partylist -->
         <%- include('election_partylist', {
@@ -228,6 +229,64 @@
         <!-- election year -->
         <div class="year">
             <%- include('election-year') %>
+        </div>
+        <div class="fixed right-3 bottom-3">
+            <button type="button" class="add_election_voter animate__animated animate__bounceIn ms-500 p-3 rpl transition-all w-full text-center flex justify-center items-center border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-teal-700 dark:bg-teal-800 hover:bg-teal-700 dark:hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-teal-800 focus:ring-teal-500">
+                <i class="fas fa-plus-circle text-lg dark:text-gray-300"></i>
+            </button>
+        </div>
+        <div class="add_election_voters_ bg-darkBlue-primary/50 fixed z-50 top-0 w-full h-full flex justify-end items-center sm:items-end transition-all p-2 sm:p-0">
+            <div animate-in="animate__animated animate__fadeInUp ms-500" animate-out="animate__animated animate__fadeOutDown ms-500" class="add_election_voters_main dark:bg-darkBlue-secondary dark_border w-96 h-full sm:h-5/6 sm:w-full rounded-lg sm:rounded-b-none transition-all">
+                <div class="container px-3 py-2.5 dark_border_b">
+                    <a class="cls_add_election_voters rpl float-right rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600 text-rose-700">
+                        <i class="fad fa-times-circle"></i>
+                    </a>
+                    <span class="dark:text-purple-500 text-purple-700 text-xl p-1 ">Add New Voters</span>
+                </div>
+                <div class="flex flex-col p-2">
+                    <div class="grid grid-cols-2 gap-1">
+                        <a class="show_add_multiple_voters rpl rounded-md justify-center px-2.5 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-teal-600 text-teal-500">
+                            <i class="fad fa-users"></i>
+                            <span class="text-sm dark:text-gray-300 text-bluegray-900 sm:hidden">Add multiple voters</span>
+                        </a>
+                        <a class="show_search_voters rpl rounded-md justify-center px-2.5 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-amber-600 text-amber-500">
+                            <i class="fad fa-search"></i>
+                            <span class="text-sm dark:text-gray-300 text-bluegray-900 sm:hidden">Search & Add voters</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="container pt-2 px-1.5 h-[calc(100%-110px)] overflow-y-auto">
+                    <form class="add_multiple_voters animate__animated animate__fadeInDown ms-500 flex flex-col gap-2 px-1.5">
+                        <div class="col-span-full">
+                            <div class="border-l-4 py-2 px-2.5 dark:bg-indigo-700/20 dark:text-gray-300 dark:border-indigo-700 text-sm">Add all voters with the selected course or year</div>
+                        </div>
+                        <select name="course" class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+                            <option value="">Select Course</option>
+                            <% for(let i = 0; i < data.course.length; i++){ %>
+                                <option value="<%- data.course[i].id %>"><%- data.course[i].type %></option>
+                            <% } %>
+                        </select>
+                        <select name="year" class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+                            <option value="">Select Year</option>
+                            <% for(let i = 0; i < data.year.length; i++){ %>
+                                <option value="<%- data.year[i].id %>"><%- data.year[i].type %></option>
+                            <% } %>
+                        </select>
+                        <div class="col-span-full">
+                            <button class="transition-all rpl w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-700 dark:bg-purple-800 hover:bg-purple-700 dark:hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 focus:ring-purple-500">
+                                Add Voters
+                            </button>
+                        </div>
+                    </form>
+                    <div class="add_search_voter animate__animated animate__fadeInDown ms-500 hidden flex-col gap-2 px-1.5">
+                        <div class="col-span-full">
+                            <div class="border-l-4 py-2 px-2.5 dark:bg-indigo-700/20 dark:text-gray-300 dark:border-indigo-700 text-sm">Search and add users in this election</div>
+                        </div>
+                        <input placeholder="Enter Student ID" class="w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
+                    </div>
+                    <div class="list_users mt-5 flex flex-col gap-3 px-1.5 dark:text-gray-300"></div>
+                </div>
+            </div>
         </div>
     </div>
     <script src="/js/theme.js "></script>

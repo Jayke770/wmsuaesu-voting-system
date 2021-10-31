@@ -8,7 +8,7 @@ const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
-const {hash, compareHash, course, year, partylists, positions, toUppercase} = require('./functions')
+const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear} = require('./functions')
 const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
@@ -467,75 +467,206 @@ adminrouter.post('/control/elections/e-remove-partylist/', limit, isadmin, async
 })
 //search voter in election 
 adminrouter.post('/control/elections/search-voter/', limit, isadmin, async (req, res) => {
-    const {search, search_by, tab} = req.body 
-    const electionID = req.session.currentElection
+    const {search, tab} = req.body 
+    const {currentElection} = req.session
     const status = tab === 'ac' ? 'Accepted' : 'Pending'
     let result = []
-    if(search !== '' && search_by !== ''){
+    if(search){
         try {
             //get all voters 
-            await election.find({
-                _id: {$eq: xs(electionID)}
-            }, {voters: 1}).then( (v) => {
-                if(v.length !== 0){
-                    const voters = v.length === 0 ? [] : v[0].voters
-                    if(voters.length !== 0){
-                        if(search_by === 'sid'){
-                            for(let i = 0; i < voters.length; i++){
-                                if(voters[i].status !== 'Deleted' && voters[i].status === status){
-                                    if(voters[i].student_id.search(search.toUpperCase()) !== -1 || voters[i].student_id === search.toUpperCase()){
-                                        result.push(voters[i])
-                                    }
-                                }
+            await election.find({_id: {$eq: xs(currentElection)}}, {voters: 1}).then( (v) => {
+                if(v.length > 0){
+                    for(let i = 0; i < v[0].voters.length; i++){
+                        if(v[0].voters[i].status === status){
+                            if(v[0].voters[i].fullname.search(xs(search)) !== -1 ){
+                                result.push(v[0].voters[i])
                             }
-                        } else if(search_by === 'name'){
-                            for(let i = 0; i < voters.length; i++){
-                                if(voters[i].status !== 'Deleted' && voters[i].status === status){
-                                    if(voters[i].fullname.search(search) !== -1 || voters[i].fullname === search){
-                                        result.push(voters[i])
-                                    }
-                                }
-                            }
-                        } else if(search_by === 'course'){
-                            for(let i = 0; i < voters.length; i++){
-                                if(voters[i].status !== 'Deleted' && voters[i].status === status){
-                                    if(voters[i].course.search(search.toUpperCase()) !== -1 || voters[i].course === search){
-                                        result.push(voters[i])
-                                    }
-                                }
-                            }
-                        } else if(search_by === 'year'){
-                            for(let i = 0; i < voters.length; i++){
-                                if(voters[i].status !== 'Deleted' && voters[i].status === status){
-                                    if(voters[i].year.search(search) !== -1 || voters[i].year === search){
-                                        result.push(voters[i])
-                                    }
-                                }
-                            }
-                        } else {
-                            throw new Error('Something went wrong')
                         }
-                        //render the results 
-                        return res.render(status === 'Accepted' ? "control/forms/accepted-voters" : "control/forms/pending-voters", {
-                            voters: result
-                        })
-                    } else {
-                        return res.render("control/forms/accepted-voters", {
-                            voters: []
-                        })
                     }
+                    return res.render(status === 'Accepted' ? "control/forms/accepted-voters" : "control/forms/pending-voters", {
+                        voters: result
+                    })
                 } else {
-                    return res.render("control/forms/accepted-voters", {
-                        voters: []
+                    return res.render(status === 'Accepted' ? "control/forms/accepted-voters" : "control/forms/pending-voters", {
+                        voters: result
                     })
                 }
-            }).catch( (e) => {
-                throw new Error(e)
             })
         } catch (e) {
             return res.status(500).send()
         }
     } else {
+        return res.status(500).send()
+    }
+})
+//get all users with the given criteria
+adminrouter.post("/control/elections/list-of-users/", limit, isadmin, async (req, res) => {
+    const {vcourse, vyear} = req.body 
+    const {currentElection} = req.session
+    try {
+        if(xs(vcourse) && xs(vyear)){
+            await user.find({
+                course: {$eq: xs(vcourse)},
+                year: {$eq: xs(vyear)},
+                elections: {$ne: currentElection.toString()}
+            }, {firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, student_id: 1, _id: 1}).then( async (user_list) => {
+                return res.render('control/forms/list_users', {
+                    users: user_list, 
+                    data: {
+                        course: await course(), 
+                        year: await year()
+                    }
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else if(xs(vcourse) && !xs(vyear)){
+            await user.find({
+                course: {$eq: xs(vcourse)},
+                elections: {$ne: currentElection.toString()}
+            }, {firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, student_id: 1, _id: 1}).then( async (user_list) => {
+                console.log(user_list)
+                return res.render('control/forms/list_users', {
+                    users: user_list, 
+                    data: {
+                        course: await course(), 
+                        year: await year()
+                    }
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else if(!xs(vcourse) && xs(vyear)){
+            await user.find({
+                year: {$eq: xs(vyear)},
+                elections: {$ne: currentElection.toString()}
+            }, {firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, student_id: 1, _id: 1}).then( async (user_list) => {
+                return res.render('control/forms/list_users', {
+                    users: user_list, 
+                    data: {
+                        course: await course(), 
+                        year: await year()
+                    }
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            throw new Error('Empty')
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//add all users with the given criteria 
+adminrouter.post("/control/elections/add-all-users/", limit, isadmin, async (req, res) => {
+    const {course, year} = req.body 
+    const {currentElection} = req.session 
+    try {
+        if(xs(course) && xs(year)){
+            await user.find({
+                course: {$eq: xs(course)}, 
+                year: {$eq: xs(year)}, 
+                elections: {$ne: currentElection.toString()}
+            }, {firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, student_id: 1, _id: 1}).then( async (user_all) => {
+                if(user_all.length > 0){
+                    for(let i = 0; i < user_all.length; i++){
+                        const new_voter = {
+                            id: user_all[i]._id.toString(), 
+                            student_id: xs(user_all[i].student_id),
+                            fullname: `${xs(user_all[i].firstname)} ${xs(user_all[i].middlename)} ${xs(user_all[i].lastname)}`,
+                            course: await mycourse(user_all[i].course), 
+                            year: await myyear(user_all[i].year),
+                            status: 'Accepted',
+                            voted: [],
+                            created: moment().tz("Asia/Manila").format()
+                        }
+                        //check if the user is not a voter 
+                        await election.find({
+                            _id: {$eq: xs(currentElection)}, 
+                            voters: {$elemMatch: {id: {$eq: user_all[i]._id}}}, 
+                            voters: {$elemMatch: {student_id: {$eq: user_all[i].student_id}}}
+                        }).then( async (v_find) => {
+                            if(v_find.length === 0) {
+                                await election.updateOne({_id: {$eq: xs(currentElection)}}, {$push: {voters: new_voter}}).then( async (u) => {
+                                    //save election id to user document 
+                                    await user.updateOne({_id: {$eq: xs(user_all[i]._id)}}, {$push: {elections: xs(currentElection).toString()}})
+                                }).catch( (e) => {
+                                    throw new Error(e)
+                                })
+                            }
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    }
+                    return res.send({
+                        status: true, 
+                        txt: 'Users successfully added', 
+                        msg: `All users in ${await mycourse(xs(course))} ${await myyear(xs(year))} is now a voter in this election`
+                    })
+                } else {
+                    return res.send({
+                        status: false, 
+                        txt: 'No users found', 
+                        msg: 'No users found with that course and year'
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        }
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//add voter 
+adminrouter.post("/control/elections/add-voter/", limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const {currentElection} = req.session 
+    let new_voter = {
+        id: null,
+        student_id: null,
+        fullname: null,
+        course: null, 
+        year: null,
+        status: 'Accepted',
+        voted: [],
+        created: moment().tz("Asia/Manila").format()
+    }
+    try {
+        await user.find({_id: {$eq: xs(id)}}, {firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, student_id: 1, _id: 1}).then( async (userData) => {
+            if(userData.length > 0) {
+                new_voter.id = userData[0]._id 
+                new_voter.student_id = userData[0].student_id 
+                new_voter.fullname = `${userData[0].firstname} ${userData[0].middlename} ${userData[0].lastname}` 
+                new_voter.course = await mycourse(userData[0].course)
+                new_voter.year = await myyear(userData[0].year)
+
+                await election.updateOne({_id: {$eq: xs(currentElection)}}, {$push: {voters: new_voter}}).then( async () => {
+                    //save election id to user 
+                    await user.updateOne({_id: {$eq: xs(userData[0]._id)}}, {$push: {elections: currentElection.toString()}}).then( () => {
+                        return res.send({
+                            status: true, 
+                            msg: 'User Successfully Added'
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: 'User Not Found'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
         return res.status(500).send()
     }
 })
@@ -2896,7 +3027,7 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                         course: xs(crs),
                         year: xs(yr),
                         type: xs(type),
-                        socket_id: 'Waiting For Student',
+                        socket_id: 'Offline',
                         username: `${fname.toUpperCase()}-${xs(sid)}`,
                         password: await hash(`WMSU-${xs(sid)}`, 10)
                     }).then(async () => {
@@ -2951,7 +3082,7 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                                             course: xs(crs),
                                             year: xs(yr),
                                             type: xs(type),
-                                            socket_id: 'Waiting For Student',
+                                            socket_id: 'Offline',
                                             username: `${fname.toUpperCase()}-${xs(sid)}`,
                                             password: await hash(`WMSU-${xs(sid)}`, 10)
                                         }).then( (crt) => {

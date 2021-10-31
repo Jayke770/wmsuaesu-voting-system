@@ -19,6 +19,198 @@ $(document).ready(() => {
             nav.removeClass(nav.attr("animate-out"))
         }, 300)
     })
+    //add election voters 
+
+    $(".add_election_voter").click( () => {
+        const parent = $(".add_election_voters_")
+        const child = $(".add_election_voters_main")
+        child.addClass(child.attr("animate-in"))
+        parent.addClass("flex")
+        parent.removeClass("hidden")
+        setTimeout( () => {
+            child.removeClass(child.attr("animate-in"))
+        }, 500)
+    })
+    $(".add_election_voters_").click( function(e) {
+        if($(e.target).hasClass("add_election_voters_")){
+            e.preventDefault()
+            const parent = $(".add_election_voters_")
+            const child = $(".add_election_voters_main")
+            child.addClass(child.attr("animate-out"))
+            setTimeout( () => {
+                child.removeClass(child.attr("animate-out"))
+                parent.removeClass("flex")
+                parent.addClass("hidden")
+            }, 500)
+        }
+    })
+    $(".cls_add_election_voters").click( () => {
+        const parent = $(".add_election_voters_")
+        const child = $(".add_election_voters_main")
+        child.addClass(child.attr("animate-out"))
+        setTimeout( () => {
+            child.removeClass(child.attr("animate-out"))
+            parent.removeClass("flex")
+            parent.addClass("hidden")
+        }, 500)
+    })
+    $(".show_add_multiple_voters").click( () => {
+        $(".add_multiple_voters").addClass("flex")
+        $(".add_multiple_voters").removeClass("hidden")
+        $(".add_search_voter").addClass("hidden")
+        $(".add_search_voter").removeClass("flex")
+    })
+    $(".show_search_voters").click( () => {
+        $(".add_multiple_voters").removeClass("flex")
+        $(".add_multiple_voters").addClass("hidden")
+        $(".add_search_voter").addClass("flex")
+        $(".add_search_voter").removeClass("hidden")
+    })
+    //when the select input of course & year is change 
+    let crs_ch = false
+    $(".add_multiple_voters").find("select").change( async function (e) {
+        if(!crs_ch){
+            try {
+                let data = new FormData() 
+                data.append("vcourse", $(".add_multiple_voters").find("select[name='course']").val() )
+                data.append("vyear", $(".add_multiple_voters").find("select[name='year']").val() )
+                crs_ch = true 
+                $(".add_multiple_voters").next().html(election.loader())
+                const req = await fetchtimeout("/control/elections/list-of-users/", {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                }) 
+                if(req.ok){
+                    const res = await req.text()
+                    crs_ch = false 
+                    $(".add_election_voters_").find(".list_users").html(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                console.log(e)
+                crs_ch = false 
+                $(".add_multiple_voters").next().html('')
+            }
+        }
+    })
+    //add multiple voters
+    let add_bulk = false
+    $(".add_multiple_voters").submit(function (e) {
+        e.preventDefault()
+        const def = $(this).find("button[type='submit']").html() 
+        if(!add_bulk){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Add all users', 
+                html: 'All users with the current selected course or year will be added to this election', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                confirmButtonText: 'Yes', 
+                showDenyButton: true, 
+                denyButtonText: 'No'
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Adding all users', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            try {
+                                add_bulk = true 
+                                $(this).find("button[type='submit']").html(election.loader()) 
+                                const req = await fetchtimeout('/control/elections/add-all-users/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: new FormData(this)
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    add_bulk = false 
+                                    $(this).find("button[type='submit']").html(def) 
+                                    Swal.fire({
+                                        icon: res.status ? 'success' : 'info', 
+                                        title: res.txt, 
+                                        html: res.msg, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false
+                                    }).then( () => {
+                                        $(this).next().html('')
+                                    })
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                add_bulk = false 
+                                $(this).find("button[type='submit']").html(def) 
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+    //add voter
+    let add_voter = false 
+    $(".add_election_voters_").delegate(".add_voter", "click", async function (e) {
+        e.preventDefault() 
+        const def = $(this).html()
+        if(!add_voter){
+            try {
+                add_voter = true 
+                $(this).html(election.loader())
+                let data = new FormData() 
+                data.append("id", $(this).attr("data"))
+                const req = await fetchtimeout("/control/elections/add-voter/", {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.json() 
+                    add_voter = false 
+                    $(this).html(def) 
+                    toast.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.msg, 
+                        timer: 1500
+                    }).then( () => {
+                        if(res.status) {
+                            $(`.users_all[data='${$(this).attr("data")}']`).remove()
+                        }
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                add_voter = false 
+                $(this).html(def) 
+                toast.fire({
+                    icon: 'error', 
+                    title: e.message, 
+                    timer: 1500
+                })
+            }
+        }
+    })
     $(".election_btn").click(function (e) {
         e.preventDefault()
         const parent = $(`.${$(this).attr("data")}_`)
@@ -29,9 +221,9 @@ $(document).ready(() => {
         setTimeout(() => {
             child.removeClass(child.attr("animate-in"))
         }, 500)
-        setTimeout( () => {
+        setTimeout( async () => {
             if($(this).attr("data") === "voters"){   
-                election.voters("/control/elections/accepted-voters/")
+                election.voters('/control/elections/accepted-voters/')
             }   
             if($(this).attr("data") === "candidates" && !candidates_tab_req){   
                 election.candidates("/control/elections/candidates/accepted-candidates/")
@@ -2043,6 +2235,9 @@ $(document).ready(() => {
                     $(".acp_voters").find(".acp_voters_skeleton").hide()
                     $(".acp_voters").find(".voters").remove()
                     $(".acp_voters").append(res)
+                    $(".voters_").find(".search_acp, .acp_voters").removeClass("hidden")
+                    $(".voters_").find(".acp_voters").addClass("grid")
+                    $(".voters_").find(".add_voter").hide()
                 } else {
                     throw new Error(`${ac.status} ${ac.statusText}`)
                 }

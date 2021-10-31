@@ -90,10 +90,10 @@
         </div>
     </div>
 <% } else { %>
-    <div class="px-2 flex items-center justify-start">
+    <div class="px-2.5 flex items-center justify-start">
         <p class="dark:text-gray-300 text-2xl">Elections</p>
     </div>
-    <div class="p-1 py-2 transition-all grid grid-cols-3 xl:grid-cols-2 md:grid-cols-none gap-3">
+    <div class="px-2.5 py-2 transition-all grid grid-cols-3 xl:grid-cols-2 md:grid-cols-none gap-3">
         <% for (let i = 0; i < elections.length; i++) { %>
             <div style="animation-delay: <%- i * .250 %>s;" class="animate__animated animate__fadeInUp ms-500 w-full dark:bg-darkBlue-secondary shadow-md bg-gray-100  px-4 rounded-lg transition-all">
                 <div class="py-3">
