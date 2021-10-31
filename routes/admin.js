@@ -638,7 +638,7 @@ adminrouter.post("/control/elections/add-voter/", limit, isadmin, async (req, re
     try {
         await user.find({_id: {$eq: xs(id)}}, {firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, student_id: 1, _id: 1}).then( async (userData) => {
             if(userData.length > 0) {
-                new_voter.id = userData[0]._id 
+                new_voter.id = userData[0]._id.toString()
                 new_voter.student_id = userData[0].student_id 
                 new_voter.fullname = `${userData[0].firstname} ${userData[0].middlename} ${userData[0].lastname}` 
                 new_voter.course = await mycourse(userData[0].course)
@@ -667,6 +667,30 @@ adminrouter.post("/control/elections/add-voter/", limit, isadmin, async (req, re
             throw new Error(e)
         })
     } catch (e) {
+        return res.status(500).send()
+    }
+})
+//view voter information 
+adminrouter.post("/control/elections/view-voter-info/", limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const {currentElection} = req.session 
+    try {
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            voters: {$elemMatch: {id: xs(id)}}
+        }, {voters: {$elemMatch: {id: xs(id)}}}).then( async (voter_data) => {
+            if(voter_data.length > 0){
+                return res.render('control/forms/election-user-info-list', {
+                    user: voter_data[0].voters[0]
+                })
+            } else {
+                return res.status(404).send()
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
         return res.status(500).send()
     }
 })

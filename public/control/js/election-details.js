@@ -240,6 +240,7 @@ $(document).ready(() => {
             }
         }
     })
+
     $(".election_btn").click(function (e) {
         e.preventDefault()
         const parent = $(`.${$(this).attr("data")}_`)
@@ -463,6 +464,78 @@ $(document).ready(() => {
                 }
             })
         }
+    })
+    //view voter information 
+    let view_v = false
+    $(".voters_").delegate(".view_voter", "click", async function (e) {
+        e.preventDefault() 
+        const def = $(this).html()
+        if(!view_v){
+            try {
+                let data = new FormData() 
+                data.append("id", $(this).attr("data"))
+                $(this).html(election.loader()) 
+                view_v = true 
+                const req = await fetchtimeout('/control/elections/view-voter-info/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    const parent = $(".user_info")
+                    const child = $(".user_info_main") 
+                    parent.addClass("flex")
+                    parent.removeClass("hidden")
+                    child.addClass(child.attr("animate-in"))
+                    setTimeout( () => {
+                        child.removeClass(child.attr("animate-in"))
+                        parent.find(".user_info_list").html(res)
+                        $(this).html(def)
+                    }, 300)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                view_v = false 
+                $(this).html(def)
+                Snackbar.show({ 
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: rgb(225, 29, 72)" class="fad fa-times-circle"></i>
+                            <span>Connection error</span>
+                        </div>
+                    `, 
+                    duration: 2000,
+                    showAction: false
+                }) 
+            }
+        }
+    })
+    //cloe view voter information
+    $(".user_info").click( function (e) {
+        if($(e.target).hasClass("user_info")){
+            e.preventDefault() 
+            const child = $(".user_info_main") 
+            child.addClass(child.attr("animate-out"))
+            setTimeout( () => {
+                $(this).removeClass("flex")
+                $(this).addClass("hidden")
+                child.removeClass(child.attr("animate-out"))
+            }, 500)
+        }
+    })
+    $(".cls_user_info").click( () => {
+        const parent = $(".user_info")
+        const child = $(".user_info_main") 
+        child.addClass(child.attr("animate-out"))
+        setTimeout( () => {
+            parent.removeClass("flex")
+            parent.addClass("hidden")
+            child.removeClass(child.attr("animate-out"))
+        }, 500)
     })
     //add more partylists 
     let add_pty_e = false
