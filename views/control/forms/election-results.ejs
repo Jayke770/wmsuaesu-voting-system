@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" class="font-sans" data="<%- election._id %>">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%- csrf %>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" class="theme-color" content="#6b21a8">
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
+    <title><%- election.election_title %> Results</title>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <%- include('../cdn/_home') %>
+    <script>
+        document.onreadystatechange = () => {
+            setTimeout( () => {
+                $(".loading").remove()
+            }, 500)
+        }
+    </script>
+</head>
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <!-- Lazy progress bar -->
+    <%- include('../../lazy/loading-progress') %>
+    <div class="loading flex justify-center w-screen h-screen items-center">
+        <%- include('../../lazy/loading') %>
+    </div>
+    <div class="sticky top-0 z-30 w-full p-1 bg-gray-50 dark:bg-[#161b22] shadow-md grid-cols-2 grid">
+        <div class="flex flex-row items-center transition-all">
+            <a class="rpl transition-all text-gray-700 dark:text-gray-50 py-1 px-2 rounded-md text-xl cursor-pointer ml-1">
+                <i class="fa fa-arrow-circle-left"></i>
+            </a>
+            <p class="m-0 p-3 text-lg font-medium cursor-pointer dark:text-gray-200" id="election_title"><%- election.election_title %></p>
+        </div>
+        <div class="flex flex-row items-center justify-end transition-all">
+            <a class="cursor-pointer py-2 px-3 rounded-md text-xl rpl dark:text-gray-100">
+                <i class="fa fa-bars"></i>
+            </a>
+        </div>
+    </div>
+    <div class="fixed hidden justify-end items-center top-0 bg-darkBlue-primary/50 w-full h-full z-30">
+        <div class="animate__animated animate__fadeInRight ms-300 dark:bg-darkBlue-secondary w-96 h-full">
+
+        </div>
+    </div>
+    <div class="h-[calc(100vh-60px)] w-full flex flex-col gap-3">
+        <div class="container election-date-time p-2">
+            <%- include('election-date-time', {
+                election: election
+            }) %>
+        </div>
+        <div class="container flex flex-col">
+            <% 
+                const electionData = {
+                    candidatesinPos: (pos) => {
+                        for(let ca = 0; ca < election.candidates.length; ca++){
+                            if(election.candidates[ca].position === pos){
+                                
+                            }
+                        }
+                    }
+                }
+                const Data = {
+                    position: (pos) => {
+                        for(let p = 0; p < data.positions.length; p++){ 
+                            if(data.positions[p].id === pos){
+                                return data.positions[p].type
+                            }
+                        }
+                    }, 
+                    partylist: (pty) => {
+                        for(let pt = 0; pt < data.partylists.length; pt++){ 
+                            if(data.partylists[pt].id === pty){
+                                return data.partylists[pt].type
+                            }
+                        }
+                    }
+                }
+            %>
+            <% for(let pos = 0; pos < election.positions.length; pos++) { %> 
+                <div class="flex flex-row items-center justify-start px-3 py-2">
+                    <span class="dark:text-gray-300 text-2xl"><%- Data.position(election.positions[pos].id) %></span>
+                </div>
+                <div class="grid grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all gap-3 py-1 px-3">
+                    <% for(let ca = 0; ca < election.candidates.length; ca++) { %> 
+                        <% if(election.candidates[ca].position === election.positions[pos].id) { %> 
+                            <div style="animation-delay: <%- ca === 0 ? 1 * .300 : ca * .300%>s;" class="rpl animate__animated animate__fadeInUp ms-500 cursor-pointer dark:bg-darkBlue-secondary p-2 rounded-md">
+                                <div class="flex flex-col gap-1 justify-center items-center">
+                                    <img class="h-40 w-40 object-cover rounded-full" src="/profile/<%- election.candidates[ca].student_id %>/">
+                                    <div class="flex flex-col justify-center items-center">
+                                        <span class="text-base dark:text-gray-300"><%- election.candidates[ca].fullname %></span>
+                                        <span class="text-sm dark:text-gray-400"><%- `${Data.position(election.candidates[ca].position)} at ${Data.partylist(election.candidates[ca].partylist)}` %></span>
+                                    </div>
+                                </div>
+                                <div class="mt-5 dark:text-purple-700 flex justify-center items-center py-3">
+                                    <%- `${election.candidates[ca].votes.length} Votes` %>
+                                </div>
+                            </div> 
+                        <% } %>
+                    <% } %> 
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <script src="/js/theme.js "></script>
+    <script src="/js/avatar.js "></script>
+    <script src="/js/color.js "></script>
+    <script src="/js/fetch.js "></script>
+    <script src="/js/time.js "></script>
+    <script src="/js/toast.js "></script>
+    <script src="/js/audio_file.js "></script>
+    <script src="/js/audio.js "></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/control/js/io.js "></script>
+    <script src="/control/js/election-results.js"></script>
+    <script>
+        $.ripple(".rpl", {
+            debug: false,
+            on: 'mousedown',
+            opacity: 0.3,
+            color: "auto",
+            multi: false,
+            duration: 0.7,
+            rate: function(pxPerSecond) {
+                return pxPerSecond;
+            },
+            easing: 'linear'
+        })
+    </script>
+</body>
+</html>

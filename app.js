@@ -86,7 +86,7 @@ app.use(route) //all user req
 app.use(admin) //all admin req 
 //http 404 req
 app.use(function(req, res) { 
-    req.method === "GET" ? res.status(404).render('error/404') : res.status(404).send()
+    return req.method === "GET" ? res.status(404).render('error/404') : res.status(404).send()
 })
 io.use(sharedsession(appsession, {
     autoSave: true,
@@ -109,7 +109,7 @@ users_socket.use(sharedsession(appsession, {
 //admin websocket events
 admin_socket.on('connection', async (socket) => {
     let {myid, currentElection, user_type, islogin} = socket.handshake.session
-    //update admin socket id every connection 
+    //update admin socket id every connection
     if(islogin !== "okay" && user_type !== "Admin"){
         socket.disconnect()
     } else {

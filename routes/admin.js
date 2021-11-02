@@ -8,13 +8,46 @@ const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
-const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear} = require('./functions')
+const {isloggedin} = require('./auth')
+const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myprofile, color} = require('./functions')
 const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
 const objectid = require('mongodb').ObjectID
 const moment = require('moment-timezone')
 const nl2br = require('nl2br')
+const path = require('path')
+/* request user profile image */
+adminrouter.get('/profile/:id/', normal_limit, async (req, res) => {
+    const {id} = req.params 
+    const {islogin} = req.session 
+    if(islogin){
+        try {
+            await user.find({
+                student_id: {$eq: xs(id)}
+            }, {firstname: 1, lastname: 1, profile: 1}).then( async (userData) => {
+                if(userData.length > 0){ 
+                    const im = myprofile(color.dark(), color.light(), `${userData[0].firstname.split('')[0]}${userData[0].lastname.split('')[0]}`).split(",")[1];
+                    const img = Buffer.from(im, 'base64');
+                    res.writeHead(200, {
+                        'Content-Type': 'image/png',
+                        'Content-Length': img.length
+                    })
+                    res.end(img)
+                } else {
+                    return res.status(404).send()
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            console.log(e)
+            return res.status(500).send()
+        }
+    } else {
+        return res.status(401).send()
+    }
+})
 /*##################################################################################### */
 adminrouter.get('/control/logout/', limit, isadmin, async (req, res) => {
     req.session.destroy() 
@@ -3079,8 +3112,8 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                         year: xs(yr),
                         type: xs(type),
                         socket_id: 'Offline',
-                        username: `${fname.toUpperCase()}-${xs(sid)}`,
-                        password: await hash(`WMSU-${xs(sid)}`, 10)
+                        username: `${fname.toUpperCase()}-${xs(sid).toUpperCase()}`,
+                        password: await hash(`WMSU-${xs(sid).toUpperCase()}`, 10)
                     }).then(async () => {
                         //update student id to enabled == true 
                         await data.updateOne({
@@ -3134,8 +3167,8 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                                             year: xs(yr),
                                             type: xs(type),
                                             socket_id: 'Offline',
-                                            username: `${fname.toUpperCase()}-${xs(sid)}`,
-                                            password: await hash(`WMSU-${xs(sid)}`, 10)
+                                            username: `${fname.toUpperCase()}-${xs(sid).toUpperCase()}`,
+                                            password: await hash(`WMSU-${xs(sid).toUpperCase()}`, 10)
                                         }).then( (crt) => {
                                             return res.send({
                                                 status: true, 
@@ -3302,6 +3335,39 @@ adminrouter.post('/control/users/sort-users/', limit, isadmin, async (req, res) 
             })
         }
     } catch (e) {
+        return res.status(500).send()
+    }
+})
+//election result 
+adminrouter.get('/control/elections/:id/results/', isadmin, limit, async (req, res) => {
+    const {id} = req.params 
+    const {currentElection} = req.session 
+    
+    try {
+        if(id === currentElection.toString()){
+            await election.find({_id: {$eq: xs(id)}}, {passcode: 0}).then( async (elec) => {
+                if(elec.length > 0) {
+                    return res.render('control/forms/election-results', {
+                        election: elec[0],
+                        data: {
+                            courses: await course(), 
+                            year: await year(), 
+                            positions: await positions(), 
+                            partylists: await partylists()
+                        },
+                        csrf: req.csrfToken()
+                    })
+                } else {
+                    return res.status(404).render('error/404')
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            throw new Error('not =')
+        }
+    } catch (e) {
+        console.log(e) 
         return res.status(500).send()
     }
 })

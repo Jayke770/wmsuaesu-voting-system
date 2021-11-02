@@ -19,18 +19,18 @@ module.exports = {
 
     if (req.session.islogin) {
 
-      if (req.session.user_type == "admin") {
+      if (req.session.user_type === "admin") {
         return next()
       }
     }
 
-    return res.redirect('/logout')
+    return req.method === "GET" ? res.redirect('/home/logout') : res.status(401).send()
   },
   isloggedin: (req, res, next) => { //detect if user is login 
     if (req.session.islogin && req.session.user_type !== "admin") {
       return next()
     }
-    return res.redirect('/home/logout')
+    return req.method === "GET" ? res.redirect('/home/logout') : res.status(401).send()
   },
   take_photo: (req, res, next) => {
     if (req.session.take_photo && req.session.islogin) {

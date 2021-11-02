@@ -90,6 +90,7 @@ const user =  new mongoose.Schema({
             }
         }
     },
+    profile: {},
     created: {
         type: Date, 
         default: Date.now()

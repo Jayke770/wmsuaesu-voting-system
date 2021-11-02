@@ -40,7 +40,7 @@
 %> 
 <div class="ca_details ca_tabs">
     <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 flex flex-col gap-2 justify-center items-center px-2 py-3">
-        <img class="h-40 w-40 ring-2 dark:ring-gray-600 rounded-full object-cover" src="/assets/image.jpg">
+        <img class="h-40 w-40 ring-2 dark:ring-gray-600 rounded-full object-cover" src="/profile/<%- candidateInfo.student_id %>">
         <div class="flex flex-col gap-1 justify-center items-center">
             <p class="dark:text-gray-300 font-medium text-lg"><%- candidateInfo.fullname %></p>
             <p class="dark:text-gray-400 font-normal text-sm"><%- `${Data.positions(candidateInfo.position)} at ${Data.partylist(candidateInfo.partylist)}` %></p>
@@ -75,7 +75,7 @@
 </div>
 <div class="ca_profile ca_tabs" style="display: none;">
     <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 flex flex-col gap-2 justify-center items-center px-2 py-3">
-        <img class="h-40 w-40 ring-2 dark:ring-gray-600 rounded-full object-cover" src="/assets/image.jpg">
+        <img class="h-40 w-40 ring-2 dark:ring-gray-600 rounded-full object-cover" src="/profile/<%- candidateInfo.student_id %>">
         <div class="flex flex-col gap-1 justify-center items-center">
             <p class="dark:text-gray-300 font-medium text-lg"><%- `${candidatesUserInfo.firstname} ${candidatesUserInfo.middlename} ${candidatesUserInfo.lastname}` %></p>
             <p class="dark:text-gray-400 font-normal text-sm"><%- `${Data.course(candidatesUserInfo.course)} ${Data.year(candidatesUserInfo.year)}` %></p>

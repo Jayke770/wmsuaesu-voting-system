@@ -8,6 +8,7 @@ const ftp = require('basic-ftp')
 const bcrypt = require('bcrypt')
 const xs = require('xss')
 const moment = require('moment-timezone')
+const { createCanvas, loadImage } = require('canvas')
 module.exports = {
     toUppercase: function (val) {
         const str = val.charAt(0).toUpperCase() + val.slice(1)
@@ -390,4 +391,31 @@ module.exports = {
         })
         return res
     },
+    myprofile: (background, foreground, text) => {
+        const canvas = createCanvas(250, 250)
+        const ctx = canvas.getContext('2d')
+        ctx.fillStyle = background
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.font = 'bold 80px Assistant'
+        ctx.fillStyle = foreground
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+        ctx.fillText(text, canvas.width / 2, canvas.height / 2)
+        return canvas.toDataURL("image/png")
+    }, 
+    color: {
+        light: () => {
+            var letters = 'BCDEF'.split(''), color = '#'
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * letters.length)]
+            }
+            return color
+        }, 
+        dark: () => {
+            let color = "#"
+            for (let i = 0; i < 3; i++)
+                color += ("0" + Math.floor(Math.random() * Math.pow(16, 2) / 2).toString(16)).slice(-2)
+            return color
+        }
+    }
 }
