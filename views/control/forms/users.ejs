@@ -42,14 +42,14 @@
                 </span>
                 <span class="sm:hidden text-base dark:text-purple-500 text-purple-700 font-normal">Add User</span>
             </a>
-            <a class="side_menu_open rpl mr-3 px-3 py-2 cursor-pointer text-xl rounded-md dark:text-gray-200">
+            <a class="rpl mr-3 px-3 py-2 cursor-pointer text-xl rounded-md dark:text-gray-200">
                 <i class="fas fa-bars"></i>
             </a>
         </div>
     </div>
     <!-- Add user -->
-    <div class="add_user fixed top-0 hidden justify-end items-center p-2 dark:bg-darkBlue-primary/50 w-full h-full z-20">
-        <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="add_user_main dark_border rounded-md w-96 h-full dark:bg-darkBlue-secondary">
+    <div class="add_user fixed top-0 hidden justify-end items-center sm:items-end p-2 sm:p-0 dark:bg-darkBlue-primary/50 w-full h-full z-20">
+        <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="add_user_main dark_border rounded-md sm:rounded-b-none w-96 h-full sm:h-5/6 dark:bg-darkBlue-secondary">
             <div class="w-full dark_border_b flex justify-center items-center py-4">
                 <p class="text-xl font-medium sm:text-lg text-purple-800 dark:text-purple-500 dark:font-semibold">Add User Account</p>
             </div>
@@ -103,7 +103,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="dark:bg-amber-800/30 dark:border-l-4 dark:border-amber-700 dark:text-amber-600 text-base font-normal p-2">
+                    <div class="dark:bg-amber-800/30 dark:border-l-4 dark:border-amber-700 dark:text-amber-600 text-sm font-normal p-2">
                         Username & Password will be generated automatically by the system
                     </div>
                 </div>
@@ -115,62 +115,102 @@
             </form>
         </div>
     </div>
-    <!-- side menu -->
-    <div class="side_menu_user fixed top-0 hidden justify-end items-end p-2 sm:p-0 dark:bg-darkBlue-primary/20 w-full h-full z-20">
-        <div animate-in="animate__animated animate__fadeInUp ms-300" animate-out="animate__animated animate__fadeOutDown ms-300" class="side_menu_user_main dark:bg-darkBlue-secondary dark_border rounded-lg sm:rounded-b-none h-auto w-96 sm:w-full">
-            <div class="px-4 py-3 flex justify-start items-center dark_border_b border-b-[.1px] border-gray-300">
-                <span class="font-semibold text-2xl text-purple-600">Settings</span>
+    <!-- side nav -->
+    <div class="side_nav fixed top-0 hidden justify-end items-end dark:bg-darkBlue-primary/20 w-full h-full z-20">
+        <div class="w-96 h-full dark:bg-darkBlue-secondary">
+            <div class="pl-3 py-3 dark_border_b w-full">
+                <a class="close_nav rpl float-right px-3 rounded-full text-red-600 dark:text-rose-600 text-2xl cursor-pointer">
+                    <i class="fad fa-times-circle"></i>
+                </a>
+                <span class="text-xl text-purple-600">Settings</span>
             </div>
-            <div class="flex flex-col px-3 h-[calc(100%-57px)]">
-                <div class="mt-2">
-                    <!-- Tab buttons -->
-                    <div class="grid grid-cols-2 gap-2 ">
-                        <a data="search" class="tab_user_settings transition-all dark:hover:bg-bluegray-800 flex flex-row gap-3 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
-                            <span class="text-amber-700/70 dark:text-amber-500/70">
-                                <i class="fad fa-search"></i>
-                            </span>
-                            <span class="text-[17px] dark:text-gray-300 text-gray-100 font-normal">Search</span>
-                        </a>
-                        <a data="sort" class="tab_user_settings transition-all dark:hover:bg-bluegray-800 flex flex-row gap-3 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
-                            <span class="text-teal-700 dark:text-teal-500">
-                                <i class="fad fa-sort"></i>
-                            </span>
-                            <span class="text-[17px] dark:text-gray-300 text-gray-100 font-normal">Sort</span>
-                        </a>
-                    </div>
-                    <!-- Tab main -->
-                    <div class="search tab_main transition-all py-2">
-                        <input autocomplete="off" type="search" placeholder="Search by Firstname, Middlename, & Lastname" class="search_user_input dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 ">
-                    </div>
-                    <div class="sort tab_main hidden transition-all py-2">
-                        <select class="sort_users dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 ">
-                            <option value=""> - Sort Users</option>
-                            <optgroup label="Active Status">
-                                <option value='<%- JSON.stringify({type: 'active_status', id: 'default'}) %>'>Default</option>
-                                <option value='<%- JSON.stringify({type: 'active_status', id: 'online'}) %>'>Online</option>
-                                <option value='<%- JSON.stringify({type: 'active_status', id: 'offline'}) %>'>Offline</option>
-                            </optgroup>
-                            <optgroup label="Course">
-                                <% for(let c = 0; c < data.course.length; c++) { %> 
-                                    <option value='<%- JSON.stringify({type: 'course', id: data.course[c].id}) %>'><%- data.course[c].type %></option>
-                                <% } %>
-                            </optgroup>
-                            <optgroup label="Year">
-                                <% for(let y = 0; y < data.year.length; y++) { %> 
-                                    <option value='<%- JSON.stringify({type: 'year', id: data.year[y].id}) %>'><%- data.year[y].type %></option>
-                                <% } %>
-                            </optgroup>
-                        </select>
-                    </div>
+            <div class="flex flex-col h-[calc(100%-55px)] py-2">
+                <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                    <i class="dark:text-teal-500/50 w-9 text-xl">
+                        <i class="fad fa-print"></i>
+                    </i>
+                    <span class="dark:text-gray-300 text-purple-800 font-normal text-base ">Print all users</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- user information -->
+    <div class="user_info transition-all fixed top-0 hidden justify-center items-center sm:items-end w-full h-full z-20 bg-darkBlue-primary/50">
+        <div animate-in="animate__animated animate__fadeInUp ms-500" animate-out="animate__animated animate__fadeOutDown ms-500" class="user_info_main transition-all dark:bg-darkBlue-secondary h-[95%] sm:h-5/6 w-10/12 sm:w-full rounded-md sm:rounded-b-none dark_border">
+            <div class="grid grid-cols-2 dark_border_b">
+                <div class="flex justify-start items-center px-3">
+                    <span class="text-xl text-purple-800 dark:text-purple-500">User Settings</span>
                 </div>
-                <div class="py-2">
-                    <button type="button" class="close_side_menu rpl appearance-none outline-none transition-all px-4 py-2 border border-rose-500 rounded-lg text-sm font-medium text-rose-500 focus:outline-none w-full">Close</button>
+                <div class="flex justify-end items-center">
+                    <a class="rpl py-2 px-3 rounded-full float-right text-red-600 mr-1 mt-1 dark:text-rose-600 text-2xl cursor-pointer">
+                        <i class="fad fa-times-circle"></i>
+                    </a>
                 </div>
+            </div>
+            <div class="h-[calc(100%-53px)] flex flex-row xl:flex-col-reverse">
+                <div class="flex-[20%] xl:flex-[1%] flex flex-col xl:grid xl:grid-cols-5 gap-2">
+                    <a class="rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                        <i class="dark:text-teal-500 w-9 xl:w-full text-xl">
+                            <i class="fad fa-info-circle"></i>
+                        </i>
+                        <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">User Information</span>
+                    </a>
+                    <a class="rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                        <i class="dark:text-amber-500 w-9 xl:w-full text-xl">
+                            <i class="fad fa-ballot-check"></i>
+                        </i>
+                        <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">Elections Attended</span>
+                    </a>
+                    <a class="rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                        <i class="dark:text-indigo-500 w-9 xl:w-full text-xl">
+                            <i class="fad fa-user-cog"></i>
+                        </i>
+                        <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">Account Settings</span>
+                    </a>
+                    <a class="rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                        <i class="dark:text-fuchsia-700 w-9 xl:w-full text-xl">
+                            <i class="fad fa-tablet-alt"></i>
+                        </i>
+                        <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">Devices</span>
+                    </a>
+                    <a class="rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                        <i class="dark:text-yellow-700 w-9 xl:w-full text-xl">
+                            <i class="fas fa-bell-exclamation"></i>
+                        </i>
+                        <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">User Requests</span>
+                    </a>
+                </div>
+                <div class="info_main_list flex-[80%] sm:flex-[99%] overflow-y-auto p-1"></div>
             </div>
         </div>
     </div>
     <!-- Main -->
     <div class="container pt-16">
+        <div class="grid grid-cols-2 px-2 gap-2">
+            <div class="flex justify-start items-center">
+                <input autocomplete="off" type="search" placeholder="Search by Name" class="search_user_input w-auto sm:w-full dark:bg-transparent dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 outline-none border border-gray-300 rounded-lg transition-all py-2 px-3 text-gray-900 ">
+            </div>
+            <div class="flex justify-end items-center">
+                <select class="sort_users sm:w-full dark:bg-darkBlue-primary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-auto outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 ">
+                    <option value=""> - Sort Users</option>
+                    <optgroup label="Active Status">
+                        <option value='<%- JSON.stringify({type: 'active_status', id: 'default'}) %>'>Default</option>
+                        <option value='<%- JSON.stringify({type: 'active_status', id: 'online'}) %>'>Online</option>
+                        <option value='<%- JSON.stringify({type: 'active_status', id: 'offline'}) %>'>Offline</option>
+                    </optgroup>
+                    <optgroup label="Course">
+                        <% for(let c = 0; c < data.course.length; c++) { %> 
+                            <option value='<%- JSON.stringify({type: 'course', id: data.course[c].id}) %>'><%- data.course[c].type %></option>
+                        <% } %>
+                    </optgroup>
+                    <optgroup label="Year">
+                        <% for(let y = 0; y < data.year.length; y++) { %> 
+                            <option value='<%- JSON.stringify({type: 'year', id: data.year[y].id}) %>'><%- data.year[y].type %></option>
+                        <% } %>
+                    </optgroup>
+                </select>
+            </div>
+        </div>
         <div class="all_users_list grid grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-none gap-3 p-2 transition-all">
             <% for (let i = 0; i < 20; i++) { %>
                 <div style="animation-delay: <%- i * .250%>s;" class="user_list_skeleton relative animate__animated animate__fadeInUp ms-500 dark_border shadow-lg rounded-md dark:bg-darkBlue-secondary p-3">

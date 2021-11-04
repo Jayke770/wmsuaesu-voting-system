@@ -3371,4 +3371,46 @@ adminrouter.get('/control/elections/:id/results/', isadmin, limit, async (req, r
         return res.status(500).send()
     }
 })
+//get user information 
+adminrouter.post('/control/users/info/', isadmin, limit, async (req, res) => {
+    const {id} = req.body 
+    
+    try {
+        await user.find({_id: {$eq: xs(id)}}, {firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, student_id: 1, bio: 1, type: 1, socket_id: 1}).then( async (userData) => {
+            if(userData.length > 0) {
+                return res.render('control/forms/user-settings-info', {
+                    userData: userData[0], 
+                    data: {
+                        courses: await course(),
+                        year: await year()
+                    }
+                })
+            } else {
+                return res.status(404).send()
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send(e)
+    }
+ })
+adminrouter.get('/control/users/list/', normal_limit, async (req, res) => {
+    try {
+        await user.find({}, {student_id: 1, firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, username: 1, password: 1}).sort({lastname: 1}).then( async (users) => {
+            return res.render('control/forms/list-users', {
+                users: users, 
+                data: {
+                    courses: await course(), 
+                    year: await year()
+                }
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e)
+    }
+})
 module.exports = adminrouter

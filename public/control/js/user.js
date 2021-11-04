@@ -1,4 +1,7 @@
 $(document).ready( function (){
+    setTimeout( async () => {
+        await Data.users()
+    }, 1000)
     //add user 
     $(".add_user_open").click( () => {
         const parent = $(".add_user")
@@ -68,13 +71,6 @@ $(document).ready( function (){
             }, 300)
         }
     })
-    //tab 
-    $(".tab_user_settings").click( function (e) {
-        e.preventDefault() 
-        const data = $(this).attr("data") 
-        $(".tab_main").addClass("hidden")
-        $(`.${data}`).removeClass("hidden")
-    })
     //add user submit 
     let add_user = false
     $(".add_user_form").submit( async function (e) {
@@ -141,9 +137,64 @@ $(document).ready( function (){
             await Data.sort_users($(this).val())
         }
     })
-    setTimeout( () => {
-        Data.users()
-    }, 1000)
+    //more info 
+    let more_info = false
+    $(".all_users_list").delegate(".more_info_user", "click", async function (e) { 
+        e.preventDefault() 
+        if(!more_info){
+            Swal.fire({
+                icon: 'info', 
+                title: 'Getting User Information', 
+                html: 'Please wait...', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showConfirmButton: false, 
+                willOpen: async () => {
+                    Swal.showLoading()
+                    try {
+                        let data = new FormData() 
+                        data.append("id", $(this).attr("data"))
+                        more_info = true 
+                        const req = await fetchtimeout('/control/users/info/', {
+                            method: 'POST', 
+                            headers: {
+                                'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                            }, 
+                            body: data
+                        })
+                        if(req.ok){
+                            const res = await req.text() 
+                            console.log(res)
+                            more_info = false
+                            const parent = $(".user_info")
+                            const child = $(".user_info_main")
+                            setTimeout( () => {
+                                Swal.close()
+                                $(".user_info").find(".info_main_list").html(res)
+                                child.addClass(child.attr("animate-in"))
+                                parent.addClass("flex")
+                                parent.removeClass("hidden") 
+                                setTimeout( () => {
+                                    child.removeClass(child.attr("animate-in"))
+                                }, 600)
+                            }, 500)
+                        } else {
+                            throw new Error(`${req.status} ${req.statusText}`)
+                        }
+                    } catch (e) {
+                        more_info = false 
+                        Swal.fire({
+                            icon: 'error', 
+                            title: 'Connection Error', 
+                            html: e.message, 
+                            backdrop: true, 
+                            allowOutsideClick: false,
+                        })
+                    }
+                }
+            })
+        }
+    })
     const Data = {
         users: async () => {
             try {
