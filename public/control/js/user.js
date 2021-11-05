@@ -256,6 +256,39 @@ $(document).ready( function (){
             child.removeClass(child.attr("animate-out"))
         }, 500)
     })
+    $(".side_nav").click( function (e) {
+        if($(e.target).hasClass("side_nav")) {
+            e.preventDefault() 
+            const parent = $(".side_nav")
+            const child = $(".side_nav_main") 
+            child.addClass(child.attr("animate-out"))
+            setTimeout( () => {
+                parent.removeClass("flex")
+                parent.addClass("hidden")
+                child.removeClass(child.attr("animate-out"))
+            }, 500)
+        }
+    })
+    $(".side_nav_open").click( () => {
+        const parent = $(".side_nav")
+        const child = $(".side_nav_main") 
+        child.addClass(child.attr("animate-in")) 
+        parent.addClass("flex")
+        parent.removeClass("hidden")
+        setTimeout( () => {
+            child.removeClass(child.attr("animate-in")) 
+        }, 500)
+    })
+    $(".close_side_nav").click( () => {
+        const parent = $(".side_nav")
+        const child = $(".side_nav_main") 
+        child.addClass(child.attr("animate-out"))
+        setTimeout( () => {
+            parent.removeClass("flex")
+            parent.addClass("hidden")
+            child.removeClass(child.attr("animate-out"))
+        }, 500)
+    })
     const Data = {
         users: async () => {
             try {

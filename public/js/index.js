@@ -30,19 +30,22 @@ $(document).ready( () => {
             }, 300)
         }
     })
-    const container = document.querySelector('.nav')
-    SwipeListener(container)
-    container.addEventListener('swipe', function (e) {
-        if(e.detail.directions.left){
-            const parent = $(".nav") 
-            const child = $(".nav_main") 
-            child.addClass(child.attr("animate-out")) 
-            setTimeout( () => {
-                parent.addClass("hidden") 
-                child.removeClass(child.attr("animate-out")) 
-            }, 300)
-        }
-    })
+    //swipe listener 
+    if($("body").find(".nav").length > 0) {
+        const container = document.querySelector('.nav')
+        SwipeListener(container)
+        container.addEventListener('swipe', function (e) {
+            if(e.detail.directions.left){
+                const parent = $(".nav") 
+                const child = $(".nav_main") 
+                child.addClass(child.attr("animate-out")) 
+                setTimeout( () => {
+                    parent.addClass("hidden") 
+                    child.removeClass(child.attr("animate-out")) 
+                }, 300)
+            }
+        })
+    }
     //check selected theme 
     if(gettheme() === 'dark'){
         $(".theme_dark").addClass("active-b-green")

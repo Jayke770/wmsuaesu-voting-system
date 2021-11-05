@@ -324,7 +324,7 @@ $(document).ready(function () {
                 <div>
                     <span class="text-bluegray-900 dark:text-gray-300 text-base font-normal break-all">${data.type}</span>
                 </div>
-                <div class="hidden group-hover:flex animate__animated animate__fadeInLeft ms-200 transition-all justify-end items-center gap-1">
+                <div class="hidden group-hover:flex animate__animated animate__fadeInUp ms-200 transition-all justify-end items-center gap-1">
                     <a data="${data.id}" class="rpl px-2 up_pos cursor-pointer text-green-600">
                         <i class="fas fa-edit"></i>
                     </a>

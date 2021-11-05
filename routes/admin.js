@@ -17,6 +17,8 @@ const objectid = require('mongodb').ObjectID
 const moment = require('moment-timezone')
 const nl2br = require('nl2br')
 const path = require('path')
+const puppeteer = require('puppeteer')
+const fs = require('fs-extra')
 /* request user profile image */
 adminrouter.get('/profile/:id/', normal_limit, async (req, res) => {
     const {id} = req.params 
@@ -3468,6 +3470,31 @@ adminrouter.post('/control/users/email/', isadmin, limit, async (req, res) => {
         return res.status(500).send()
     }
 })
+//print all users 
+adminrouter.get('/control/users/print-users/', normal_limit, isadmin, async (req, res) => {
+    try {
+        const browser = await puppeteer.launch()
+        const page = await browser.newPage()
+        await page.goto(`${process.env.maillink}control/users/list/`)
+        await page.pdf({ 
+            path: 'log/users.pdf', 
+            fullPage: true, 
+            margin: {
+                top: ".5cm",
+                right: ".5cm",
+                bottom: ".5cm",
+                left: ".5cm"
+            }
+        })
+        await browser.close() 
+        return res.download(`${process.cwd()}/log/users.pdf`, async () => {
+            await fs.remove(`${process.cwd()}/log/users.pdf`)
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
 adminrouter.get('/control/users/list/', normal_limit, async (req, res) => {
     try {
         await user.find({}, {student_id: 1, firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, username: 1, password: 1}).sort({lastname: 1}).then( async (users) => {
@@ -3482,7 +3509,8 @@ adminrouter.get('/control/users/list/', normal_limit, async (req, res) => {
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
+        console.log(e) 
+        return res.status(500).send()
     }
 })
 module.exports = adminrouter

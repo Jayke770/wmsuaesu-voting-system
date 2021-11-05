@@ -42,14 +42,14 @@
                 </span>
                 <span class="sm:hidden text-base dark:text-purple-500 text-purple-700 font-normal">Add User</span>
             </a>
-            <a class="rpl mr-3 px-3 py-2 cursor-pointer text-xl rounded-md dark:text-gray-200">
+            <a class="side_nav_open rpl mr-3 px-3 py-2 cursor-pointer text-xl rounded-md dark:text-gray-200">
                 <i class="fas fa-bars"></i>
             </a>
         </div>
     </div>
     <!-- Add user -->
     <div class="add_user fixed top-0 hidden justify-end items-center sm:items-end p-2 sm:p-0 dark:bg-darkBlue-primary/50 w-full h-full z-20">
-        <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="add_user_main dark_border rounded-md sm:rounded-b-none w-96 h-full sm:h-5/6 dark:bg-darkBlue-secondary">
+        <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="add_user_main dark_border rounded-md sm:rounded-b-none w-96 sm:w-full h-full sm:h-5/6 dark:bg-darkBlue-secondary">
             <div class="w-full dark_border_b flex justify-center items-center py-4">
                 <p class="text-xl font-medium sm:text-lg text-purple-800 dark:text-purple-500 dark:font-semibold">Add User Account</p>
             </div>
@@ -117,19 +117,19 @@
     </div>
     <!-- side nav -->
     <div class="side_nav fixed top-0 hidden justify-end items-end dark:bg-darkBlue-primary/20 w-full h-full z-20">
-        <div class="w-96 h-full dark:bg-darkBlue-secondary">
+        <div  animate-in="animate__animated animate__fadeInRight ms-500" animate-out="animate__animated animate__fadeOutRight ms-500" class="side_nav_main w-96 sm:w-[calc(100%-50px)] h-full dark:bg-darkBlue-secondary">
             <div class="pl-3 py-3 dark_border_b w-full">
-                <a class="close_nav rpl float-right px-3 rounded-full text-red-600 dark:text-rose-600 text-2xl cursor-pointer">
+                <a class="close_side_nav rpl float-right px-3 rounded-full text-red-600 dark:text-rose-600 text-2xl cursor-pointer">
                     <i class="fad fa-times-circle"></i>
                 </a>
                 <span class="text-xl text-purple-600">Settings</span>
             </div>
             <div class="flex flex-col h-[calc(100%-55px)] py-2">
-                <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                <a href="/control/users/print-users/" class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                     <i class="dark:text-teal-500/50 w-9 text-xl">
                         <i class="fad fa-print"></i>
                     </i>
-                    <span class="dark:text-gray-300 text-purple-800 font-normal text-base ">Print all users</span>
+                    <span onclick="window.close()" class="dark:text-gray-300 text-purple-800 font-normal text-base">Print all users</span>
                 </a>
             </div>
         </div>
