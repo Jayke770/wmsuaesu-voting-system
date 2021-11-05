@@ -1,7 +1,7 @@
 {
   "name": "voting-system",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "app.js",
   "author": "Jayke770",
   "license": "MIT",
   "dependencies": {
