@@ -3440,7 +3440,19 @@ adminrouter.post('/control/users/account/', isadmin, limit, async (req, res) => 
         return res.status(500).send()
     }
 })
-
+//get user devices 
+adminrouter.post('/control/users/devices/', isadmin, limit, async (req, res) => {
+    const {id} = req.body 
+    const {devices} = await user_data(id)
+    try {
+        return res.render('control/forms/user-settings-devices', {
+            devices: devices
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
 adminrouter.get('/control/users/list/', normal_limit, async (req, res) => {
     try {
         await user.find({}, {student_id: 1, firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, username: 1, password: 1}).sort({lastname: 1}).then( async (users) => {

@@ -1,0 +1,73 @@
+<div class="container p-2 sm:px-0 flex flex-col gap-2">
+    <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 flex items-center justify-start px-2.5 sm:px-0.5">
+        <span class="dark:text-gray-300 text-base">User Devices</span>
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-1 transition-all gap-2 px-2.5 sm:px-0.5 py-3 pt-0">
+        <% if(devices.length > 0) { %> 
+            <% for(let i = 0; i < devices.length; i++){ %> 
+                <div style="animation-delay: <%- i * .250%>s;" class="rpl animate__animated animate__fadeInUp ms-500 h-[fit-content] cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
+                    <span class="dark:text-purple-600">
+                        <%- devices[i].devicename.split(' ')[0] && devices[i].devicename.split(' ')[1] === 'undefined' ? devices[i].browser : devices[i].devicename %>
+                    </span>
+                    <form class="flex flex-col gap-3 mt-2">
+                        <div class="flex flex-row gap-2 items-center justify-start">
+                            <div class="flex justify-start items-center">
+                                <i class="dark:text-indigo-700 text-xl fad fa-globe"></i>
+                            </div>
+                            <div class="container flex justify-end items-center">    
+                                <span class="dark:text-gray-300 text-sm"><%- devices[i].browser %></span>
+                            </div>
+                        </div>
+                        <div class="flex flex-row gap-2 items-center justify-start">
+                            <div class="flex justify-start items-center">
+                                <i class="dark:text-amber-700 text-xl fad fa-phone-laptop"></i>
+                            </div>
+                            <div class="container flex justify-end items-center">
+                                <span class="dark:text-gray-300 text-sm"><%- devices[i].devicename %></span>
+                            </div>
+                        </div>
+                        <div class="flex flex-row gap-2 items-center justify-start">
+                            <div class="flex justify-start items-center">
+                                <i class="dark:text-orange-700 text-xl fad fa-info-circle"></i>
+                            </div>
+                            <div class="container flex justify-end items-center">
+                                <span class="dark:text-gray-300 text-sm"><%- devices[i].os %></span>
+                            </div>
+                        </div>
+                        <div class="flex flex-row gap-2 items-center justify-start">
+                            <div class="flex justify-start items-center">
+                                <i class="dark:text-yellow-700 text-xl fad fa-ethernet"></i>
+                            </div>
+                            <div class="container flex justify-end items-center">
+                                <span class="dark:text-gray-300 text-sm"><%- devices[i].ip %></span>
+                            </div>
+                        </div>
+                        <div class="flex flex-row gap-2 items-center justify-start">
+                            <span class="dark:text-indigo-700 text-sm">Verified</span>
+                            <div class="container flex justify-end items-center">
+                                <% if(devices[i].verified) {%> 
+                                    <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">Verified</span>  
+                                <% } else { %> 
+                                    <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">Not Verified</span>  
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="flex flex-row gap-2 items-center justify-start">
+                            <span class="dark:text-indigo-700 text-sm">Status</span>
+                            <div class="container flex justify-end items-center">
+                                <% if(devices[i].status === 'Online') { %> 
+                                    <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">Online</span>
+                                <% } else { %> 
+                                    <span class="dark:bg-gray-700 bg-gray-600  text-gray-300 px-4 py-0.5 text-sm rounded-lg">Offline</span>
+                                <% } %>
+                            </div>
+                        </div>
+                        <button class="rpl mt-1.5 transition-all w-full text-center px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-700 dark:bg-rose-800 hover:bg-rose-700 dark:hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-rose-800 focus:ring-rose-500"
+                            type="submit">Remove Device</button>
+                    </form>
+                </div>
+            <% } %>
+        <% } else {%> 
+        <% } %>
+    </div>
+</div>
