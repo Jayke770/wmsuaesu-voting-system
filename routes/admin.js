@@ -3473,7 +3473,7 @@ adminrouter.post('/control/users/email/', isadmin, limit, async (req, res) => {
 //print all users 
 adminrouter.get('/control/users/print-users/', normal_limit, isadmin, async (req, res) => {
     try {
-        const browser = await puppeteer.launch({ args: ['--no-sandbox'] }))
+        const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
         const page = await browser.newPage()
         await page.goto(`${process.env.maillink}control/users/list/`)
         await page.pdf({ 
