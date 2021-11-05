@@ -250,9 +250,9 @@ $(document).ready( function (){
         const parent = $(".user_info")
         const child = $(".user_info_main") 
         child.addClass(child.attr("animate-out"))
-        parent.addClass("flex")
-        parent.removeClass("hidden")
         setTimeout( () => {
+            parent.addClass("hidden")
+            parent.removeClass("flex")
             child.removeClass(child.attr("animate-out"))
         }, 500)
     })
