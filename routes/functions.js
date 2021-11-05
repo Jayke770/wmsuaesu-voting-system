@@ -133,7 +133,7 @@ module.exports = {
         return res
     }, 
     //user data 
-    user_data: async function (id) {
+    user_data: async (id) => {
         let result
         try {
             await user.find({
@@ -173,7 +173,7 @@ module.exports = {
     course: async () => {
         let result
         try {
-            await data.find({}, {course: 1}).then( (c) =>{
+            await data.find({}, {course: 1}).sort({"course.type": 1}).then( (c) =>{
                 result =  c.length === 0 ? [] : c[0].course
             }).catch( (e) => {
                 throw new Error(e)
@@ -187,8 +187,8 @@ module.exports = {
     year: async () => {
         let result
         try {
-            await data.find({}, {year: 1}).then( (c) =>{
-                result =  c.length === 0 ? [] : c[0].year
+            await data.find({}, {year: 1}).sort({"year.type": 1}).then( (y) =>{
+                result =  y.length === 0 ? [] : y[0].year
             }).catch( (e) => {
                 throw new Error(e)
             })

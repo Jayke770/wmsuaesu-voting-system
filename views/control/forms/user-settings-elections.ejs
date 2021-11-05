@@ -1,0 +1,41 @@
+<div class="grid grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 gap-2 px-2.5 py-3">
+    <% if(elections.length > 0) { %> 
+        <% for (let i = 0; i < elections.length; i++) { %>
+            <div style="animation-delay: <%- i * .250%>s;" class="rpl animate__animated animate__fadeInUp ms-500 cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
+                <span class="dark:text-purple-600"><%- elections[i].election_title %></span>
+                <div class="grid grid-cols-2 gap-1 mt-2">
+                    <span class="dark:text-gray-300/80 p-1 text-sm">Status</span>
+                    <div class="flex justify-end items-center">
+                        <% if(elections[i].status === 'Not Started') { %>
+                            <div class="dark:bg-yellow-600/50 bg-yellow-700 text-gray-100 dark:text-gray-300 py-0.5 text-xs px-2 rounded-xl"><%- elections[i].status %></div>
+                        <% } else if(elections[i].status === 'Started') { %>
+                            <div class="dark:bg-teal-600/50 bg-teal-700 text-gray-100 dark:text-gray-300 py-0.5 text-xs px-5 rounded-xl"><%- elections[i].status %></div>
+                        <% } else if(elections[i].status === 'Ended') { %>
+                            <div class="dark:bg-rose-600/50 bg-rose-700 text-gray-100 dark:text-gray-300 py-0.5 text-xs px-5 rounded-xl"><%- elections[i].status %></div>
+                        <% } else { %>
+                            <div class="dark:bg-red-600/50 bg-red-700 text-gray-100 dark:text-gray-300 py-0.5 text-xs px-2 rounded-xl"><%- elections[i].status %></div>
+                        <% } %>
+                    </div>
+                    <span class="dark:text-gray-300/80 p-1 text-sm">Total Voters</span>
+                    <div class="flex justify-end items-center">
+                        <span class="dark:text-gray-300/80 p-1 text-base"><%- elections[i].voters.length %></span>
+                    </div>
+                    <span class="dark:text-gray-300/80 p-1 text-sm">Total Candidates</span>
+                    <div class="flex justify-end items-center">
+                        <span class="dark:text-gray-300/80 p-1 text-base"><%- elections[i].candidates.length %></span>
+                    </div>
+                    <span class="dark:text-gray-300/80 p-1 text-sm">User Role</span>
+                    <div class="flex justify-end items-center">
+                        <div class="dark:bg-teal-600/50 bg-teal-700 text-gray-100 dark:text-gray-300 py-0.5 text-xs px-2 rounded-xl"><%- role %></div>
+                    </div>
+                </div>
+            </div>                      
+        <% } %>
+    <% } else { %>
+        <div class="h-full w-full col-span-full flex justify-center items-center">
+            <div style="animation-delay: .250s;" class="rpl animate__animated animate__fadeInUp ms-500 w-96 cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col justify-center items-center gap-2 rounded-md">
+                <span class="dark:text-gray-300/80 p-1 text-xl">There aren't any elections</span>
+            </div>
+        </div>
+    <% } %>
+</div>

@@ -9,7 +9,7 @@ const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
 const {isloggedin} = require('./auth')
-const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myprofile, color} = require('./functions')
+const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myprofile, color, user_data} = require('./functions')
 const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
@@ -3043,7 +3043,7 @@ adminrouter.post('/control/elections/partylist/update-partylist/', normal_limit,
 /*##################################################################################### */
 
 //users main
-adminrouter.get('/control/users/', limit, isadmin, async (req, res) => {
+adminrouter.get('/control/users/', normal_limit, isadmin, async (req, res) => {
     try {
         return res.render('control/forms/users', {
             data: {
@@ -3392,10 +3392,55 @@ adminrouter.post('/control/users/info/', isadmin, limit, async (req, res) => {
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e) 
         return res.status(500).send(e)
     }
- })
+})
+//get user elections attented 
+adminrouter.post('/control/users/elections/', isadmin, limit, async (req, res) => {
+    const {id} = req.body 
+    const {elections, type} = await user_data(id)
+    let res_elections = []
+    try {
+        if(elections.length > 0) {
+            for(let i = 0; i < elections.length; i++) {
+                await election.find({_id: {$eq: xs(elections[i])}}, {election_title: 1, status: 1, voters: 1, candidates: 1}).then( (elec) => {
+                    if(elec.length > 0) { 
+                        res_elections.push(elec[0]) 
+                    }
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            }
+            return res.render('control/forms/user-settings-elections', {
+                elections: res_elections, 
+                role: type
+            })
+        } else {
+            return res.render('control/forms/user-settings-elections', {
+                elections: res_elections
+            })
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//get user account 
+adminrouter.post('/control/users/account/', isadmin, limit, async (req, res) => {
+    const {id} = req.body 
+    try {
+        return res.render('control/forms/user-settings-account', {
+            userData: await user_data(id), 
+            data: {
+                courses: await course(), 
+                year: await year()
+            }
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+
 adminrouter.get('/control/users/list/', normal_limit, async (req, res) => {
     try {
         await user.find({}, {student_id: 1, firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, username: 1, password: 1}).sort({lastname: 1}).then( async (users) => {

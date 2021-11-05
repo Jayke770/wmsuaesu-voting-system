@@ -2,6 +2,18 @@ $(document).ready( function (){
     setTimeout( async () => {
         await Data.users()
     }, 1000)
+    //show password
+    $("body").delegate(".show_pass", "click", function () {
+        const show = `<i class="fas fa-eye dark:text-indigo-600 cursor-pointer"></i>`
+        const hide = `<i class="fas fa-eye-slash dark:text-indigo-600 cursor-pointer"></i>`
+        if($(this).prev().attr("type") === "password"){
+            $(this).prev().attr("type", "text")
+            $(this).html(hide)
+        } else {
+            $(this).prev().attr("type", "password")
+            $(this).html(show)
+        }
+    })
     //add user 
     $(".add_user_open").click( () => {
         const parent = $(".add_user")
@@ -137,8 +149,8 @@ $(document).ready( function (){
             await Data.sort_users($(this).val())
         }
     })
-    //more info 
-    let more_info = false
+    //open more info 
+    let more_info = false, id
     $(".all_users_list").delegate(".more_info_user", "click", async function (e) { 
         e.preventDefault() 
         if(!more_info){
@@ -155,6 +167,7 @@ $(document).ready( function (){
                         let data = new FormData() 
                         data.append("id", $(this).attr("data"))
                         more_info = true 
+                        id = $(this).attr("data")
                         const req = await fetchtimeout('/control/users/info/', {
                             method: 'POST', 
                             headers: {
@@ -164,7 +177,6 @@ $(document).ready( function (){
                         })
                         if(req.ok){
                             const res = await req.text() 
-                            console.log(res)
                             more_info = false
                             const parent = $(".user_info")
                             const child = $(".user_info_main")
@@ -194,6 +206,55 @@ $(document).ready( function (){
                 }
             })
         }
+    })
+    //more info menu 
+    let menu = false
+    $(".user_info_menu").click( async function (e) {
+        e.preventDefault()
+        if(!menu){
+            menu = true
+            Data.info_menu(id, $(this).attr("data")).then( (res) => {
+                menu = false
+            }).catch( (e) => {
+                menu = false
+                Snackbar.show({
+                    text: `
+                        <div class="flex justify-center items-center gap-2"> 
+                            <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                            <span>${e.message}</span>
+                     </div>
+                    `, 
+                    duration: 3000,
+                    showAction: false
+                })
+            })
+        }
+    })
+    //close user info 
+    $(".user_info").click( function (e) {
+        if($(e.target).hasClass("user_info")){
+            e.preventDefault() 
+            id = ''
+            const parent = $(".user_info")
+            const child = $(".user_info_main") 
+            child.addClass(child.attr("animate-out"))
+            setTimeout( () => {
+                parent.addClass("hidden")
+                parent.removeClass("flex")
+                child.removeClass(child.attr("animate-out"))
+            }, 500)
+        }
+    })
+    $(".cls_user_info").click( () => {
+        id = ''
+        const parent = $(".user_info")
+        const child = $(".user_info_main") 
+        child.addClass(child.attr("animate-out"))
+        parent.addClass("flex")
+        parent.removeClass("hidden")
+        setTimeout( () => {
+            child.removeClass(child.attr("animate-out"))
+        }, 500)
     })
     const Data = {
         users: async () => {
@@ -317,6 +378,27 @@ $(document).ready( function (){
         }, 
         offline: () => {
             return `<div class="absolute dark:bg-gray-500 h-4 w-4 rounded-full right-3"></div>`
+        }, 
+        info_menu: async (id, menu) => {
+            try {
+                let data = new FormData() 
+                data.append("id", id) 
+                const req = await fetchtimeout(`/control/users/${menu}/`, {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok) {
+                    const res = await req.text() 
+                    $(".user_info").find(".info_main_list").html(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                throw new Error(e)
+            }
         }
     }
     //socket events 

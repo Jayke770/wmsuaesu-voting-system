@@ -142,45 +142,53 @@
                     <span class="text-xl text-purple-800 dark:text-purple-500">User Settings</span>
                 </div>
                 <div class="flex justify-end items-center">
-                    <a class="rpl py-2 px-3 rounded-full float-right text-red-600 mr-1 mt-1 dark:text-rose-600 text-2xl cursor-pointer">
+                    <a class="cls_user_info rpl py-2 px-3 rounded-full float-right text-red-600 mr-1 mt-1 dark:text-rose-600 text-2xl cursor-pointer">
                         <i class="fad fa-times-circle"></i>
                     </a>
                 </div>
             </div>
             <div class="h-[calc(100%-53px)] flex flex-row xl:flex-col-reverse">
-                <div class="flex-[20%] xl:flex-[1%] flex flex-col xl:grid xl:grid-cols-5 gap-2">
-                    <a class="rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                <div class="flex-[20%] xl:flex-[1%] flex flex-col xl:grid xl:grid-cols-6 gap-2">
+                    <a data="info" class="user_info_menu rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                         <i class="dark:text-teal-500 w-9 xl:w-full text-xl">
                             <i class="fad fa-info-circle"></i>
                         </i>
                         <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">User Information</span>
                     </a>
-                    <a class="rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                    <a data="elections" class="user_info_menu rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                         <i class="dark:text-amber-500 w-9 xl:w-full text-xl">
                             <i class="fad fa-ballot-check"></i>
                         </i>
                         <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">Elections Attended</span>
                     </a>
-                    <a class="rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                    <a data="account" class="user_info_menu rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                         <i class="dark:text-indigo-500 w-9 xl:w-full text-xl">
                             <i class="fad fa-user-cog"></i>
                         </i>
                         <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">Account Settings</span>
                     </a>
-                    <a class="rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                    <a data="devices" class="user_info_menu rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                         <i class="dark:text-fuchsia-700 w-9 xl:w-full text-xl">
                             <i class="fad fa-tablet-alt"></i>
                         </i>
                         <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">Devices</span>
                     </a>
-                    <a class="rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                    <a data="email" class="user_info_menu rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                        <i class="dark:text-orange-700 w-9 xl:w-full text-xl">
+                            <i class="fad fa-envelope"></i>
+                        </i>
+                        <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">Email</span>
+                    </a>
+                    <a data="requests" class="user_info_menu rpl xl:text-center flex flex-row items-center xl:justify-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                         <i class="dark:text-yellow-700 w-9 xl:w-full text-xl">
                             <i class="fas fa-bell-exclamation"></i>
                         </i>
                         <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">User Requests</span>
                     </a>
                 </div>
-                <div class="info_main_list flex-[80%] sm:flex-[99%] overflow-y-auto p-1"></div>
+                <div class="info_main_list flex-[80%] sm:flex-[99%] overflow-y-auto p-1">
+                    
+                </div>
             </div>
         </div>
     </div>
