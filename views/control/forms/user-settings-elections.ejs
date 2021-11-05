@@ -1,5 +1,5 @@
-<div class="grid grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 gap-2 px-2.5 py-3">
-    <% if(elections.length > 0) { %> 
+<% if(elections.length > 0) { %> 
+    <div class="grid grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 gap-2 px-2.5 py-3">
         <% for (let i = 0; i < elections.length; i++) { %>
             <div style="animation-delay: <%- i * .250%>s;" class="rpl animate__animated animate__fadeInUp ms-500 cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
                 <span class="dark:text-purple-600"><%- elections[i].election_title %></span>
@@ -31,11 +31,11 @@
                 </div>
             </div>                      
         <% } %>
-    <% } else { %>
-        <div class="h-full w-full col-span-full flex justify-center items-center">
-            <div style="animation-delay: .250s;" class="rpl animate__animated animate__fadeInUp ms-500 w-96 cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col justify-center items-center gap-2 rounded-md">
-                <span class="dark:text-gray-300/80 p-1 text-xl">There aren't any elections</span>
-            </div>
+    </div>
+<% } else { %> 
+    <div class="h-full w-full col-span-full flex justify-center items-center">
+        <div style="animation-delay: .250s;" class="rpl animate__animated animate__fadeInUp ms-500 w-96 cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col justify-center items-center gap-2 rounded-md">
+            <span class="dark:text-gray-300/80 p-1 text-base">There aren't any elections</span>
         </div>
-    <% } %>
-</div>
+    </div>
+<% } %>

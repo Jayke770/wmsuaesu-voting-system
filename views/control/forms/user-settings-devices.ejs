@@ -1,15 +1,16 @@
-<div class="container p-2 sm:px-0 flex flex-col gap-2">
-    <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 flex items-center justify-start px-2.5 sm:px-0.5">
-        <span class="dark:text-gray-300 text-base">User Devices</span>
-    </div>
-    <div class="grid grid-cols-2 lg:grid-cols-1 transition-all gap-2 px-2.5 sm:px-0.5 py-3 pt-0">
-        <% if(devices.length > 0) { %> 
+<% if(devices.length > 0) { %> 
+    <div class="container p-2 sm:px-0 flex flex-col gap-2">
+        <div style="animation-delay: .150s;" class="animate__animated animate__fadeInUp ms-500 flex items-center justify-start px-2.5 sm:px-0.5">
+            <span class="dark:text-gray-300 text-base">User Devices</span>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-1 transition-all gap-2 px-2.5 sm:px-0.5 py-3 pt-0">
             <% for(let i = 0; i < devices.length; i++){ %> 
                 <div style="animation-delay: <%- i * .250%>s;" class="rpl animate__animated animate__fadeInUp ms-500 h-[fit-content] cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
                     <span class="dark:text-purple-600">
                         <%- devices[i].devicename.split(' ')[0] && devices[i].devicename.split(' ')[1] === 'undefined' ? devices[i].browser : devices[i].devicename %>
                     </span>
                     <form class="flex flex-col gap-3 mt-2">
+                        <input type="hidden" name="id" value="<%- id %>">
                         <div class="flex flex-row gap-2 items-center justify-start">
                             <div class="flex justify-start items-center">
                                 <i class="dark:text-indigo-700 text-xl fad fa-globe"></i>
@@ -67,7 +68,12 @@
                     </form>
                 </div>
             <% } %>
-        <% } else {%> 
-        <% } %>
+        </div>
     </div>
-</div>
+<% } else { %>
+    <div class="flex h-full w-full justify-center items-center">
+        <div style="animation-delay: .250s;" class="rpl animate__animated animate__fadeInUp ms-500 h-[fit-content] w-96 sm:w-full cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col items-center justify-center gap-2 rounded-md">
+            <span class="dark:text-gray-300 text-base">There aren't any devices</span>
+        </div>
+    </div>
+<% } %>

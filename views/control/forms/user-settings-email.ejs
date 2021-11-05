@@ -1,0 +1,56 @@
+<% if(email) { %> 
+    <div class="flex flex-col gap-2 justify-center items-center h-full w-full">
+        <div style="animation-delay: .250s;" class="rpl animate__animated animate__fadeInUp ms-500 h-[fit-content] w-96 sm:w-full cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
+            <span class="dark:text-purple-600 text-xl">User email</span>
+            <form class="flex flex-col gap-2 mt-1 p-2">
+                <input type="hidden" value="<%- id %>" name="id">
+                <div class="flex flex-row gap-1">
+                    <div class="flex-[1%] flex items-center justify-start ">
+                        <span class="dark:text-gray-300 text-sm">ID</span>
+                    </div>
+                    <div class="flex-[99%] flex items-end justify-end">
+                        <span class="dark:text-gray-400 break-all"><%- email.id %></>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2">
+                    <div class="flex items-center justify-start ">
+                        <span class="dark:text-gray-300 text-sm">Email</span>
+                    </div>
+                    <div class="flex items-end justify-end">
+                        <span class="dark:text-gray-400"><%- email.email %></span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2">
+                    <div class="flex items-center justify-start ">
+                        <span class="dark:text-gray-300 text-sm">Added</span>
+                    </div>
+                    <div class="flex items-end justify-end">
+                        <span class="dark:text-gray-400 time" data="<%- email.added %>"></span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2">
+                    <div class="flex items-center justify-start">
+                        <span class="dark:text-gray-300 text-sm">Status</span>
+                    </div>
+                    <div class="flex items-end justify-end">
+                        <% if(email.status) {%> 
+                            <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">Verified</span>  
+                        <% } else { %> 
+                            <span class="dark:bg-rose-700/40 bg-rose-600 dark:text-rose-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">Not Verified</span>  
+                        <% } %>
+                    </div>
+                </div>
+                <div class="col-span-full flex flex-col">
+                    <button class="rpl col-span-full mt-1.5 transition-all w-full text-center px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-700 dark:bg-rose-800 hover:bg-rose-700 dark:hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-rose-800 focus:ring-rose-500"
+                        type="submit">Remove email</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<% } else { %> 
+    <div class="flex flex-col gap-2 justify-center items-center h-full w-full">
+        <div style="animation-delay: .250s;" class="rpl animate__animated animate__fadeInUp ms-500 h-[fit-content] w-96 sm:w-full cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col items-center justify-center gap-2 rounded-md">
+            <span class="dark:text-gray-300 text-base">There aren't any email</span>
+        </div>
+    </div>
+<% } %>

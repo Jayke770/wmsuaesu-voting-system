@@ -22,7 +22,7 @@
 
 <body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
     <!-- Laxy progress bar -->
-    <%- include('../../lazy/loading-progress') %>
+    <form%- include('../../lazy/loading-progress') %>
     <!-- on ready state -->
     <div class="loading flex justify-center w-screen h-screen items-center">
         <%- include('../../lazy/loading') %>
@@ -186,7 +186,9 @@
                         <span class="dark:text-gray-300 text-purple-800 font-light text-base xl:hidden">User Requests</span>
                     </a>
                 </div>
-                <div class="info_main_list flex-[80%] sm:flex-[99%] overflow-y-auto p-1"></div>
+                <div class="info_main_list flex-[80%] sm:flex-[99%] overflow-y-auto p-1">
+                    
+                </div>
             </div>
         </div>
     </div>

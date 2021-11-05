@@ -381,11 +381,14 @@ admin_socket.on('connection', async (socket) => {
 })
 //user websocket events
 users_socket.on('connection', async (socket) => {
-    let {myid, electionID, islogin, user_type} = socket.handshake.session 
+    let {myid, electionID, islogin, user_type, device} = socket.handshake.session 
     const {student_id} = await user_data(myid)
     //update socket id every user connted to server 
     if(islogin && user_type === "Candidate" || islogin && user_type === "Voter"){
-        await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: socket.id}}).then( () => {
+        await users.updateOne({
+            _id: {$eq: xs(myid)}, 
+            "devices.id": {$eq: xs(device)}
+        }, {$set: {socket_id: socket.id, "devices.$.status": 'Online'}}).then( () => {
             console.log("New User Connected with soket Id of ", socket.id,)
             admin_socket.emit('connected', {id: xs(myid)})
         })
@@ -394,7 +397,10 @@ users_socket.on('connection', async (socket) => {
     }
     socket.on('disconnect', async () => {
         const socket_id = socket.id
-        await users.updateOne({_id: {$eq: xs(myid)}}, {$set: {socket_id: 'Offline'}}).then( () => {
+        await users.updateOne({
+            _id: {$eq: xs(myid)}, 
+            "devices.id": {$eq: xs(device)}
+        }, {$set: {socket_id: 'Offline', "devices.$.status": 'Offline'}}).then( (h) => {
             console.log("New User Diconnected with soket Id of ", socket_id)
             admin_socket.emit('user-disconnected', {id: xs(myid)})
         })

@@ -3443,10 +3443,25 @@ adminrouter.post('/control/users/account/', isadmin, limit, async (req, res) => 
 //get user devices 
 adminrouter.post('/control/users/devices/', isadmin, limit, async (req, res) => {
     const {id} = req.body 
-    const {devices} = await user_data(id)
+    const {devices, _id} = await user_data(id)
     try {
         return res.render('control/forms/user-settings-devices', {
-            devices: devices
+            devices: devices, 
+            id: _id
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//get user email
+adminrouter.post('/control/users/email/', isadmin, limit, async (req, res) => {
+    const {id} = req.body 
+    const {email, _id} = await user_data(id)
+    try {
+        return res.render('control/forms/user-settings-email', {
+            email: email, 
+            id: _id
         })
     } catch (e) {
         console.log(e)
