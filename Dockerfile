@@ -32,4 +32,4 @@ COPY . .
 RUN npm run build
 ENV NODE_ENV=production
 EXPOSE 8989
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
