@@ -45,6 +45,6 @@
 
 ## Production Links  
 | Server | Link Status |
-| -------- | ---------- |z1a4d3581-ze9bd4298-gtw.qovery.io
+| -------- | ---------- |
 | Heroku | <a href="https://wmsuaesu-voting-system.herokuapp.com"> <img src="https://img.shields.io/website?down_message=Offline&label=Production%20Status&style=for-the-badge&up_message=Online&url=https%3A%2F%2Fwmsuaesu-voting-system.herokuapp.com"> </a> |
 | Qovery | <a href="https://z1a4d3581-ze9bd4298-gtw.qovery.io"> <img src="https://img.shields.io/website?down_message=Offline&label=Production%20Status&style=for-the-badge&up_message=Online&url=https%3A%2F%2Fz1a4d3581-ze9bd4298-gtw.qovery.io"> </a> |
