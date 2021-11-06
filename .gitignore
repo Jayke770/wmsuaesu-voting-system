@@ -6,3 +6,4 @@ face-api/*
 face.js
 yarn-error.log
 public/css/tailwindcss/*
+test.js
