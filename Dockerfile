@@ -31,15 +31,5 @@ RUN npm install
 COPY . .
 RUN npm run build
 ENV NODE_ENV=production
-ENV PORT=8989 
-ENV link=https://8000-blue-wren-49tiikb7.ws-us18.gitpod.io/
-ENV maillink=https://8000-blue-wren-49tiikb7.ws-us18.gitpod.io/
-ENV admin_username=wmsuadmin
-ENV admin_password=password1434!
-ENV db_url=mongodb+srv://jayke-mongodb:Jakevelasco1434!@thesis.xz8wf.mongodb.net/wmsu-voting?retryWrites=true&w=majority
-ENV email=votingsystem1434@gmail.com
-ENV emailpassword=Jakevelasco1434!
-ENV emailservice=gmail
-ENV session_secret=jdjdjdbdbdjjdsjsjskskkskw26626272783848rjdbbznskaoaasbsbdxxoaqlkaqowo3746466448392o2okwjdbdnndkaoaoabbssbdbjxjxjdbbdbdiwjwu26363638hdbsb
 EXPOSE 8989
 CMD ["npm", "run", "dev"]
