@@ -4,7 +4,6 @@ const data = require('../models/data')
 const election = require('../models/election')
 const objectid = require('mongodb').ObjectID
 const { v4: uuid } = require('uuid');
-const ftp = require('basic-ftp')
 const bcrypt = require('bcrypt')
 const xs = require('xss')
 const moment = require('moment-timezone')
@@ -97,20 +96,6 @@ module.exports = {
             type: type,
             read: 0,
             time: Date.now()
-        }
-    }, 
-    ftp: async () => {
-        const client = new ftp.Client()
-        try {
-            await client.access({
-                host: process.env.ftp_host,
-                port: process.env.ftp_port,
-                user: process.env.ftp_username,
-                password: process.env.ftp_password
-            })
-            return true
-        } catch(e){
-            return false
         }
     }, 
     hash: async (data, n) => {
