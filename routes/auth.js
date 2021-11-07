@@ -673,6 +673,7 @@ module.exports = {
     })
   }, 
   restore_account_email: (email, fname, account) => {
+    console.log(email, fname, account)
     const transporter = nodemailer.createTransport({
       service: process.env.emailservice,
       auth: {
@@ -970,10 +971,10 @@ module.exports = {
     }
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
-        console.log("Not Sent", info)
+        console.log("Not Sent", error, info)
         return false
       } else {
-        console.log("Sent", info)
+        console.log("Sent", error, info)
         return true
       }
     })
