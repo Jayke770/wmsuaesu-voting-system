@@ -846,7 +846,7 @@ module.exports = {
             
       <div style="color: #e5eaf5; line-height: 140%; text-align: center; word-wrap: break-word;">
         <p style="font-size: 14px; line-height: 140%; text-align: center;">&nbsp;</p>
-    <p style="font-size: 14px; line-height: 140%; text-align: center;"><span style="font-size: 28px; line-height: 39.2px;"><strong><span style="line-height: 39.2px; font-size: 28px;">Your account was resetted</span></strong></span></p>
+    <p style="font-size: 14px; line-height: 140%; text-align: center;"><span style="font-size: 28px; line-height: 39.2px;"><strong><span style="line-height: 39.2px; font-size: 28px;">Your account has been reset</span></strong></span></p>
       </div>
     
           </td>
@@ -882,7 +882,7 @@ module.exports = {
             
       <div style="line-height: 160%; text-align: center; word-wrap: break-word;">
         <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 22px; line-height: 35.2px;">Hi ${fname}</span></p>
-    <p style="font-size: 14px; line-height: 160%;">The admin is resetted all the users account, Use your new Username & Password below to login</p>
+    <p style="font-size: 14px; line-height: 160%;">The admin resetted all the users account, Use your new Username & Password below to login</p>
     <br><br><br>
     <table style="border: 1px solid #1d1d1d; width: 100%">
       <thead>
