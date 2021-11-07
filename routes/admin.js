@@ -3469,6 +3469,101 @@ adminrouter.post('/control/users/email/', isadmin, limit, async (req, res) => {
         return res.status(500).send()
     }
 }) 
+//update fullname 
+adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res) => {
+    const {cmd} = req.params 
+    const {id, fname, mname, lname, type, course, year} = req.body
+    try {
+        if(xs(cmd) === "fullname"){
+            if(fname && mname && lname){
+                //check if user exists 
+                await user.find({_id: {$eq: xs(id)}}, {_id: 1}).then( async (userData) => {
+                    if(userData.length > 0) {
+                        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {firstname: xs(toUppercase(fname)), middlename:  xs(toUppercase(mname)), lastname:  xs(toUppercase(lname))}}).then( () => {
+                            return res.send({
+                                status: true, 
+                                msg: "Successfully updated"
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            msg: "User not found"
+                        })
+                    }
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Invalid fullname"
+                })
+            }
+        } else if(xs(cmd) === 'type') {
+            //check if user exists 
+            if(type){
+                await user.find({_id: {$eq: xs(id)}}, {_id: 1}).then( async (userData) => {
+                    if(userData.length > 0) {
+                        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {type: xs(type)}}).then( () => {
+                            return res.send({
+                                status: true, 
+                                msg: "Successfully updated"
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            msg: "User not found"
+                        })
+                    }
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Invalid user type"
+                })
+            }
+        } else if(xs(cmd) === 'cy') {
+            if(course && year){
+                //check if user exists 
+                await user.find({_id: {$eq: xs(id)}}, {_id: 1}).then( async (userData) => {
+                    if(userData.length > 0) {
+                        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {course: xs(course), year: xs(year)}}).then( () => {
+                            return res.send({
+                                status: true, 
+                                msg: "Successfully updated"
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            msg: "User not found"
+                        })
+                    }
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "Invalid course / year"
+                })
+            }
+        }
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
 //reset all users account 
 adminrouter.post('/control/users/reset-users-account/', isadmin, limit, async (req, res) => {
     try {

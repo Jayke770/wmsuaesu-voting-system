@@ -43,7 +43,7 @@
     <div class="grid grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 gap-2 px-2.5 py-3 pt-0">
         <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 h-[fit-content] cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
             <span class="dark:text-purple-600">Name</span>
-            <form class="grid grid-cols-2 gap-1">
+            <form class="fullname_update grid grid-cols-2 gap-1">
                 <input type="hidden" name="id" value="<%- userData._id %>">
                 <input value="<%- userData.firstname %>" autocapitalize="words" name="fname" placeholder="Firstname" required class="mt-1 dark:bg-darkBlue-100 dark_border dark:text-gray-200 text-input w-full px-2.5 py-2 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
                 <input value="<%- userData.middlename %>" autocapitalize="words" name="mname" placeholder="Middlename" required class="mt-1 dark:bg-darkBlue-100 dark_border dark:text-gray-200 text-input w-full px-2.5 py-2 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
@@ -54,7 +54,7 @@
         </div>
         <div style="animation-delay: .500s;" class="animate__animated animate__fadeInUp ms-500 h-[fit-content] cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
             <span class="dark:text-purple-600">User type</span>
-            <form class="flex flex-col gap-1">
+            <form class="user_type_update flex flex-col gap-1">
                 <input type="hidden" name="id" value="<%- userData._id %>">
                 <select name="type" required class="mt-1 dark:bg-darkBlue-100 dark_border dark:text-gray-200 text-input w-full px-2.5 py-2 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
                     <% if(userData.type === "Candidate") { %> 
@@ -71,12 +71,12 @@
         </div>
         <div style="animation-delay: .750s;" class="animate__animated animate__fadeInUp ms-500 h-[fit-content] cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
             <span class="dark:text-purple-600">Course & Year</span>
-            <form class="grid grid-cols-2 gap-1">
+            <form class="cy_update grid grid-cols-2 gap-1">
                 <input type="hidden" name="id" value="<%- userData._id %>">
                 <select name="course" required class="mt-1 dark:bg-darkBlue-100 dark_border dark:text-gray-200 text-input w-full px-2.5 py-2 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
                     <% for(let i = 0; i < data.courses.length; i++) { %>
                         <% if(data.courses[i].id === userData.course) { %> 
-                            <option selected value=""><%- Data.course(userData.course) %></option>
+                            <option selected value="<%- userData.course %>"><%- Data.course(userData.course) %></option>
                         <% } else { %>
                             <option value="<%- data.courses[i].id %>"><%- data.courses[i].type %></option>
                         <% } %>
@@ -85,7 +85,7 @@
                 <select name="year" required class="mt-1 dark:bg-darkBlue-100 dark_border dark:text-gray-200 text-input w-full px-2.5 py-2 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
                     <% for(let i = 0; i < data.year.length; i++) { %>
                         <% if(data.year[i].id === userData.year) { %> 
-                            <option selected value=""><%- Data.year(userData.year) %></option>
+                            <option selected value="<%- userData.year %>"><%- Data.year(userData.year) %></option>
                         <% } else { %>
                             <option value="<%- data.year[i].id %>"><%- data.year[i].type %></option>
                         <% } %>

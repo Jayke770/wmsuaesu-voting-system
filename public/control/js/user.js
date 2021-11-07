@@ -349,6 +349,117 @@ $(document).ready( function (){
                 }
             })
         }
+    }) 
+    //update user fullname 
+    let update_flname = false
+    $(".info_main_list").delegate(".fullname_update", "submit", async function(e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html()
+        if(!update_flname){
+            try {
+                update_flname = true
+                $(this).find("button[type='submit']").html(Data.loader())  
+                const req = await fetchtimeout('/control/users/update/fullname/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok) {
+                    const res = await req.json() 
+                    update_flname = false
+                    $(this).find("button[type='submit']").html(def)  
+                    toast.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.msg, 
+                        timer: 2500
+                    }).then( async () => {
+                        res.status ? await Data.info_menu(id, "account") : console.clear()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                update_flname = false
+                $(this).find("button[type='submit']").html(def)  
+                Data.error(e.message)
+            }     
+        }
+    })
+    //update user type
+    let update_type= false
+    $(".info_main_list").delegate(".user_type_update", "submit", async function(e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html()
+        if(!update_type){
+            try {
+                update_type = true
+                $(this).find("button[type='submit']").html(Data.loader())  
+                const req = await fetchtimeout('/control/users/update/type/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok) {
+                    const res = await req.json() 
+                    update_type = false
+                    $(this).find("button[type='submit']").html(def)  
+                    toast.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.msg, 
+                        timer: 2500
+                    }).then( async () => {
+                        res.status ? await Data.info_menu(id, "account") : console.clear()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                update_type = false
+                $(this).find("button[type='submit']").html(def)  
+                Data.error(e.message)
+            }     
+        }
+    })
+    //update course & year
+    let update_cy = false
+    $(".info_main_list").delegate(".cy_update", "submit", async function(e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html()
+        if(!update_cy){
+            try {
+                update_cy = true
+                $(this).find("button[type='submit']").html(Data.loader())  
+                const req = await fetchtimeout('/control/users/update/cy/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok) {
+                    const res = await req.json() 
+                    update_cy = false
+                    $(this).find("button[type='submit']").html(def)  
+                    toast.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.msg, 
+                        timer: 2500
+                    }).then( async () => {
+                        res.status ? await Data.info_menu(id, "account") : console.clear()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                update_cy = false
+                $(this).find("button[type='submit']").html(def)  
+                Data.error(e.message)
+            }     
+        }
     })
     const Data = {
         users: async () => {
@@ -493,6 +604,21 @@ $(document).ready( function (){
             } catch (e) {
                 throw new Error(e)
             }
+        }, 
+        loader: () => {
+            return '<i class="fad animate-spin fa-spinner-third"></i>'
+        }, 
+        error: (msg) => {
+            Snackbar.show({ 
+                text: `
+                    <div class="flex justify-center items-center gap-2"> 
+                        <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                        <span>${msg}</span>
+                    </div>
+                `, 
+                duration: 3000,
+                showAction: false
+            })
         }
     }
     //socket events 
