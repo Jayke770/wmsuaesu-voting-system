@@ -3468,7 +3468,7 @@ adminrouter.post('/control/users/email/', isadmin, limit, async (req, res) => {
         console.log(e)
         return res.status(500).send()
     }
-}) 
+})
 //update fullname 
 adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res) => {
     const {cmd} = req.params 
@@ -3616,7 +3616,43 @@ adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res)
                     throw new Error(e)
                 }) 
             }
+        } else {
+            return res.send({
+                status: false, 
+                msg: 'Invalid Command'
+            })
         }
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//reset specific user account 
+adminrouter.post('/control/users/reset-account/', isadmin, limit, async (req, res) => {
+    const {id} = req.body 
+    const {student_id, firstname, email} = await user_data(id)
+    try {
+        //hash
+        const new_account = {
+            username: `${firstname.toUpperCase()}-${student_id}`, 
+            password: await hash(`WMSU-${student_id}`, 10),
+        }
+        //not hash 
+        const account = {
+            username: `${firstname.toUpperCase()}-${student_id}`, 
+            password: `WMSU-${student_id}`,
+        } 
+        await user.updateOne({_id: {$eq: xs(id)}}, {$set: { username: new_account.username, password: new_account.password }}).then( async () => {
+            if(email.email) {
+                restore_account_email(email.email, firstname, account)
+                return res.send({
+                    status: true, 
+                    msg: 'Successfully reset', 
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
     } catch (e) {
         console.log(e) 
         return res.status(500).send()
@@ -3628,10 +3664,12 @@ adminrouter.post('/control/users/reset-users-account/', isadmin, limit, async (r
         await user.find({}, {_id: 1, firstname: 1, student_id: 1, username: 1, password: 1, email: 1}).then( async (usersData) => {
             if(usersData.length > 0) {
                 for(let i = 0; i < usersData.length; i++){
+                    //hash
                     const new_account = {
                         username: `${usersData[i].firstname.toUpperCase()}-${usersData[i].student_id}`, 
                         password: await hash(`WMSU-${usersData[i].student_id}`, 10)
                     }
+                    //not hash
                     const account = {
                         username: `${usersData[i].firstname.toUpperCase()}-${usersData[i].student_id}`,
                         password: `WMSU-${usersData[i].student_id}`
@@ -3664,6 +3702,7 @@ adminrouter.post('/control/users/reset-users-account/', isadmin, limit, async (r
         return res.status(500).send()
     }
 })
+//print all users
 adminrouter.get('/control/users/print/',isadmin, normal_limit, async (req, res) => {
     try {
         await user.find({}, {student_id: 1, firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, username: 1, password: 1}).sort({lastname: 1}).then( async (users) => {

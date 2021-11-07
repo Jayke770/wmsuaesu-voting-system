@@ -64,7 +64,8 @@ $(document).ready(() => {
         $(".add_multiple_voters").removeClass("flex")
         $(".add_multiple_voters").addClass("hidden")
         $(".add_search_voter").addClass("flex")
-        $(".add_search_voter").removeClass("hidden")
+        $(".add_search_voter").removeClass("hidden") 
+        $(".user_info").find(".list_users").html('')
     })
     //when the select input of course & year is change 
     let crs_ch = false
@@ -75,7 +76,7 @@ $(document).ready(() => {
                 data.append("vcourse", $(".add_multiple_voters").find("select[name='course']").val() )
                 data.append("vyear", $(".add_multiple_voters").find("select[name='year']").val() )
                 crs_ch = true 
-                $(".add_multiple_voters").next().html(election.loader())
+                $(".add_multiple_voters").next().next().html(election.loader())
                 const req = await fetchtimeout("/control/elections/list-of-users/", {
                     method: 'POST', 
                     headers: {
@@ -93,7 +94,7 @@ $(document).ready(() => {
             } catch (e) {
                 console.log(e)
                 crs_ch = false 
-                $(".add_multiple_voters").next().html('')
+                $(".add_multiple_voters").next().next().html('')
             }
         }
     })

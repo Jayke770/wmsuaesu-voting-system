@@ -1326,63 +1326,6 @@ router.post('/account/settings/:menu/', normal_limit, isloggedin, async (req, re
         return res.status(500).send()
     }
 })
-//change user type
-router.post('/account/settings/menu/change-user-type/', normal_limit, isloggedin, async (req, res) => {
-    const {type} = req.body
-    const {myid} = req.session 
-
-    try {
-        if(type){
-            await user.find({_id: {$eq: xs(myid)}}, {"settings.usertype": 1}).then( async (usertype) => {
-                if(usertype.length > 0){
-                    if(usertype[0].settings.usertype.status === 'Accepted'){
-                        return res.send({
-                            status: false, 
-                            msg: 'User Type already changed'
-                        })
-                    } else {
-                        if(usertype[0].settings.usertype.status === 'Pending'){
-                            return res.send({
-                                status: false, 
-                                msg: 'Request is already pending'
-                            })
-                        } else {
-                            await user.updateOne({
-                                _id: {$eq: xs(myid)}
-                            }, {$set: {
-                                "settings.usertype.status": 'Pending', 
-                                "settings.usertype.value": xs(type), 
-                                "settings.usertype.requested": moment().tz("Asia/Manila").format()
-                            }}).then( () => {
-                                return res.send({
-                                    status: true, 
-                                    msg: 'Request submitted'
-                                })
-                            }).catch( (e) => {
-                                throw new Error(e)
-                            })
-                        }
-                    }
-                } else {
-                    return res.send({
-                        status: false, 
-                        msg: 'User ID not found'
-                    })
-                }
-            }).catch( (e) => {
-                throw new Error(e)
-            })
-        } else {
-            return res.send({
-                status: false, 
-                msg: 'Select new user type'
-            })
-        }
-    } catch (e) {
-        console.log(e)
-        return res.status(500).send()
-    }
-})
 //change e-mail 
 router.post('/account/settings/menu/change-e-mail', normal_limit, isloggedin, async (req, res) => {
     const {nmail, pass} = req.body 

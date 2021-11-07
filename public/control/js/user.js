@@ -498,6 +498,43 @@ $(document).ready( function (){
             }     
         }
     })
+    //reset account 
+    let reset_account = false 
+    $(".info_main_list").delegate(".reset_account", "click", async function(e) {
+        e.preventDefault() 
+        const def = $(this).html()
+        if(!reset_account){
+            try {
+                reset_account = false 
+                $(this).html(Data.loader()) 
+                let data = new FormData() 
+                data.append("id", id)
+                const req = await fetchtimeout('/control/users/reset-account/', {
+                    method: 'POST', 
+                    headers:{
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok) {
+                    const res = await req.json() 
+                    reset_account = false 
+                    $(this).html(def)
+                    toast.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.msg, 
+                        timer: 2500
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                reset_account = false 
+                $(this).html(def)
+                Data.error(e.message)
+            }
+        }
+    })
     const Data = {
         users: async () => {
             try {

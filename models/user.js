@@ -75,21 +75,6 @@ const user =  new mongoose.Schema({
             type: String
         }
     },
-    settings:{
-        usertype: {
-            status: {
-                type: String, 
-                default: ''
-            }, 
-            value: {
-                type: String, 
-                default: ''
-            },
-            requested: {
-                type: String
-            }
-        }
-    },
     profile: {},
     created: {
         type: Date, 
