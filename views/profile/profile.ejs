@@ -20,6 +20,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="theme-color" class="theme-color" content="#6b21a8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%- `${userData.firstname} ${userData.middlename} ${userData.lastname}` %></title>
@@ -46,7 +47,7 @@
         <div class="w-full py-2">
         <div class="float-left">
             <div class="flex flex-row justify-center items-center px-3">
-                <a class="rpl rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-xl cursor-pointer mr-1 last:mr-0">
+                <a href="/home" class="rpl rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-xl cursor-pointer mr-1 last:mr-0">
                     <i class="fa fa-arrow-circle-left"></i>
                 </a>
             </div>
@@ -64,8 +65,8 @@
         </div>
     </div>
     <div style="display: none;" class="main container">
-        <div class="container h-[calc(100vh-150px)] shadow-md bg-darkBlue-200 flex flex-col items-start">
-            <div class="transition-all relative container h-3/4 sm:h-[65%] flex px-52 xl:px-20 md:px-10 sm:px-0">
+        <div class="container h-[calc(100vh-150px)] sm:h-[70vh] shadow-md bg-darkBlue-200 flex flex-col items-start">
+            <div class="transition-all relative container h-3/4 sm:h-[70%] flex px-52 xl:px-20 md:px-10 sm:px-0">
                 <img class="transition-all h-full w-full object-cover rounded-b-2xl shadow-md" src="/assets/image.jpg">
                 <div class="absolute -bottom-20 pl-4 sm:pl-0 sm:flex sm:w-full sm:justify-center transition-all">
                     <div class="relative">

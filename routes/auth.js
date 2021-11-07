@@ -349,7 +349,7 @@ module.exports = {
       }
     })
   },
-  verify_device: (fname, email, device, user_id) => {Online 
+  verify_device: (fname, email, device, user_id) => {
     const transporter = nodemailer.createTransport({
       service: process.env.emailservice,
       auth: {

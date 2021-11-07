@@ -1840,7 +1840,7 @@ router.post('/account/settings/secure/verify-device/', normal_limit, isloggedin,
             await user.updateOne({
                 _id: {$eq: xs(myid)}, 
                 devices: {$elemMatch: {id: xs(deviceData.id)}}
-            }, {$set: {"devices.$.status": "Verifying"}}).then( () => {
+            }, {$set: {"devices.$.status": "Verifying"}}).then( (f) => {
                 verify_device(firstname, email.email, deviceData, myid)
                 return res.send({
                     status: true, 
