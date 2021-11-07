@@ -461,6 +461,43 @@ $(document).ready( function (){
             }     
         }
     })
+    //update account
+    let update_account = false
+    $(".info_main_list").delegate(".update_account", "submit", async function(e) {
+        e.preventDefault() 
+        const def = $(this).find("button[type='submit']").html()
+        if(!update_account){
+            try {
+                update_account = true
+                $(this).find("button[type='submit']").html(Data.loader())  
+                const req = await fetchtimeout('/control/users/update/account/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: new FormData(this)
+                })
+                if(req.ok) {
+                    const res = await req.json() 
+                    update_account = false
+                    $(this).find("button[type='submit']").html(def)  
+                    toast.fire({
+                        icon: res.status ? 'success' : 'info', 
+                        title: res.msg, 
+                        timer: 2500
+                    }).then( async () => {
+                        res.status ? await Data.info_menu(id, "account") : console.clear()
+                    })
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                update_account = false
+                $(this).find("button[type='submit']").html(def)  
+                Data.error(e.message)
+            }     
+        }
+    })
     const Data = {
         users: async () => {
             try {

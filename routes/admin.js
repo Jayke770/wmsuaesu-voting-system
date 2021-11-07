@@ -8,7 +8,7 @@ const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
-const {restore_account_email} = require('./auth')
+const {restore_account_email, change_account_cred} = require('./auth')
 const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myprofile, color, user_data} = require('./functions')
 const genpass = require('generate-password')
 const xs = require('xss')
@@ -3472,7 +3472,8 @@ adminrouter.post('/control/users/email/', isadmin, limit, async (req, res) => {
 //update fullname 
 adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res) => {
     const {cmd} = req.params 
-    const {id, fname, mname, lname, type, course, year} = req.body
+    const {id, fname, mname, lname, type, course, year, usr, pass} = req.body
+    const {firstname, email} = await user_data(id)
     try {
         if(xs(cmd) === "fullname"){
             if(fname && mname && lname){
@@ -3557,6 +3558,63 @@ adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res)
                     status: false, 
                     msg: "Invalid course / year"
                 })
+            }
+        } else if(xs(cmd) === "account") {
+            if(xs(usr) === process.env.admin_username || xs(pass) === process.env.admin_password) {
+                return res.send({
+                    status: false, 
+                    msg: 'Invalid Username / Password'
+                })
+            } else {
+                let thesame_pass = false
+                //check username 
+                await user.find({username: {$eq: xs(usr)}}).then( async (usrname) => {
+                    if(usrname.length > 0) {
+                        return res.send({
+                            status: false, 
+                            msg: 'Username is already taken'
+                        })
+                    } else {
+                        //check password 
+                        await user.find({}, {password: 1}).then( async (usrpass) => {
+                            if(usrpass.length > 0) {
+                                for(let i = 0; i < usrpass.length; i++){
+                                    if(await compareHash(xs(pass), usrpass[i].password)) {
+                                        thesame_pass = true 
+                                        break
+                                    }
+                                }
+                            } else {
+                                thesame_pass = false
+                            }
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                        
+                        if(!thesame_pass){
+                            const account = {
+                                username: xs(usr), 
+                                password: xs(pass)
+                            }
+                            await user.updateOne({_id: {$eq: xs(id)}}, {$set: {username: xs(usr), password: await hash(xs(pass), 10)}}).then( (p) => {
+                                change_account_cred(email.email, firstname, account)
+                                return res.send({
+                                    status: true, 
+                                    msg: 'Successfully updated'
+                                })
+                            }).catch( (e) => {
+                                throw new Error(e)
+                            })
+                        } else {
+                            return res.send({
+                                status: false, 
+                                msg: 'Password is already taken'
+                            })
+                        }
+                    }
+                }).catch( (e) => {
+                    throw new Error(e)
+                }) 
             }
         }
     } catch (e) {
