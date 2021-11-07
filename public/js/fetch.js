@@ -1,6 +1,6 @@
 /* fetch with timeout */
 async function fetchtimeout(source, options = {}){
-    const {timeout = 60000} = options 
+    const {timeout = 600000} = options 
     $(".lazy-progress-bar").show(100)
     const controller = new AbortController() 
     const i = setTimeout( () => { 

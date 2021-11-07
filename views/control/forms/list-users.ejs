@@ -69,20 +69,59 @@
             <p class="text-gray-600">Made with ❤️  by Master</p>
         </div>
     </div>
+    <script src="/js/theme.js"></script>
     <script>
         $(document).ready( async () => {
-            var element = document.getElementById('try')
-            var opt = {
-                margin:       0.01,
-                filename:     'users.pdf',
-                image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'mm', format: 'letter', orientation: 'l' }
-            }
-            await html2pdf().set(opt).from(element).save()
-            setTimeout(() => {
-                window.close()
-            }, 500)
+            Swal.fire({
+                icon: 'info', 
+                title: 'Download all users', 
+                html: 'This will generate a pdf file that contains all the users', 
+                confirmButtonText: 'Download', 
+                showDenyButton: true,
+                denyButtonText: 'Cancel', 
+                backdrop: true, 
+                allowOutsideClick: false
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Generating pdf file', 
+                        html: 'Please wait..',
+                        showConfirmButton: false,
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            var element = document.getElementById('try')
+                            var opt = {
+                                margin:       0.01,
+                                filename:     'users.pdf',
+                                image:        { type: 'jpeg', quality: 1 },
+                                html2canvas:  { scale: 2 },
+                                jsPDF:        { unit: 'mm', format: 'letter', orientation: 'l' }
+                            }
+                            await html2pdf().set(opt).from(element).save()
+                            setTimeout(() => {
+                                Swal.fire({
+                                    icon: 'success', 
+                                    title: 'PDF Successfully generated', 
+                                    html: 'You can now close this tab',
+                                    confirmButtonText: 'Close this tab', 
+                                    showDenyButton: true,
+                                    denyButtonText: 'Cancel', 
+                                    backdrop: true, 
+                                    allowOutsideClick: false,
+                                }).then( (a) => {
+                                    if(a.isConfirmed){
+                                        window.close()
+                                    }
+                                })
+                            }, 500)
+                        }
+                    })
+                    
+                }
+            })
         })
     </script>
 </body>

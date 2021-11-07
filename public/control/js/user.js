@@ -289,6 +289,67 @@ $(document).ready( function (){
             child.removeClass(child.attr("animate-out"))
         }, 500)
     })
+    //reset all users account 
+    let reset_acc = false
+    $(".reset_all_users_account").click( () => {
+        if(!reset_acc){
+            Swal.fire({
+                icon: 'warning', 
+                title: 'Reset all users account', 
+                html: 'Resetting all users acccount will restore the prevoiusly system generated username & password', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                confirmButtonText: "Reset", 
+                showDenyButton: true, 
+                denyButtonText: "Cancel"
+            }).then( (a) => {
+                if(a.isConfirmed) {
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Resetting all users account', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false,
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            try {
+                                reset_acc = true
+                                const req = await fetchtimeout('/control/users/reset-users-account/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    reset_acc = false
+                                    Swal.fire({
+                                        icon: res.status ? 'success' : 'info', 
+                                        title: res.txt, 
+                                        html: res.msg, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false, 
+                                    })
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                reset_acc = false 
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false, 
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
     const Data = {
         users: async () => {
             try {
