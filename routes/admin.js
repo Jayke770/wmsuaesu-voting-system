@@ -34,7 +34,7 @@ adminrouter.get('/profile/:id/', normal_limit, async (req, res) => {
                         'Content-Type': 'image/png',
                         'Content-Length': img.length
                     })
-                    res.end(img)
+                    return res.end(img)
                 } else {
                     return res.status(404).send()
                 }
@@ -46,6 +46,7 @@ adminrouter.get('/profile/:id/', normal_limit, async (req, res) => {
             return res.status(500).send()
         }
     } else {
+        console.log(e)
         return res.status(401).send()
     }
 })
@@ -3054,6 +3055,7 @@ adminrouter.get('/control/users/', normal_limit, isadmin, async (req, res) => {
             csrf: req.csrfToken()
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })

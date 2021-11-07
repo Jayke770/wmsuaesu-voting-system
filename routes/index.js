@@ -21,6 +21,28 @@ const fs = require('fs-extra')
 const moment = require('moment-timezone')
 const uaParser = require('ua-parser-js')
 const emailValidator = require('is-email')
+
+//profile 
+router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
+    const {id} = req.params 
+    const {myid} = req.session
+    try {
+        if(id == myid.toString()){
+            return res.render('profile/profile', {
+                userData: await user_data(id), 
+                data: {
+                    courses: await course(), 
+                    year: await year()
+                }
+            })
+        } else {
+            console.log('fasfafs')
+        }
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).render('error/500')
+    }
+})
 //welcome page  contains login page ang registration
 router.get('/', authenticated, normal_limit, async (req, res) => {
     try {

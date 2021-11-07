@@ -1,17 +1,16 @@
- <!-- backend -->
- <% 
-    const user_data = {
-        course: (id) => {
-            for(let i = 0; i < course.length; i++){
-                if(id === course[i].id){
-                    return course[i].type
+<% 
+    const Data = {
+        mycourse: (id) => {
+            for(let c = 0; c < data.courses.length; c++) {
+                if(id === data.courses[c].id){
+                    return data.courses[c].type
                 }
             }
         }, 
-        year: (id) => {
-            for(let i = 0; i < year.length; i++){
-                if(id === year[i].id){
-                    return year[i].type
+        myyear: (id) => {
+            for(let y = 0; y < data.year.length; y++) {
+                if(id === data.year[y].id){
+                    return data.year[y].type
                 }
             }
         }
@@ -23,53 +22,67 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%- `${data.firstname} ${data.middlename} ${data.lastname}` %></title>
+    <title><%- `${userData.firstname} ${userData.middlename} ${userData.lastname}` %></title>
     <%- include('../cdn/_profile') %>
-    <link rel="shortcut icon" data="<%- `${data.firstname.split("")[0].toUpperCase()} ${data.lastname.split("")[0].toUpperCase()}` %>" class="profile-icon" href="" type="image/x-png">
+    <link rel="shortcut icon" href="/profile/<%- userData.student_id %>" type="image/x-png">
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <script>
+        document.onreadystatechange = function () {
+            setTimeout( () => {
+                $(".loading").remove() 
+                $(".main").show()
+            }, 500)
+        }
+    </script>
 </head>
 <body class="bg-gray-300 dark:bg-[#090c10]">
-    <div class="flex w-full justify-center h-[70vh] sm:h-[50vh]">
-        <div class="w-4/5 sm:w-full h-full relative transition-all">
-            <div class="z-0 absolute -bottom-16 px-3 w-full sm:flex sm:justify-center">
-                <img class="rounded-full object-cover w-[150px] profile-image" data="<%- `${data.firstname.split("")[0].toUpperCase()} ${data.lastname.split("")[0].toUpperCase()}` %>" alt="profile" src="">
-            </div>
-            <div class="absolute flex flex-row justify-center right-1 bottom-1 p-2 z-20">
-                <a class="text-2xl cursor-pointer text-rose-600">
-                    <i class="fas fa-heart"></i>
+     <!-- Lazy loading -->
+     <div class="loading flex justify-center w-screen h-screen items-center">
+        <%- include('../lazy/loading') %>
+    </div>
+    <!-- Lazy progresbar -->
+    <%- include('../lazy/loading-progress') %>
+    <div class="dark:bg-[#161b22] bg-gray-100 shadow-md sticky flex w-full transition-all top-0 z-10">
+        <div class="w-full py-2">
+        <div class="float-left">
+            <div class="flex flex-row justify-center items-center px-3">
+                <a class="rpl rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-xl cursor-pointer mr-1 last:mr-0">
+                    <i class="fa fa-arrow-circle-left"></i>
                 </a>
             </div>
-            <img class="w-full h-full object-cover rounded-b-2xl" alt="image" src="/assets/image.jpg">
+        </div>
+        <div class="float-right h-full hidden">
+            <div class="flex flex-row gap-4 mr-1 justify-center items-center px-3 h-full">
+                <a class="rounded-lg transition-all p-[6px] text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
+                    <i class="far fa-bell"></i>
+                </a>
+                <a class="rounded-lg transition-all peer p-[8px] text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
+                    <i class="far fa-comment-lines"></i>
+                </a>
+            </div>
+            </div>
         </div>
     </div>
-    <div class="mt-28 flex flex-col items-center justify-center">
-        <div class="w-4/5 sm:w-[95%]">
-            <h1 class="dark:text-gray-300 text-2xl">Visitors</h1>
-        </div>
-        <div class="w-4/5 sm:w-[95%] flex flex-row gap-2 py-3 overflow-y-auto">
-            <% for (let i = 0; i < 50; i++) { %>
-                <img class="rounded-full object-cover w-16 h-16" alt="profile" src="/assets/logo.png">
-            <% } %>
-        </div>
-        <div class="mt-10 w-4/5 sm:w-[95%] py-3 transition-all">
-            <div class="grid grid-cols-3 md:grid-cols-none gap-2 transition-all">
-                <div class="flex flex-col gap-4">
-                    <% if(data.bio !== "") { %> 
-                        <div class="p-2 rounded-md dark:bg-darkBlue-secondary shadow-xl">
-                            <p class="font-normal px-2 text-xl dark:text-purple-600">Bio</p>
-                            <div class="p-2 dark:text-gray-400 h-48 overflow-x-auto break-words"></div>
-                        </div>
-                    <% } %>
-                    <div class="p-2 rounded-md dark:bg-darkBlue-secondary shadow-xl">
-                        <p class="font-normal px-2 text-xl dark:text-purple-600">Course & Year</p>
-                        <div class="p-2 dark:text-gray-400"><%- `${user_data.course(data.course)} ${user_data.year(data.year)}` %></div>
-                    </div>
-                    <div class="p-2 rounded-md dark:bg-darkBlue-secondary shadow-xl">
-                        <p class="font-normal px-2 text-xl dark:text-purple-600">Account Created</p>
-                        <div class="p-2 dark:text-gray-400 time" data="<%- data.created %>">...</div>
+    <div style="display: none;" class="main container">
+        <div class="container h-[calc(100vh-150px)] shadow-md bg-darkBlue-200 flex flex-col items-start">
+            <div class="transition-all relative container h-3/4 sm:h-[65%] flex px-52 xl:px-20 md:px-10 sm:px-0">
+                <img class="transition-all h-full w-full object-cover rounded-b-2xl shadow-md" src="/assets/image.jpg">
+                <div class="absolute -bottom-20 pl-4 sm:pl-0 sm:flex sm:w-full sm:justify-center transition-all">
+                    <div class="relative">
+                        <img class="h-44 w-44 object-cover rounded-full shadow-md" src="/profile/<%- userData.student_id %>">
+                        <button class="rpl absolute -right-1 bottom-7 rounded-full py-2 px-3 dark:bg-darkBlue-100 focus:outline-none" type="button">
+                            <i class="fa fa-camera dark:text-gray-300"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="col-span-2">fsaf</div>
+                <button class="rpl absolute bottom-4 right-56 xl:right-24 md:right-14 sm:right-2 flex flex-row gap-2 justify-center items-center rounded-md py-1.5 sm:py-2 px-3 dark:bg-bluegray-100 focus:outline-none" type="button">
+                    <i class="fa fa-camera"></i>
+                    <span class="dark:text-bluegray-900 text-base md:hidden">Edit Cover Photo</span>
+                </button>
+            </div>
+            <div class="container transition-all pl-[420px] sm:pl-0 sm:pt-[80px] xl:pl-72 md:pl-60 flex flex-col sm:justify-center sm:items-center">
+                <span class="dark:text-gray-300 text-3xl sm:text-2xl font-semibold pt-4 sm:text-center"><%- `${userData.firstname} ${userData.middlename} ${userData.lastname}` %></span>
+                <span class="text-base dark:text-gray-400 pt-1"><%- `${Data.mycourse(userData.course)} ${Data.myyear(userData.year)}` %></span>
             </div>
         </div>
     </div>
@@ -77,7 +90,19 @@
     <script src="/js/fetch.js"></script>
     <script src="/js/time.js"></script>
     <script src="/js/profile.js"></script>
-    <script src="/js/avatar.js"></script>
-    <script src="/js/color.js"></script>
+    <script>
+        $.ripple(".rpl", {
+                debug: false,
+                on: 'mousedown',
+                opacity: 0.3,
+                color: "auto",
+                multi: false,
+                duration: 0.7,
+                rate: function(pxPerSecond) {
+                    return pxPerSecond;
+                },
+                easing: 'linear'
+            })
+    </script>
 </body>
 </html>
