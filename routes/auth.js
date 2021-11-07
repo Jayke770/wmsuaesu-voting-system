@@ -970,6 +970,7 @@ module.exports = {
     }
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
+        console.log("Not Sent", info)
         return false
       } else {
         console.log("Sent", info)
