@@ -48,7 +48,7 @@ module.exports = {
     }
     return next()
   },
-  send_verification_email: async (fname, email, id, email_id) => {
+  send_verification_email: (fname, email, id, email_id) => {
     const transporter = nodemailer.createTransport({
       service: process.env.emailservice,
       auth: {
@@ -340,7 +340,7 @@ module.exports = {
             </html>
             `
     }
-    await transporter.sendMail(mailOptions, function (error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         return false
       } else {
@@ -349,7 +349,7 @@ module.exports = {
       }
     })
   },
-  verify_device: async (fname, email, device, user_id) => {Online 
+  verify_device: (fname, email, device, user_id) => {Online 
     const transporter = nodemailer.createTransport({
       service: process.env.emailservice,
       auth: {
@@ -663,7 +663,7 @@ module.exports = {
   </html>
   `
     }
-    await transporter.sendMail(mailOptions, function (error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         return false
       } else {
@@ -672,7 +672,7 @@ module.exports = {
       }
     })
   }, 
-  restore_account_email: async (email, fname, account) => {
+  restore_account_email: (email, fname, account) => {
     const transporter = nodemailer.createTransport({
       service: process.env.emailservice,
       auth: {
@@ -968,7 +968,7 @@ module.exports = {
     </html>
     `
     }
-    await transporter.sendMail(mailOptions, function (error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         return false
       } else {

@@ -3485,7 +3485,7 @@ adminrouter.post('/control/users/reset-users-account/', isadmin, limit, async (r
                     }
                     await user.updateOne({_id: usersData[i]._id}, {$set: { username: new_account.username, password: new_account.password }}).then( async () => {
                         if(usersData[i].email.email) {
-                            await restore_account_email(usersData[i].email.email, usersData[i].firstname, account)
+                            restore_account_email(usersData[i].email.email, usersData[i].firstname, account)
                         }
                     }).catch( (e) => {
                         throw new Error(e)
