@@ -91,21 +91,17 @@ router.get('/home/profile/:id/cover/:sid/', limit, isloggedin, async (req, res) 
     try {
         await user.find({_id: {$eq: xs(myid)}, student_id: {$eq: xs(sid)}}, {photo: 1}).then( async (userData) => {
             if(userData.length > 0) {
-                // await fs.ensureDir('./uploads/')
-                // const base64img = userData[0].photo.cover 
-                // const basetmppath = './uploads/'
-                // const options = {'fileName': xs(sid), 'type':'png'}
-                // await base64_2_img(base64img, basetmppath, options) 
-                // return res.sendFile(`${process.cwd()}/uploads/${xs(sid)}.png`, (r) => {
-                //     console.log(r)
-                // })
-                const base64cover_img = userData[0].photo.cover 
-                const base64img = Buffer.from(base64cover_img, 'base64')
-                return res.writeHead(200, {
-                    'Content-Length': base64img.length
-                }).end(base64img)
+                if(userData[0].photo.cover){
+                    const base64cover_img = userData[0].photo.cover 
+                    const base64img = Buffer.from(base64cover_img, 'base64')
+                    return res.writeHead(200, {
+                        'Content-Length': base64img.length
+                    }).end(base64img)
+                } else {
+                    return res.sendFile('image.jpg', {root: "public/assets"})
+                }
             } else {
-                console.log('fasf')
+                return res.sendFile('image.jpg', {root: "public/assets"})
             }
         }).catch( (e) => {
             throw new Error(e)
