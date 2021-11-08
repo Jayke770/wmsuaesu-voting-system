@@ -20,6 +20,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="<%- csrf %>">
     <meta name="theme-color" class="theme-color" content="#6b21a8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,31 +66,58 @@
         </div>
     </div>
     <div style="display: none;" class="main container">
-        <div class="container h-[calc(100vh-150px)] sm:h-[70vh] shadow-md bg-darkBlue-200 flex flex-col items-start">
+        <div class="container h-[calc(100vh-150px)] sm:h-auto shadow-md bg-darkBlue-200 flex flex-col items-start">
             <div class="transition-all relative container h-3/4 sm:h-[70%] flex px-52 xl:px-20 md:px-10 sm:px-0">
-                <img class="transition-all h-full w-full object-cover rounded-b-2xl shadow-md" src="/assets/image.jpg">
+                <img class="user_cover_photo border-none transition-all h-full sm:h-[350px]  w-full object-cover rounded-b-2xl shadow-md" src="cover/<%- userData.student_id %>/">
                 <div class="absolute -bottom-20 pl-4 sm:pl-0 sm:flex sm:w-full sm:justify-center transition-all">
                     <div class="relative">
-                        <img class="h-44 w-44 object-cover rounded-full shadow-md" src="/profile/<%- userData.student_id %>">
-                        <button class="rpl absolute -right-1 bottom-7 rounded-full py-2 px-3 dark:bg-darkBlue-100 focus:outline-none" type="button">
+                        <img class="user_profile_photo border-none h-44 w-44 object-cover rounded-full shadow-md" src="/profile/<%- userData.student_id %>/">
+                        <button class="add_user_profile_photo rpl absolute -right-1 bottom-7 rounded-full py-2 px-3 dark:bg-darkBlue-100 focus:outline-none" type="button">
                             <i class="fa fa-camera dark:text-gray-300"></i>
                         </button>
+                        <input accept="image/*" class="hidden profile_photo" type="file">
                     </div>
                 </div>
-                <button class="rpl absolute bottom-4 right-56 xl:right-24 md:right-14 sm:right-2 flex flex-row gap-2 justify-center items-center rounded-md py-1.5 sm:py-2 px-3 dark:bg-bluegray-100 focus:outline-none" type="button">
+                <button class="add_cover_photo rpl shadow-lg cursor-pointer absolute bottom-4 right-56 xl:right-24 md:right-14 sm:right-2 flex flex-row gap-2 justify-center items-center rounded-md py-1.5 sm:py-2 px-3 dark:bg-bluegray-100 focus:outline-none" type="button">
                     <i class="fa fa-camera"></i>
                     <span class="dark:text-bluegray-900 text-base md:hidden">Edit Cover Photo</span>
                 </button>
+                <input accept="image/*" class="hidden cover_photo" type="file">
             </div>
-            <div class="container transition-all pl-[420px] sm:pl-0 sm:pt-[80px] xl:pl-72 md:pl-60 flex flex-col sm:justify-center sm:items-center">
+            <div class="container transition-all pl-[420px] sm:pl-0 sm:pt-[80px] sm:pb-2 xl:pl-72 md:pl-60 flex flex-col sm:justify-center sm:items-center">
                 <span class="dark:text-gray-300 text-3xl sm:text-2xl font-semibold pt-4 sm:text-center"><%- `${userData.firstname} ${userData.middlename} ${userData.lastname}` %></span>
                 <span class="text-base dark:text-gray-400 pt-1"><%- `${Data.mycourse(userData.course)} ${Data.myyear(userData.year)}` %></span>
             </div>
         </div>
     </div>
+    <% if(profile) { %> 
+        <!-- uploading -->
+        <div class="uploading_ fixed top-0 z-50 hidden justify-center items-center w-full h-full bg-darkBlue-primary/50">
+            <span animate-out="animate__animated animate__bounceOut ms-500" animate-in="animate__animated animate__bounceIn ms-500" class="uploading_main dark:text-gray-300 text-5xl font-semibold"></span>
+        </div>
+        <!-- confirms cover change -->
+        <div class="confirm_cover_change fixed top-0 z-30 hidden justify-end items-end p-2 w-full h-full">
+            <div animate-out="animate__animated animate__fadeOutDown ms-500" animate-in="animate__animated animate__fadeInUp ms-500" class="confirm_cover_change_main w-96 sm:w-full p-2 dark:bg-darkBlue-secondary rounded-md">
+                <div class="grid grid-cols-3 py-1 pl-2">
+                    <div class="col-span-2 flex justify-start items-center">
+                        <span class="dark:text-gray-300 font-medium">Apply current photo</span>
+                    </div>
+                    <div class="flex flex-row gap-1 items-end justify-end">
+                        <a data="confirm" class="confirm_cover_change_btn rpl cursor-pointer dark:text-green-600 text-green-700 text-2xl px-2 rounded-md">
+                            <i class="fad fa-check-circle"></i>
+                        </a>
+                        <a data="reject" class="confirm_cover_change_btn rpl cursor-pointer dark:text-red-500 text-red-600 text-2xl px-2 rounded-md">
+                            <i class="fad fa-times-circle"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
     <script src="/js/theme.js"></script>
     <script src="/js/fetch.js"></script>
     <script src="/js/time.js"></script>
+    <script src="/js/toast.js"></script>
     <script src="/js/profile.js"></script>
     <script>
         $.ripple(".rpl", {

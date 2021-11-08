@@ -11,17 +11,17 @@ const data = require('../models/data')
 const election = require('../models/election')
 const { authenticated, isadmin, isloggedin, take_photo, get_face, send_verification_email, verify_device} = require('./auth')
 const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash} = require('./functions')
-const { normal_limit } = require('./rate-limit')
+const { normal_limit, limit} = require('./rate-limit')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
 const nl2br = require("nl2br")
 const img2base64 = require('image-to-base64')
+const base64_2_img = require('base64-to-image')
 const path = require('path')
 const fs = require('fs-extra')
 const moment = require('moment-timezone')
 const uaParser = require('ua-parser-js')
 const emailValidator = require('is-email')
-
 //profile 
 router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
     const {id} = req.params 
@@ -29,11 +29,13 @@ router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
     try {
         if(id == myid.toString()){
             return res.render('profile/profile', {
+                profile: true,
                 userData: await user_data(id), 
                 data: {
                     courses: await course(), 
                     year: await year()
-                }
+                }, 
+                csrf: req.csrfToken()
             })
         } else {
             console.log('fasfafs')
@@ -41,6 +43,76 @@ router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
     } catch (e) {
         console.log(e) 
         return res.status(500).render('error/500')
+    }
+}) 
+//upload cover photo 
+router.post('/home/profile/:id/change-cover-photo/', limit, isloggedin, async (req, res) => {
+    const {coverPhoto} = req.files
+    const {myid} = req.session
+    try {
+        //check if user exists 
+        await user.find({_id: {$eq: xs(myid)}}).then( async (userData) => {
+            if(userData.length > 0) {
+                //ensure that file exists 
+                if(await fs.pathExists(coverPhoto[0].path)){
+                    await img2base64(coverPhoto[0].path).then( async (fl_res) => {
+                        await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {photo: {cover: fl_res}}}).then( () => {
+                            return res.send({
+                                status: true, 
+                                msg: "Successfully Uploaded"
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                } else {
+                    throw new Error('unknown')
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "User Not Found"
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+//get cover photo 
+router.get('/home/profile/:id/cover/:sid/', limit, isloggedin, async (req, res) => {
+    const {sid} = req.params 
+    const {myid} = req.session 
+
+    try {
+        await user.find({_id: {$eq: xs(myid)}, student_id: {$eq: xs(sid)}}, {photo: 1}).then( async (userData) => {
+            if(userData.length > 0) {
+                // await fs.ensureDir('./uploads/')
+                // const base64img = userData[0].photo.cover 
+                // const basetmppath = './uploads/'
+                // const options = {'fileName': xs(sid), 'type':'png'}
+                // await base64_2_img(base64img, basetmppath, options) 
+                // return res.sendFile(`${process.cwd()}/uploads/${xs(sid)}.png`, (r) => {
+                //     console.log(r)
+                // })
+                const base64cover_img = userData[0].photo.cover 
+                const base64img = Buffer.from(base64cover_img, 'base64')
+                return res.writeHead(200, {
+                    'Content-Length': base64img.length
+                }).end(base64img)
+            } else {
+                console.log('fasf')
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
     }
 })
 //welcome page  contains login page ang registration
@@ -196,6 +268,7 @@ router.post('/verify', normal_limit, async (req, res) => {
     }
 })
 router.post('/login', normal_limit, async (req, res) => {
+    console.log(req.body)
     const { auth_usr, auth_pass } = req.body
     const ua = xs(req.headers['user-agent'])
     const device = {

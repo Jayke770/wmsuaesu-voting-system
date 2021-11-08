@@ -5,6 +5,7 @@
   "author": "Jayke770",
   "license": "MIT",
   "dependencies": {
+    "base64-to-image": "^1.0.2",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "canvas": "^2.8.0",

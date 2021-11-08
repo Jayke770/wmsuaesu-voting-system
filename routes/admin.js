@@ -28,13 +28,12 @@ adminrouter.get('/profile/:id/', normal_limit, async (req, res) => {
                 student_id: {$eq: xs(id)}
             }, {firstname: 1, lastname: 1, profile: 1}).then( async (userData) => {
                 if(userData.length > 0){ 
-                    const im = myprofile(color.dark(), color.light(), `${userData[0].firstname.split('')[0]}${userData[0].lastname.split('')[0]}`).split(",")[1];
-                    const img = Buffer.from(im, 'base64');
-                    res.writeHead(200, {
+                    const im = myprofile(color.dark(), color.light(), `${userData[0].firstname.split('')[0]}${userData[0].lastname.split('')[0]}`).split(",")[1]
+                    const img = Buffer.from(im, 'base64')
+                    return res.writeHead(200, {
                         'Content-Type': 'image/png',
                         'Content-Length': img.length
-                    })
-                    return res.end(img)
+                    }).end(img)
                 } else {
                     return res.status(404).send()
                 }

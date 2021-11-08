@@ -75,7 +75,10 @@ const user =  new mongoose.Schema({
             type: String
         }
     },
-    profile: {},
+    photo: {
+        cover: {}, 
+        profile: {}
+    },
     created: {
         type: Date, 
         default: Date.now()

@@ -11,8 +11,6 @@ const session = require('express-session')
 const mongoose = require('mongoose')
 const mongodbstore = require('connect-mongodb-session')(session)
 const morgan = require('morgan')
-const multer = require('multer')
-const uploader = multer()
 const helmet = require('helmet')
 const cors = require('cors')
 const xs = require('xss')
@@ -24,6 +22,7 @@ const sharedsession = require('express-socket.io-session')
 const requestIp = require('request-ip')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
+const uploader = require('./routes/uploader')
 const {updateAdminSocketID, user_socket_id, election_handler, user_data, users_election_handler, course, mycourse, year, myyear} = require('./routes/functions') 
 //models 
 const election = require('./models/election')
@@ -71,14 +70,14 @@ app.use(
 app.use(morgan(':status :remote-addr :method :url :response-time ms', { stream: log_stream }))
 app.use(express.static(dir))
 app.use(requestIp.mw())
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(express.json()) // json 
-app.use(uploader.array())
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json()) // json
+app.use(uploader)
 app.use(cors())
 app.set('view engine', 'ejs')
 if(app.get('env') === 'production'){
     app.set('trust proxy', 1)
-} 
+}
 app.use(cookieParser())
 app.use(csrf({cookie: true}))
 app.use(appsession)
