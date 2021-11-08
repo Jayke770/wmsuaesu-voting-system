@@ -49,7 +49,7 @@ $(document).ready( () => {
                         var xhr = new window.XMLHttpRequest()
                         xhr.upload.addEventListener("progress", function(e) {
                             if (e.lengthComputable) {
-                                child.text(`${Math.floor(((e.loaded / e.total) * 100))} %`)
+                                child.text( Math.floor(((e.loaded / e.total) * 100)) === 100 ? "..." : `${Math.floor(((e.loaded / e.total) * 100))} %`)
                             }
                         }, false)
                         return xhr
