@@ -40,7 +40,7 @@ const user =  new mongoose.Schema({
     messages:{
         type: Array,
     },
-    hearts:{
+    fans:{
         type: Array,
     },
     comments:{
@@ -79,6 +79,7 @@ const user =  new mongoose.Schema({
         cover: {}, 
         profile: {}
     },
+    last_seen: {},
     created: {
         type: Date, 
         default: Date.now()

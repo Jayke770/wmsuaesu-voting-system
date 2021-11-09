@@ -20,6 +20,8 @@ const cookieParser = require('cookie-parser')
 const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
 const requestIp = require('request-ip')
+const fs = require('fs-extra')
+const moment = require('moment-timezone')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
 const uploader = require('./routes/uploader')
@@ -387,7 +389,11 @@ users_socket.on('connection', async (socket) => {
         await users.updateOne({
             _id: {$eq: xs(myid)}, 
             "devices.id": {$eq: xs(device)}
-        }, {$set: {socket_id: socket.id, "devices.$.status": 'Online'}}).then( () => {
+        }, {$set: {
+            socket_id: socket.id, 
+            "devices.$.status": 'Online', 
+            last_seen: ''
+        }}).then( () => {
             console.log("New User Connected with soket Id of ", socket.id,)
             admin_socket.emit('connected', {id: xs(myid)})
         })
@@ -399,7 +405,11 @@ users_socket.on('connection', async (socket) => {
         await users.updateOne({
             _id: {$eq: xs(myid)}, 
             "devices.id": {$eq: xs(device)}
-        }, {$set: {socket_id: 'Offline', "devices.$.status": 'Offline'}}).then( (h) => {
+        }, {$set: {
+            socket_id: 'Offline', 
+            "devices.$.status": 'Offline',
+            last_seen: moment().tz("Asia/Manila").format()
+        }}).then( (h) => {
             console.log("New User Diconnected with soket Id of ", socket_id)
             admin_socket.emit('user-disconnected', {id: xs(myid)})
         })
@@ -563,6 +573,8 @@ setInterval(async () => {
 async function start() {
     await election_handler()
     await users_election_handler()
+    await fs.remove(`${process.cwd()}/uploads/`)
+    await fs.remove(`${process.cwd()}/log/`)
     http.listen(port, () => {
         console.log(`Server Started on port ${port}`)
     })

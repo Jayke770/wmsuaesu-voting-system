@@ -38,8 +38,32 @@ router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
                 csrf: req.csrfToken()
             })
         } else {
-            console.log('fasfafs')
+            const userData = await user_data(id)
+            if(userData){
+                await user.updateOne({_id: {$eq: xs(id)}}, {$pull: {visitors: {$eq: xs(myid.toString())}}}).then( async (pl) => {
+                    console.log(pl)
+                    await user.updateOne({_id: {$eq: xs(id)}}, {$push: {visitors: {$eq: xs(myid.toString())}}}).then( async (ps) => {
+                        console.log(ps)
+                        return res.render('profile/profile', {
+                            profile: false,
+                            userData: userData, 
+                            data: {
+                                courses: await course(), 
+                                year: await year()
+                            }, 
+                            csrf: req.csrfToken()
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.status(404).render('error/404')
+            }
         }
+
     } catch (e) {
         console.log(e) 
         return res.status(500).render('error/500')
@@ -80,34 +104,6 @@ router.post('/home/profile/:id/change-cover-photo/', limit, isloggedin, async (r
             throw new Error(e)
         })
     } catch (e) {
-        return res.status(500).send()
-    }
-})
-//get cover photo 
-router.get('/home/profile/:id/cover/:sid/', limit, isloggedin, async (req, res) => {
-    const {sid} = req.params 
-    const {myid} = req.session 
-
-    try {
-        await user.find({_id: {$eq: xs(myid)}, student_id: {$eq: xs(sid)}}, {photo: 1}).then( async (userData) => {
-            if(userData.length > 0) {
-                if(userData[0].photo.cover){
-                    const base64cover_img = userData[0].photo.cover 
-                    const base64img = Buffer.from(base64cover_img, 'base64')
-                    return res.writeHead(200, {
-                        'Content-Length': base64img.length
-                    }).end(base64img)
-                } else {
-                    return res.sendFile('image.jpg', {root: "public/assets"})
-                }
-            } else {
-                return res.sendFile('image.jpg', {root: "public/assets"})
-            }
-        }).catch( (e) => {
-            throw new Error(e)
-        })
-    } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -263,8 +259,7 @@ router.post('/verify', normal_limit, async (req, res) => {
         return res.status(500).send()
     }
 })
-router.post('/login', normal_limit, async (req, res) => {
-    console.log(req.body)
+router.post('/login', limit, async (req, res) => {
     const { auth_usr, auth_pass } = req.body
     const ua = xs(req.headers['user-agent'])
     const device = {

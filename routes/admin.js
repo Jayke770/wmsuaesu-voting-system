@@ -49,6 +49,39 @@ adminrouter.get('/profile/:id/', normal_limit, async (req, res) => {
         return res.status(401).send()
     }
 })
+//get cover photo 
+adminrouter.get('/cover/:sid/', normal_limit,  async (req, res) => {
+    const {sid} = req.params 
+    const {myid, islogin} = req.session 
+
+    if(islogin) {
+        try {
+            await user.find({
+                student_id: {$eq: xs(sid)}
+            }, {photo: 1}).then( async (userData) => {
+                if(userData.length > 0) {
+                    if(userData[0].photo.cover){
+                        const base64cover_img = userData[0].photo.cover 
+                        const base64img = Buffer.from(base64cover_img, 'base64')
+                        return res.writeHead(200, {
+                            'Content-Length': base64img.length
+                        }).end(base64img)
+                    } else {
+                        return res.sendFile('image.jpg', {root: "public/assets"})
+                    }
+                } else {
+                    return res.sendFile('image.jpg', {root: "public/assets"})
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            return res.status(500).send()
+        }
+    } else {
+        return res.status(401).send()
+    }
+})
 /*##################################################################################### */
 adminrouter.get('/control/logout/', limit, isadmin, async (req, res) => {
     req.session.destroy() 

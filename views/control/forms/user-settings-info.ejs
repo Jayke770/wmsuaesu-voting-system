@@ -16,11 +16,14 @@
         },
     }
 %>
-<div class="flex flex-col gap-3 p-2">
-    <div style="animation-delay: .250s;" class="animate__animated animate__fadeInDown ms-500 flex justify-center items-center py-5">
-        <img class="w-40 h-40 object-cover rounded-full" src="/profile/<%- userData.student_id %>/">
+<div class="flex flex-col gap-3">
+    <div style="animation-delay: .250s;" class="animate__animated animate__fadeInDown ms-500 relative">
+        <img class="w-full h-96 sm:h-56 object-cover rounded-b-lg shadow-md" src="/cover/<%- userData.student_id %>/">
+        <div class="container absolute -bottom-20 flex justify-center items-center">
+            <img class="w-40 h-40 object-cover rounded-full shadow-md" src="/profile/<%- userData.student_id %>/">
+        </div>
     </div>
-    <div class="grid grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 transition-all gap-2 px-3 sm:px-0">
+    <div class="mt-20 grid grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 transition-all gap-2 px-3 sm:px-0">
         <div style="animation-delay: .500s;" class="rpl animate__animated animate__fadeInUp ms-500 cursor-pointer shadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
             <span class="dark:text-purple-600">Name</span>
             <span class="dark:text-gray-300/80"><%- `${userData.firstname} ${userData.middlename} ${userData.lastname}` %></span>
@@ -44,7 +47,7 @@
         <div style="animation-delay: 1.75s;" class="rpl animate__animated animate__fadeInUp ms-500 cursor-pointer hadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
             <span class="dark:text-purple-600">Active Status</span>
             <div class="container">
-                <% if(userData.socket_id === 'Online') { %> 
+                <% if(userData.socket_id !== 'Offline') { %> 
                     <span class="dark:bg-teal-700/40 bg-teal-600 dark:text-teal-500 text-gray-50 px-4 py-0.5 text-sm rounded-lg">Online</span>
                 <% } else { %> 
                     <span class="dark:bg-gray-700 bg-gray-600  text-gray-300 px-4 py-0.5 text-sm rounded-lg">Offline</span>

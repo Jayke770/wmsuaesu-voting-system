@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
     }
 })
 const uploader = multer({ storage: storage, }).fields([
-    {name: "coverPhoto", maxCount: 1}
+    {name: "coverPhoto", maxCount: 1}, 
+    {name: 'profilePhoto', maxCount: 1}
 ])
 module.exports = uploader
