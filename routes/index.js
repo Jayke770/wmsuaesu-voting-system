@@ -107,6 +107,44 @@ router.post('/home/profile/:id/change-cover-photo/', limit, isloggedin, async (r
         return res.status(500).send()
     }
 })
+//upload profile photo 
+router.post('/home/profile/:id/change-profile-photo/', limit, isloggedin, async (req, res) => {
+    const {profilePhoto} = req.files
+    const {myid} = req.session
+    try {
+        //check if user exists 
+        await user.find({_id: {$eq: xs(myid)}}).then( async (userData) => {
+            if(userData.length > 0) {
+                //ensure that file exists 
+                if(await fs.pathExists(profilePhoto[0].path)){
+                    await img2base64(profilePhoto[0].path).then( async (fl_res) => {
+                        await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {photo: {profile: fl_res}}}).then( () => {
+                            return res.send({
+                                status: true, 
+                                msg: "Successfully Uploaded"
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                } else {
+                    throw new Error('unknown')
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    msg: "User Not Found"
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
 //welcome page  contains login page ang registration
 router.get('/', authenticated, normal_limit, async (req, res) => {
     try {

@@ -162,7 +162,6 @@ $(document).ready( () => {
     $(".confirm_profile_change").find(".confirm_profile_change_btn").click( async function (e) {
         e.preventDefault() 
         const confirm_photo = $(this).attr("data") === "confirm" ? true : false
-        console.log(confirm_photo, action2)
         if(!action2){
             if(confirm_photo) {
                 const parent = $(".uploading_")

@@ -26,14 +26,22 @@ adminrouter.get('/profile/:id/', normal_limit, async (req, res) => {
         try {
             await user.find({
                 student_id: {$eq: xs(id)}
-            }, {firstname: 1, lastname: 1, profile: 1}).then( async (userData) => {
+            }, {firstname: 1, lastname: 1, photo: 1}).then( async (userData) => {
                 if(userData.length > 0){ 
-                    const im = myprofile(color.dark(), color.light(), `${userData[0].firstname.split('')[0]}${userData[0].lastname.split('')[0]}`).split(",")[1]
-                    const img = Buffer.from(im, 'base64')
-                    return res.writeHead(200, {
-                        'Content-Type': 'image/png',
-                        'Content-Length': img.length
-                    }).end(img)
+                    if(userData[0].photo.profile){
+                        const base64profile_img = userData[0].photo.profile 
+                        const base64img = Buffer.from(base64profile_img, 'base64')
+                        return res.writeHead(200, {
+                            'Content-Length': base64img.length
+                        }).end(base64img)
+                    } else {
+                        const im = myprofile(color.dark(), color.light(), `${userData[0].firstname.split('')[0]}${userData[0].lastname.split('')[0]}`).split(",")[1]
+                        const img = Buffer.from(im, 'base64')
+                        return res.writeHead(200, {
+                            'Content-Type': 'image/png',
+                            'Content-Length': img.length
+                        }).end(img)
+                    }
                 } else {
                     return res.status(404).send()
                 }
