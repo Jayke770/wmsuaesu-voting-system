@@ -80,7 +80,7 @@ router.post('/home/profile/:id/change-cover-photo/', limit, isloggedin, async (r
                 //ensure that file exists 
                 if(await fs.pathExists(coverPhoto[0].path)){
                     await img2base64(coverPhoto[0].path).then( async (fl_res) => {
-                        await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {photo: {cover: fl_res}}}).then( () => {
+                        await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {"photo.cover": fl_res}}).then( () => {
                             return res.send({
                                 status: true, 
                                 msg: "Successfully Uploaded"
@@ -88,8 +88,11 @@ router.post('/home/profile/:id/change-cover-photo/', limit, isloggedin, async (r
                         }).catch( (e) => {
                             throw new Error(e)
                         })
-                    }).catch( (e) => {
-                        throw new Error(e)
+                    }).catch( () => {
+                        return res.send({
+                            status: false, 
+                            msg: "Invalid Image Type"
+                        })
                     })
                 } else {
                     throw new Error('unknown')
@@ -118,7 +121,7 @@ router.post('/home/profile/:id/change-profile-photo/', limit, isloggedin, async 
                 //ensure that file exists 
                 if(await fs.pathExists(profilePhoto[0].path)){
                     await img2base64(profilePhoto[0].path).then( async (fl_res) => {
-                        await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {photo: {profile: fl_res}}}).then( () => {
+                        await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {"photo.profile": fl_res}}).then( () => {
                             return res.send({
                                 status: true, 
                                 msg: "Successfully Uploaded"
@@ -126,8 +129,11 @@ router.post('/home/profile/:id/change-profile-photo/', limit, isloggedin, async 
                         }).catch( (e) => {
                             throw new Error(e)
                         })
-                    }).catch( (e) => {
-                        throw new Error(e)
+                    }).catch( () => {
+                        return res.send({
+                            status: false, 
+                            msg: "Invalid File Type"
+                        })
                     })
                 } else {
                     throw new Error('unknown')
@@ -142,6 +148,7 @@ router.post('/home/profile/:id/change-profile-photo/', limit, isloggedin, async 
             throw new Error(e)
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })

@@ -32,6 +32,7 @@ adminrouter.get('/profile/:id/', normal_limit, async (req, res) => {
                         const base64profile_img = userData[0].photo.profile 
                         const base64img = Buffer.from(base64profile_img, 'base64')
                         return res.writeHead(200, {
+                            'Content-Type': 'image/png',
                             'Content-Length': base64img.length
                         }).end(base64img)
                     } else {
@@ -72,6 +73,7 @@ adminrouter.get('/cover/:sid/', normal_limit,  async (req, res) => {
                         const base64cover_img = userData[0].photo.cover 
                         const base64img = Buffer.from(base64cover_img, 'base64')
                         return res.writeHead(200, {
+                            'Content-Type': 'image/png',
                             'Content-Length': base64img.length
                         }).end(base64img)
                     } else {

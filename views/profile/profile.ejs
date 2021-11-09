@@ -25,7 +25,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%- `${userData.firstname} ${userData.middlename} ${userData.lastname}` %></title>
-    <%- include('../cdn/_profile') %>
+    <%- include('../dn/_profile') %>
     <link rel="shortcut icon" href="/profile/<%- userData.student_id %>" type="image/x-png">
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
     <script>
@@ -161,7 +161,7 @@
         </div>
         <!-- confirms cover change -->
         <div class="confirm_cover_change fixed top-0 z-30 hidden justify-end items-end p-2 w-full h-full">
-            <div animate-out="animate__animated animate__fadeOutDown ms-500" animate-in="animate__animated animate__fadeInUp ms-500" class="confirm_cover_change_main w-96 sm:w-full p-2 dark:bg-darkBlue-secondary rounded-md">
+            <div animate-out="animate__animated animate__fadeOutDown ms-500" animate-in="animate__animated animate__fadeInUp ms-500" class="confirm_cover_change_main dark_border  w-96 sm:w-full p-2 dark:bg-darkBlue-secondary rounded-md">
                 <div class="grid grid-cols-3 py-1 pl-2">
                     <div class="col-span-2 flex justify-start items-center">
                         <span class="dark:text-gray-300 font-medium">Apply current photo</span>
@@ -179,7 +179,7 @@
         </div>
         <!-- confirms profile change -->
         <div class="confirm_profile_change fixed top-0 z-30 hidden justify-end items-end p-2 w-full h-full">
-            <div animate-out="animate__animated animate__fadeOutDown ms-500" animate-in="animate__animated animate__fadeInUp ms-500" class="confirm_profile_change_main w-96 sm:w-full p-2 dark:bg-darkBlue-secondary rounded-md">
+            <div animate-out="animate__animated animate__fadeOutDown ms-500" animate-in="animate__animated animate__fadeInUp ms-500" class="confirm_profile_change_main dark_border  w-96 sm:w-full p-2 dark:bg-darkBlue-secondary rounded-md">
                 <div class="grid grid-cols-3 py-1 pl-2">
                     <div class="col-span-2 flex justify-start items-center">
                         <span class="dark:text-gray-300 font-medium">Apply current photo</span>
