@@ -18,7 +18,7 @@
 %>
 <% if(users.length > 0) { %> 
     <% for (let i = 0; i < users.length; i++) { %>
-        <div id="try" data="<%- users[i]._id %>" style="animation-delay: <%- i * .250%>s;" class="user_list_main animate__animated animate__fadeInUp ms-500 relative dark_border shadow-lg rounded-md dark:bg-darkBlue-secondary p-3">
+        <div data="<%- users[i]._id %>" style="animation-delay: <%- i * .250%>s;" class="user_list_main animate__animated animate__fadeInUp ms-500 relative dark_border shadow-lg rounded-md dark:bg-darkBlue-secondary p-3">
             <div class="badge-status">
                 <% if(users[i].socket_id === "Waiting For Student" || users[i].socket_id === "Offline"){ %>
                     <div class="absolute dark:bg-gray-500 h-4 w-4 rounded-full right-3"></div>

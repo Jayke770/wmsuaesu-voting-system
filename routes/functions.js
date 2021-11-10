@@ -152,6 +152,34 @@ module.exports = {
         return res
     },
     //elections 
+    is_course_eligible: async (electionID, voter_course) => {
+        let res = false
+        await election.find({_id: {$eq: xs(electionID)}}, {courses: 1}).then( (elec) => {
+            for(let i = 0; i < elec[0].courses.length; i++){
+                if(elec[0].courses[i] === voter_course) {
+                    res = true 
+                    break
+                } 
+            }
+        }).catch( (e) => {
+            res = false
+        })
+        return res
+    },
+    is_year_eligible: async (electionID, voter_year) => {
+        let res = false
+        await election.find({_id: {$eq: xs(electionID)}}, {year: 1}).then( (elec) => {
+            for(let i = 0; i < elec[0].year.length; i++){
+                if( elec[0].year[i] === voter_year) {
+                    res = true 
+                    break
+                } 
+            }
+        }).catch( (e) => {
+            res = false
+        })
+        return res
+    },
     course: async () => {
         let result
         try {

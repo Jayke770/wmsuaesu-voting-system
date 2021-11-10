@@ -39,7 +39,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" class="theme-color" content="#6b21a8">
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
-    <title><%- election.election_title %></title>
+    <title><%- election.election_title %> Candidates</title>
     <link rel="stylesheet" href="/css/tailwindcss/style.css">
     <%- include('../cdn/_home') %>
     <script>
@@ -76,7 +76,6 @@
                 </a>
                 <a href="print/" target="_blank" class="flex dark:text-teal-700 dark:text-purple-500flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
                     <i class="fad fa-download"></i>
-                    <span class="sm:hidden text-[17px] font-normal dark:text-gray-300">Download Candidates</span>
                 </a>
             </div>
         </div>
@@ -152,8 +151,6 @@
     </div>
     <!-- add candidates -->
     <div class="add_ca fixed top-0 w-full h-full z-40 bg-darkBlue-primary/50 hidden justify-center items-center sm:items-end transition-all">
-        <input type="hidden" value='<%- JSON.stringify(election.positions) %>' class="electionPositions">
-        <input type="hidden" value='<%- JSON.stringify(data.positions) %>' class="defaultPositions">
         <div animate-in="animate__animated animate__fadeInUp ms-500" animate-out="animate__animated animate__fadeOutDown ms-500" class="add_ca_main dark_border w-9/12 lg:w-[95%] sm:w-full h-5/6  dark:bg-darkBlue-secondary rounded-md sm:rounded-b-none shadow-md transition-all">
             <div class="container grid grid-cols-2 py-1 px-2.5 dark_border_b">
                 <div class="flex justify-start items-center">

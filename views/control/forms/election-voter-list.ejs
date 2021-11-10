@@ -1,0 +1,54 @@
+<% if(voters.length > 0) { %> 
+    <% for (let i = 0; i < voters.length; i++) { %>
+        <% if(voters[i].status === "Pending") { %> 
+            <!-- Pending Voters -->
+            <div data="<%- voters[i].id %>" style="animation-delay: <%- i * .250%>s;" class="election_voter animate__animated animate__fadeInUp ms-500 transition-all shadow-md rounded-md dark:bg-darkBlue-secondary">
+                <div class="relative w-full">
+                    <img class="w-full h-44 sm:h-52 rounded-t-md shadow-md" src="/cover/<%- voters[i].student_id %>/">
+                    <div class="absolute -bottom-14 w-full flex justify-center items-center">
+                        <img class="w-32 h-32 object-cover rounded-full shadow-md" src="/profile/<%- voters[i].student_id %>/">
+                    </div>
+                </div>
+                <div class="container mt-14 py-2">
+                    <div class="flex flex-col justify-center items-center">
+                        <span class="dark:text-gray-300 text-base"><%- voters[i].fullname %></span>
+                        <span class="dark:text-gray-400 text-sm"><%- `${voters[i].course} ${voters[i].year}` %></span>
+                    </div>
+                    <div class="flex flex-row gap-1 justify-center items-center mt-3">
+                        <span class="dark:text-gray-400 text-sm">Joined</span>
+                        <span class="dark:text-gray-400 text-sm time skeleton" data="<%- voters[i].created %>"></span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 pt-4 px-2">
+                        <a data="<%- voters[i].id %>" class="rpl cursor-pointer transition-all w-full text-center px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm text-darkBlue-100 dark:text-gray-300 bg-teal-700 dark:bg-teal-800 hover:bg-teal-700 dark:hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-teal-800 focus:ring-teal-500">Accept</a>
+                        <a data="<%- voters[i].id %>" class="rpl col-span-2 cursor-pointer transition-all w-full text-center px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm text-darkBlue-100 dark:text-gray-300 bg-rose-700 dark:bg-rose-800 hover:bg-rose-700 dark:hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-rose-800 focus:ring-rose-500">Remove</a>
+                    </div>
+                </div> 
+            </div>
+        <% } else { %>
+            <!-- Accepted VOters -->
+            <div data="<%- voters[i].id %>" style="animation-delay: <%- i * .250%>s;" class="election_voter animate__animated animate__fadeInUp ms-500 transition-all shadow-md rounded-md dark:bg-darkBlue-secondary">
+                <div class="relative w-full">
+                    <img class="w-full h-44 sm:h-52 rounded-t-md shadow-md" src="/cover/<%- voters[i].student_id %>/">
+                    <div class="absolute -bottom-14 w-full flex justify-center items-center">
+                        <img class="w-32 h-32 object-cover rounded-full shadow-md" src="/profile/<%- voters[i].student_id %>/">
+                    </div>
+                </div>
+                <div class="container mt-14 py-2">
+                    <div class="flex flex-col justify-center items-center">
+                        <span class="dark:text-gray-300 text-base"><%- voters[i].fullname %></span>
+                        <span class="dark:text-gray-400 text-sm"><%- `${voters[i].course} ${voters[i].year}` %></span>
+                    </div>
+                    <div class="flex flex-row gap-1 justify-center items-center mt-3">
+                        <span class="dark:text-gray-400 text-sm">Joined</span>
+                        <span class="dark:text-gray-400 text-sm time skeleton" data="<%- voters[i].created %>"></span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 pt-4 px-2">
+                        <a data="<%- voters[i].id %>" class="rpl cursor-pointer transition-all w-full text-center px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm text-darkBlue-100 dark:text-gray-300 bg-purple-700 dark:bg-purple-800 hover:bg-purple-700 dark:hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 focus:ring-purple-500">View</a>
+                        <a data="<%- voters[i].id %>" class="rpl col-span-2 cursor-pointer transition-all w-full text-center px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm text-darkBlue-100 dark:text-gray-300 bg-rose-700 dark:bg-rose-800 hover:bg-rose-700 dark:hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-rose-800 focus:ring-rose-500">Remove</a>
+                    </div>
+                </div> 
+            </div>
+        <% } %>
+    <% } %>
+<% } else { %>
+<% } %>
