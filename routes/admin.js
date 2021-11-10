@@ -477,6 +477,12 @@ adminrouter.post('/control/elections/candidates/add-voter-as-candidate/', normal
                                     }).catch( (e) => {
                                         throw new Error(e)
                                     })
+                                } else {
+                                    return res.send({
+                                        status: false, 
+                                        txt: 'Election Is Already Started', 
+                                        msg: 'You cannot add more candidates if the election is started'
+                                    })
                                 }
                             } else {
                                 throw new Error('internal error')
