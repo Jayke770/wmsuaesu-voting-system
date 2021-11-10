@@ -4,7 +4,7 @@
             <!-- Pending Voters -->
             <div data="<%- voters[i].id %>" style="animation-delay: <%- i * .250%>s;" class="election_voter animate__animated animate__fadeInUp ms-500 transition-all shadow-md rounded-md dark:bg-darkBlue-secondary">
                 <div class="relative w-full">
-                    <img class="w-full h-44 sm:h-52 rounded-t-md shadow-md" src="/cover/<%- voters[i].student_id %>/">
+                    <img class="w-full h-44 sm:h-52 rounded-t-md shadow-md object-cover" src="/cover/<%- voters[i].student_id %>/">
                     <div class="absolute -bottom-14 w-full flex justify-center items-center">
                         <img class="w-32 h-32 object-cover rounded-full shadow-md" src="/profile/<%- voters[i].student_id %>/">
                     </div>
@@ -28,7 +28,7 @@
             <!-- Accepted VOters -->
             <div data="<%- voters[i].id %>" style="animation-delay: <%- i * .250%>s;" class="election_voter animate__animated animate__fadeInUp ms-500 transition-all shadow-md rounded-md dark:bg-darkBlue-secondary">
                 <div class="relative w-full">
-                    <img class="w-full h-44 sm:h-52 rounded-t-md shadow-md" src="/cover/<%- voters[i].student_id %>/">
+                    <img class="w-full h-44 sm:h-52 rounded-t-md shadow-md object-cover" src="/cover/<%- voters[i].student_id %>/">
                     <div class="absolute -bottom-14 w-full flex justify-center items-center">
                         <img class="w-32 h-32 object-cover rounded-full shadow-md" src="/profile/<%- voters[i].student_id %>/">
                     </div>
