@@ -1,113 +1,244 @@
 <% 
-    const data = {
-        //course
-        c: (val) => {
-            for (let c = 0; c < course.length; c++) {
-                if (val === course[c].id) {
-                    return course[c].type
+     const Data = {
+        mycourse: (id) => {
+            for(let i = 0; i < data.courses.length; i++){
+                if(id === data.courses[i].id){
+                   return data.courses[i].type
                 }
             }
         }, 
-        //year
-        y: (val) => {
-            for (let c = 0; c < year.length; c++) {
-                if (val === year[c].id) {
-                    return year[c].type
+        myyear: (id) => {
+            for(let i = 0; i < data.year.length; i++){
+                if(id === data.year[i].id){
+                    return data.year[i].type
+                }
+            }
+        },
+        myposition: (id) => {
+            for(let p = 0; p < data.positions.length; p++){
+                if(data.positions[p].id === id) {
+                    return data.positions[p].type
                 }
             }
         }, 
-        //partylists
-        p: (val) => {
-            for (let p = 0; p < partylists.length; p++) {
-                if (val === partylists[p].id) {
-                    return partylists[p].type
-                }
-            }
-        }, 
-        //positions
-        pos: (val) => {
-            for (let pos = 0; pos < positions.length; pos++) {
-                if (val === positions[pos].id) {
-                    return positions[pos].type
+        mypartylist: (id) => {
+            for(let pty = 0; pty < data.partylists.length; pty++){
+                if(data.partylists[pty].id === id) {
+                    return data.partylists[pty].type
                 }
             }
         }
     }
 %>
-<div class="candidates_ p-2 sm:p-0 z-30 fixed top-0 bg-darkBlue-primary/60 w-full h-full hidden items-center sm:items-end justify-end">
-    <div animate-in="animate__animated animate__fadeInUp ms-300" animate-out="animate__animated animate__fadeOutDown ms-300" class="candidates_main w-96 sm:w-full h-full sm:h-5/6 bg-gray-100 dark:bg-darkBlue-secondary dark_border rounded-lg transition-all">
-        <div class="w-full py-[10px] px-2 dark_border_b">
-            <a class="close_candidates rpl float-right rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600 text-rose-700">
-                <i class="fad fa-times-circle"></i>
-            </a>
-            <span class="dark:text-purple-500 text-purple-700 text-xl p-1">Candidates</span>
-        </div>
-        <div class="container mt-2 px-3 flex flex-col gap-1">
-            <div class="grid grid-cols-3 gap-2 w-full">
-                <a data="ac" class="candidates_tab relative rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-teal-600 text-teal-500">
-                    <i class="fad fa-user-check"></i>
-                    <span class="text-base dark:text-gray-300/80 text-bluegray-900 sm:hidden">Accepted</span> 
+<!DOCTYPE html>
+<html lang="en" class="font-sans" data="<%- election._id %>">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%- csrf %>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" class="theme-color" content="#6b21a8">
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-png">
+    <title><%- election.election_title %></title>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css">
+    <%- include('../cdn/_home') %>
+    <script>
+        document.onreadystatechange = () => {
+            setTimeout( () => {
+                $(".loading").remove()
+                $(".main, .nav").show()
+            }, 500)
+        }
+    </script>
+</head>
+<body class="bg-gray-300 dark:bg-[#090c10] transition-all antialiased">
+    <!-- Lazy progress bar -->
+    <%- include('../../lazy/loading-progress') %>
+    <div class="loading flex justify-center w-screen h-screen items-center">
+        <%- include('../../lazy/loading') %>
+    </div>
+    <!-- nav -->
+    <div style="display: none; animation-delay: .250s;" class="nav animate__animated animate__fadeInDown ms-500 dark:bg-[#161b22] bg-gray-100 shadow-md sticky flex w-full transition-all top-0 z-10">
+        <div class="w-full py-2">
+            <div class="float-left">
+                <div class="flex flex-row justify-center items-center px-3">
+                    <a href="<%- link %>"
+                        class="rpl rounded-lg transition-all p-[8px] text-gray-900 dark:text-gray-200 text-xl cursor-pointer mr-1 last:mr-0">
+                        <i class="fa fa-arrow-circle-left"></i>
+                    </a>
+                    <p class="text-lg font-medium cursor-pointer dark:text-gray-200" id="election_title">Candidates</p>
+                </div>
+            </div>
+            <div class="float-right flex justify-center items-center h-full">
+                <a class="add_ca_open flex dark:text-purple-700 dark:text-purple-500flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
+                    <i class="fas fa-plus-circle"></i>
+                    <span class="sm:hidden text-[17px] font-normal">Add Candidate</span>
                 </a>
-                <a data="pend" class="candidates_tab relative rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-amber-600 text-amber-500">
-                    <i class="fad fa-users"></i>
-                    <span class="text-base dark:text-gray-300/80 text-bluegray-900 sm:hidden">Pending</span>
-                    <% if(pending_candidates !== 0) { %> 
-                        <div class="e_pend_count_ca absolute right-[-2px] top-[-7px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending_candidates %></div>
-                    <% } %>
-                </a>
-                <a data="del" class="candidates_tab relative rpl rounded-md justify-center px-3 py-2 flex flex-row gap-2 items-center cursor-pointer text-xl dark:text-rose-600 text-rose-500">
-                    <i class="fad fa-user-times"></i>
-                    <span class="text-base dark:text-gray-300/80 text-bluegray-900 sm:hidden">Deleted</span>
-                    <% if(deleted_candidates !== 0) { %> 
-                        <div class="e_pend_count_ca absolute right-[-2px] top-[-7px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- deleted_candidates %></div>
-                    <% } %>
+                <a href="print/" target="_blank" class="flex dark:text-teal-700 dark:text-purple-500flex-row gap-2 items-center cursor-pointer rpl text-xl rounded-md p-2 px-3">
+                    <i class="fad fa-download"></i>
+                    <span class="sm:hidden text-[17px] font-normal dark:text-gray-300">Download Candidates</span>
                 </a>
             </div>
         </div>
-        <div class="flex flex-col h-[calc(100%-100px)]">
-            <div class="candidates_list flex flex-col gap-3 pt-2 pb-2 px-3 transition-all overflow-y-auto flex-[90%]">
-                <% for (let i = 0; i < 20; i++) { %>
-                    <div style="animation-delay: <%- i * .250 %>s;" class="acp_candidates_skeleton animate__animated animate__fadeInUp ms-300 h-[78px] dark_border dark:bg-[#161b22] z-0 p-[8px] md:w-full cursor-pointer flex flex-row shadow-xl bg-gray-100 rounded-2xl transition-all">
-                        <div class="flex flex-row w-full">
-                            <div class="h-[60px] w-[60px] rounded-full object-cover skeleton-image"></div>
-                            <div class="grid grid-flow-col flex-[80%]">
-                                <div class="justify-center gap-1 w-full flex flex-col pl-3">
-                                    <span class="text-base dark:text-gray-400 skeleton w-40"></span>
-                                    <span class="text-sm dark:text-gray-400 skeleton w-32"></span>
-                                </div>
-                                <div class="w-full flex-row justify-end items-center flex">
-                                    <a class="skeleton rounded-full p-2 justify-center flex flex-row gap-2 items-center cursor-pointer text-lg dark:text-cyan-600"></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <% } %>
+    </div>
+    <!-- main -->
+    <div style="display: none;" class="main container">
+        <div class="grid grid-cols-2 gap-1">
+            <div class="flex justify-start items-center py-1.5 px-2">
+                <input placeholder="Search Candidates" type="search" class="search_candidate dark:bg-darkBlue-primary dark_border dark:text-gray-200 w-auto sm:w-full px-3 py-1.5 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
             </div>
-            <div class="w-full p-1 flex justify-center items-center flex-[10%] pt-3 px-3 transition-all">
-                <select class="sort-candidates-by w-full dark:bg-darkBlue-secondary outline-none appearance-none dark_border dark:bg-transparent py-2 px-3 dark:text-gray-300 rounded-lg focus:border-purple-500 dark:focus:border-purple-700 transition-all">
-                    <option selected value=""> - Sort Candidates</option>
-                    <optgroup label="Positions">
-                        <% for (let i = 0; i < e_position.length; i++) { %>
-                            <option value='<%- `position, ${e_position[i].id}` %>'><%- data.pos(e_position[i].id) %></option>
-                        <% } %>
+            <div class="flex justify-end items-center py-1.5 px-2">
+                <select class="sort_candidates dark:bg-darkBlue-primary dark_border dark:text-gray-200 w-auto sm:w-full px-3 py-1.5 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
+                    <option value="" selected disabled> - Sort Candidates</option>
+                    <option value='<%- JSON.stringify({type: 'status', value: 'default'}) %>'>Default</option>
+                    <optgroup label="Status">
+                        <option value='<%- JSON.stringify({type: 'status', value: 'Accepted'}) %>'>Accepted Candidates</option>
+                        <option value='<%- JSON.stringify({type: 'status', value: 'Pending'}) %>'>Pending Candidates</option>
+                        <option value='<%- JSON.stringify({type: 'status', value: 'Deleted'}) %>'>Deleted Candidates</option>
                     </optgroup>
                     <optgroup label="Partylists">
-                        <% for (let i = 0; i < e_partylist.length; i++) { %>
-                            <option value='<%- `partylist, ${e_partylist[i]}` %>'><%- data.p(e_partylist[i]) %></option>
+                        <% for (let i = 0; i < election.partylist.length; i++) { %>
+                            <option value='<%- JSON.stringify({type: 'partylist', value: `${election.partylist[i]}`}) %>'><%- Data.mypartylist(election.partylist[i]) %></option>
                         <% } %>
-                    </optgroup> 
+                    </optgroup>
+                    <optgroup label="Positions">
+                        <% for (let i = 0; i < election.positions.length; i++) { %>
+                            <option value='<%- JSON.stringify({type: 'position', value: `${election.positions[i].id}`}) %>'><%- Data.myposition(election.positions[i].id) %></option>
+                        <% } %>
+                    </optgroup>
                     <optgroup label="Course">
-                        <% for (let i = 0; i < e_courses.length; i++) { %>
-                            <option value='<%- `course, ${e_courses[i]}` %>'><%- data.c(e_courses[i]) %></option>
+                        <% for (let i = 0; i < election.courses.length; i++) { %>
+                            <option value='<%- JSON.stringify({type: 'course', value: `${election.courses[i]}`}) %>'><%- Data.mycourse(election.courses[i]) %></option>
                         <% } %>
                     </optgroup>
                     <optgroup label="Year">
-                        <% for (let i = 0; i < e_year.length; i++) { %>
-                            <option value='<%- `year, ${e_year[i]}` %>'><%- data.y(e_year[i]) %></option>
+                        <% for (let i = 0; i < election.year.length; i++) { %>
+                            <option value='<%- JSON.stringify({type: 'year', value: `${election.year[i]}`}) %>'><%- Data.myyear(election.year[i]) %></option>
                         <% } %>
                     </optgroup>
                 </select>
             </div>
         </div>
+        <div style="animation-delay: .250s;" class="election_candidates_list animate__animated animate__fadeIn ms-500 grid grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 gap-2.5 px-2 py-2.5">
+            <% for (let i = 0; i < 10; i++) { %>
+                <div style="animation-delay: <%- i * .300%>s;" class="election_candidate_skeleton animate__animated animate__fadeInUp ms-500 dark:bg-darkBlue-secondary w-full transition-all rounded-md shadow-md">
+                    <div class="relative container">
+                        <div class="h-44 w-full object-cover rounded-t-md skeleton-image"  ></div>
+                        <div class="absolute w-full -bottom-14 z-0 flex justify-center items-center">
+                            <div class="h-32 w-32 object-cover rounded-full skeleton-image"></div>
+                        </div>
+                    </div>
+                    <div class="mt-16 py-2 container flex flex-col gap-1 justify-center items-center">
+                        <span class="dark:text-gray-300 text-base skeleton w-40"></span>
+                        <span class="dark:text-gray-400 text-sm w-42 skeleton"></span>
+                        <div class="flex justify-center items-center py-3">
+                            <span class="dark:text-gray-400 text-sm skeleton w-10"></span>
+                        </div>
+                        <div class="mt-5 w-full grid grid-cols-2 px-2 py-2.5">
+                            <div class="flex items-center justify-end border-r-2 dark:border-bluegray-700 pr-2">
+                                <span class="dark:text-gray-400 text-sm skeleton w-10"></span>
+                            </div>
+                            <div class="flex items-center justify-start pl-2">
+                                <span class="dark:text-gray-400 text-sm skeleton w-10"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex mt-3 py-2 px-2.5">
+                        <a class="skeleton w-full"></a>
+                    </div>
+                </div> 
+           <% } %>
+        </div>
     </div>
-</div>
+    <!-- add candidates -->
+    <div class="add_ca fixed top-0 w-full h-full z-40 bg-darkBlue-primary/50 hidden justify-center items-center sm:items-end transition-all">
+        <input type="hidden" value='<%- JSON.stringify(election.positions) %>' class="electionPositions">
+        <input type="hidden" value='<%- JSON.stringify(data.positions) %>' class="defaultPositions">
+        <div animate-in="animate__animated animate__fadeInUp ms-500" animate-out="animate__animated animate__fadeOutDown ms-500" class="add_ca_main dark_border w-9/12 lg:w-[95%] sm:w-full h-5/6  dark:bg-darkBlue-secondary rounded-md sm:rounded-b-none shadow-md transition-all">
+            <div class="container grid grid-cols-2 py-1 px-2.5 dark_border_b">
+                <div class="flex justify-start items-center">
+                    <span class="dark:text-purple-700 text-lg">Add New Candidate</span>
+                </div>
+                <div class="flex justify-end items-center">
+                    <a class="close_add_ca rpl py-1 px-1.5 rounded-full float-right text-red-600 mr-1 mt-1 dark:text-rose-600 text-2xl cursor-pointer">
+                        <i class="fad fa-times-circle"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="flex flex-col h-[calc(100%-53px)]">
+                <div class="container flex justify-start items-center py-2.5 px-1.5">
+                    <input placeholder="Search Voter" type="search" class="search_user_for_ca dark:bg-darkBlue-secondary dark_border dark:text-gray-200 w-auto sm:w-full px-3 py-1.5 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
+                </div>
+                <div class="users_for_ca_list grid grid-cols-3 xl:grid-cols-2 sm:grid-cols-1 gap-2.5 px-2 py-2.5 overflow-y-auto">
+                    <% for (let i = 0; i < 20; i++) { %>
+                        <div  style="animation-delay: <%- i * .150 %>s;" class="user_for_ca_skeleton rpl animate__animated animate__fadeInUp ms-300 dark:hover:border-purple-700/50 hover:border-purple-600/50 min-h-[78px] dark:bg-darkBlue-100 z-0 p-2 md:w-full cursor-pointer flex flex-col shadow-md bg-gray-100 rounded-lg transition-all">
+                            <div class="flex flex-row w-full">
+                                <div class="h-[60px] w-[62px] rounded-full object-cover skeleton-image"></div>
+                                <div class="grid grid-flow-col flex-[80%]">
+                                    <div class="justify-center w-full gap-2 flex flex-col pl-3">
+                                        <span class="text-base dark:text-gray-300 skeleton"></span>
+                                        <span class="text-sm dark:text-gray-400 skeleton w-40"></span>
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>  
+    <!-- confirm add current selected voter as a candidate -->
+    <div class="confirm_add_ca fixed top-0 w-full h-full z-40 bg-darkBlue-primary/50 hidden justify-center items-center sm:items-end transition-all ">
+        <div animate-in="animate__animated animate__fadeInUp ms-500" animate-out="animate__animated animate__fadeOutDown ms-500" class="confirm_add_ca_main dark_border py-2 w-96 sm:w-full dark:bg-darkBlue-secondary rounded-md sm:rounded-b-none shadow-md transition-all">
+            <div class="flex flex-col justify-center items-center py-3">
+                <i class="fad fa-info-circle text-5xl dark:text-teal-600"></i>
+                <p class="text-center mt-4 dark:text-gray-300 text-lg">Select Position & Partylist For The New Candidate</p>
+            </div>
+            <form class="confirm_add_ca_form flex gap-2 flex-col px-4 pb-3">
+                <input class="hidden" type="reset">
+                <input type="hidden" class="selected_voter" name="sid">
+                <select name="pos" required class="dark:bg-darkBlue-secondary dark_border dark:text-gray-200 w-full px-3 py-1.5 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
+                    <option value="">Select Position</option>
+                    <% for (let i = 0; i < election.positions.length; i++) { %>
+                        <option value="<%- election.positions[i].id %>"><%- Data.myposition(election.positions[i].id) %></option>
+                    <% } %>
+                </select>
+                <select name="pty" required class="dark:bg-darkBlue-secondary dark_border dark:text-gray-200 w-full px-3 py-1.5 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
+                    <option value="">Select Partylist</option>
+                    <% for (let j = 0; j < election.partylist.length; j++) { %>
+                        <option value="<%- election.partylist[j] %>"><%- Data.mypartylist(election.partylist[j]) %></option>
+                    <% } %>
+                </select>
+                <textarea rows="5" placeholder="Candidate Platform"  name="platform" required class="dark:bg-darkBlue-secondary dark_border dark:text-gray-200 w-full px-3 py-1.5 outline-none dark:focus:border-purple-700 transition-all rounded-lg"></textarea>
+                <div class="grid grid-cols-2 gap-2 mt-3">
+                    <button class="transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-700 dark:bg-purple-800 hover:bg-purple-700 dark:hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 focus:ring-purple-500" type="submit">Add Candidate</button>
+                    <button class="close_confirm_ca transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-700 dark:bg-rose-800 hover:bg-rose-700 dark:hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-rose-800 focus:ring-rose-500" type="button">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="/js/fetch.js "></script>
+    <script src="/js/time.js "></script>
+    <script src="/js/toast.js "></script>
+    <script src="/js/audio_file.js "></script>
+    <script src="/js/audio.js "></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/control/js/io.js "></script>
+    <script src="/control/js/candidates.js "></script>
+    <script src="/js/theme.js "></script>
+    <script>
+        $.ripple(".rpl", {
+            debug: false,
+            on: 'mousedown',
+            opacity: 0.3,
+            color: "auto",
+            multi: false,
+            duration: 0.7,
+            rate: function(pxPerSecond) {
+                return pxPerSecond;
+            },
+            easing: 'linear'
+        })
+    </script>
+</body>
+</html>

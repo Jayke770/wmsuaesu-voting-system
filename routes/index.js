@@ -1813,73 +1813,86 @@ router.post('/account/settings/secure/add-email/', normal_limit, isloggedin, asy
     try {
         //check if valid email
        if(emailValidator(xs(nmail))){
-        await user.find({_id: {$eq: xs(myid)}}, {password: 1, email: 1}).then( async (user_pass) => {
-            if(user_pass.length > 0){
-                //check password
-                if(await compareHash(xs(pass), user_pass[0].password)){
-                    //check email  
-                    if(xs(nmail) !== user_pass[0].email.email){
-                        //check if the email is not used by another user 
-                        await user.find({
-                            _id: {$eq: xs(myid)}, 
-                            "email.email": {$eq: xs(nmail)}
-                        }).then( async (mail) => {
-                            if(mail.length > 0){
+           //check if email is not used by another user 
+           await user.find({"email.email": {$eq: xs(nmail)}}).then( async (em_not_use) => {
+               if(em_not_use.length === 0){
+                    await user.find({_id: {$eq: xs(myid)}}, {password: 1, email: 1}).then( async (user_pass) => {
+                        if(user_pass.length > 0){
+                            //check password
+                            if(await compareHash(xs(pass), user_pass[0].password)){
+                                //check email  
+                                if(xs(nmail) !== user_pass[0].email.email){
+                                    //check if the email is not used by another user 
+                                    await user.find({
+                                        _id: {$eq: xs(myid)}, 
+                                        "email.email": {$eq: xs(nmail)}
+                                    }).then( async (mail) => {
+                                        if(mail.length > 0){
+                                            return res.send({
+                                                status: false, 
+                                                txt: 'Email already in used', 
+                                                msg: 'Please submit another email'
+                                            })
+                                        } else {
+                                            const email_id = uuidv4()
+                                            await user.updateOne({
+                                                _id: { $eq: xs(myid) }
+                                            }, {
+                                                $set: {
+                                                    "email.id": email_id,
+                                                    "email.email": xs(nmail),
+                                                    "email.status": "Not Verified",
+                                                    "email.added": moment().tz("Asia/Manila").format()
+                                                }
+                                            }).then(() => {
+                                                //send verification  
+                                                send_verification_email(firstname, xs(nmail), xs(myid.toString()), email_id)
+                                                return res.send({
+                                                    status: true,
+                                                    txt: "Email Verification Sent Successfully",
+                                                    msg: 'Please check your E-mail inbox'
+                                                })
+                                            }).catch((e) => {
+                                                throw new Error(e)
+                                            })
+                                        }
+                                    }).catch( (e) => {
+                                        throw new Error(e)
+                                    })
+                                } else {
+                                    return res.send({
+                                        status: false, 
+                                        txt: 'Email already in used', 
+                                        msg: 'Please submit another email'
+                                    })
+                                }
+                            } else {
                                 return res.send({
                                     status: false, 
-                                    txt: 'Email already in used', 
-                                    msg: 'Please submit another email'
-                                })
-                            } else {
-                                const email_id = uuidv4()
-                                await user.updateOne({
-                                    _id: { $eq: xs(myid) }
-                                }, {
-                                    $set: {
-                                        "email.id": email_id,
-                                        "email.email": xs(nmail),
-                                        "email.status": "Not Verified",
-                                        "email.added": moment().tz("Asia/Manila").format()
-                                    }
-                                }).then(() => {
-                                    //send verification  
-                                    send_verification_email(firstname, xs(nmail), xs(myid.toString()), email_id)
-                                    return res.send({
-                                        status: true,
-                                        txt: "Email Verification Sent Successfully",
-                                        msg: 'Please check your E-mail inbox'
-                                    })
-                                }).catch((e) => {
-                                    throw new Error(e)
+                                    txt: 'Incorrect Password', 
+                                    msg: 'Please check your password and try again'
                                 })
                             }
-                        }).catch( (e) => {
-                            throw new Error(e)
-                        })
-                    } else {
-                        return res.send({
-                            status: false, 
-                            txt: 'Email already in used', 
-                            msg: 'Please submit another email'
-                        })
-                    }
-                } else {
-                    return res.send({
-                        status: false, 
-                        txt: 'Incorrect Password', 
-                        msg: 'Please check your password and try again'
+                        } else {
+                            return res.send({
+                                status: false, 
+                                txt: 'User ID not found', 
+                                msg: 'Please refresh your browser'
+                            })
+                        }
+                    }).catch( (e) => {
+                        throw new Error(e)
                     })
-                }
-            } else {
+               } else {
                 return res.send({
                     status: false, 
-                    txt: 'User ID not found', 
-                    msg: 'Please refresh your browser'
+                    txt: 'Email is already taken', 
+                    msg: 'Please submit another email'
                 })
-            }
-        }).catch( (e) => {
-            throw new Error(e)
-        })
+               }
+           }).catch( (e) => {
+               throw new Error(e)
+           })
        } else {
            return res.send({
                status: false, 

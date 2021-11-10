@@ -1,33 +1,47 @@
+<% 
+    const Data = {
+        course: (id) => {
+            for(let c = 0; c < data.courses.length; c++){
+                if(data.courses[c].id === id) {
+                    return data.courses[c].type
+                }
+            }
+        }, 
+        year: (id) => {
+            for(let y = 0; y < data.year.length; y++){
+                if(data.year[y].id === id) {
+                    return data.year[y].type
+                }
+            }
+        }, 
+        position: (id) => {
+            for(let pos = 0; pos < data.positions.length; pos++){
+                if(data.positions[pos].id === id) {
+                    return data.positions[pos].type
+                }
+            }
+        }, 
+        partylist: (id) => {
+            for(let pty = 0; pty < data.partylists.length; pty++){
+                if(data.partylists[pty].id === id) {
+                    return data.partylists[pty].type
+                }
+            }
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User List</title>
+    <title>Candidates</title>
     <link rel="stylesheet" href="/css/tailwindcss/style.css"> 
     <%- include('../cdn/_list_users') %>
 </head>
 <body>
-    <% 
-        const Data = {
-            course: (id) => {
-                for(let c = 0; c < data.courses.length; c++){
-                    if(data.courses[c].id === id) {
-                        return data.courses[c].type
-                    }
-                }
-            }, 
-            year: (id) => {
-                for(let y = 0; y < data.year.length; y++){
-                    if(data.year[y].id === id) {
-                        return data.year[y].type
-                    }
-                }
-            }
-        }
-    %>
-    <div id="users" class="py-3 px-10 w-full">
+    <div id="candidates" class="py-3 px-10 w-full">
         <div class="grid grid-cols-4">
             <div class="flex justify-center items-center px-2 py-7">
                 <img src="/assets/logo.png">
@@ -46,36 +60,32 @@
             <thead>
                 <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Student ID</th>
                 <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Name</th>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Course</th>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Year</th>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Username</th>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Password</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Platform</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Course & Year</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Position</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Partylist</th>
             </thead>
             <tbody>
-                <% for(let i = 0; i < users.length; i++) { %> 
+                <% for(let i = 0; i < candidates.length; i++) { %> 
                     <tr>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- users[i].student_id %></td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- `${users[i].firstname} ${users[i].middlename} ${users[i].lastname}` %></td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- Data.course(users[i].course ) %></td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- Data.year(users[i].year) %></td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- users[i].username %></td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900">NA</td>
+                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- candidates[i].student_id %></td>
+                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- candidates[i].fullname %></td>
+                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- candidates[i].platform %></td>
+                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- `${Data.course(candidates[i].course)} ${Data.year(candidates[i].year)}` %></td>
+                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- Data.position(candidates[i].position) %></td>
+                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- Data.partylist(candidates[i].partylist) %></td>
                     </tr>
                 <% } %>
             </tbody>
         </table>
-        <div class="col-span-2 flex mt-5 flex-col justify-center items-center gap-2">
-            <p class="text-gray-600">Document is generated by WMSU-AESU Online Voting System</p>
-            <p class="text-gray-600">Made with ❤️  by Master</p>
-        </div>
     </div>
     <script src="/js/theme.js"></script>
     <script>
         $(document).ready( async () => {
             Swal.fire({
                 icon: 'info', 
-                title: 'Download all users', 
-                html: 'This will generate a pdf file that contains all the users', 
+                title: 'Download all Candidates', 
+                html: 'This will generate a pdf file that contains all the candidates in current election', 
                 confirmButtonText: 'Download', 
                 showDenyButton: true,
                 denyButtonText: 'Cancel', 
@@ -92,10 +102,10 @@
                         allowOutsideClick: false, 
                         willOpen: async () => {
                             Swal.showLoading()
-                            var element = document.getElementById('users')
+                            var element = document.getElementById('candidates')
                             var opt = {
                                 margin:       0.01,
-                                filename:     'users.pdf',
+                                filename:     'candidates.pdf',
                                 image:        { type: 'jpeg', quality: 1 },
                                 html2canvas:  { scale: 2 },
                                 jsPDF:        { unit: 'mm', format: 'letter', orientation: 'l' }

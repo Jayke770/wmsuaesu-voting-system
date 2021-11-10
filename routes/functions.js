@@ -122,10 +122,7 @@ module.exports = {
         let result
         try {
             await user.find({
-                $or: [
-                    {_id: {$eq: xs(id)}}, 
-                    {student_id: {$eq: xs(id)}}
-                ]
+                _id: {$eq: xs(id)}
             }, {messages: 0, comments: 0, notifications: 0, password: 0, username: 0}).then( (data) => {
                 result = data.length === 0 ? [] : data[0]
             }).catch( (e) => {

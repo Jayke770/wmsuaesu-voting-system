@@ -86,8 +86,8 @@ html:focus-within, body:focus-within{
 /* .swal2-input, .swal2-textarea{
     @apply rounded-md dark:bg-transparent dark:text-gray-200 border-gray-500 transition-all text-base;
 } */
-.swal2-input, .swal2-textarea {
-    @apply placeholder-gray-400;
+.swal2-input, .swal2-textarea, .swal2-select {
+    @apply dark:text-gray-300 text-bluegray-900 placeholder-gray-400 dark:border dark:border-[#30363d] border-[0.1px] border-gray-300;
     margin-bottom: 10px !important;
     margin-top: 10px !important;
     border-radius: 0.375rem !important;

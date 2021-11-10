@@ -53,11 +53,7 @@
                                 <div class="e_pend_count absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending_voters %></div>
                             <% } %>
                         </a>
-                        <a data="candidates" id="candidates_nav_count" class="election_btn relative rpl nav_btn dark:text-gray-300">Candidates
-                            <% if(pending_candidates !== 0){ %>
-                                <div class="e_pend_count_ca absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm"><%- pending_candidates %></div>
-                            <% } %>
-                        </a>
+                        <a href="candidates/" class="rpl nav_btn dark:text-gray-300">Candidates</a>
                         <a data="partylist" class="election_btn rpl nav_btn dark:text-gray-300">Partylist</a>
                         <a data="positions" class="election_btn rpl nav_btn dark:text-gray-300">Positions</a>
                         <a href="/control/elections/<%- election._id %>/results/" class="rpl nav_btn dark:text-gray-300">Results</a>
@@ -103,7 +99,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div title="Total count of accepted candidates" data="candidates" class="w-full election_btn rpl cursor-pointer dark:bg-purple-700/50 bg-purple-600/50 shadow-md rounded-md p-4 transition-all ">
+                        <a href="candidates/" class="w-full  rpl cursor-pointer dark:bg-purple-700/50 bg-purple-600/50 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
                                     <div class="e_pend_count_ca text-4xl font-medium mt-1 tracking-wider dark:text-gray-100 text-white" id="accepted_candidates_count"><%- accepted_candidates %></div>
@@ -113,7 +109,7 @@
                                     <i class="fad fa-poll-people text-6xl dark:text-purple-500 text-purple-700"></i>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                         <div class="w-full election_btn dark:bg-rose-700/50 bg-rose-600/50 shadow-md rounded-md p-4 transition-all ">
                             <div class="grid grid-cols-2 transition-all ">
                                 <div class="text flex flex-col ml-3 mt-1 gap-3">
@@ -202,18 +198,6 @@
             election_partylist: election.partylist, 
             partylists: data.partylist
         }) %> 
-        <!-- election candidates -->
-        <%- include('election-candidates', {
-            course: data.course, 
-            year: data.year, 
-            e_courses: election.courses, 
-            e_year: election.year, 
-            e_partylist: election.partylist, 
-            partylists: data.partylist, 
-            e_position: election.positions, 
-            positions: data.positions, 
-            pending_candidates: pending_candidates
-        }) %>
         <!-- election positions -->
         <%- include('election-positions') %>
         <!-- election settings -->
