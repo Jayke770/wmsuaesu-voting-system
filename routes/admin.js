@@ -54,7 +54,6 @@ adminrouter.get('/profile/:id/', normal_limit, async (req, res) => {
             return res.status(500).send()
         }
     } else {
-        console.log(e)
         return res.status(401).send()
     }
 })
