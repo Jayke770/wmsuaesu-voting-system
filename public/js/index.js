@@ -1314,8 +1314,7 @@ $(document).ready( () => {
                     method: 'POST', 
                     headers: {
                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                    }, 
-                    timeout: 2000
+                    }
                 })
                 if(req.ok){
                     const res = await req.text() 
