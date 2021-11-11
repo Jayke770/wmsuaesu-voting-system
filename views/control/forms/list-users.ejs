@@ -58,7 +58,7 @@
             </thead>
             <tbody>
                 <% for(let i = 0; i < users.length; i++) { %> 
-                    <tr>
+                    <tr id="user<%- i %>">
                         <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900">
                             <div class="flex w-full justify-center items-center">
                                 <img class="rounded-full object-cover h-16 w-16" src="/profile/<%- users[i].student_id %>">
@@ -107,6 +107,7 @@
                             Swal.showLoading()
                             var element = document.getElementById('users')
                             var opt = {
+                                pagebreak: { before: '#users6' },
                                 margin:       0.01,
                                 filename:     'users.pdf',
                                 image:        { type: 'jpeg', quality: 1 },
