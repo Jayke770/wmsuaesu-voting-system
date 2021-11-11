@@ -31,7 +31,7 @@
     }
 %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-voters="<%- election.voters.length %>" election-id="<%- election._id %>">
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="<%- csrf %>">

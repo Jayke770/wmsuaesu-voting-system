@@ -9,7 +9,7 @@ const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
 const {restore_account_email, change_account_cred} = require('./auth')
-const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myprofile, color, user_data, is_course_eligible, is_year_eligible} = require('./functions')
+const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myprofile, color, user_data, is_course_eligible, is_year_eligible, newNotification} = require('./functions')
 const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
@@ -984,7 +984,7 @@ adminrouter.post('/control/elections/voters/search-users/', limit, isadmin, asyn
     }
 })
 //add voter add user 
-adminrouter.post('/control/elections/add-user-add-voter/', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/voters/add-user-add-voter/', limit, isadmin, async (req, res) => {
     const {id} = req.body 
     const {currentElection} = req.session 
     let new_voter = {
@@ -997,7 +997,6 @@ adminrouter.post('/control/elections/add-user-add-voter/', limit, isadmin, async
         voted: [],
         created: moment().tz("Asia/Manila").format()
     }
-    console.log(currentElection)
     try {
         await election.find({_id: {$eq: xs(currentElection)}}, {_id: 1}).then( async (elec) => {
             if(elec.length > 0){
@@ -1072,7 +1071,7 @@ adminrouter.post('/control/elections/add-user-add-voter/', limit, isadmin, async
     }
 })
 //sort voters 
-adminrouter.post('/control/elections/sort-voters/', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/voters/sort-voters/', limit, isadmin, async (req, res) => {
     const {sort} = req.body 
     const srt = JSON.parse(xs(sort))
     const {currentElection} = req.session 
@@ -1130,7 +1129,7 @@ adminrouter.post('/control/elections/sort-voters/', limit, isadmin, async (req, 
     }
 })
 //search voters 
-adminrouter.post('/control/elections/search-voters/', limit, isadmin, async (req, res) => {
+adminrouter.post('/control/elections/voters/search-voters/', limit, isadmin, async (req, res) => {
     const {search} = req.body 
     const {currentElection} = req.session 
     let result = []
@@ -1148,6 +1147,80 @@ adminrouter.post('/control/elections/search-voters/', limit, isadmin, async (req
             } else {
                 return res.render('control/forms/election-voter-list', {
                     voters: [],
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//accept voter request 
+adminrouter.post('/control/elections/voters/accept-voter/', limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const {currentElection} = req.session 
+
+    try {
+        await election.find({
+            _id: {$eq: xs(currentElection)}, 
+            voters: {$elemMatch: {id: {$eq: xs(id)}}}
+        }, {voters: {$elemMatch: {id: {$eq: xs(id)}}}}).then( async (elec_voter) => {
+            if(elec_voter.length > 0){
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}, 
+                    "voters.id": {$eq: xs(id)}
+                }, {$set: {"voters.$.status": "Accepted"}}).then( () => {
+                    return res.send({
+                        status: true, 
+                        txt: "Voter Successfully Accepted", 
+                        msg: ""
+                    })
+                }).catch((e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: "Voter Not Found", 
+                    msg: "Please Refresh The Page"
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//remove voter request 
+adminrouter.post('/control/elections/voters/remove-voter/', limit, isadmin, async (req, res) => {
+    const {id} = req.body 
+    const {currentElection} = req.session 
+    console.log(id)
+    try { 
+        await election.find({_id: {$eq: xs(currentElection)}, "voters.id": {$eq: xs(id)}}).then( async (elec_voter) => {
+            if(elec_voter.length > 0){
+                await election.updateOne({
+                    _id: {$eq: xs(currentElection)}, 
+                    voters: {$elemMatch: {id: {$eq: xs(id)}}}
+                }, {$pull: {voters: {id: {$eq: xs(id)}}}}).then( (g) => {
+                    console.log(g)
+                    return res.send({
+                        status: true, 
+                        txt: "Voter Successfully Removed", 
+                        msg: ""
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: "Voter Not Found", 
+                    msg: "Please Refresh The App"
                 })
             }
         }).catch( (e) => {
@@ -3716,14 +3789,32 @@ adminrouter.post('/control/users/email/', isadmin, limit, async (req, res) => {
 adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res) => {
     const {cmd} = req.params 
     const {id, fname, mname, lname, type, course, year, usr, pass} = req.body
-    const {firstname, email} = await user_data(id)
+    const {firstname, email, elections} = await user_data(id)
     try {
         if(xs(cmd) === "fullname"){
             if(fname && mname && lname){
                 //check if user exists 
                 await user.find({_id: {$eq: xs(id)}}, {_id: 1}).then( async (userData) => {
                     if(userData.length > 0) {
-                        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {firstname: xs(toUppercase(fname)), middlename:  xs(toUppercase(mname)), lastname:  xs(toUppercase(lname))}}).then( () => {
+                        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {firstname: xs(toUppercase(fname)), middlename:  xs(toUppercase(mname)), lastname:  xs(toUppercase(lname))}}).then( async () => {
+                            const flname = `${xs(toUppercase(fname))} ${xs(toUppercase(mname))} ${xs(toUppercase(lname))}`
+                            for(let i = 0; i < elections.length; i++){
+                                await election.updateOne({
+                                    _id: {$eq: xs(elections[i])}, 
+                                    voters: {$elemMatch: {id: {$eq: xs(id)}}}
+                                }, {$set: {
+                                    "voters.$.fullname": flname, 
+                                    "candidates.$.fullname": flname
+                                }}).catch( (e) => {
+                                    throw new Error(e)
+                                })
+                            }
+                            //send notification to user 
+                            await newNotification(id, 'account', {
+                                id: uuid(), 
+                                content: "Your name has been updated",
+                                created: moment().tz("Asia/Manila").format()
+                            })
                             return res.send({
                                 status: true, 
                                 msg: "Successfully updated"
@@ -3751,7 +3842,13 @@ adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res)
             if(type){
                 await user.find({_id: {$eq: xs(id)}}, {_id: 1}).then( async (userData) => {
                     if(userData.length > 0) {
-                        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {type: xs(type)}}).then( () => {
+                        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {type: xs(type)}}).then( async () => {
+                            //send notification to user 
+                            await newNotification(id, 'account', {
+                                id: uuid(), 
+                                content: "Your User Type has been updated",
+                                created: moment().tz("Asia/Manila").format()
+                            })
                             return res.send({
                                 status: true, 
                                 msg: "Successfully updated"
@@ -3779,7 +3876,13 @@ adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res)
                 //check if user exists 
                 await user.find({_id: {$eq: xs(id)}}, {_id: 1}).then( async (userData) => {
                     if(userData.length > 0) {
-                        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {course: xs(course), year: xs(year)}}).then( () => {
+                        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {course: xs(course), year: xs(year)}}).then( async () => {
+                            //send notification to user 
+                            await newNotification(id, 'account', {
+                                id: uuid(), 
+                                content: "Your Course & Year has been updated",
+                                created: moment().tz("Asia/Manila").format()
+                            })
                             return res.send({
                                 status: true, 
                                 msg: "Successfully updated"
@@ -3839,8 +3942,14 @@ adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res)
                                 username: xs(usr), 
                                 password: xs(pass)
                             }
-                            await user.updateOne({_id: {$eq: xs(id)}}, {$set: {username: xs(usr), password: await hash(xs(pass), 10)}}).then( (p) => {
+                            await user.updateOne({_id: {$eq: xs(id)}}, {$set: {username: xs(usr), password: await hash(xs(pass), 10)}}).then( async () => {
                                 change_account_cred(email.email, firstname, account)
+                                //send notification to user 
+                                await newNotification(id, 'account', {
+                                    id: uuid(), 
+                                    content: "Your Username & Password has been updated",
+                                    created: moment().tz("Asia/Manila").format()
+                                })
                                 return res.send({
                                     status: true, 
                                     msg: 'Successfully updated'
@@ -3888,6 +3997,12 @@ adminrouter.post('/control/users/reset-account/', isadmin, limit, async (req, re
         await user.updateOne({_id: {$eq: xs(id)}}, {$set: { username: new_account.username, password: new_account.password }}).then( async () => {
             if(email.email) {
                 restore_account_email(email.email, firstname, account)
+                //send notification to user 
+                await newNotification(id, 'account', {
+                    id: uuid(), 
+                    content: "Your Account has been reset",
+                    created: moment().tz("Asia/Manila").format()
+                })
                 return res.send({
                     status: true, 
                     msg: 'Successfully reset', 
@@ -3919,6 +4034,12 @@ adminrouter.post('/control/users/reset-users-account/', isadmin, limit, async (r
                     }
                     await user.updateOne({_id: usersData[i]._id}, {$set: { username: new_account.username, password: new_account.password }}).then( async () => {
                         if(usersData[i].email.email) {
+                            //send notification to user 
+                            await newNotification(usersData[i]._id, 'account', {
+                                id: uuid(), 
+                                content: "Your Account has been reset",
+                                created: moment().tz("Asia/Manila").format()
+                            })
                             restore_account_email(usersData[i].email.email, usersData[i].firstname, account)
                         }
                     }).catch( (e) => {

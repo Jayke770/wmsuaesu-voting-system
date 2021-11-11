@@ -1,0 +1,55 @@
+<div animate-in="animate__animated animate__fadeIn ms-500" animate-out="animate__animated animate__fadeOut ms-500" class="notification z-10 fixed hidden right-0 top-16 dark:bg-darkBlue-secondary w-96 sm:w-full h-[calc(100vh-80px)] rounded-b-md">
+    <div class="flex items-center justify-start py-2.5 px-3">
+        <span class="dark:text-gray-300 text-xl">Notifications</span>
+    </div>
+    <div class="flex flex-col gap-2.5 px-2.5 pb-5 h-[calc(100%-48px)] overflow-y-auto">
+        <div class="container px-1">
+            <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start items-center">
+                <span class="dark:text-gray-400 text-base">Account</span>
+            </div>
+            <div class="flex flex-col gap-2 mt-1">
+                <% for (let i = 0; i < 5; i++) { %>
+                    <div style="animation-delay: <%- i * .150%>s;" class="animate__animated animate__fadeInUp ms-500 shadow-md rounded-md cursor-pointer dark:bg-darkBlue-100 dark:hover:bg-bluegray-800 transition-all p-2">
+                        <div class="flex flex-row">
+                            <div class="flex-[10%] flex justify-center items-center px-3 py-4">
+                                <i class="fas fa-info-circle text-2xl dark:text-teal-700"></i>
+                            </div>
+                            <div class="flex-[90%] grid grid-cols-4 items-center">
+                                <div class="col-span-3">
+                                    <p class="dark:text-gray-300/90 text-sm">Your Name has been updated</p>
+                                </div>
+                                <div class="flex justify-end px-1">
+                                    <span class="dark:text-gray-400 text-sm">1 day ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+        <div class="container px-1">
+            <div style="animation-delay: .250s;" class="animate__animated animate__fadeInUp ms-500 flex justify-start items-center">
+                <span class="dark:text-gray-400 text-base">Election</span>
+            </div>
+            <div class="flex flex-col gap-2 mt-1">
+                <% for (let i = 0; i < 5; i++) { %>
+                    <div style="animation-delay: <%- i * .150%>s;" class="animate__animated animate__fadeInUp ms-500 shadow-md rounded-md cursor-pointer dark:bg-darkBlue-100 dark:hover:bg-bluegray-800 transition-all p-2">
+                        <div class="flex flex-row">
+                            <div class="flex-[10%] flex justify-center items-center px-3 py-4">
+                                <i class="fad fa-info-circle text-2xl dark:text-amber-700"></i>
+                            </div>
+                            <div class="flex-[90%] grid grid-cols-4 items-center">
+                                <div class="col-span-3">
+                                    <p class="dark:text-gray-300/90 text-sm">USC Election 2021 has been Started</p>
+                                </div>
+                                <div class="flex justify-end px-1">
+                                    <span class="dark:text-gray-400 text-sm">1 day ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>

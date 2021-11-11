@@ -1362,6 +1362,7 @@ $(document).ready(() => {
     setInterval( () => {
         electionData($("html").attr("data"))
     }, 2000)
+
     function electionData(id){
         if(!election_deleted){
             socket.emit('election-data', {id: id}, async (res) => {
@@ -1372,25 +1373,10 @@ $(document).ready(() => {
                     $("body").find("#positions_count").html(res.data.positions)
                     //update candidates accpted count 
                     $("body").find("#accepted_candidates_count").html(res.data.candidates.accepted)
-                    //update candidates counts 
-                    if(res.data.candidates.pending !== 0){
-                        $("#candidates_nav_count").append(`
-                            <div class="e_pend_count_ca absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm">${res.data.candidates.pending}</div>
-                        `)
-                        $(".candidates_tab[data='pend']").find(".e_pend_count_ca").remove() 
-                        $(".candidates_tab[data='pend']").append(`
-                            <div class="e_pend_count_ca absolute right-[-2px] top-[-2px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm">${res.data.candidates.pending}</div>
-                        `)
-                    }
-                    if(res.data.candidates.pending === 0){
-                        $("#candidates_nav_count").find(".e_pend_count_ca").remove() 
-                        $(".candidates_tab[data='pend']").find(".e_pend_count_ca").remove() 
-                    }
                     //update voters count 
                     $("body").find("#accepted_voter_count").html(res.data.voters.accepted)
                     //update voters voted count 
                     $("body").find("#voter_voter_count").html(res.data.voters.voted)
-                    e_data = false
                 } else {
                     election_deleted = true
                     Swal.fire({
@@ -1417,13 +1403,11 @@ $(document).ready(() => {
     //new election started 
     socket.on('new-election-started', async () => {
         await election.election_status()
-        await election.status()
         await election.dt()
     })
     //new election ended
     socket.on('new-election-ended', async () => {
         await election.election_status()
-        await election.status()
         await election.dt()
     })
     //functions 
@@ -1605,9 +1589,6 @@ $(document).ready(() => {
         }, 
         end: (dt) => {
             $("p#e_end_status").text(moment(dt).tz("Asia/Manila").format('MMMM DD YYYY, h:mm a'))
-        }, 
-        deleted_candidates_count: (n) => {
-            return `<div class="e_del_count_ca absolute right-[-2px] top-[-7px] dark:bg-purple-700 bg-purple-500 text-gray-50 dark:text-gray-300 w-5 h-5 text-center rounded-full text-sm">${n}</div>`
         }, 
     }
 })

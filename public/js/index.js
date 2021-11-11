@@ -1,4 +1,21 @@
 $(document).ready( () => { 
+    //open notification 
+    $(".open_notification").click( () => {
+        const nty = $(".notification")
+        if(nty.hasClass("hidden")){
+            nty.addClass(nty.attr("animate-in"))
+            nty.removeClass("hidden")
+            setTimeout( () => {
+                nty.removeClass(nty.attr("animate-in"))
+            }, 500)
+        } else {
+            nty.addClass(nty.attr("animate-out"))
+            setTimeout( () => {
+                nty.removeClass(nty.attr("animate-out"))
+                nty.addClass("hidden")
+            }, 500)
+        }
+    })
     //open navigation 
     $(".open_nav").click( () => {
         const parent = $(".nav") 

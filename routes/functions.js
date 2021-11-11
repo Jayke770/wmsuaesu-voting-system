@@ -373,7 +373,7 @@ module.exports = {
                         if(user_elecs[i].elections.length > 0){
                             for(let j = 0; j < user_elecs[i].elections.length; j++){
                                 //then check if this election is currently exists 
-                                await election.find({_id: {$eq: objectid(xs(user_elecs[i].elections[j]))}}, {_id: 1}).then( async (elec) => {
+                                await election.find({_id: {$eq: xs(user_elecs[i].elections[j])}, "voters.id": {$eq: xs(user_elecs[i]._id.toString())}}, {_id: 1}).then( async (elec) => {
                                     //pull this election id to user election feild 
                                     if(elec.length === 0){
                                         await user.updateOne({_id: {$eq: xs(user_elecs[i]._id)}}, {$pull: {elections: xs(user_elecs[i].elections[j])}})
@@ -426,6 +426,21 @@ module.exports = {
             for (let i = 0; i < 3; i++)
                 color += ("0" + Math.floor(Math.random() * Math.pow(16, 2) / 2).toString(16)).slice(-2)
             return color
+        }
+    }, 
+    //notification
+    newNotification: async (id, type, data) => {
+        try {
+            if(type === "account"){
+                await user.updateOne({_id: {$eq: xs(id)}}, {$push: {"notifications.account": data}}).then( (h) => {
+                    console.log(h)
+                    return true
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            }
+        } catch (e) {
+            return false
         }
     }
 }

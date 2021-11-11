@@ -69,7 +69,7 @@ $(document).ready( () => {
                                 add_user_v = true 
                                 let data = new FormData() 
                                 data.append("id", $(this).attr("data"))
-                                const req = await fetchtimeout('/control/elections/add-user-add-voter/', {
+                                const req = await fetchtimeout('/control/elections/voters/add-user-add-voter/', {
                                     method: 'POST', 
                                     headers: {
                                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
@@ -131,7 +131,7 @@ $(document).ready( () => {
                 $(".election_voters_list").find(".election_voter").remove() 
                 const data = new FormData() 
                 data.append("sort", $(this).val())
-                const req = await fetchtimeout('/control/elections/sort-voters/', {
+                const req = await fetchtimeout('/control/elections/voters/sort-voters/', {
                     method: 'POST', 
                     headers: {
                         'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
@@ -164,7 +164,7 @@ $(document).ready( () => {
                     $(".election_voters_list").find(".election_voter").remove() 
                     let data = new FormData() 
                     data.append("search", $(this).val())
-                    const req = await fetchtimeout('/control/elections/search-voters/', {
+                    const req = await fetchtimeout('/control/elections/voters/search-voters/', {
                         method: 'POST', 
                         headers: {
                             'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
@@ -185,6 +185,164 @@ $(document).ready( () => {
             }, 1000)
         }
     })
+
+    // accept voter 
+    let accept_voter = false 
+    $(".election_voters_list").delegate(".accept_voter_req", "click", async function (e) {
+        e.preventDefault() 
+        if(!accept_voter){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Accept Voter Request', 
+                html: 'This will accept the current voter request', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showDenyButton: true, 
+                confirmButtonText: "Accept", 
+                denyButtonText: "Cancel"
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Accepting Voter Request', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            try {
+                                accept_voter = true
+                                let data = new FormData() 
+                                data.append("id", $(this).attr("data")) 
+                                const req = await fetchtimeout('/control/elections/voters/accept-voter/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    accept_voter = false
+                                    Swal.fire({
+                                        icon: res.status ? 'success' : 'info', 
+                                        title: res.txt, 
+                                        html: res.msg, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false
+                                    }).then( async () => {
+                                        if(res.status){
+                                            socket.emit('voter-accepted', {voterID: $(this).attr("data")})
+                                            await voter.voters()
+                                        }
+                                    })
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                accept_voter = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+
+    // remove voter 
+    let remove_voter = false 
+    $(".election_voters_list").delegate(".remove_voter_req", "click", async function (e) {
+        e.preventDefault() 
+        if(!remove_voter){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Remove Voter Request', 
+                html: 'This will remove the current voter request', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showDenyButton: true, 
+                confirmButtonText: "Remove", 
+                denyButtonText: "Cancel"
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Removing Voter Request', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            try {
+                                accept_voter = true
+                                let data = new FormData() 
+                                data.append("id", $(this).attr("data")) 
+                                const req = await fetchtimeout('/control/elections/voters/remove-voter/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    remove_voter = false
+                                    Swal.fire({
+                                        icon: res.status ? 'success' : 'info', 
+                                        title: res.txt, 
+                                        html: res.msg, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false
+                                    }).then( async () => {
+                                        if(res.status){
+                                            socket.emit('voter-remove', {voterID: $(this).attr("data")})
+                                        }
+                                    })
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                remove_voter = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+    //websocket
+    //get election voters 
+    setInterval( () => {
+        socket.emit('election-data', {id: $("html").attr("election-id")}, async (res) => {
+            if(res.status && parseInt($("html").attr("data-voters")) !== res.data.voters.total){
+                $("html").attr("data-voters", res.data.voters.total)
+                await voter.voters()
+            }
+        })
+    }, 2000)
+    // new voter joined the election 
+    socket.on('new-user-join-election', (data) => { 
+        if($("html").attr("election-id") === data.election){
+            alertify.notify('New voter joined the election!')
+        }
+    })
+    //check election voters 
     setTimeout( async () => {
         await voter.voters()
     }, 1000)

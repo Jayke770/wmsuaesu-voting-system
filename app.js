@@ -125,12 +125,14 @@ admin_socket.on('connection', async (socket) => {
             voters: {
                 accepted: 0, 
                 pending: 0, 
-                voted: 0
+                voted: 0, 
+                total: 0
             },
             candidates: {
                 accepted: 0, 
                 pending: 0, 
-                deleted: 0
+                deleted: 0, 
+                total: 0
             },
             partylists: 0, 
             positions: 0
@@ -166,6 +168,8 @@ admin_socket.on('connection', async (socket) => {
                             new_election_data.voters.voted += 1
                         }
                     }
+                    new_election_data.candidates.total = election.candidates.length
+                    new_election_data.voters.total = election.voters.length
                     new_election_data.partylists = election.partylist.length
                     new_election_data.positions = election.positions.length
                     res({
@@ -182,10 +186,9 @@ admin_socket.on('connection', async (socket) => {
                 throw new Error(e)
             })
         } catch (e){
-            console.log(e)
             res({
                 status: false, 
-                msg: e
+                msg: 'error'
             })
         }
     })
