@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Candidates</title>
+    <title><%- election.election_title %> Voters</title>
     <link rel="stylesheet" href="/css/tailwindcss/style.css"> 
     <%- include('../cdn/_list_users') %>
 </head>
@@ -27,8 +27,9 @@
                 <img src="/assets/logo.png">
             </div>
         </div>
-        <div class="container">
-            <div class="grid grid-cols-6">
+        <div class="container mt-5">
+            <div class="grid grid-cols-7">
+                <div class="border-teal-600 text-center font-medium py-2.5 border-[1px] p-2 text-bluegray-900">No</div>
                 <div class="border-teal-600 text-center font-medium py-2.5 border-[1px] p-2 text-bluegray-900">Photo</div>
                 <div class="border-teal-600 text-center font-medium py-2.5 border-[1px] p-2 text-bluegray-900">Student ID</div>
                 <div class="border-teal-600 text-center font-medium py-2.5 border-[1px] p-2 text-bluegray-900">Name</div>
@@ -38,20 +39,21 @@
             </div>
             <div class="flex flex-col">
                 <% for(let i = 0; i < voters.length; i++) { %> 
-                    <div class="grid grid-cols-6">
+                    <div class="grid grid-cols-7">
+                        <div class="text-sm flex justify-center items-center text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- i + 1 %></div>
                         <div class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900">
                             <div class="flex w-full justify-center items-center">
                                 <img class="rounded-full object-cover h-16 w-16" src="/profile/<%- voters[i].student_id %>">
                             </div>
                         </div>
-                        <div class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- voters[i].student_id %></div>
-                        <div class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- voters[i].fullname %></div>
-                        <div class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- `${voters[i].course} ${voters[i].year}` %></div>
-                        <div class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- voters[i].status %></div>
-                        <div class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900 time" data="<%- voters[i].created %>"><%- voters[i].created %></div>
+                        <div class="text-sm flex justify-center items-center text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- voters[i].student_id %></div>
+                        <div class="text-sm flex justify-center items-center text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- voters[i].fullname %></div>
+                        <div class="text-sm flex justify-center items-center text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- `${voters[i].course} ${voters[i].year}` %></div>
+                        <div class="text-sm flex justify-center items-center text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- voters[i].status %></div>
+                        <div class="text-sm flex justify-center items-center text-center border-teal-600 border-[1px] p-2 text-bluegray-900 time" data="<%- voters[i].created %>"><%- voters[i].created %></div>
                     </div>
-                    <% if(i === 6) { %> 
-                        <br><br>
+                    <% if(Number.isInteger( i / 6) && ( i / 6) !== 0) { %>
+                        <br><br><br><br><br><br>
                     <% } %>
                 <% } %>
             </div>

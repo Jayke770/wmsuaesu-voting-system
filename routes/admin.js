@@ -1163,8 +1163,9 @@ adminrouter.get('/control/elections/id/:id/:from/voters/print/', limit, isadmin,
     const {currentElection} = req.session
 
     try {
-        await election.find({_id: {$eq: xs(currentElection)}}, {voters: 1}).then( (elec_voters) => {
+        await election.find({_id: {$eq: xs(currentElection)}}, {voters: 1, election_title: 1}).then( (elec_voters) => {
             return res.render('control/forms/list-voters', {
+                election: elec_voters.length > 0 ? elec_voters[0] : {},
                 voters: elec_voters.length > 0 ? elec_voters[0].voters : []
             })
         }).catch( (e) => {
