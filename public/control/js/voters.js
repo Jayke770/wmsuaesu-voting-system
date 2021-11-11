@@ -39,6 +39,150 @@ $(document).ready( () => {
             $(".users_list").find(".users_").remove()
         }, 500)
     })
+
+    //click add user as voter 
+    let add_user_v = false
+    $(".users_list").delegate(".add_user_as_voter", "click", async function (e) { 
+        e.preventDefault() 
+        const def = $(this).html()
+        if(!add_user_v){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Add User As Voter', 
+                backdrop: true, 
+                allowOutsideClick: false,
+                showDenyButton: true, 
+                confirmButtonText: "Yes"
+            }).then( (a) => {
+                if(a.isConfirmed) {
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Adding User As Voter', 
+                        html: 'Please Wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading() 
+                            try {
+                                $(this).html(voter.loader())
+                                add_user_v = true 
+                                let data = new FormData() 
+                                data.append("id", $(this).attr("data"))
+                                const req = await fetchtimeout('/control/elections/add-user-add-voter/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    add_user_v = false 
+                                    $(this).html(def)
+                                    Swal.fire({
+                                        icon: res.status ? 'success' : 'info', 
+                                        title: res.txt, 
+                                        html: res.msg, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false
+                                    }).then( async () => {
+                                        if(res.status) { 
+                                            $(`.users_[data='${$(this).attr("data")}']`).remove()
+                                            await voter.voters()
+                                        }
+                                    })
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                add_user_v = false 
+                                $(this).html(def)
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+
+    //search user 
+    let search_usr = false 
+    $(".search_user_for_ca").keyup( async function () {
+        if(!search_usr){
+            await voter.search($(this).val())
+        }
+    })
+
+    //sort voters 
+    let sort_usr = false 
+    $(".sort_voters").change( async function () {
+        if(!sort_usr){
+            try {
+                sort_usr = true 
+                $(".election_voters_list").find(".election_voter_skeleton").show() 
+                $(".election_voters_list").find(".election_voter").remove() 
+                const data = new FormData() 
+                data.append("sort", $(this).val())
+                const req = await fetchtimeout('/control/elections/sort-voters/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    sort_usr = false 
+                    $(".election_voters_list").find(".election_voter_skeleton").hide() 
+                    $(".election_voters_list").append(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                sort_usr = false 
+                voter.error(e.message)
+            }
+        }
+    })
+
+    //search voters 
+    let search_voter = false 
+    $(".search_voters").keyup( async function () {
+        if(!search_voter){
+            try {
+                search_voter = false
+                $(".election_voters_list").find(".election_voter_skeleton").show() 
+                $(".election_voters_list").find(".election_voter").remove() 
+                let data = new FormData() 
+                data.append("search", $(this).val())
+                const req = await fetchtimeout('/control/elections/search-voters/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                    }, 
+                    body: data
+                })
+                if(req.ok){
+                    const res = await req.text() 
+                    $(".election_voters_list").find(".election_voter_skeleton").hide() 
+                    $(".election_voters_list").append(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                search_voter = false
+                voter.error(e.message)
+            }
+        }
+    })
     setTimeout( async () => {
         await voter.voters()
     }, 1000)
