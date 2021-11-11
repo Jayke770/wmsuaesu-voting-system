@@ -27,6 +27,9 @@
             }
         }
     %>
+    <div class="flex py-3 justify-center items-center px-3">
+        <a class="download rpl col-span-2 cursor-pointer transition-all w-96 sm:w-full text-center px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm text-white bg-teal-700 dark:bg-teal-800 hover:bg-teal-700 dark:hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-teal-800 focus:ring-teal-500">Download Voters</a>
+    </div>
     <div id="users" class="py-3 px-10 w-full">
         <div class="grid grid-cols-4">
             <div class="flex justify-center items-center px-2 py-7">
@@ -44,13 +47,14 @@
         </div>
         <table class="w-full">
             <thead>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Photo</th>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Student ID</th>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Name</th>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Course</th>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Year</th>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Username</th>
-                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-left">Password</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-center">Photo</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-center">Student ID</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-center">Name</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-center">Course</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-center">Year</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-center">Username</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-center">Password</th>
+                <th class="border-teal-600 border-[1px] p-2 text-bluegray-900 text-center">Created</th>
             </thead>
             <tbody>
                 <% for(let i = 0; i < users.length; i++) { %> 
@@ -60,12 +64,13 @@
                                 <img class="rounded-full object-cover h-16 w-16" src="/profile/<%- users[i].student_id %>">
                             </div>
                         </td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- users[i].student_id %></td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- `${users[i].firstname} ${users[i].middlename} ${users[i].lastname}` %></td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- Data.course(users[i].course ) %></td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- Data.year(users[i].year) %></td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900"><%- users[i].username %></td>
-                        <td class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900">NA</td>
+                        <td class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- users[i].student_id %></td>
+                        <td class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- `${users[i].firstname} ${users[i].middlename} ${users[i].lastname}` %></td>
+                        <td class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- Data.course(users[i].course ) %></td>
+                        <td class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- Data.year(users[i].year) %></td>
+                        <td class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900"><%- users[i].username %></td>
+                        <td class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900">***Hidden***</td>
+                        <td class="text-sm text-center border-teal-600 border-[1px] p-2 text-bluegray-900 time" data="<%- users[i].created %>"></td>
                     </tr>
                 <% } %>
             </tbody>
@@ -76,9 +81,11 @@
         </div>
     </div>
     <script src="/js/theme.js"></script>
+    <script src="/js/time.js"></script>
     <script>
         $(document).ready( async () => {
-            Swal.fire({
+            $(".download").click( () => {
+                Swal.fire({
                 icon: 'info', 
                 title: 'Download all users', 
                 html: 'This will generate a pdf file that contains all the users', 
@@ -127,6 +134,7 @@
                     })
                     
                 }
+            })
             })
         })
     </script>

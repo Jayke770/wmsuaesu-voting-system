@@ -155,32 +155,34 @@ $(document).ready( () => {
 
     //search voters 
     let search_voter = false 
-    $(".search_voters").keyup( async function () {
+    $(".search_voters").keyup( function () {
         if(!search_voter){
-            try {
-                search_voter = false
-                $(".election_voters_list").find(".election_voter_skeleton").show() 
-                $(".election_voters_list").find(".election_voter").remove() 
-                let data = new FormData() 
-                data.append("search", $(this).val())
-                const req = await fetchtimeout('/control/elections/search-voters/', {
-                    method: 'POST', 
-                    headers: {
-                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                    }, 
-                    body: data
-                })
-                if(req.ok){
-                    const res = await req.text() 
-                    $(".election_voters_list").find(".election_voter_skeleton").hide() 
-                    $(".election_voters_list").append(res)
-                } else {
-                    throw new Error(`${req.status} ${req.statusText}`)
+            setTimeout( async () => {
+                try {
+                    search_voter = false
+                    $(".election_voters_list").find(".election_voter_skeleton").show() 
+                    $(".election_voters_list").find(".election_voter").remove() 
+                    let data = new FormData() 
+                    data.append("search", $(this).val())
+                    const req = await fetchtimeout('/control/elections/search-voters/', {
+                        method: 'POST', 
+                        headers: {
+                            'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                        }, 
+                        body: data
+                    })
+                    if(req.ok){
+                        const res = await req.text() 
+                        $(".election_voters_list").find(".election_voter_skeleton").hide() 
+                        $(".election_voters_list").append(res)
+                    } else {
+                        throw new Error(`${req.status} ${req.statusText}`)
+                    }
+                } catch (e) {
+                    search_voter = false
+                    voter.error(e.message)
                 }
-            } catch (e) {
-                search_voter = false
-                voter.error(e.message)
-            }
+            }, 1000)
         }
     })
     setTimeout( async () => {

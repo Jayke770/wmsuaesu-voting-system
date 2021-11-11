@@ -1158,6 +1158,23 @@ adminrouter.post('/control/elections/search-voters/', limit, isadmin, async (req
         return res.status(500).send()
     }
 })
+//print all voters 
+adminrouter.get('/control/elections/id/:id/:from/voters/print/', limit, isadmin, async (req, res) => {
+    const {currentElection} = req.session
+
+    try {
+        await election.find({_id: {$eq: xs(currentElection)}}, {voters: 1}).then( (elec_voters) => {
+            return res.render('control/forms/list-voters', {
+                voters: elec_voters.length > 0 ? elec_voters[0].voters : []
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).render('error/500')
+    }
+})
 
 //add partylist in election 
 adminrouter.post('/control/elections/e-add-pty/', limit, isadmin, async (req, res) => {
@@ -3930,7 +3947,7 @@ adminrouter.post('/control/users/reset-users-account/', isadmin, limit, async (r
 //print all users
 adminrouter.get('/control/users/print/',isadmin, normal_limit, async (req, res) => {
     try {
-        await user.find({}, {student_id: 1, firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, username: 1, password: 1}).sort({lastname: 1}).then( async (users) => {
+        await user.find({}, {created: 1, student_id: 1, firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, username: 1, password: 1}).sort({lastname: 1}).then( async (users) => {
             return res.render('control/forms/list-users', {
                 users: users, 
                 data: {
