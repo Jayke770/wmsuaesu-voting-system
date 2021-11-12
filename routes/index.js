@@ -1355,16 +1355,23 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
                                             await election.updateOne({
                                                 _id: {$eq: xs(electionID)}, 
                                                 "candidates.id": {$eq: xs(vote[k])}
-                                            }, {$push: {"candidates.$.votes": xs(myid).toString()}}).then( () => {
-                                                return res.send({
-                                                    status: true, 
-                                                    txt: 'Vote submitted successfully', 
-                                                    msg: `Have a nice day ${firstname}!`
+                                            }, {$push: {"candidates.$.votes": xs(myid).toString()}}).then( async () => {
+                                                //save candidate id in the voter votes
+                                                await election.updateOne({
+                                                    _id: {$eq: xs(electionID)},
+                                                    "voters.id": xs(myid).toString()
+                                                }, {$push: {"voters.$.voted": xs(vote[k])}}).catch( (e) => {
+                                                    throw new Error(e)
                                                 })
                                             }).catch( (e) => {
                                                 throw new Error(e)
                                             })
                                         }
+                                        return res.send({
+                                            status: true, 
+                                            txt: 'Vote submitted successfully', 
+                                            msg: `Have a nice day ${firstname}!`
+                                        })
                                     } else {
                                         return res.send({
                                             status: false,
