@@ -1,15 +1,17 @@
 $(document).ready( () => {
     //open notification 
-    $(".open_notification").click( () => {
-        const nty = $(".notification")
-        if(nty.hasClass("hidden")){
+    $(".open_notification").click( () => { 
+        const nty = $(".notification") 
+        const msg = $(".messages") 
+
+        if(msg.hasClass("hidden") && nty.hasClass("hidden")){
             nty.addClass(nty.attr("animate-in"))
             nty.removeClass("hidden")
             setTimeout( async () => {
                 await notification.notifications()
                 nty.removeClass(nty.attr("animate-in"))
             }, 500)
-        } else {
+        } else if(msg.hasClass("hidden") && !nty.hasClass("hidden")){
             nty.addClass(nty.attr("animate-out"))
             setTimeout( () => {
                 nty.removeClass(nty.attr("animate-out"))
@@ -18,9 +20,21 @@ $(document).ready( () => {
                 $(".notifications_list").find(".notification_skeleton").addClass("flex")
                 $(".notifications_list").find(".notification").remove()
             }, 500)
+        } else  {
+            nty.addClass(nty.attr("animate-in"))
+            nty.removeClass("hidden")
+            //msg
+            msg.addClass(msg.attr("animate-out"))
+            setTimeout( async () => {
+                //msg
+                msg.removeClass(msg.attr("animate-out"))
+                msg.addClass("hidden")
+                //nty
+                await notification.notifications()
+                nty.removeClass(nty.attr("animate-in"))
+            }, 500)
         }
     })
-
     //remove notification 
     let remove_nty = false
     $(".notifications_list").delegate(".notification-data", "click", async function () {

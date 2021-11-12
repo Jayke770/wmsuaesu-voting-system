@@ -81,7 +81,7 @@
             </div>
             <div class="float-right h-full">
                 <div class="flex flex-row gap-4 mr-1 justify-center items-center px-3 h-full">
-                    <a class="rpl rounded-lg transition-all relative p-2 text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
+                    <a class="rpl open_message rounded-lg transition-all relative p-2 text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
                         <i class="far fa-comment-lines"></i>
                         <span class="dark:bg-indigo-700 absolute rounded-full w-2 h-2"></span>
                     </a>
@@ -95,6 +95,8 @@
         </div>
         <!-- Notifications -->
         <%- include('notification/notification') %>
+        <!-- Messages -->
+        <%- include('message/messages') %>
         <!-- Main -->
         <% if(!isvoting) { %> 
             <div class="election__ hidden transition-all">

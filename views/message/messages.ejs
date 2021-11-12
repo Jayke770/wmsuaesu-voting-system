@@ -1,0 +1,14 @@
+<div animate-in="animate__animated animate__fadeIn ms-500" animate-out="animate__animated animate__fadeOut ms-500" class="messages hidden z-10 fixed right-0 top-16 dark:bg-darkBlue-secondary w-[400px] sm:w-full h-[calc(100vh-80px)] rounded-b-md">
+    <div class="flex items-center justify-start py-2.5 px-3">
+        <span class="dark:text-gray-300 text-xl">Messages</span>
+    </div>
+    <div class="flex justify-center items-center py-1 px-3 pr-4">
+        <input type="search" placeholder="Search User" class="search_user dark_border px-3 py-2.5 placeholder-blueGray-300 text-blueGray-600 relative dark:bg-transparent dark:text-gray-50 bg-white rounded-lg text-base leading-tight border border-blueGray-300 outline-none focus:outline-none dark:focus:border-purple-700 transition-all w-full">
+    </div>
+    <div class="messages_list flex flex-col gap-2.5 px-3 pt-3 pb-5 h-[calc(100%-100px)] overflow-y-auto overflow-x-hidden">
+        <div class="message_skeleton flex w-full h-full justify-center items-center dark:text-purple-800 text-5xl">
+            <i class="fad animate-spin fa-spinner-third"></i>
+        </div>
+    </div>
+</div>
+<script src="/js/messages.js"></script>

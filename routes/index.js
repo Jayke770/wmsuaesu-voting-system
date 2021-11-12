@@ -9,6 +9,7 @@ const user = require('../models/user')
 const admin = require('../models/admin')
 const data = require('../models/data')
 const election = require('../models/election')
+const conversations = require('../models/conversations')
 const { authenticated, isadmin, isloggedin, take_photo, get_face, send_verification_email, verify_device} = require('./auth')
 const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash, newNotification} = require('./functions')
 const { normal_limit, limit} = require('./rate-limit')
@@ -2168,6 +2169,61 @@ router.post('/account/notifications/remove/', normal_limit, isloggedin, async (r
                 throw new Error(e)
             })
         }
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//get messages 
+router.post('/account/messages/', normal_limit, isloggedin, async (req, res) => {
+    const {myid} = req.session 
+
+    try {
+        await conversations.find({userID: {$eq: xs(myid)}}).then( async (userConversations) => {
+            return res.render('message/messages-list', {
+                messages: userConversations
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//search user in message 
+router.post('/account/messges/search-users/', normal_limit, isloggedin, async (req, res) => {
+    const {search} = req.body 
+    const {myid} = req.session
+    let result = []
+    try {
+        await user.find({_id: {$ne: xs(myid)}}, {firstname: 1, middlename: 1, lastname: 1, course: 1, year: 1, socket_id: 1, _id :1, student_id: 1}).then( async (usersData) => {
+            if(usersData.length > 0){
+                for(let i = 0; i < usersData.length; i++){
+                    const name = `${usersData[i].firstname} ${usersData[i].middlename} ${usersData[i].lastname}`
+                    if(name.search(xs(search)) !== -1) {
+                        result.push(usersData[i])
+                    }
+                }
+                return res.render('message/search-user', {
+                    users: result, 
+                    data: {
+                        courses: await course(),
+                        year: await year()
+                    }
+                })
+            } else {
+                return res.render('message/search-user', {
+                    users: [], 
+                    data: {
+                        courses: await course(),
+                        year: await year()
+                    }
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
     } catch (e) {
         console.log(e) 
         return res.status(500).send()
