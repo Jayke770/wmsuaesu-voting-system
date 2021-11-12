@@ -449,14 +449,14 @@ module.exports = {
     newNotification: async (id, type, data) => {
         try {
             if(xs(type) === "account"){
-                await user.updateOne({_id: {$eq: xs(id)}}, {$push: {"notifications.account": data}}).then( (h) => {
+                await user.updateOne({_id: {$eq: xs(id)}}, {$push: {"notifications.$.account": data}}).then( (h) => {
                     console.log(h)
                     return true
                 }).catch( (e) => {
                     throw new Error(e)
                 })
             } else if(xs(type) === "election") {
-                await user.updateOne({_id: {$eq: xs(id)}}, {$push: {"notifications.election": data}}).then( (h) => {
+                await user.updateOne({_id: {$eq: xs(id)}}, {$push: {"notifications.$.election": data}}).then( (h) => {
                     console.log(h)
                     return true
                 }).catch( (e) => {
