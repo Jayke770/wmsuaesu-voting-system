@@ -10,7 +10,7 @@ const admin = require('../models/admin')
 const data = require('../models/data')
 const election = require('../models/election')
 const { authenticated, isadmin, isloggedin, take_photo, get_face, send_verification_email, verify_device} = require('./auth')
-const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash} = require('./functions')
+const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash, newNotification} = require('./functions')
 const { normal_limit, limit} = require('./rate-limit')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
@@ -499,7 +499,13 @@ router.post('/register', normal_limit, async (req, res) => {
                                         req.session.islogin = true // to determine that user is now logged in
                                         req.session.user_type = userData.type //to determine the user type
                                         req.session.data = userData
-                                        await data.updateOne({ "voterId.student_id": { $eq: xs(student_id) } }, { $set: { "voterId.$.enabled": true } }).then((vu) => {
+                                        await data.updateOne({ "voterId.student_id": { $eq: xs(student_id) } }, { $set: { "voterId.$.enabled": true } }).then( async () => {
+                                            await newNotification(userData._id, 'account', {
+                                                id: uuidv4(), 
+                                                content: `Hi, ${xs(toUppercase(fname))} Welcome to WMSU-AESU Online Voting System`,
+                                                student_id: student_id,
+                                                created: moment().tz("Asia/Manila").format()
+                                            })
                                             return res.send({
                                                 islogin: true,
                                                 msg: `Welcome ${xs(toUppercase(fname))}`
@@ -1585,7 +1591,7 @@ router.post('/account/settings/verify-email/:email/:emailID/:id/', normal_limit,
     const {pass} = req.body
     const {email, emailID, id} = req.params
     try {
-        await user.find({_id: {$eq: xs(id)}}, {email: 1, password: 1}).then( async (userData) => {
+        await user.find({_id: {$eq: xs(id)}}, {email: 1, password: 1, firstname: 1, student_id: 1, _id: 1}).then( async (userData) => {
             if(userData.length > 0){
                 //check password 
                 if(await compareHash(xs(pass), userData[0].password)){
@@ -1595,6 +1601,12 @@ router.post('/account/settings/verify-email/:email/:emailID/:id/', normal_limit,
                             _id: {$eq: xs(id)}, 
                             "email.id": {$eq: xs(emailID)}
                         }, {$set: {"email.status": 'Verified'}}).then( async () => {
+                            await newNotification(userData[0]._id, 'account', {
+                                id: uuidv4(), 
+                                content: `Hi, ${userData[0].firstname} Thank you for verifying your email`,
+                                student_id: userData[0].student_id,
+                                created: moment().tz("Asia/Manila").format()
+                            })
                             return res.send({
                                 status: true, 
                                 txt: 'Email Successfully Verified', 
@@ -1962,7 +1974,7 @@ router.post('/account/settings/secure/verify-device/', normal_limit, isloggedin,
             await user.updateOne({
                 _id: {$eq: xs(myid)}, 
                 devices: {$elemMatch: {id: xs(deviceData.id)}}
-            }, {$set: {"devices.$.status": "Verifying"}}).then( (f) => {
+            }, {$set: {"devices.$.status": "Verifying"}}).then( () => {
                 verify_device(firstname, email.email, deviceData, myid)
                 return res.send({
                     status: true, 
@@ -2011,7 +2023,7 @@ router.get('/account/settings/verify-device/:deviceID/:userID/', normal_limit, a
 // verify now 
 router.post('/account/settings/verify-device/:deviceID/:userID/', normal_limit, async (req, res) => { 
     const {deviceID, userID} = req.params 
-    const {devices} = await user_data(userID)
+    const {devices, student_id, firstname, _id} = await user_data(userID)
     try {
         let device_found
         for(let i = 0; i < devices.length; i++){
@@ -2027,7 +2039,13 @@ router.post('/account/settings/verify-device/:deviceID/:userID/', normal_limit, 
             }, {$set: {
                 "devices.$.status": "Online", 
                 "devices.$.verified": true
-            }}).then( () => {
+            }}).then( async () => {
+                await newNotification(_id, 'account', {
+                    id: uuidv4(), 
+                    content: `Hi, ${firstname} Thank you for verifying your new device`,
+                    student_id: student_id,
+                    created: moment().tz("Asia/Manila").format()
+                })
                 return res.send({
                     status: true, 
                     txt: 'Device Successfully Verified', 

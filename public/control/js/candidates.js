@@ -111,6 +111,7 @@ $(document).ready( () => {
                                     }).then( async () => {
                                         if(res.status) {
                                             $(this).find('input[type="reset"]').click() 
+                                            socket.emit('send-notification', {student_id: res.student_id})
                                             await ca.search('')
                                             await ca.candidates()
                                         }
@@ -201,7 +202,6 @@ $(document).ready( () => {
                                 if(req.ok) {
                                     const res = await req.json() 
                                     accept_ca = false
-                                    socket.emit('candidacy-form-accepted', {candidacyID: $(this).attr("data").trim()})
                                     if(res.status){
                                         Swal.fire({
                                             icon: 'success', 
@@ -210,6 +210,8 @@ $(document).ready( () => {
                                             backdrop: true, 
                                             allowOutsideClick: false,
                                         })
+                                        socket.emit('candidacy-form-accepted', {candidacyID: $(this).attr("data").trim()})
+                                        socket.emit('send-notification', {student_id: res.student_id})
                                         await ca.candidates()
                                     } else {
                                         Swal.fire({
@@ -298,6 +300,7 @@ $(document).ready( () => {
                                                         backdrop: true, 
                                                         allowOutsideClick: false,
                                                     })
+                                                    socket.emit('send-notification', {student_id: res.student_id})
                                                     await ca.candidates()
                                                 } else {
                                                     Swal.fire({
@@ -377,6 +380,7 @@ $(document).ready( () => {
                                             backdrop: true, 
                                             allowOutsideClick: false,
                                         })
+                                        socket.emit('send-notification', {student_id: res.student_id})
                                         await ca.candidates()
                                     } else {
                                         Swal.fire({
@@ -452,7 +456,10 @@ $(document).ready( () => {
                                         backdrop: true, 
                                         allowOutsideClick: false
                                     }).then( async () => {
-                                        await ca.candidates()
+                                        if(res.status){
+                                            socket.emit('send-notification', {student_id: res.student_id})
+                                            await ca.candidates()
+                                        }
                                     })
                                 } else {
                                     throw new Error(`${req.status} ${req.statusText}`)

@@ -190,7 +190,6 @@ $(document).ready( () => {
     // accept voter 
     let accept_voter = false 
     $(".election_voters_list").delegate(".accept_voter_req", "click", async function () {
-        console.log(accept_voter)
         if(!accept_voter){
             Swal.fire({
                 icon: 'question', 

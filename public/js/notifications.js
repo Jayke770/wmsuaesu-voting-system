@@ -90,7 +90,6 @@ $(document).ready( () => {
     })
     //websocket 
     socket.on('new_notification', async () => { 
-        $(".open_notification").find(".dot").removeClass("hidden")
         sent()
         await notification.notifications()
         alertify.notify('New Notification')
