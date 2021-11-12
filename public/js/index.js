@@ -5,6 +5,9 @@ $(document).ready( () => {
         const child = $(".nav_main") 
         child.addClass(child.attr("animate-in")) 
         parent.removeClass("hidden") 
+        if(!$(".notification").hasClass("hidden")){
+            $(".notification").addClass("hidden")
+        }
         setTimeout( () => {
             child.removeClass(child.attr("animate-in")) 
         }, 300)

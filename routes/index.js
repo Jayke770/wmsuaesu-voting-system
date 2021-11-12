@@ -2069,7 +2069,6 @@ router.post('/account/notifications/remove/', normal_limit, isloggedin, async (r
         if(xs(type) === "account") {
             await user.find({_id: {$eq: xs(myid)}}, {notifications: 1}).then( async (userData) => {
                 if(userData.length > 0){
-                    console.log(userData[0].notifications)
                     let {account} = userData[0].notifications, nty_found = false
                     for(let i = 0; i < account.length; i++){
                         if(account[i].id === xs(id)){
@@ -2078,7 +2077,6 @@ router.post('/account/notifications/remove/', normal_limit, isloggedin, async (r
                             break
                         }
                     }
-                    console.log(nty_found)
                     if(nty_found){
                         await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {"notifications.account": account}}).then( () => {
                             return res.send({

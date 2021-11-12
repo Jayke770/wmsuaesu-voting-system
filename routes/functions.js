@@ -315,7 +315,7 @@ module.exports = {
         let res
         try {
             //get all elections 
-            await election.find({}).then( async (elec) => {
+            await election.find({}, {passcode: 0}).then( async (elec) => {
                 if(elec.length !== 0){
                     for(let i = 0; i < elec.length; i++){
                         const e_start = moment(elec[i].start).tz("Asia/Manila").fromNow().search("ago") !== -1 ? true : false
@@ -324,7 +324,7 @@ module.exports = {
                         //if election is not started and it is the time to start
                         if(elec[i].status === "Not Started" && e_start && !e_end){
                             //start election 
-                            await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Started"}}).then( () => {
+                            await election.updateOne({_id: {$eq: xs(elec[i]._id)}}, {$set: {status: "Started"}}).then( async () => {
                                 console.log(`Election with ID ${elec[i]._id} has been Started\nElection Title : ${elec[i].election_title}`)
                                 res = {electionID: elec[i]._id, status: true, type: "Started"}
                             }).catch( (e) => {
@@ -334,7 +334,7 @@ module.exports = {
                         //if election is not ended and it is the time to end
                         if(elec[i].status === "Started" && e_start && e_end){
                             // end election 
-                            await election.updateOne({_id: {$eq: objectid(xs(elec[i]._id))}}, {$set: {status: "Ended"}}).then( () => {
+                            await election.updateOne({_id: {$eq: xs(elec[i]._id)}}, {$set: {status: "Ended"}}).then( () => {
                                 console.log(`Election with ID ${elec[i]._id} has been Ended\nElection Title : ${elec[i].election_title}`)
                                 res = {electionID: elec[i]._id, status: true, type: "Ended"}
                             }).catch( (e) => {
@@ -345,13 +345,13 @@ module.exports = {
                         if(elec[i].status === "Pending for deletion" && e_deletion && e_start && e_end){
                             //delete election 
                             //get all voters student_id 
-                            await election.find({ _id: {$eq: objectid(xs(elec[i]._id))}}, {voters: 1}).then( async (voters) => {
+                            await election.find({ _id: {$eq: xs(elec[i]._id)}}, {voters: 1}).then( async (voters) => {
                                 if(voters.length > 0){
                                     for(let i = 0; i < voters.length; i++){
                                         //remove the current election id in the user document 
                                         await user.updateOne({student_id: {$eq: xs(voters[i].student_id)}}, {$pull: {elections: xs(elec[i]._id)}})
                                     }
-                                    await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( () => { 
+                                    await election.deleteOne({_id: {$eq: xs(elec[i].id)}}).then( () => { 
                                         //delete this election
                                         console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
                                         res = {electionID: elec[i]._id, status: true, type: "Deleted"}
@@ -359,7 +359,7 @@ module.exports = {
                                         throw new Error(e)
                                     })
                                 } else {
-                                    await election.deleteOne({_id: {$eq: objectid(xs(elec[i].id))}}).then( () => { 
+                                    await election.deleteOne({_id: {$eq: xs(elec[i].id)}}).then( () => { 
                                         //delete this election
                                         console.log(`Election with ID ${elec[i]._id} has been Deleted\nElection Title : ${elec[i].election_title}`)
                                         res = {electionID: elec[i]._id, status: true, type: "Deleted"}
@@ -447,25 +447,27 @@ module.exports = {
     }, 
     //notification
     newNotification: async (id, type, data) => {
+        let res = false
         try {
             if(xs(type) === "account"){
                 await user.updateOne({_id: {$eq: xs(id)}}, {$push: {"notifications.account": data}}).then( (h) => {
                     console.log(h)
-                    return true
+                    res = true
                 }).catch( (e) => {
                     throw new Error(e)
                 })
             } else if(xs(type) === "election") {
                 await user.updateOne({_id: {$eq: xs(id)}}, {$push: {"notifications.election": data}}).then( (h) => {
                     console.log(h)
-                    return true
+                    res =  true
                 }).catch( (e) => {
                     throw new Error(e)
                 })
             }
         } catch (e) {
             console.log(e)
-            return false
+            res =  false
         }
+        return res
     }
 }

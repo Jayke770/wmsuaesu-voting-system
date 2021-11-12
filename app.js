@@ -22,10 +22,11 @@ const sharedsession = require('express-socket.io-session')
 const requestIp = require('request-ip')
 const fs = require('fs-extra')
 const moment = require('moment-timezone')
+const {v4: uuidv4} = require('uuid')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
 const uploader = require('./routes/uploader')
-const {updateAdminSocketID, user_socket_id, election_handler, user_data, users_election_handler, course, mycourse, year, myyear} = require('./routes/functions') 
+const {updateAdminSocketID, user_socket_id, election_handler, user_data, users_election_handler, course, mycourse, year, myyear, newNotification} = require('./routes/functions') 
 //models 
 const election = require('./models/election')
 const users = require('./models/user')
@@ -542,14 +543,21 @@ setInterval(async () => {
             //send event to admin & user that there is new election has been started 
             admin_socket.emit('new-election-started', { electionID: election_status.electionID })
             //get all voter in this election and notify 
-            await election.find({_id: {$eq: xs(election_status.electionID)}}, {voters: 1}).then( async (elec) => {
+            await election.find({_id: {$eq: xs(election_status.electionID)}}, {voters: 1, election_title: 1}).then( async (elec) => {
                 if(elec.length > 0){
                    const voters = elec[0].voters 
                    if(voters.length > 0){
                        for(let i = 0; i < voters.length; i++){
-                           await users.find({student_id: {$eq: xs(voters[i].student_id)}}, {socket_id: 1}).then( (s) => {
-                               if(s[0].socket_id !== "Offline" || s[0].socket_id !== "Waiting For Student"){
-                                users_socket.to(s[0].socket_id).emit('new-election-started', { electionID: election_status.electionID })
+                           await users.find({student_id: {$eq: xs(voters[i].student_id)}}, {socket_id: 1, _id: 1}).then( async (s) => {
+                                await newNotification(s[0]._id, 'election', {
+                                    id: uuidv4(), 
+                                    type: 'info',
+                                    content: `${elec[0].election_title} has been started`, 
+                                    created: moment().tz("Asia/Manila").format()
+                                })
+                               if(s[0].socket_id !== "Offline"){
+                                    users_socket.to(s[0].socket_id).emit('new_notification')
+                                    users_socket.to(s[0].socket_id).emit('new-election-started', { electionID: election_status.electionID })
                                }
                            })
                        }
@@ -562,13 +570,20 @@ setInterval(async () => {
             //send event to admin & user that there is new election has been started 
             admin_socket.emit('new-election-ended', { electionID: election_status.electionID })
             //get all voter in this election and notify 
-            await election.find({_id: {$eq: xs(election_status.electionID)}}, {voters: 1}).then( async (elec) => {
+            await election.find({_id: {$eq: xs(election_status.electionID)}}, {voters: 1, election_title: 1}).then( async (elec) => {
                 if(elec.length > 0){
                    const voters = elec[0].voters 
                    if(voters.length > 0){
                        for(let i = 0; i < voters.length; i++){
-                           await users.find({student_id: {$eq: xs(voters[i].student_id)}}, {socket_id: 1}).then( (s) => {
-                               if(s[0].socket_id !== "Offline" || s[0].socket_id !== "Waiting For Student"){
+                           await users.find({student_id: {$eq: xs(voters[i].student_id)}}, {socket_id: 1, _id: 1}).then( async (s) => {
+                                await newNotification(s[0]._id, 'election', {
+                                    id: uuidv4(), 
+                                    type: 'info',
+                                    content: `${elec[0].election_title} has been ended`, 
+                                    created: moment().tz("Asia/Manila").format()
+                                })
+                               if(s[0].socket_id !== "Offline"){
+                                users_socket.to(s[0].socket_id).emit('new_notification')
                                 users_socket.to(s[0].socket_id).emit('new-election-ended', { electionID: election_status.electionID })
                                }
                            })

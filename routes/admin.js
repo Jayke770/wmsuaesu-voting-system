@@ -1591,7 +1591,7 @@ adminrouter.post('/control/election/settings/start-election/', limit, isadmin, a
         //get election details 
         await election.find({
             _id: {$eq: xs(electionID)}
-        }, {status: 1}).then( async (s) => {
+        }, {status: 1, voters: 1, election_title: 1}).then( async (s) => {
             if(s.length !== 0){
                 //check status
                 // if the election is not started then start the election
@@ -1602,7 +1602,15 @@ adminrouter.post('/control/election/settings/start-election/', limit, isadmin, a
                     }, {$set: {
                         status: 'Started',
                         start: moment().tz("Asia/Manila").format()
-                    }}).then( () => {
+                    }}).then( async () => {
+                        for(let i = 0; i < s[0].voters.length; i++) {
+                            await newNotification(s[0].voters[i].id, 'election', {
+                                id: uuid(), 
+                                type: 'info',
+                                content: `${s[0].election_title} has been started`, 
+                                created: moment().tz("Asia/Manila").format()
+                            })
+                        }
                         return res.send({
                             status: true, 
                             e_status: true,
@@ -1652,7 +1660,7 @@ adminrouter.post('/control/election/settings/stop-election/', limit, isadmin, as
     try {
         await election.find({
             _id: {$eq: xs(electionID)}
-        }, {status: 1}).then( async (s) => {
+        }, {status: 1, voters: 1, election_title: 1}).then( async (s) => {
             if(s.length !== 0){
                 if(s[0].status === 'Started'){
                     //update election and stop 
@@ -1661,7 +1669,15 @@ adminrouter.post('/control/election/settings/stop-election/', limit, isadmin, as
                     }, {$set: {
                         status: 'Ended', 
                         end: moment().tz("Asia/Manila").format()
-                    }}).then( () => {
+                    }}).then( async () => {
+                        for(let i = 0; i < s[0].voters.length; i++) {
+                            await newNotification(s[0].voters[i].id, 'election', {
+                                id: uuid(), 
+                                type: 'info',
+                                content: `${s[0].election_title} has been ended`, 
+                                created: moment().tz("Asia/Manila").format()
+                            })
+                        }
                         return res.send({
                             status: true, 
                             e_status: false,
@@ -1694,6 +1710,7 @@ adminrouter.post('/control/election/settings/stop-election/', limit, isadmin, as
             throw new Error(e)
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })
@@ -1749,7 +1766,7 @@ adminrouter.post('/control/election/settings/edit-ending-dt/', limit, isadmin, a
         // check election status
         await election.find({
             _id: {$eq: xs(electionID)}
-        }, {status: 1, start: 1, end: 1}).then( async (e_st) => {
+        }, {status: 1, start: 1, end: 1, voters: 1, election_title: 1}).then( async (e_st) => {
            if(e_st.length !== 0){
                 const e_start_time = moment(e_st[0].start).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
                 const e_end_time = moment(e_st[0].end).tz("Asia/Manila").fromNow().search("ago") != -1 ? true : false
@@ -1761,7 +1778,15 @@ adminrouter.post('/control/election/settings/edit-ending-dt/', limit, isadmin, a
                     }, {$set: {
                         status: 'Started', 
                         end: xs(time)
-                    }}).then( (t) => {
+                    }}).then( async () => {
+                        for(let i = 0; i < e_st[0].voters.length; i++) {
+                            await newNotification(e_st[0].voters[i].id, 'election', {
+                                id: uuid(), 
+                                type: 'info',
+                                content: `${e_st[0].election_title} has been restarted`, 
+                                created: moment().tz("Asia/Manila").format()
+                            })
+                        }
                         return res.send({
                             status: true, 
                             msg: 'Election successfully restarted!'
@@ -1792,6 +1817,7 @@ adminrouter.post('/control/election/settings/edit-ending-dt/', limit, isadmin, a
            }
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })
