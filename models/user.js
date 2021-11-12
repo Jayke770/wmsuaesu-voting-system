@@ -53,8 +53,15 @@ const user =  new mongoose.Schema({
         type: Array,
     },
     notifications:{
-        account: {}, 
-        elections: {}
+        account: {
+            type: Array,
+        }, 
+        election: {
+            type: Array,
+        },
+        system: {
+            type: Array,
+        }
     },
     elections: {
         type: Array,

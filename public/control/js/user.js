@@ -375,7 +375,10 @@ $(document).ready( function (){
                         title: res.msg, 
                         timer: 2500
                     }).then( async () => {
-                        res.status ? await Data.info_menu(id, "account") : console.clear()
+                        if(res.status) {
+                            socket.emit('send-notification', {student_id: res.student_id})
+                            await Data.info_menu(id, "account") 
+                        }
                     })
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
@@ -412,7 +415,10 @@ $(document).ready( function (){
                         title: res.msg, 
                         timer: 2500
                     }).then( async () => {
-                        res.status ? await Data.info_menu(id, "account") : console.clear()
+                        if (res.status) {
+                            socket.emit('send-notification', {student_id: res.student_id})
+                            await Data.info_menu(id, "account")
+                        }
                     })
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
@@ -449,7 +455,10 @@ $(document).ready( function (){
                         title: res.msg, 
                         timer: 2500
                     }).then( async () => {
-                        res.status ? await Data.info_menu(id, "account") : console.clear()
+                        if (res.status) {
+                            socket.emit('send-notification', {student_id: res.student_id})
+                            await Data.info_menu(id, "account")
+                        }
                     })
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
@@ -486,7 +495,10 @@ $(document).ready( function (){
                         title: res.msg, 
                         timer: 2500
                     }).then( async () => {
-                        res.status ? await Data.info_menu(id, "account") : console.clear()
+                        if (res.status) {
+                            socket.emit('send-notification', {student_id: res.student_id})
+                            await Data.info_menu(id, "account")
+                        }
                     })
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)
@@ -524,6 +536,10 @@ $(document).ready( function (){
                         icon: res.status ? 'success' : 'info', 
                         title: res.msg, 
                         timer: 2500
+                    }).then( () => {
+                        if (res.status) {
+                            socket.emit('send-notification', {student_id: res.student_id})
+                        }
                     })
                 } else {
                     throw new Error(`${req.status} ${req.statusText}`)

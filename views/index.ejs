@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="font-sans antialiased transition-all" joined="<%- joined %>">
+<html lang="en" class="font-sans antialiased transition-all" joined="<%- joined %>" notification-election="<%- userData.notifications.election.length %>" notification-account="<%- userData.notifications.account.length %>" notification-system="<%- userData.notifications.system.length %>">
 
 <head>
     <meta charset="UTF-8">
@@ -36,7 +36,6 @@
             }, 500)
         }
     </script>
-<script data-ad-client="ca-pub-8538025424759782" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 
 <body class="bg-gray-300 dark:bg-[#090c10] h-full">
@@ -88,7 +87,7 @@
                     </a>
                     <a class="open_notification rpl relative rounded-lg transition-all p-2 text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
                         <i class="far fa-bell"></i>
-                        <span class="dark:bg-indigo-700 absolute rounded-full w-2 h-2"></span>
+                        <span class="dot hidden dark:bg-indigo-700 absolute rounded-full w-2 h-2"></span>
                     </a>
                 </div>
             </div>

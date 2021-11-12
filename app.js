@@ -382,6 +382,13 @@ admin_socket.on('connection', async (socket) => {
             })
         }
     })
+    //send notification 
+    socket.on('send-notification', async (data, res) => {
+        const status = await user_socket_id(data.student_id)
+        if(status !== "Offline"){
+            users_socket.to(status).emit('new_notification')
+        }
+    })  
 })
 //user websocket events
 users_socket.on('connection', async (socket) => {

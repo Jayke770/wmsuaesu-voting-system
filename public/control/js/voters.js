@@ -88,6 +88,7 @@ $(document).ready( () => {
                                         allowOutsideClick: false
                                     }).then( async () => {
                                         if(res.status) { 
+                                            socket.emit('send-notification', {student_id: res.student_id})
                                             $(`.users_[data='${$(this).attr("data")}']`).remove()
                                             await voter.voters()
                                         }
@@ -188,8 +189,8 @@ $(document).ready( () => {
 
     // accept voter 
     let accept_voter = false 
-    $(".election_voters_list").delegate(".accept_voter_req", "click", async function (e) {
-        e.preventDefault() 
+    $(".election_voters_list").delegate(".accept_voter_req", "click", async function () {
+        console.log(accept_voter)
         if(!accept_voter){
             Swal.fire({
                 icon: 'question', 
@@ -233,6 +234,7 @@ $(document).ready( () => {
                                         allowOutsideClick: false
                                     }).then( async () => {
                                         if(res.status){
+                                            socket.emit('send-notification', {student_id: res.student_id})
                                             socket.emit('voter-accepted', {voterID: $(this).attr("data")})
                                             await voter.voters()
                                         }
@@ -259,13 +261,12 @@ $(document).ready( () => {
 
     // remove voter 
     let remove_voter = false 
-    $(".election_voters_list").delegate(".remove_voter_req", "click", async function (e) {
-        e.preventDefault() 
+    $(".election_voters_list").delegate(".remove_voter_req", "click", async function () {
         if(!remove_voter){
             Swal.fire({
                 icon: 'question', 
-                title: 'Remove Voter Request', 
-                html: 'This will remove the current voter request', 
+                title: 'Remove Voter', 
+                html: 'This will remove the current voter', 
                 backdrop: true, 
                 allowOutsideClick: false, 
                 showDenyButton: true, 
@@ -275,7 +276,7 @@ $(document).ready( () => {
                 if(a.isConfirmed){
                     Swal.fire({
                         icon: 'info', 
-                        title: 'Removing Voter Request', 
+                        title: 'Removing Voter', 
                         html: 'Please wait...', 
                         backdrop: true, 
                         allowOutsideClick: false, 
@@ -283,7 +284,7 @@ $(document).ready( () => {
                         willOpen: async () => {
                             Swal.showLoading() 
                             try {
-                                accept_voter = true
+                                remove_voter = true
                                 let data = new FormData() 
                                 data.append("id", $(this).attr("data")) 
                                 const req = await fetchtimeout('/control/elections/voters/remove-voter/', {
@@ -304,6 +305,7 @@ $(document).ready( () => {
                                         allowOutsideClick: false
                                     }).then( async () => {
                                         if(res.status){
+                                            socket.emit('send-notification', {student_id: res.student_id})
                                             socket.emit('voter-remove', {voterID: $(this).attr("data")})
                                         }
                                     })

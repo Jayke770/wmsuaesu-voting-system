@@ -9,7 +9,7 @@ const election = require('../models/election')
 const data = require('../models/data')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
 const {restore_account_email, change_account_cred} = require('./auth')
-const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myprofile, color, user_data, is_course_eligible, is_year_eligible, newNotification} = require('./functions')
+const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myprofile, color, user_data, is_course_eligible, is_year_eligible, newNotification, user_id} = require('./functions')
 const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
@@ -555,13 +555,21 @@ adminrouter.post('/control/elections/candidates/delete/', limit, isadmin, async 
     try {
         await election.find({
             _id: {$eq: xs(currentElection)}, 
-            "candidates.id": {$eq: xs(id)}
-        }).then( async (elec) => {
+            candidates: {$elemMatch: {id: {$eq: xs(id)}}}
+        }, {candidates: {$elemMatch: {id: {$eq: xs(id)}}}, election_title: 1}).then( async (elec) => {
             if(elec.length !== 0){
                 //pull the current candidate 
                 await election.updateOne({
                     _id: {$eq: xs(currentElection)}
-                }, {$pull: {candidates: {id: xs(id)}}}).then( (del) => {
+                }, {$pull: {candidates: {id: xs(id)}}}).then( async () => {
+                    const {_id} = await user_id(elec[0].candidates[0].student_id)
+                    //send notification 
+                    await newNotification(_id, 'election', {
+                        id: uuid(), 
+                        type: 'warning',
+                        content: `Your candidacy has been deleted from the ${elec[0].election_title}`,
+                        created: moment().tz("Asia/Manila").format()
+                    })
                     return res.send({
                         status: true, 
                         txt: 'Candidate Deleted successfully'
@@ -591,15 +599,23 @@ adminrouter.post('/control/elections/candidates/accept-candidacy/', limit, isadm
         //check if election and candidate is exist 
         await election.find({
             _id: {$eq: xs(currentElection)}, 
-            "candidates.id": {$eq: xs(id)}
-        }, {candidates: 1}).then( async (elec) => {
+            candidates: {$elemMatch: {id: {$eq: xs(id)}}}
+        }, {candidates: {$elemMatch: {id: {$eq: xs(id)}}}, election_title: 1}).then( async (elec) => {
             //if election and candidates is exist 
             if(elec.length !== 0){
                 //accept candidate 
                 await election.updateOne({
                     _id: {$eq: xs(currentElection)}, 
                     "candidates.id": {$eq: xs(id)}
-                }, {$set: {"candidates.$.status": "Accepted"}}).then( (ac) => {
+                }, {$set: {"candidates.$.status": "Accepted"}}).then( async () => {
+                    const {_id} = await user_id(elec[0].candidates[0].student_id)
+                    //send notification 
+                    await newNotification(_id, 'election', {
+                        id: uuid(), 
+                        type: 'info',
+                        content: `Your candidacy has been accepted from the ${elec[0].election_title}`,
+                        created: moment().tz("Asia/Manila").format()
+                    })
                     return res.send({
                         status: true, 
                         txt: 'Candidate successfully accepted'
@@ -630,8 +646,8 @@ adminrouter.post('/control/elections/candidates/delete-candidacy/', limit, isadm
         //check if election and candidate is exist 
         await election.find({
             _id: {$eq: xs(currentElection)}, 
-            "candidates.id": {$eq: xs(id)}
-        }, {candidates: 1}).then( async (elec) => {
+            candidates: {$elemMatch: {id: {$eq: xs(id)}}}
+        }, {candidates: {$elemMatch: {id: {$eq: xs(id)}}}, election_title: 1}).then( async (elec) => {
             //if election and candidates is exist 
             if(elec.length !== 0){
                 //accept candidate 
@@ -641,7 +657,15 @@ adminrouter.post('/control/elections/candidates/delete-candidacy/', limit, isadm
                 }, {$set: {
                     "candidates.$.status": "Deleted", 
                     "candidates.$.msg": xs(nl2br(msg))
-                }}).then( (ac) => {
+                }}).then( async () => {
+                    const {_id} = await user_id(elec[0].candidates[0].student_id)
+                    //send notification 
+                    await newNotification(_id, 'election', {
+                        id: uuid(), 
+                        type: 'warning',
+                        content: `Your candidacy has been declined from the ${elec[0].election_title}`,
+                        created: moment().tz("Asia/Manila").format()
+                    })
                     return res.send({
                         status: true, 
                         txt: 'Candidate temporarily deleted'
@@ -812,19 +836,28 @@ adminrouter.post('/control/election/candidates/search/', limit, isadmin, async (
 adminrouter.post('/control/election/candidates/remove-candidate/', limit, isadmin, async (req, res) => {
     const {id} = req.body 
     const {currentElection} = req.session
-
     try {
-        await election.find({_id: {$eq: xs(currentElection)}}, {candidates: 1}).then( async (elec) => {
+        await election.find({_id: {$eq: xs(currentElection)}}, {candidates: 1, election_title: 1}).then( async (elec) => {
             if(elec.length > 0) {
-                let ca_found = false
+                let ca_found = false, ca_student_id = null
                 for(let i = 0; i < elec[0].candidates.length; i++){
                     if(elec[0].candidates[i].id === xs(id)) {
                         ca_found = true 
+                        ca_student_id = elec[0].candidates[i].student_id
                         break
                     }
                 }
                 if(ca_found){ 
-                    await election.updateOne({_id: {$eq: xs(currentElection)}}, {$pull: {candidates: {id: xs(id)}}}).then( () => {
+                    const {_id} = await user_id(ca_student_id)
+                    console.log(_id)
+                    await election.updateOne({_id: {$eq: xs(currentElection)}}, {$pull: {candidates: {id: xs(id)}}}).then( async () => {
+                        //send notification 
+                        await newNotification(_id, 'election', {
+                            id: uuid(), 
+                            type: 'warning',
+                            content: `Your candidacy has been removed from the ${elec[0].election_title}`,
+                            created: moment().tz("Asia/Manila").format()
+                        })
                         return res.send({
                             status: true, 
                             txt: "Candidate Successfully Removed", 
@@ -998,7 +1031,7 @@ adminrouter.post('/control/elections/voters/add-user-add-voter/', limit, isadmin
         created: moment().tz("Asia/Manila").format()
     }
     try {
-        await election.find({_id: {$eq: xs(currentElection)}}, {_id: 1}).then( async (elec) => {
+        await election.find({_id: {$eq: xs(currentElection)}}, {_id: 1, election_title: 1}).then( async (elec) => {
             if(elec.length > 0){
                 const userData = await user_data(id)
                 if(userData){
@@ -1025,11 +1058,19 @@ adminrouter.post('/control/elections/voters/add-user-add-voter/', limit, isadmin
                             }
                             if(!elec_found){
                                 await user.updateOne({student_id: {$eq: xs(userData.student_id)}}, {$push: {elections: xs(currentElection.toString())}}).then( async () => {
-                                    await election.updateOne({_id: {$eq: xs(currentElection)}}, {$push: {voters: new_voter}}).then( () => {
+                                    await election.updateOne({_id: {$eq: xs(currentElection)}}, {$push: {voters: new_voter}}).then( async () => {
+                                        //send notification 
+                                        await newNotification(new_voter.id, 'election', {
+                                            id: uuid(), 
+                                            type: 'info',
+                                            content: `You are now a voter of ${elec[0].election_title}`,
+                                            created: moment().tz("Asia/Manila").format()
+                                        })
                                         return res.send({
                                             status: true, 
                                             txt: "User Successfully Added", 
-                                            msg: `${new_voter.fullname} is now a voter`
+                                            msg: `${new_voter.fullname} is now a voter`, 
+                                            student_id: new_voter.student_id
                                         })
                                     }).catch( (e) => {
                                         throw new Error(e)
@@ -1166,16 +1207,24 @@ adminrouter.post('/control/elections/voters/accept-voter/', limit, isadmin, asyn
         await election.find({
             _id: {$eq: xs(currentElection)}, 
             voters: {$elemMatch: {id: {$eq: xs(id)}}}
-        }, {voters: {$elemMatch: {id: {$eq: xs(id)}}}}).then( async (elec_voter) => {
+        }, {voters: {$elemMatch: {id: {$eq: xs(id)}}}, election_title: 1}).then( async (elec_voter) => {
             if(elec_voter.length > 0){
                 await election.updateOne({
                     _id: {$eq: xs(currentElection)}, 
                     "voters.id": {$eq: xs(id)}
-                }, {$set: {"voters.$.status": "Accepted"}}).then( () => {
+                }, {$set: {"voters.$.status": "Accepted"}}).then( async () => {
+                    //send notification 
+                    await newNotification(id, 'election', {
+                        id: uuid(), 
+                        type: 'info',
+                        content: `You are now a voter of ${elec_voter[0].election_title}`,
+                        created: moment().tz("Asia/Manila").format()
+                    })
                     return res.send({
                         status: true, 
                         txt: "Voter Successfully Accepted", 
-                        msg: ""
+                        msg: "", 
+                        student_id: elec_voter[0].voters[0].student_id
                     })
                 }).catch((e) => {
                     throw new Error(e)
@@ -1199,19 +1248,25 @@ adminrouter.post('/control/elections/voters/accept-voter/', limit, isadmin, asyn
 adminrouter.post('/control/elections/voters/remove-voter/', limit, isadmin, async (req, res) => {
     const {id} = req.body 
     const {currentElection} = req.session 
-    console.log(id)
     try { 
-        await election.find({_id: {$eq: xs(currentElection)}, "voters.id": {$eq: xs(id)}}).then( async (elec_voter) => {
+        await election.find({_id: {$eq: xs(currentElection)}, voters: {$elemMatch: {id: {$eq: xs(id)}}}}, {voters: {$elemMatch: {id: {$eq: xs(id)}}}, election_title: 1}).then( async (elec_voter) => {
             if(elec_voter.length > 0){
                 await election.updateOne({
                     _id: {$eq: xs(currentElection)}, 
                     voters: {$elemMatch: {id: {$eq: xs(id)}}}
-                }, {$pull: {voters: {id: {$eq: xs(id)}}}}).then( (g) => {
-                    console.log(g)
+                }, {$pull: {voters: {id: {$eq: xs(id)}}}}).then( async () => {
+                    //send notification 
+                    await newNotification(id, 'election', {
+                        id: uuid(), 
+                        type: 'warning',
+                        content: `You have been removed from the ${elec_voter[0].election_title}`,
+                        created: moment().tz("Asia/Manila").format()
+                    })
                     return res.send({
                         status: true, 
                         txt: "Voter Successfully Removed", 
-                        msg: ""
+                        msg: "", 
+                        student_id: elec_voter[0].voters[0].student_id
                     })
                 }).catch( (e) => {
                     throw new Error(e)
@@ -3789,7 +3844,7 @@ adminrouter.post('/control/users/email/', isadmin, limit, async (req, res) => {
 adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res) => {
     const {cmd} = req.params 
     const {id, fname, mname, lname, type, course, year, usr, pass} = req.body
-    const {firstname, email, elections} = await user_data(id)
+    const {firstname, email, elections, student_id} = await user_data(id)
     try {
         if(xs(cmd) === "fullname"){
             if(fname && mname && lname){
@@ -3817,6 +3872,7 @@ adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res)
                             })
                             return res.send({
                                 status: true, 
+                                student_id: student_id,
                                 msg: "Successfully updated"
                             })
                         }).catch( (e) => {
@@ -3851,6 +3907,7 @@ adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res)
                             })
                             return res.send({
                                 status: true, 
+                                student_id: student_id,
                                 msg: "Successfully updated"
                             })
                         }).catch( (e) => {
@@ -3885,6 +3942,7 @@ adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res)
                             })
                             return res.send({
                                 status: true, 
+                                student_id: student_id,
                                 msg: "Successfully updated"
                             })
                         }).catch( (e) => {
@@ -3948,6 +4006,7 @@ adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res)
                                 await newNotification(id, 'account', {
                                     id: uuid(), 
                                     content: "Your Username & Password has been updated",
+                                    student_id: student_id,
                                     created: moment().tz("Asia/Manila").format()
                                 })
                                 return res.send({
@@ -4005,6 +4064,7 @@ adminrouter.post('/control/users/reset-account/', isadmin, limit, async (req, re
                 })
                 return res.send({
                     status: true, 
+                    student_id: student_id,
                     msg: 'Successfully reset', 
                 })
             }

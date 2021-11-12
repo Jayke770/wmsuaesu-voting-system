@@ -2043,4 +2043,111 @@ router.post('/account/settings/verify-device/:deviceID/:userID/', normal_limit, 
         return res.status(500).send()
     }
 })
+//get notifications 
+router.post('/account/notifications/', normal_limit, isloggedin, async (req, res) => {
+    const {myid} = req.session 
+
+    try {
+        await user.find({_id: {$eq: xs(myid)}}, {notifications: 1}).then( async (userData) => {
+            return res.render('notification/notifications-list', {
+                notifications: userData.length > 0 ? userData[0].notifications : {}
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//remove notification
+router.post('/account/notifications/remove/', normal_limit, isloggedin, async (req, res) => {
+    const {id, type} = req.body 
+    const {myid} = req.session 
+
+    try {
+        if(xs(type) === "account") {
+            await user.find({_id: {$eq: xs(myid)}}, {notifications: 1}).then( async (userData) => {
+                if(userData.length > 0){
+                    console.log(userData[0].notifications)
+                    let {account} = userData[0].notifications, nty_found = false
+                    for(let i = 0; i < account.length; i++){
+                        if(account[i].id === xs(id)){
+                            account.splice(i, 1)
+                            nty_found = true 
+                            break
+                        }
+                    }
+                    console.log(nty_found)
+                    if(nty_found){
+                        await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {"notifications.account": account}}).then( () => {
+                            return res.send({
+                                status: true, 
+                                txt: "Notification Successfully Removed", 
+                                msg: ""
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            txt: "Notification Not Found", 
+                            msg: "Please refresh the app"
+                        })
+                    }
+                } else {
+                    return res.send({
+                        status: false, 
+                        txt: "Notification Not Found", 
+                        msg: "Please refresh the app"
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else if (xs(type) === "election") {
+            await user.find({_id: {$eq: xs(myid)}}, {notifications: 1}).then( async (userData) => {
+                if(userData.length > 0){
+                    let {election} = userData[0].notifications, nty_found = false
+                    for(let i = 0; i < election.length; i++){
+                        if(election[i].id === xs(id)){
+                            election.splice(i, 1)
+                            nty_found = true 
+                            break
+                        }
+                    }
+                    if(nty_found){
+                        await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {"notifications.election": election}}).then( () => {
+                            return res.send({
+                                status: true, 
+                                txt: "Notification Successfully Removed", 
+                                msg: ""
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            txt: "Notification Not Found", 
+                            msg: "Please refresh the app"
+                        })
+                    }
+                } else {
+                    return res.send({
+                        status: false, 
+                        txt: "Notification Not Found", 
+                        msg: "Please refresh the app"
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        }
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
 module.exports = router

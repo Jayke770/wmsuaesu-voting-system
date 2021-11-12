@@ -18,7 +18,7 @@ function new_(vol) {
     const msg  = localStorage.getItem('msg')
     var sound = new Howl({
         src: [msg], 
-        volume: vol
+        volume: vol ? vol : 0.1
     })
     sound.play()
 }

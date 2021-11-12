@@ -123,7 +123,24 @@ module.exports = {
         try {
             await user.find({
                 _id: {$eq: xs(id)}
-            }, {messages: 0, comments: 0, notifications: 0, password: 0, username: 0}).then( (data) => {
+            }, {password: 0, username: 0}).then( (data) => {
+                result = data.length === 0 ? [] : data[0]
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            return false
+        }
+        //return user data 
+        return result
+    },
+    //get user id 
+    user_id: async (student_id) => {
+        let result
+        try {
+            await user.find({
+                student_id: {$eq: xs(student_id)}
+            }, {_id: 1}).then( (data) => {
                 result = data.length === 0 ? [] : data[0]
             }).catch( (e) => {
                 throw new Error(e)
@@ -431,8 +448,15 @@ module.exports = {
     //notification
     newNotification: async (id, type, data) => {
         try {
-            if(type === "account"){
+            if(xs(type) === "account"){
                 await user.updateOne({_id: {$eq: xs(id)}}, {$push: {"notifications.account": data}}).then( (h) => {
+                    console.log(h)
+                    return true
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else if(xs(type) === "election") {
+                await user.updateOne({_id: {$eq: xs(id)}}, {$push: {"notifications.election": data}}).then( (h) => {
                     console.log(h)
                     return true
                 }).catch( (e) => {
@@ -440,6 +464,7 @@ module.exports = {
                 })
             }
         } catch (e) {
+            console.log(e)
             return false
         }
     }
