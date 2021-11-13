@@ -169,6 +169,29 @@ module.exports = {
         return res
     },
     //elections 
+    valid_vote: (position, vote) => {
+        console.log(vote)
+        if(vote.length > 0){
+            return "Not"
+        } else {
+            return "Invalid Vote"
+        }
+    },
+    //get votes 
+    count_vote: (position, votes) => {
+        let position_count = 0 
+
+        for(let i = 0; i < votes.length; i++){
+            if(JSON.parse(votes[i]).positionID === position.id){
+                position_count += 1
+            }
+        }
+        if(position_count === 0){
+            return false
+        } else {
+            return position_count <= parseInt(position.maxvote)
+        }  
+    },
     is_course_eligible: async (electionID, voter_course) => {
         let res = false
         await election.find({_id: {$eq: xs(electionID)}}, {courses: 1}).then( (elec) => {

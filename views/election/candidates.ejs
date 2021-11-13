@@ -28,15 +28,16 @@
                 <% for (let c = 0; c < election.candidates.length; c++) { %>
                     <% if(election.positions[i].id === election.candidates[c].position && election.candidates[c].status === "Accepted") { %> 
                         <div style="animation-delay: <%- c * .250%>s;" class="animate__animated animate__fadeInUp ms-500 bg-darkBlue-100 shadow-md rounded-md">
-                            <div class="p-2 flex flex-col gap-3">
-                                <div class="flex flex-row gap-2 justify-start items-center">
+                            <div class="flex flex-col gap-3">
+                                <div class="flex flex-row gap-2 justify-start items-center dark_border_b py-2 px-1.5">
                                     <img class="w-20 h-20 object-cover rounded-full" src="/profile/<%-election.candidates[c].student_id%>/">
                                     <div class="flex flex-col gap-0.5 justify-start items-start">
                                         <p class="dark:text-gray-300 font-medium text-base"><%- election.candidates[c].fullname %></p>
                                         <p class="dark:text-gray-400 font-normal text-sm"><%- `${Data.positions(election.positions[i].id)} at ${Data.partylist(election.candidates[c].partylist)}` %></p>
                                     </div>
                                 </div>
-                                <div class="flex flex-col gap-1">
+                                <div class="flex flex-col gap-1 p-1">
+                                    <div class="break-words p-2 text-center dark:text-gray-400 text-base h-40 overflow-y-auto"><%- election.candidates[c].platform %></div>
                                     <div class="grid grid-cols-2 px-2 gap-2 sm:py-3">
                                         <div class="flex items-center justify-end border-r-2 border-bluegray-600 pr-4">
                                             <span class="dark:text-gray-300/70 text-sm" data="reaction-<%- election.candidates[c].id %>"><%- election.candidates[c].reactions.length > 1 ? `${election.candidates[c].reactions.length} Reactions` : `${election.candidates[c].reactions.length} Reaction` %></span>

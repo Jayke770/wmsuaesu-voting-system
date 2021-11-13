@@ -644,43 +644,72 @@ $(document).ready( () => {
         e.preventDefault()
         const def = $(this).find("button[type='submit']").html() 
         if(!vote){
-            $(this).find("button[type='submit']").html(election.loader()) 
-            vote = true
-            try {
-                const req = await fetchtimeout('submit-vote/', {
-                    method: 'POST', 
-                    headers: {
-                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                    }, 
-                    body: new FormData(this)
-                })
-                if(req.ok){
-                    const res = await req.json() 
-                    $(this).find("button[type='submit']").html(def) 
-                    $(this).find("button[type='reset']").click()
-                    vote = false
+            Swal.fire({
+                icon: 'question', 
+                title: 'Submit votes', 
+                html: 'Are you sure you want to submit your votes, This process cannot be undone', 
+                backdrop: true, 
+                allowOutsideClick: false,
+                showDenyButton: true,
+                denyButtonText: 'Cancel', 
+                confirmButtonText: 'Submit Vote'
+            }).then( (a) => {
+                if(a.isConfirmed){
                     Swal.fire({
-                        icon: res.status ? 'success' : 'info', 
-                        title: res.txt, 
-                        html: res.msg, 
+                        icon: 'info', 
+                        title: 'Submitting Votes', 
+                        html: 'Please wait...', 
                         backdrop: true, 
-                        confirmButtonText: res.status ? 'Thank You' : 'OK',
-                        allowOutsideClick: false
+                        allowOutsideClick: false,
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            $(this).find("button[type='submit']").html(election.loader()) 
+                            vote = true
+                            try {
+                                const req = await fetchtimeout('submit-vote/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: new FormData(this)
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    vote = false
+                                    Swal.fire({
+                                        icon: res.status ? 'success' : 'info', 
+                                        title: res.txt, 
+                                        html: res.msg, 
+                                        backdrop: true, 
+                                        confirmButtonText: res.status ? 'Thank You' : 'OK',
+                                        allowOutsideClick: false
+                                    }).then( () => {
+                                        if(res.status){
+                                            $(this).find("button[type='submit']").html(def) 
+                                            $(this).find("button[type='reset']").click()
+                                        } else {
+                                            $(this).find("button[type='submit']").html(def) 
+                                        }
+                                    })
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                $(this).find("button[type='submit']").html(def) 
+                                vote = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: "Connection Error", 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false
+                                })
+                            }
+                        }
                     })
-                } else {
-                    throw new Error(`${req.status} ${req.statusText}`)
                 }
-            } catch (e) {
-                $(this).find("button[type='submit']").html(def) 
-                vote = false
-                Swal.fire({
-                    icon: 'error', 
-                    title: "Connection Error", 
-                    html: e.message, 
-                    backdrop: true, 
-                    allowOutsideClick: false
-                })
-            }
+            })
         }
     })
     //open account settings 

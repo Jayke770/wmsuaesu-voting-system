@@ -11,7 +11,7 @@ const data = require('../models/data')
 const election = require('../models/election')
 const conversations = require('../models/conversations')
 const { authenticated, isadmin, isloggedin, take_photo, get_face, send_verification_email, verify_device} = require('./auth')
-const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash, newNotification} = require('./functions')
+const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash, newNotification, valid_vote, count_vote} = require('./functions')
 const { normal_limit, limit} = require('./rate-limit')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
@@ -456,19 +456,115 @@ router.post('/register', normal_limit, async (req, res) => {
         status: 'Online',
         verified: false
     }
+    const newfullname = `${xs(fname.toLowerCase()).replace(/\s+/g, ' ').trim()} ${xs(mname.toLowerCase()).replace(/\s+/g, ' ').trim()} ${xs(lname.toLowerCase()).replace(/\s+/g, ' ').trim()}`
     try {
-        await user.find({
-            $and: [
-                {firstname: {$eq: xs(fname)}}, 
-                {middlename: {$eq: xs(mname)}}, 
-                {lastname: {$eq: xs(lname)}}
-            ]
-        }).then( async (name) => {
-            if(name.length > 0){
-                return res.send({
-                    status: false, 
-                    msg: 'Invalid Name', 
-                    text: 'Name is already registered'
+        //check name 
+        await user.find({}, {firstname: 1, middlename: 1, lastname: 1}).then( async (names) => {
+            if(names.length > 0){
+                //check all names 
+                for(let i = 0; i < names.length; i++){
+                    const fullname = `${names[i].firstname.toLowerCase()} ${names[i].middlename.toLowerCase()} ${names[i].lastname.toLowerCase()}`
+                    if(fullname === newfullname){
+                        return res.send({
+                            status: false, 
+                            msg: "Invalid Name", 
+                            text: "Please check your name"
+                        })
+                    }
+                }
+                //check voter id
+                await data.find({
+                    voterId: {$elemMatch: {student_id: {$eq: xs(student_id).toUpperCase()}}}
+                }, {
+                    voterId: {$elemMatch: {student_id: {$eq: xs(student_id).toUpperCase()}}}
+                }).then( async (v) => {
+                    if(v.length > 0){
+                        const voterId = v[0].voterId[0]
+                        //check if the voter is not enabled 
+                        if(!voterId.enabled){
+                            //check course 
+                            if(voterId.course === xs(course)){
+                                //check year 
+                                if(voterId.year === xs(yr)){
+                                    //check username if already taken 
+                                    await user.find({username: {$eq: xs(usr)}}, {username: 1}).then( async (username) => {
+                                        if(username.length > 0){
+                                            return res.send({
+                                                status: false, 
+                                                msg: 'Username is already taken', 
+                                                text: 'Please use another username'
+                                            })
+                                        } else {
+                                            //save new user 
+                                            await user.create({
+                                                student_id: xs(student_id).toUpperCase(),
+                                                firstname: xs(toUppercase(fname)).replace(/\s+/g, ' ').trim(),
+                                                middlename: xs(toUppercase(mname)).replace(/\s+/g, ' ').trim(),
+                                                lastname: xs(toUppercase(lname)).replace(/\s+/g, ' ').trim(),
+                                                course: xs(course),
+                                                year: xs(yr),
+                                                socket_id: 'Offline',
+                                                username: xs(usr),
+                                                password: hash_password, 
+                                                devices: [device]
+                                            }).then(async (new_user) => {
+                                                const userData = await user_data(new_user._id)
+                                                req.session.device = device.id
+                                                req.session.myid = userData._id //session for student
+                                                req.session.islogin = true // to determine that user is now logged in
+                                                req.session.user_type = "Voter" //to determine the user type
+                                                req.session.data = userData
+                                                await data.updateOne({ "voterId.student_id": { $eq: xs(student_id) } }, { $set: { "voterId.$.enabled": true } }).then( async () => {
+                                                    await newNotification(userData._id, 'account', {
+                                                        id: uuidv4(), 
+                                                        content: `Hi, ${xs(toUppercase(fname))} Welcome to WMSU-AESU Online Voting System`,
+                                                        student_id: student_id,
+                                                        created: moment().tz("Asia/Manila").format()
+                                                    })
+                                                    return res.send({
+                                                        islogin: true,
+                                                        msg: `Welcome ${xs(toUppercase(fname))}`
+                                                    })
+                                                }).catch((e) => {
+                                                    throw new Error(e)
+                                                })
+                                            }).catch( (e) => {
+                                                throw new Error(e)
+                                            })
+                                        }
+                                    }).catch( (e) => {
+                                        throw new Error(e)
+                                    })
+                                } else {
+                                    return res.send({
+                                        status: false, 
+                                        msg: 'Invalid Year', 
+                                        text: 'Please make sure that your year is match with your Voter ID'
+                                    })
+                                }
+                            } else {
+                                return res.send({
+                                    status: false, 
+                                    msg: 'Invalid Course', 
+                                    text: 'Please make sure that your course is match with your Voter ID'
+                                })
+                            }
+                        } else {
+                            return res.send({
+                                status: false, 
+                                msg: 'Student Id is already taken', 
+                                text: 'Please make sure that this Voter ID is belongs to you'
+                            })
+                        }
+                    } else {
+                        return res.send({
+                            status: false, 
+                            msg: 'Voter Id not found', 
+                            text: 'Please check your Voter ID'
+                        })
+                    }
+                }).catch( (e) => {
+                    throw new Error(e)
                 })
             } else {
                 //check voter id
@@ -497,9 +593,9 @@ router.post('/register', normal_limit, async (req, res) => {
                                             //save new user 
                                             await user.create({
                                                 student_id: xs(student_id).toUpperCase(),
-                                                firstname: xs(toUppercase(fname)),
-                                                middlename: xs(toUppercase(mname)),
-                                                lastname: xs(toUppercase(lname)),
+                                                firstname: xs(toUppercase(fname)).replace(/\s+/g, ' ').trim(),
+                                                middlename: xs(toUppercase(mname)).replace(/\s+/g, ' ').trim(),
+                                                lastname: xs(toUppercase(lname)).replace(/\s+/g, ' ').trim(),
                                                 course: xs(course),
                                                 year: xs(yr),
                                                 socket_id: 'Offline',
@@ -587,6 +683,7 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
         year: await myyear(year),
         status: '?',
         voted: [],
+        isvoted: false,
         created: moment().tz("Asia/Manila").format()
     },  
     electionData = {
@@ -1131,7 +1228,7 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
                 await election.find({
                     _id: {$eq: xs(electionID)}, 
                     voters: {$elemMatch: {student_id: xs(student_id)}}
-                }, {passcode: 0}).then( async (elec) => {
+                }, {passcode: 0}).sort({"candidates.fullname": 1}).then( async (elec) => {
                     if(elec.length > 0){
                         for(let i = 0; i < elec[0].candidates.length; i++){
                             if(elec[0].candidates[i].status === "Accepted"){
@@ -1352,7 +1449,7 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
                         csrf: req.csrfToken()
                     })
                 } else {
-                    return res.status(401).send('fasff')
+                    return res.status(403).send()
                 }
             } else {
                 return res.status(404).render('error/404')
@@ -1366,107 +1463,84 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
 })
 //submit vote 
 router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, async (req, res) => {
-    const {vote, positionType} = req.body 
+    const {votes} = req.body
     const {electionID, myid} = req.session
     const {firstname} = await user_data(myid)
     try {
-        //check position type 
-        await election.find({
-            _id: {$eq: xs(electionID)}, 
-            positions: {$elemMatch: {id: {$eq: xs(positionType)}}}
-        }, {
-            positions: {$elemMatch: {id: {$eq: xs(positionType)}}}
-        }).then( async (elec_p) => {
-            if(elec_p.length > 0){
-                if(xs(vote)){
-                    if(parseInt(elec_p[0].positions[0].maxvote) >= vote.length){
-                        //check if the user already voted to this tier of candidates 
-                        let isvoted = false, ca_in_position = []
-                        //get all candidates 
-                        await election.find({_id: {$eq: xs(electionID)}}, {candidates: 1}).then( async (ca_elec) => {
-                            if(ca_elec.length > 0){
-                                const candidates = ca_elec[0].candidates 
-                                for(let c = 0; c < candidates.length; c++){
-                                    if(candidates[c].position === xs(positionType)){
-                                        ca_in_position.push(candidates[c].votes)
-                                    }
-                                }
-                                //check if the user already voted with this position 
-                                if(ca_in_position.length > 0){
-                                    for(let v = 0; v < ca_in_position.length; v++){
-                                        for(let vote = 0; vote < ca_in_position[v].length; vote++){
-                                            if(ca_in_position[v][vote] === xs(myid).toString()){
-                                                isvoted = true
-                                            }
-                                        }
-                                    }
-                                    //if the user is not voted
-                                    if(!isvoted){
-                                        for(let k = 0; k < vote.length; k++){
-                                            //insert new vote 
-                                            await election.updateOne({
-                                                _id: {$eq: xs(electionID)}, 
-                                                "candidates.id": {$eq: xs(vote[k])}
-                                            }, {$push: {"candidates.$.votes": xs(myid).toString()}}).then( async () => {
-                                                //save candidate id in the voter votes
-                                                await election.updateOne({
-                                                    _id: {$eq: xs(electionID)},
-                                                    "voters.id": xs(myid).toString()
-                                                }, {$push: {"voters.$.voted": xs(vote[k])}}).catch( (e) => {
-                                                    throw new Error(e)
-                                                })
-                                            }).catch( (e) => {
-                                                throw new Error(e)
-                                            })
-                                        }
-                                        return res.send({
-                                            status: true, 
-                                            txt: 'Vote submitted successfully', 
-                                            msg: `Have a nice day ${firstname}!`
-                                        })
-                                    } else {
-                                        return res.send({
-                                            status: false,
-                                            txt: "Oops..", 
-                                            msg: `You already submitted a vote for ${await myposition(xs(positionType))}`
-                                        })
-                                    }
-                                } else {
-                                    return res.send({
-                                        status: false,
-                                        txt: "Candidates Not Found", 
-                                        msg: "Please refresh the app!"
-                                    })
-                                }
-                            } else {
-                                throw new Error("Election Not Found")
-                            }
-                        }).catch( (e) => {
-                            throw new Error(e)
-                        })
-                    } else {
-                        return res.send({
-                            status: false, 
-                            txt: "Invalid Vote", 
-                            msg: `Please select up to ${parseInt(elec_p[0].positions[0].maxvote)} candidate for ${await myposition(xs(positionType))}`
-                        })
+        if(votes !== undefined) {
+            await election.find({_id: {$eq: xs(electionID)}}, {positions: 1, candidates: 1}).then( async (electionData) => {
+                if(electionData.length > 0){
+                    //check votes if valid
+                    for(let i = 0; i < electionData[0].positions.length; i++){
+                        //count votes using the current position
+                        if(!count_vote(electionData[0].positions[i], votes)){
+                            return res.send({
+                                status: false, 
+                                txt: "Invalid Vote", 
+                                msg: `Please select up to ${parseInt(electionData[0].positions[i].maxvote)} candidate for ${await myposition(electionData[0].positions[i].id)}`
+                            }) 
+                        }
                     }
+                    //check if the voter already voted  
+                    await election.find({
+                        _id: {$eq: xs(electionID)}, 
+                        "voters.id": {$eq: xs(myid).toString()},
+                        "voters.isvoted": {$eq: true}
+                    }).then( async (elecData) => {
+                        if(elecData.length > 0){
+                            return res.send({
+                                status: false,
+                                txt: "Oops..", 
+                                msg: `You already submitted a vote`
+                            })
+                        } else {
+                            for(let v = 0; v < votes.length; v++){
+                                await election.updateOne({
+                                    _id: {$eq: xs(electionID)}, 
+                                    "candidates.id": {$eq: xs(JSON.parse(votes[v]).candidateID)}
+                                }, {$push: {"candidates.$.votes": xs(myid).toString()}}).then( async () => {
+                                    //save candidate id in the voter votes
+                                    await election.updateOne({
+                                        _id: {$eq: xs(electionID)},
+                                        "voters.id": xs(myid).toString()
+                                    }, {
+                                        $push: {"voters.$.voted": xs(JSON.parse(votes[v]).candidateID)}, 
+                                        $set: {"voters.$.isvoted": true}
+                                    }).catch( (e) => {
+                                        throw new Error(e)
+                                    })
+                                }).catch( (e) => {
+                                    throw new Error(e)
+                                })
+                            }
+
+                            //send response
+                            return res.send({
+                                status: true, 
+                                txt: 'Vote submitted successfully', 
+                                msg: `Have a nice day ${firstname}!`
+                            })
+                        }
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
                 } else {
                     return res.send({
                         status: false, 
-                        txt: "Invalid Vote", 
-                        msg: `Please choose up to ${parseInt(elec_p[0].positions[0].maxvote)} candidate for ${await myposition(xs(positionType))}`
+                        txt: "Election Not Found", 
+                        msg: "Please refresh the app"
                     })
                 }
-            } else {
-                return res.send({
-                    status: false, 
-                    txt: 'Position Not Found',
-                })
-            }
-        }).catch( (e) => {
-            throw new Error(e)
-        })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            return res.send({
+                status: false, 
+                txt: "Invalid Vote", 
+                msg: "Please select a candidate in each position"
+            })
+        }
     } catch (e) {
         console.log(e)
         return res.status(500).send()
