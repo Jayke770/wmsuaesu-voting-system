@@ -24,10 +24,6 @@ const user =  new mongoose.Schema({
         type: String, 
         required: true
     },
-    type: {
-        type: String, 
-        required: true
-    },
     username: {
         type: String
     },

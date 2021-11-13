@@ -23,74 +23,48 @@
 %> 
 <% if(election.candidates.length !== 0) { %>
     <div class="candidates h-screen pt-[64px] w-full hidden">
-        <div class="p-2">
-            <% for (let i = 0; i < election.positions.length; i++) { %>
-                <div class="swiper ca mt-5 first:mt-0">
-                    <div class="swiper-wrapper">
-                        <% for (let c = 0; c < election.candidates.length; c++) { %>
-                            <% if(election.positions[i].id === election.candidates[c].position && election.candidates[c].status === "Accepted") { %> 
-                                <div class="swiper-slide w-full flex flex-col dark:bg-darkBlue-secondary bg-gray-100 rounded-lg dark_border">
-                                    <div class="flex w-full items-center justify-center px-2 py-5">
-                                        <% const icon = election.candidates[c].fullname.split(" ") %>
-                                        <img class="h-36 w-36 ring-2 dark:ring-gray-600 rounded-full object-cover skeleton-image" src="/profile/<%-election.candidates[c].student_id %>">
+        <% for (let i = 0; i < election.positions.length; i++) { %>
+            <div class="grid grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 gap-2 px-2 py-3 transition-all">
+                <% for (let c = 0; c < election.candidates.length; c++) { %>
+                    <% if(election.positions[i].id === election.candidates[c].position && election.candidates[c].status === "Accepted") { %> 
+                        <div style="animation-delay: <%- c * .250%>s;" class="animate__animated animate__fadeInUp ms-500 bg-darkBlue-100 shadow-md rounded-md">
+                            <div class="p-2 flex flex-col gap-3">
+                                <div class="flex flex-row gap-2 justify-start items-center">
+                                    <img class="w-20 h-20 object-cover rounded-full" src="/profile/<%-election.candidates[c].student_id%>/">
+                                    <div class="flex flex-col gap-0.5 justify-start items-start">
+                                        <p class="dark:text-gray-300 font-medium text-base"><%- election.candidates[c].fullname %></p>
+                                        <p class="dark:text-gray-400 font-normal text-sm"><%- `${Data.positions(election.positions[i].id)} at ${Data.partylist(election.candidates[c].partylist)}` %></p>
                                     </div>
-                                    <div class="flex flex-col gap-2">
-                                        <div class="flex flex-col gap-1 justify-center items-center">
-                                            <p class="dark:text-gray-300 font-medium text-base"><%- election.candidates[c].fullname %></p>
-                                            <p class="dark:text-gray-400 font-normal text-sm"><%- `${Data.positions(election.positions[i].id)} at ${Data.partylist(election.candidates[c].partylist)}` %></p>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="grid grid-cols-2 px-2 gap-2 sm:py-3">
+                                        <div class="flex items-center justify-end border-r-2 border-bluegray-600 pr-4">
+                                            <span class="dark:text-gray-300/70 text-sm" data="reaction-<%- election.candidates[c].id %>"><%- election.candidates[c].reactions.length > 1 ? `${election.candidates[c].reactions.length} Reactions` : `${election.candidates[c].reactions.length} Reaction` %></span>
                                         </div>
-                                        <div class="break-words p-2 text-center dark:text-gray-500 text-base h-[30vh] overflow-y-auto"><%- election.candidates[c].platform %></div>
-                                        <div class="grid grid-cols-2 px-2 gap-2 sm:py-3">
-                                            <div class="flex items-center justify-end border-r-2 border-bluegray-600 pr-4">
-                                                <span class="dark:text-gray-300/70" data="reaction-<%- election.candidates[c].id %>"><%- election.candidates[c].reactions.length > 1 ? `${election.candidates[c].reactions.length} Reactions` : `${election.candidates[c].reactions.length} Reaction` %></span>
-                                            </div>
-                                            <div class="flex items-center justify-start pl-2">
-                                                <span class="dark:text-gray-300/70" data="view-<%- election.candidates[c].id %>"><%- election.candidates[c].views.length > 1 ? `${election.candidates[c].views.length} Views` : `${election.candidates[c].views.length} View` %></span>
-                                            </div>
+                                        <div class="flex items-center justify-start pl-2">
+                                            <span class="dark:text-gray-300/70 text-sm" data="view-<%- election.candidates[c].id %>"><%- election.candidates[c].views.length > 1 ? `${election.candidates[c].views.length} Views` : `${election.candidates[c].views.length} View` %></span>
                                         </div>
-                                        <div class="grid grid-cols-2 gap-1 px-2 py-2 sm:pt-4">
-                                            <div class="flex justify-start items-center">
-                                                <a data="<%- election.candidates[c].id %>" class="react_ca rpl dark:text-rose-600 rounded-full cursor-pointer text-2xl px-2 py-1 w-auto">
-                                                    <i class="fad fa-heart-circle"></i>
-                                                </a>
-                                            </div>
-                                            <div class="flex justify-end items-center">
-                                                <a data="<%- election.candidates[c].id %>" class="view_ca rpl dark:text-blue-600 rounded-full cursor-pointer text-2xl px-2 py-1 w-auto">
-                                                    <i class="fad fa-eye"></i>
-                                                </a>
-                                            </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-1">
+                                        <div class="flex justify-start items-center">
+                                            <a data="<%- election.candidates[c].id %>" class="react_ca rpl dark:text-rose-600 rounded-full cursor-pointer text-2xl px-2 py-1 w-auto">
+                                                <i class="fad fa-heart-circle"></i>
+                                            </a>
+                                        </div>
+                                        <div class="flex justify-end items-center">
+                                            <a data="<%- election.candidates[c].id %>" class="view_ca rpl dark:text-blue-600 rounded-full cursor-pointer text-2xl px-2 py-1 w-auto">
+                                                <i class="fad fa-eye"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
-                            <% } %>
-                        <% } %>    
-                    </div>
-                    <div class="swiper-button-prev"></div>
-                    <div class="swiper-button-next"></div>
-                </div>   
-            <% } %>
-        </div>
+                            </div>
+                        </div>
+                    <% } %>
+                <% } %>
+            </div>
+        <% } %>
     </div>
-    <script>
-        var swiper = new Swiper(".ca", {
-        slidesPerView: 1,
-        spaceBetween: 10,
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 1,
-                spaceBetween: 10,
-            },
-            920: {
-                slidesPerView: 4,
-                spaceBetween: 10,
-            }
-        }
-      })
-    </script>
     <!-- view candidate -->
     <div class="view_ca_ fixed top-0 w-full h-full p-2 sm:p-0 hidden justify-end items-center sm:items-end z-50 bg-darkBlue-primary/40">
         <div animate-in="animate__animated animate__fadeInUp ms-300" animate-out="animate__animated animate__fadeOutDown ms-300 " class="view_ca_main dark:bg-darkBlue-secondary w-96 h-full sm:h-4/5 sm:w-full dark_border rounded-xl sm:rounded-b-none transition-all">

@@ -1,16 +1,11 @@
 const mongoose = require('mongoose')
 const conversation = new mongoose.Schema({
-    userID: {
-        type: String
-    }, 
-    recipient_userID: {
-        type: String
-    }, 
-    name: {
-        type: String
+    userIDs: {
+        type: Array,
     },
     messages: {
         type: Array
-    }
+    }, 
+    created: {}
 })
 module.exports = mongoose.model('comversations', conversation)

@@ -396,7 +396,8 @@ users_socket.on('connection', async (socket) => {
     let {myid, electionID, islogin, user_type, device} = socket.handshake.session 
     const {student_id} = await user_data(myid)
     //update socket id every user connted to server 
-    if(islogin && user_type === "Candidate" || islogin && user_type === "Voter"){
+    console.log(user_type)
+    if(islogin && user_type === "Voter"){
         await users.updateOne({
             _id: {$eq: xs(myid)}, 
             "devices.id": {$eq: xs(device)}

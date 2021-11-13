@@ -352,7 +352,7 @@ router.post('/login', limit, async (req, res) => {
                 await user.find({$or: [
                     {username: {$eq: xs(auth_usr)}}, 
                     {"email.email": {$eq: xs(auth_usr)}}
-                ]}, {password: 1, firstname: 1, type: 1}).then( async (usp) => {
+                ]}, {password: 1, firstname: 1}).then( async (usp) => {
                     if(usp.length > 0){
                         if(await compareHash(xs(auth_pass), usp[0].password)){
                             //get all saved devices with this account 
@@ -370,7 +370,7 @@ router.post('/login', limit, async (req, res) => {
                                     if(device_data){
                                         req.session.device = device_data.id
                                         req.session.islogin = true // determine if logged
-                                        req.session.user_type = usp[0].type // user type
+                                        req.session.user_type = "Voter" // user type
                                         req.session.myid = usp[0]._id // user id
                                         req.session.data = await user_data(usp[0]._id)
                                         return res.send({
@@ -381,7 +381,7 @@ router.post('/login', limit, async (req, res) => {
                                         await user.updateOne({_id: {$eq: xs(usp[0]._id)}}, {$push: {devices: device}}).then( async (new_d) => {
                                             req.session.device = device.id
                                             req.session.islogin = true // determine if logged
-                                            req.session.user_type = usp[0].type // user type
+                                            req.session.user_type = "Voter" // user type
                                             req.session.myid = usp[0]._id // user id
                                             req.session.data = await user_data(usp[0]._id)
                                             return res.send({
@@ -400,7 +400,7 @@ router.post('/login', limit, async (req, res) => {
                                             verified: device.verified
                                         }
                                         req.session.islogin = true // determine if lodevice.verifiedgged
-                                        req.session.user_type = usp[0].type // user type
+                                        req.session.user_type = "Voter" // user type
                                         req.session.myid = usp[0]._id // user id
                                         req.session.data = await user_data(usp[0]._id)
                                         return res.send({
@@ -443,7 +443,7 @@ router.post('/login', limit, async (req, res) => {
 })
 //register
 router.post('/register', normal_limit, async (req, res) => {
-    const { student_id, fname, mname, lname, course, yr, type, usr, pass } = req.body
+    const { student_id, fname, mname, lname, course, yr, usr, pass } = req.body
     const hash_password = await bcrypt.hash(xs(pass), 10)
     const ua = xs(req.headers['user-agent'])
     const device = {
@@ -457,96 +457,113 @@ router.post('/register', normal_limit, async (req, res) => {
         verified: false
     }
     try {
-        //check voter id
-        await data.find({
-            voterId: {$elemMatch: {student_id: {$eq: xs(student_id).toUpperCase()}}}
-        }, {
-            voterId: {$elemMatch: {student_id: {$eq: xs(student_id).toUpperCase()}}}
-        }).then( async (v) => {
-            if(v.length > 0){
-                const voterId = v[0].voterId[0]
-                //check if the voter is not enabled 
-                if(!voterId.enabled){
-                    //check course 
-                    if(voterId.course === xs(course)){
-                        //check year 
-                        if(voterId.year === xs(yr)){
-                            //check username if already taken 
-                            await user.find({username: {$eq: xs(usr)}}, {username: 1}).then( async (username) => {
-                                if(username.length > 0){
-                                    return res.send({
-                                        status: false, 
-                                        msg: 'Username is already taken', 
-                                        text: 'Please use another username'
-                                    })
-                                } else {
-                                    //save new user 
-                                    await user.create({
-                                        student_id: xs(student_id).toUpperCase(),
-                                        firstname: xs(toUppercase(fname)),
-                                        middlename: xs(toUppercase(mname)),
-                                        lastname: xs(toUppercase(lname)),
-                                        course: xs(course),
-                                        year: xs(yr),
-                                        type: xs(type),
-                                        socket_id: 'Offline',
-                                        username: xs(usr),
-                                        password: hash_password, 
-                                        devices: [device]
-                                    }).then(async (new_user) => {
-                                        const userData = await user_data(new_user._id)
-                                        req.session.device = device.id
-                                        req.session.myid = userData._id //session for student
-                                        req.session.islogin = true // to determine that user is now logged in
-                                        req.session.user_type = userData.type //to determine the user type
-                                        req.session.data = userData
-                                        await data.updateOne({ "voterId.student_id": { $eq: xs(student_id) } }, { $set: { "voterId.$.enabled": true } }).then( async () => {
-                                            await newNotification(userData._id, 'account', {
-                                                id: uuidv4(), 
-                                                content: `Hi, ${xs(toUppercase(fname))} Welcome to WMSU-AESU Online Voting System`,
-                                                student_id: student_id,
-                                                created: moment().tz("Asia/Manila").format()
-                                            })
+        await user.find({
+            $and: [
+                {firstname: {$eq: xs(fname)}}, 
+                {middlename: {$eq: xs(mname)}}, 
+                {lastname: {$eq: xs(lname)}}
+            ]
+        }).then( async (name) => {
+            if(name.length > 0){
+                return res.send({
+                    status: false, 
+                    msg: 'Invalid Name', 
+                    text: 'Name is already registered'
+                })
+            } else {
+                //check voter id
+                await data.find({
+                    voterId: {$elemMatch: {student_id: {$eq: xs(student_id).toUpperCase()}}}
+                }, {
+                    voterId: {$elemMatch: {student_id: {$eq: xs(student_id).toUpperCase()}}}
+                }).then( async (v) => {
+                    if(v.length > 0){
+                        const voterId = v[0].voterId[0]
+                        //check if the voter is not enabled 
+                        if(!voterId.enabled){
+                            //check course 
+                            if(voterId.course === xs(course)){
+                                //check year 
+                                if(voterId.year === xs(yr)){
+                                    //check username if already taken 
+                                    await user.find({username: {$eq: xs(usr)}}, {username: 1}).then( async (username) => {
+                                        if(username.length > 0){
                                             return res.send({
-                                                islogin: true,
-                                                msg: `Welcome ${xs(toUppercase(fname))}`
+                                                status: false, 
+                                                msg: 'Username is already taken', 
+                                                text: 'Please use another username'
                                             })
-                                        }).catch((e) => {
-                                            throw new Error(e)
-                                        })
+                                        } else {
+                                            //save new user 
+                                            await user.create({
+                                                student_id: xs(student_id).toUpperCase(),
+                                                firstname: xs(toUppercase(fname)),
+                                                middlename: xs(toUppercase(mname)),
+                                                lastname: xs(toUppercase(lname)),
+                                                course: xs(course),
+                                                year: xs(yr),
+                                                socket_id: 'Offline',
+                                                username: xs(usr),
+                                                password: hash_password, 
+                                                devices: [device]
+                                            }).then(async (new_user) => {
+                                                const userData = await user_data(new_user._id)
+                                                req.session.device = device.id
+                                                req.session.myid = userData._id //session for student
+                                                req.session.islogin = true // to determine that user is now logged in
+                                                req.session.user_type = "Voter" //to determine the user type
+                                                req.session.data = userData
+                                                await data.updateOne({ "voterId.student_id": { $eq: xs(student_id) } }, { $set: { "voterId.$.enabled": true } }).then( async () => {
+                                                    await newNotification(userData._id, 'account', {
+                                                        id: uuidv4(), 
+                                                        content: `Hi, ${xs(toUppercase(fname))} Welcome to WMSU-AESU Online Voting System`,
+                                                        student_id: student_id,
+                                                        created: moment().tz("Asia/Manila").format()
+                                                    })
+                                                    return res.send({
+                                                        islogin: true,
+                                                        msg: `Welcome ${xs(toUppercase(fname))}`
+                                                    })
+                                                }).catch((e) => {
+                                                    throw new Error(e)
+                                                })
+                                            }).catch( (e) => {
+                                                throw new Error(e)
+                                            })
+                                        }
                                     }).catch( (e) => {
                                         throw new Error(e)
                                     })
+                                } else {
+                                    return res.send({
+                                        status: false, 
+                                        msg: 'Invalid Year', 
+                                        text: 'Please make sure that your year is match with your Voter ID'
+                                    })
                                 }
-                            }).catch( (e) => {
-                                throw new Error(e)
-                            })
+                            } else {
+                                return res.send({
+                                    status: false, 
+                                    msg: 'Invalid Course', 
+                                    text: 'Please make sure that your course is match with your Voter ID'
+                                })
+                            }
                         } else {
                             return res.send({
                                 status: false, 
-                                msg: 'Invalid Year', 
-                                text: 'Please make sure that your year is match with your Voter ID'
+                                msg: 'Student Id is already taken', 
+                                text: 'Please make sure that this Voter ID is belongs to you'
                             })
                         }
                     } else {
                         return res.send({
                             status: false, 
-                            msg: 'Invalid Course', 
-                            text: 'Please make sure that your course is match with your Voter ID'
+                            msg: 'Voter Id not found', 
+                            text: 'Please check your Voter ID'
                         })
                     }
-                } else {
-                    return res.send({
-                        status: false, 
-                        msg: 'Student Id is already taken', 
-                        text: 'Please make sure that this Voter ID is belongs to you'
-                    })
-                }
-            } else {
-                return res.send({
-                    status: false, 
-                    msg: 'Voter Id not found', 
-                    text: 'Please check your Voter ID'
+                }).catch( (e) => {
+                    throw new Error(e)
                 })
             }
         }).catch( (e) => {
@@ -793,69 +810,63 @@ router.post('/home/election/submit-candidacy-form/', normal_limit, isloggedin, a
         created: moment().tz("Asia/Manila").format()
     }
     try {
-        //user type if == Candidate 
-        if(data.type === 'Candidate'){
-            //check election if exists & the user is a voter of the election
-            await election.find({
-                _id: {$eq: xs(electionID)},
-                "voters.id": {$eq: xs(myid)}
-            }, {candidates: 1, autoAccept_candidates: 1, status: 1}).then( async (elec) => {
-                if(elec.length !== 0){
-                    if(elec[0].status === "Not Started"){
-                        //if the auto accept candidates feature is enabled to this election accept the candidate automatically 
-                        elec[0].autoAccept_candidates ? new_candidate.status = 'Accepted' : new_candidate.status = 'Pending'
-                        //check the new candidate is not candidate 
-                        const candidates = elec[0].candidates 
-                        let iscandidate = false
-                        for(let i = 0; i < candidates.length; i++){
-                            if(data.student_id === candidates[i].student_id){
-                                iscandidate = true 
-                                break
-                            }
+        //check election if exists & the user is a voter of the election
+        await election.find({
+            _id: {$eq: xs(electionID)},
+            $and: [
+                {"voters.id": {$eq: xs(myid)}}, 
+                {"voters.status": "Accepted"}
+            ]
+        }, {candidates: 1, autoAccept_candidates: 1, status: 1}).then( async (elec) => {
+            if(elec.length !== 0){
+                if(elec[0].status === "Not Started"){
+                    //if the auto accept candidates feature is enabled to this election accept the candidate automatically 
+                    elec[0].autoAccept_candidates ? new_candidate.status = 'Accepted' : new_candidate.status = 'Pending'
+                    //check the new candidate is not candidate 
+                    const candidates = elec[0].candidates 
+                    let iscandidate = false
+                    for(let i = 0; i < candidates.length; i++){
+                        if(data.student_id === candidates[i].student_id){
+                            iscandidate = true 
+                            break
                         }
-                        //if not candidate
-                        if(!iscandidate){
-                            //push the new candidate in election
-                            await election.updateOne({
-                                _id: {$eq: xs(electionID)}
-                            }, {$push: {candidates: new_candidate}}).then( (new_c) => {
-                                return res.send({
-                                    status: true,
-                                    txt: elec[0].autoAccept_candidates ? 'Candidacy successfully accepted' : 'Form successfully submitted', 
-                                    msg: elec[0].autoAccept_candidates ? '' : 'Please wait for the admin to accept your candidacy form'
-                                })
-                            })
-                        } else {
+                    }
+                    //if not candidate
+                    if(!iscandidate){
+                        //push the new candidate in election
+                        await election.updateOne({
+                            _id: {$eq: xs(electionID)}
+                        }, {$push: {candidates: new_candidate}}).then( (new_c) => {
                             return res.send({
-                                status: false, 
-                                txt: "You're already a candidate", 
-                                msg: 'Please wait for the admin to accept your candidacy form'
+                                status: true,
+                                txt: elec[0].autoAccept_candidates ? 'Candidacy successfully accepted' : 'Form successfully submitted', 
+                                msg: elec[0].autoAccept_candidates ? '' : 'Please wait for the admin to accept your candidacy form'
                             })
-                        }
+                        })
                     } else {
                         return res.send({
                             status: false, 
-                            txt: `Election is ${elec[0].status}`, 
-                            msg: `You can't submit your candidacy form once the election is ${elec[0].status}`
+                            txt: "You're already a candidate", 
+                            msg: 'Please wait for the admin to accept your candidacy form'
                         })
                     }
                 } else {
                     return res.send({
                         status: false, 
-                        txt: 'Something went wrong!', 
-                        msg: 'Invalid election / you are not a voter of this election'
+                        txt: `Election is ${elec[0].status}`, 
+                        msg: `You can't submit your candidacy form once the election is ${elec[0].status}`
                     })
                 }
-            }).catch( (e) => {
-                throw new Error(e)
-            })
-        } else {
-            return res.send({
-                status: false, 
-                txt: 'Something went wrong!', 
-                msg: 'Invalid user form cannot be submitted'
-            })
-        }
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Something went wrong!', 
+                    msg: 'Invalid election / you are not a voter of this election'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
     } catch (e) {
         return res.status(500).send()
     }
@@ -1099,35 +1110,75 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
     const {id} = req.body 
     const {electionID, myid, device} = req.session 
     const {_id, student_id, devices} = await user_data(myid)
-
+    let candidateAccepted = []
     try {
-        let device_data
-        for(let i = 0; i < devices.length; i++){
-            if(devices[i].id === device){
-                device_data = devices[i]
-                break
-            }
-        }
-        //check if election & voter is exists 
         await election.find({
             _id: {$eq: xs(electionID)}, 
-            voters: {$elemMatch: {student_id: xs(student_id)}}
-        }, {passcode: 0}).then( async (elec) => {
-            return res.render('index', {
-                joined: true,
-                iscandidate: true,
-                isvoting: false,
-                elections: elec[0], 
-                data: {
-                    course: await course(), 
-                    year: await year(), 
-                    partylists: await partylists(), 
-                    positions: await positions(),
-                }, 
-                device: device_data,
-                userData: await user_data(myid), 
-                csrf: req.csrfToken()
-            })
+            $and: [
+                {"voters.id": {$eq: xs(_id).toString()}}, 
+                {"voters.status": "Accepted"}
+            ]
+        }).then( async (is_accepted) => {
+            if(is_accepted.length > 0){
+                let device_data
+                for(let i = 0; i < devices.length; i++){
+                    if(devices[i].id === device){
+                        device_data = devices[i]
+                        break
+                    }
+                }
+                //check if election & voter is exists 
+                await election.find({
+                    _id: {$eq: xs(electionID)}, 
+                    voters: {$elemMatch: {student_id: xs(student_id)}}
+                }, {passcode: 0}).then( async (elec) => {
+                    if(elec.length > 0){
+                        for(let i = 0; i < elec[0].candidates.length; i++){
+                            if(elec[0].candidates[i].status === "Accepted"){
+                                candidateAccepted.push(elec[0].candidates[i])
+                            }
+                        }
+                        return res.render('index', {
+                            joined: true,
+                            iscandidate: true,
+                            isvoting: false,
+                            elections: elec[0], 
+                            data: {
+                                course: await course(), 
+                                year: await year(), 
+                                partylists: await partylists(), 
+                                positions: await positions(),
+                            }, 
+                            device: device_data,
+                            userData: await user_data(myid), 
+                            csrf: req.csrfToken()
+                        })
+                    } else {
+                        return res.render('index', {
+                            joined: true,
+                            iscandidate: true,
+                            isvoting: false,
+                            elections: {
+                                positions: [], 
+                                candidates: []
+                            }, 
+                            data: {
+                                course: await course(), 
+                                year: await year(), 
+                                partylists: await partylists(), 
+                                positions: await positions(),
+                            }, 
+                            device: device_data,
+                            userData: await user_data(myid), 
+                            csrf: req.csrfToken()
+                        })
+                    }   
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.redirect(`/home/election/id/${electionID}/`)
+            }
         }).catch( (e) => {
             throw new Error(e)
         })
@@ -1180,7 +1231,7 @@ router.post('/home/election/id/*/candidates/react-candidate/', normal_limit, isl
                     },{$pull: {"candidates.$.reactions": xs(myid).toString()}}).then( () => {
                         return res.send({
                             status: true, 
-                            msg: 'Your Reaction Successfully Reacted'
+                            msg: 'Your Reaction Successfully Removed'
                         })
                     }).catch( (e) => {
                         throw new Error(e)
@@ -2179,7 +2230,7 @@ router.post('/account/messages/', normal_limit, isloggedin, async (req, res) => 
     const {myid} = req.session 
 
     try {
-        await conversations.find({userID: {$eq: xs(myid)}}).then( async (userConversations) => {
+        await conversations.find({userIDs: {$eq: xs(myid)}}).then( async (userConversations) => {
             return res.render('message/messages-list', {
                 messages: userConversations
             })
@@ -2192,7 +2243,7 @@ router.post('/account/messages/', normal_limit, isloggedin, async (req, res) => 
     }
 })
 //search user in message 
-router.post('/account/messges/search-users/', normal_limit, isloggedin, async (req, res) => {
+router.post('/account/messages/search-users/', normal_limit, isloggedin, async (req, res) => {
     const {search} = req.body 
     const {myid} = req.session
     let result = []
@@ -2219,6 +2270,51 @@ router.post('/account/messges/search-users/', normal_limit, isloggedin, async (r
                         courses: await course(),
                         year: await year()
                     }
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//begin to chat
+router.post('/account/messages/begin-chat/', normal_limit, isloggedin, async (req, res) => {
+    const {id} = req.body 
+    const {myid} = req.session
+    const myData = await user_data(myid)
+    const myKachatData = await user_data(id)
+    const new_convo = [
+        {id: xs(myid).toString(), name: `${myData.firstname} ${myData.middlename} ${myData.lastname}`}, 
+        {id: xs(id), name: `${myKachatData.firstname} ${myKachatData.middlename} ${myKachatData.lastname}`}
+    ]
+    try {
+        await conversations.find({
+           $and: [
+               {"userIDs.id": {$eq: xs(id)}}, 
+               {"userIDs.id": {$eq: xs(myid).toString()}}
+           ]
+        }).then( async (convo) => {
+            if(convo.length > 0){
+                return res.render('message/conversations', {
+                    userID: xs(myid), 
+                    messages: convo[0].messages
+                })
+            } else {
+                await conversations.create({
+                    userIDs: new_convo, 
+                    messages: [],
+                    created: moment().tz("Asia/Manila").format()
+                }).then( async (new_cnv) => {
+                    console.log(new_cnv)
+                    return res.render('message/conversations', {
+                        userID: xs(myid), 
+                        messages: new_cnv.messages
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
                 })
             }
         }).catch( (e) => {

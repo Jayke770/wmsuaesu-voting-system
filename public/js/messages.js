@@ -49,7 +49,7 @@ $(document).ready( () => {
                     $(".messages_list").find(".message_skeleton").removeClass("hidden")
                     $(".messages_list").find(".message_skeleton").addClass("flex")
                     $(".messages_list").find(".message_user, .message").remove()
-                    const req = await fetchtimeout('/account/messges/search-users/', {
+                    const req = await fetchtimeout('/account/messages/search-users/', {
                         method: 'POST', 
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -74,6 +74,61 @@ $(document).ready( () => {
             await message.messages()
         }
     })
+    //when the user click the fetch users in search results 
+    let begin_chat = false
+    $(".messages_list").delegate(".message_user", "click", async function () {
+        if(!begin_chat){
+            Swal.fire({
+                icon: 'info', 
+                title: `Connecting to ${$(this).attr("name")}`, 
+                html: 'Please wait...', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showConfirmButton: false, 
+                willOpen: async () => {
+                    Swal.showLoading()
+                    try {
+                        begin_chat = true 
+                        let data = new FormData() 
+                        data.append("id", $(this).attr("data"))
+                        const req = await fetchtimeout("/account/messages/begin-chat/", {
+                            method: 'POST', 
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }, 
+                            body: data
+                        })
+                        if(req.ok){
+                            const res = await req.text() 
+                            const msg = $(".messages") 
+                            msg.addClass(msg.attr("animate-out"))
+                            setTimeout( () => {
+                                msg.addClass("hidden")
+                                msg.removeClass(msg.attr("animate-out"))
+                                $(".messages_list").find(".message_skeleton").removeClass("hidden")
+                                $(".messages_list").find(".message_skeleton").addClass("flex")
+                                $(".messages_list").find(".message").remove()
+                                $("body").append(res)
+                                Swal.close()
+                            }, 300)
+                        } else {
+                            throw new Error(`${req.status} ${req.statusText}`)
+                        }
+                    } catch (e) {
+                        begin_chat = false 
+                        Swal.fire({
+                            icon: 'error', 
+                            title: `Connection error`, 
+                            html: e.message, 
+                            backdrop: true, 
+                            allowOutsideClick: false, 
+                        })
+                    }
+                }
+            })
+        }
+    })
+
     let get_messages = false
     const message = {
         messages: async () => {

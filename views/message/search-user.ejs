@@ -18,7 +18,7 @@
 %>
 <% if(users.length > 0) { %> 
     <% for (let i = 0; i < users.length; i++) { %>
-        <div data="<%- users[i]._id %>" style="animation-delay: <%- i * .150%>s;" class="message_user animate__animated animate__fadeInRight ms-500 shadow-md rounded-md cursor-pointer dark:bg-darkBlue-100 dark:hover:bg-bluegray-800 transition-all p-1.5">
+        <div name="<%- users[i].firstname %>" data="<%- users[i]._id %>" style="animation-delay: <%- i * .150%>s;" class="message_user rpl animate__animated animate__fadeInRight ms-500 shadow-md rounded-md cursor-pointer dark:bg-darkBlue-100 dark:hover:bg-bluegray-800 transition-all p-1.5">
             <div class="flex flex-row">
                 <div class="flex-[10%] flex justify-center items-center">
                     <img class="object-cover h-16 w-16 rounded-full" src="/profile/<%- users[i].student_id %>">

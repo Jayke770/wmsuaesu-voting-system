@@ -43,17 +43,17 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div class="flex flex-col">
                         <label for="fname" class="dark:text-gray-400 text-bluegray-900 text-base">Firstname</label>
-                        <input required value="<%- user.firstname %>" type="text" name="fname" class="dark_border w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
+                        <input disabled readonly value="<%- user.firstname %>" type="text" class="dark_border dark:disabled:text-gray-500 w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
                     </div>
                     <div class="flex flex-col">
                         <label for="mname" class="dark:text-gray-400 text-bluegray-900 text-base">Middlename</label>
-                        <input required value="<%- user.middlename %>" type="text" name="mname" class="dark_border w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
+                        <input disabled readonly value="<%- user.middlename %>" type="text" class="dark_border dark:disabled:text-gray-500 w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
                     </div>
                 </div>
                 <div class="flex w-full">
                     <div class="flex flex-col w-full">
                         <label for="lname" class="dark:text-gray-400 text-bluegray-900 text-base">Lastname</label>
-                        <input required value="<%- user.lastname %>" type="text" name="lname" class="dark_border w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
+                        <input disabled readonly value="<%- user.lastname %>" type="text" class="dark_border dark:disabled:text-gray-500 w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
                     </div>
                 </div>
             </div>
@@ -61,13 +61,13 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div class="flex flex-col">
                         <label for="course" class="dark:text-gray-400 text-bluegray-900 text-base">Course</label>
-                        <select required name="course" class="dark_border appearance-none w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
+                        <select disabled readonly class="dark_border dark:disabled:text-gray-500 appearance-none w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
                             <option selected value="<%- user.course %>"><%- userData.course(user.course) %></option>
                         </select>
                     </div>
                     <div class="flex flex-col">
                         <label for="year" class="dark:text-gray-400 text-bluegray-900 text-base">Year</label>
-                        <select required name="year" class="dark_border appearance-none w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
+                        <select disabled readonly class="dark_border dark:disabled:text-gray-500 appearance-none w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
                             <option selected value="<%- user.year %>"><%- userData.year(user.year) %></option>
                         </select>
                     </div>
@@ -75,7 +75,7 @@
                 <div class="flex w-full">
                     <div class="flex flex-col w-full">
                         <label for="sid" class="dark:text-gray-400 text-bluegray-900 text-base">Student ID</label>
-                        <input required value="<%- user.student_id %>" type="text" name="sid" class="dark_border w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
+                        <input disabled readonly required value="<%- user.student_id %>" type="text" class="dark_border dark:disabled:text-gray-500 w-full px-3 py-2 dark:bg-darkBlue-secondary rounded-lg dark:text-gray-300 text-bluegray-900 dark:focus:border-purple-500 outline-none">
                     </div>
                 </div>
             </div>

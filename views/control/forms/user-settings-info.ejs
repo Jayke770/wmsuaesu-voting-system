@@ -36,13 +36,9 @@
             <span class="dark:text-purple-600">Student ID</span>
             <span class="dark:text-gray-300/80"><%- userData.student_id %></span>
         </div>
-        <div style="animation-delay: 1.25s;" class="rpl animate__animated animate__fadeInUp ms-500 col-span-full cursor-pointer hadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
+        <div style="animation-delay: 1.25s;" class="rpl animate__animated animate__fadeInUp ms-500 col-span-2 sm:col-span-full cursor-pointer hadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
             <span class="dark:text-purple-600">Bio</span>
-            <span class="dark:text-gray-300/80"><%- userData.bio ? userData.bio : 'User Bio is empty' %></span>
-        </div>
-        <div style="animation-delay: 1.50s;" class="rpl animate__animated animate__fadeInUp ms-500 cursor-pointer hadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
-            <span class="dark:text-purple-600">User Type</span>
-            <span class="dark:text-gray-300/80"><%- userData.type %></span>
+            <span class="dark:text-gray-300/80"><%- userData.bio ? userData.bio : '404 Bio Not Found' %></span>
         </div>
         <div style="animation-delay: 1.75s;" class="rpl animate__animated animate__fadeInUp ms-500 cursor-pointer hadow-md dark:bg-darkBlue-100 p-2 flex flex-col gap-2 rounded-md">
             <span class="dark:text-purple-600">Active Status</span>

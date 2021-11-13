@@ -49,7 +49,7 @@
         </i>
         <span class="dark:text-gray-300 text-purple-800">Election Status</span>
     </a>
-    <a class="<%- electionData.voterStatus(userData.student_id) && userData.type === "Candidate" ? " cursor-pointer rpl hover:bg-purple-200 dark:hover:bg-bluegray-800/70 file_candidacy_open " : "cursor-not-allowed opacity-50 " %> transition-all py-2 px-4 flex flex-row items-center">
+    <a class="<%- electionData.voterStatus(userData.student_id) ? " cursor-pointer rpl hover:bg-purple-200 dark:hover:bg-bluegray-800/70 file_candidacy_open " : "cursor-not-allowed opacity-50 " %> transition-all py-2 px-4 flex flex-row items-center">
         <i class="ic dark:text-blue-400 w-9 text-xl text-blue-500">
             <i class="fad fa-ballot-check"></i>
         </i>

@@ -390,46 +390,6 @@ $(document).ready( function (){
             }     
         }
     })
-    //update user type
-    let update_type= false
-    $(".info_main_list").delegate(".user_type_update", "submit", async function(e) {
-        e.preventDefault() 
-        const def = $(this).find("button[type='submit']").html()
-        if(!update_type){
-            try {
-                update_type = true
-                $(this).find("button[type='submit']").html(Data.loader())  
-                const req = await fetchtimeout('/control/users/update/type/', {
-                    method: 'POST', 
-                    headers: {
-                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                    }, 
-                    body: new FormData(this)
-                })
-                if(req.ok) {
-                    const res = await req.json() 
-                    update_type = false
-                    $(this).find("button[type='submit']").html(def)  
-                    toast.fire({
-                        icon: res.status ? 'success' : 'info', 
-                        title: res.msg, 
-                        timer: 2500
-                    }).then( async () => {
-                        if (res.status) {
-                            socket.emit('send-notification', {student_id: res.student_id})
-                            await Data.info_menu(id, "account")
-                        }
-                    })
-                } else {
-                    throw new Error(`${req.status} ${req.statusText}`)
-                }
-            } catch (e) {
-                update_type = false
-                $(this).find("button[type='submit']").html(def)  
-                Data.error(e.message)
-            }     
-        }
-    })
     //update course & year
     let update_cy = false
     $(".info_main_list").delegate(".cy_update", "submit", async function(e) {

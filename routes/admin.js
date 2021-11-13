@@ -373,30 +373,31 @@ adminrouter.post('/control/elections/candidates/search-users/', normal_limit, is
     try {
         await election.find({_id: {$eq: xs(currentElection)}}, {voters: 1}).then( async (usersData) => {
             if(usersData.length > 0) {
-                let not_ca_voters = []
                 for(let i = 0; i < usersData[0].voters.length; i++){
                     //check if the voter is not a candidate 
-                    await election.find({_id: {$eq: xs(currentElection)}, "candidates.student_id": {$eq: xs(usersData[0].voters[i].student_id)}}).then( async (is_ca) => {
-                        //check if the user is a candidate user type 
-                        if(is_ca.length === 0) {
-                            await user.find({student_id: {$eq: xs(usersData[0].voters[i].student_id)}}, {type: 1}).then( (user_type) => {
-                                if(user_type.length > 0) {
-                                    if(user_type[0].type === "Candidate"){
-                                        not_ca_voters.push(usersData[0].voters[i]) 
-                                    }
+                    await election.find({
+                        _id: {$eq: xs(currentElection)}, 
+                        "candidates.student_id": {$eq: xs(usersData[0].voters[i].student_id)}
+                    }).then( (is_ca) => {
+                        if(is_ca.length === 0){
+                            if(xs(search)){
+                                if(usersData[0].voters[i].fullname.search(xs(search)) !== -1){
+                                    result.push(usersData[0].voters[i])
                                 }
-                            })
+                            } else {
+                                result.push(usersData[0].voters[i])
+                            }
                         }
                     }).catch( (e) => {
                         throw new Error(e)
                     })
                 }
                 return res.render('control/forms/election-list-voters', {
-                    users: xs(search) ? result : not_ca_voters,
+                    users: result
                 })
             } else{
                 return res.render('control/forms/election-list-voters', {
-                    users: [],
+                    users: []
                 })
             }
         }).catch( (e) => {
@@ -3487,128 +3488,144 @@ adminrouter.post('/control/users/all-users/', limit, isadmin, async (req, res) =
 })
 //add user 
 adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) => {
-    const { sid, fname, mname, lname, crs, yr, type } = req.body
+    const { sid, fname, mname, lname, crs, yr} = req.body
     try {
-        if (sid && fname && mname && lname && crs && yr && type) {
-            //check if student id, course, & year if exists
-            await data.find({
-                voterId: {
-                    $elemMatch: {
-                        student_id: { $eq: xs(sid.toUpperCase()) },
-                        course: { $eq: xs(crs) },
-                        year: { $eq: xs(yr) },
-                        enabled: false
-                    }
-                }
-            }, {
-                voterId: {
-                    $elemMatch: {
-                        student_id: { $eq: xs(sid.toUpperCase()) },
-                        course: { $eq: xs(crs) },
-                        year: { $eq: xs(yr) },
-                        enabled: false
-                    }
-                }
-            }).then(async (v) => {
-                if (v.length > 0) {
-                    //add new user 
-                    await user.create({
-                        student_id: xs(sid),
-                        firstname: xs(toUppercase(fname)),
-                        middlename: xs(toUppercase(mname)),
-                        lastname: xs(toUppercase(lname)),
-                        course: xs(crs),
-                        year: xs(yr),
-                        type: xs(type),
-                        socket_id: 'Offline',
-                        username: `${fname.toUpperCase()}-${xs(sid).toUpperCase()}`,
-                        password: await hash(`WMSU-${xs(sid).toUpperCase()}`, 10)
-                    }).then(async () => {
-                        //update student id to enabled == true 
-                        await data.updateOne({
-                            "voterId.student_id": { $eq: xs(sid).toUpperCase() }
-                        }, { $set: { "voterId.$.enabled": true } }).then(() => {
-                            return res.send({
-                                status: true,
-                                msg: "User Successfully Added!"
-                            })
-                        }).catch((e) => {
-                            throw new Error(e)
-                        })
-                    }).catch((e) => {
-                        throw new Error(e)
+        if (sid && fname && mname && lname && crs && yr) {
+            //check fullname 
+            await user.find({
+                $and: [
+                    {firstname: {$eq: xs(fname)}}, 
+                    {middlename: {$eq: xs(mname)}}, 
+                    {lastname: {$eq: xs(lname)}}
+                ]
+            }).then( async (name) => {
+                if(name.length > 0){
+                    return res.send({
+                        status: false,
+                        msg: 'Name is already in used'
                     })
                 } else {
-                    //create new voter id and save the new user
-                    //check if the course & year is available 
+                    //check if student id, course, & year if exists
                     await data.find({
-                        $and: [
-                            { course: {
-                                $elemMatch: {id: {$eq: xs(crs)}}
-                            }}, 
-                            { year: {
-                                $elemMatch: {id: {$eq: xs(yr)}}
-                            }}
-                        ]
-                    }).then( async (cy) => {
-                        if(cy.length > 0){
-                            //create new voter id 
-                            const new_voterId = {
-                                id: uuid(), 
-                                student_id: xs(sid).toUpperCase(),
-                                course: xs(crs), 
-                                year: xs(yr), 
-                                enabled: true
+                        voterId: {
+                            $elemMatch: {
+                                student_id: { $eq: xs(sid.toUpperCase()) },
+                                course: { $eq: xs(crs) },
+                                year: { $eq: xs(yr) },
+                                enabled: false
                             }
-                            //check if new student is is not exists 
+                        }
+                    }, {
+                        voterId: {
+                            $elemMatch: {
+                                student_id: { $eq: xs(sid.toUpperCase()) },
+                                course: { $eq: xs(crs) },
+                                year: { $eq: xs(yr) },
+                                enabled: false
+                            }
+                        }
+                    }).then(async (v) => {
+                        if (v.length > 0) {
+                            //add new user 
+                            await user.create({
+                                student_id: xs(sid),
+                                firstname: xs(toUppercase(fname)),
+                                middlename: xs(toUppercase(mname)),
+                                lastname: xs(toUppercase(lname)),
+                                course: xs(crs),
+                                year: xs(yr),
+                                socket_id: 'Offline',
+                                username: `${fname.toUpperCase()}-${xs(sid).toUpperCase()}`,
+                                password: await hash(`WMSU-${xs(sid).toUpperCase()}`, 10)
+                            }).then(async () => {
+                                //update student id to enabled == true 
+                                await data.updateOne({
+                                    "voterId.student_id": { $eq: xs(sid).toUpperCase() }
+                                }, { $set: { "voterId.$.enabled": true } }).then(() => {
+                                    return res.send({
+                                        status: true,
+                                        msg: "User Successfully Added!"
+                                    })
+                                }).catch((e) => {
+                                    throw new Error(e)
+                                })
+                            }).catch((e) => {
+                                throw new Error(e)
+                            })
+                        } else {
+                            //create new voter id and save the new user
+                            //check if the course & year is available 
                             await data.find({
-                                voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}
-                            }).then( async (v) => {
-                                if(v.length === 0){
-                                    await data.updateOne({}, {$push: {voterId: new_voterId}}).then( async (v) => {
-                                        //add new user 
-                                        await user.create({
-                                            student_id: xs(sid),
-                                            firstname: xs(toUppercase(fname)),
-                                            middlename: xs(toUppercase(mname)),
-                                            lastname: xs(toUppercase(lname)),
-                                            course: xs(crs),
-                                            year: xs(yr),
-                                            type: xs(type),
-                                            socket_id: 'Offline',
-                                            username: `${fname.toUpperCase()}-${xs(sid).toUpperCase()}`,
-                                            password: await hash(`WMSU-${xs(sid).toUpperCase()}`, 10)
-                                        }).then( (crt) => {
-                                            return res.send({
-                                                status: true, 
-                                                msg: 'New user added successfully'
+                                $and: [
+                                    { course: {
+                                        $elemMatch: {id: {$eq: xs(crs)}}
+                                    }}, 
+                                    { year: {
+                                        $elemMatch: {id: {$eq: xs(yr)}}
+                                    }}
+                                ]
+                            }).then( async (cy) => {
+                                if(cy.length > 0){
+                                    //create new voter id 
+                                    const new_voterId = {
+                                        id: uuid(), 
+                                        student_id: xs(sid).toUpperCase(),
+                                        course: xs(crs), 
+                                        year: xs(yr), 
+                                        enabled: true
+                                    }
+                                    //check if new student is is not exists 
+                                    await data.find({
+                                        voterId: {$elemMatch: {student_id: {$eq: xs(sid).toUpperCase()}}}
+                                    }).then( async (v) => {
+                                        if(v.length === 0){
+                                            await data.updateOne({}, {$push: {voterId: new_voterId}}).then( async (v) => {
+                                                //add new user 
+                                                await user.create({
+                                                    student_id: xs(sid),
+                                                    firstname: xs(toUppercase(fname)),
+                                                    middlename: xs(toUppercase(mname)),
+                                                    lastname: xs(toUppercase(lname)),
+                                                    course: xs(crs),
+                                                    year: xs(yr),
+                                                    socket_id: 'Offline',
+                                                    username: `${fname.toUpperCase()}-${xs(sid).toUpperCase()}`,
+                                                    password: await hash(`WMSU-${xs(sid).toUpperCase()}`, 10)
+                                                }).then( (crt) => {
+                                                    return res.send({
+                                                        status: true, 
+                                                        msg: 'New user added successfully'
+                                                    })
+                                                }).catch( (e) => {
+                                                    throw new Error(e)
+                                                })
+                                            }).catch( (e) => {
+                                                throw new Error(e)
                                             })
-                                        }).catch( (e) => {
-                                            throw new Error(e)
-                                        })
+                                        } else {
+                                            return res.send({
+                                                status: false, 
+                                                msg: 'Student ID is already exists!'
+                                            })
+                                        }
                                     }).catch( (e) => {
                                         throw new Error(e)
                                     })
                                 } else {
                                     return res.send({
                                         status: false, 
-                                        msg: 'Student ID is alreadt exists!'
+                                        msg: 'Course & Year is not found'
                                     })
                                 }
                             }).catch( (e) => {
                                 throw new Error(e)
                             })
-                        } else {
-                            return res.send({
-                                status: false, 
-                                msg: 'Course & Year is not found'
-                            })
                         }
-                    }).catch( (e) => {
+                    }).catch((e) => {
                         throw new Error(e)
                     })
                 }
-            }).catch((e) => {
+            }).catch( (e) => {
                 throw new Error(e)
             })
         } else {
@@ -3928,41 +3945,6 @@ adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res)
                 return res.send({
                     status: false, 
                     msg: "Invalid fullname"
-                })
-            }
-        } else if(xs(cmd) === 'type') {
-            //check if user exists 
-            if(type){
-                await user.find({_id: {$eq: xs(id)}}, {_id: 1}).then( async (userData) => {
-                    if(userData.length > 0) {
-                        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {type: xs(type)}}).then( async () => {
-                            //send notification to user 
-                            await newNotification(id, 'account', {
-                                id: uuid(), 
-                                content: "Your User Type has been updated",
-                                created: moment().tz("Asia/Manila").format()
-                            })
-                            return res.send({
-                                status: true, 
-                                student_id: student_id,
-                                msg: "Successfully updated"
-                            })
-                        }).catch( (e) => {
-                            throw new Error(e)
-                        })
-                    } else {
-                        return res.send({
-                            status: false, 
-                            msg: "User not found"
-                        })
-                    }
-                }).catch( (e) => {
-                    throw new Error(e)
-                })
-            } else {
-                return res.send({
-                    status: false, 
-                    msg: "Invalid user type"
                 })
             }
         } else if(xs(cmd) === 'cy') {

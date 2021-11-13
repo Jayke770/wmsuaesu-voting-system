@@ -13,13 +13,13 @@ async function fetchtimeout(source, options = {}){
     }
     console.log('Fetch with timeout\n', log)
     try {
-        const response  = await fetch(source, {
+        const req  = await fetch(source, {
             ...options, 
             signal: controller.signal
         })
         clearTimeout(i) 
         $(".lazy-progress-bar").hide(100)
-        return response
+        return req
     } catch (e) {
         $(".lazy-progress-bar").hide(100)
         return new Error(e) 

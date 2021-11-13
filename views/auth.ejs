@@ -43,7 +43,7 @@
                 <div
                     class="login gap-4 px-12 py-20 sm:px-5 sm:py-6 grid grid-cols-2 sm:grid-cols-none xl:w-[70%] transition-all p-4 rounded-xl bg-gray-50 dark_border dark:bg-darkBlue-secondary/95 shadow-2xl w-2/4 md:w-[90%]">
                     <div class="mr-5 sm:mr-0 w-full flex items-center justify-center py-5 sm:py-3">
-                        <i class="text-purple-800 dark:text-purple-600 fad fa-user-circle text-[12rem] sm:text-[10rem]"></i>
+                        <img class="object-cover h-32 w-32 rounded-full" src="/assets/logo.png">
                     </div>
                     <div class="form_login ml-5 sm:ml-0 w-full">
                         <div class="flex w-full flex-row items-center justify-start sm:justify-center">
@@ -138,7 +138,7 @@
                             animate-in="animate__animated animate__fadeIn ms-500">
                             <div
                                 class="flex rpl items-center justify-center p-2 text-purple-900 dark:text-purple-800 w-full h-full text-center text-6xl">
-                                <i class="fad fa-user-plus text-9xl sm:text-7xl"></i>
+                                <img class="object-cover h-32 w-32 rounded-full" src="/assets/logo.png">
                             </div>
                             <div class="flex flex-col gap-1">
                                 <div class="flex flex-row items-center justify-start sm:justify-center mb-3 sm:mb-2">
@@ -175,15 +175,6 @@
                                         <% for (let i = 0; i < year.length; i++) { %>
                                             <option value="<%- year[i].id  %>"><%- year[i].type %></option>
                                         <% } %>
-                                    </select>
-                                </div>
-                                <div class="mt-2">
-                                    <select required
-                                        class="dark:bg-darkBlue-secondary dark_border dark:text-gray-200 text-input w-full p-[10px] outline-none dark:focus:border-purple-700 transition-all rounded-lg"
-                                        name="type">
-                                        <option value="">User Type</option>
-                                        <option value="Candidate">Candidate</option>
-                                        <option value="Voter">Voter</option>
                                     </select>
                                 </div>
                                 <div>

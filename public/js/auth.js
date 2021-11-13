@@ -283,8 +283,7 @@ $(document).ready(function () {
             $("input[name='mname'").val(),
             $("input[name='lname'").val(),
             $("select[name='course'").val(),
-            $("select[name='yr'").val(),
-            $("select[name='type'").val()
+            $("select[name='yr'").val()
         ]
         for(let i = 0; i < inputs.length; i++){
             if(!inputs[i]){

@@ -53,7 +53,7 @@
     </div>  
 <% } else { %>
     <div style="animation-delay: .500s;" class="secure_verify_item animate__animated animate__fadeInRight ms-500">
-        <div class="border-l-4 dark:border-amber-800 dark:bg-amber-800/40 p-2 dark:text-gray-300 text-sm break-words">
+        <div class="mt-2 border-l-4 dark:border-amber-800 dark:bg-amber-800/40 p-2 dark:text-gray-300 text-sm break-words">
             <%- device.status !== "Verifying" ? "Verify your new device to secure your account" : "You will be redirected once your is device is verified" %>
         </div>
         <form class="verify_device flex flex-col gap-3 mt-5">
@@ -108,6 +108,9 @@
                     </div>
                 </div>
             <% } else { %>
+                <div class="border-l-4 dark:border-teal-800 dark:bg-teal-800/40 p-2 dark:text-gray-300 text-sm break-words">
+                    Please check your email inbox to verify your current device
+                </div>
                 <input type="hidden" name="verifying" value="<%- device.id %>">
                 <div class="flex justify-center items-center p-4">
                     <i class="dark:text-purple-600 text-purple-700 animate-pulse animate-spin text-7xl fad fa-spinner-third"></i>

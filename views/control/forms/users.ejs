@@ -49,7 +49,7 @@
     </div>
     <!-- Add user -->
     <div class="add_user fixed top-0 hidden justify-end items-center sm:items-end p-2 sm:p-0 dark:bg-darkBlue-primary/50 w-full h-full z-20">
-        <div animate-in="animate__animated animate__fadeInRight ms-300" animate-out="animate__animated animate__fadeOutRight ms-300" class="add_user_main dark_border rounded-md sm:rounded-b-none w-96 sm:w-full h-full sm:h-5/6 dark:bg-darkBlue-secondary">
+        <div animate-in="animate__animated animate__fadeInUp ms-300" animate-out="animate__animated animate__fadeOutDown ms-300" class="add_user_main dark_border rounded-md sm:rounded-b-none w-96 sm:w-full h-full sm:h-5/6 dark:bg-darkBlue-secondary">
             <div class="w-full dark_border_b flex justify-center items-center py-4">
                 <p class="text-xl font-medium sm:text-lg text-purple-800 dark:text-purple-500 dark:font-semibold">Add User Account</p>
             </div>
@@ -93,21 +93,11 @@
                             </select>
                         </div>
                     </div>
-                    <div class="container transition-all">
-                        <div>
-                            <label for="fnmae" class=" dark:text-gray-300/80">User Type</label>
-                            <select name="type" class="dark:bg-darkBlue-secondary dark:text-gray-200 dark_border dark:focus:border-purple-600 focus:border-purple-600 mt-1 w-full outline-none border border-gray-300 rounded-md  transition-all py-2 px-3 text-gray-900 " required>
-                                <option value="">User Type</option>
-                                <option value="Candidate">Candidate</option>
-                                <option value="Voter">Voter</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="dark:bg-amber-800/30 dark:border-l-4 dark:border-amber-700 dark:text-amber-600 text-sm font-normal p-2">
                         Username & Password will be generated automatically by the system
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2 items-end justify-center h-[calc(100%-470px)] w-full p-2">
+                <div class="grid grid-cols-2 gap-2 items-end justify-center h-[calc(100%-384px)] w-full p-2">
                     <button type="reset" class="hidden">reset</button>
                     <button type="button" class="close_add_user rpl transition-all text-red-600 dark:text-rose-500 dark:font-medium border border-rose-500 dark:border-rose-600  font-normal py-1 rounded-lg outline-none mt-4 w-full">Close</button>
                     <button type="submit" class="rpl dark:disabled:bg-purple-600 disabled:bg-purple-500 rpl dark:hover:bg-purple-700 hover:bg-purple-600 dark:bg-purple-800 bg-purple-700 text-white dark:text-gray-200 transition-all font-normal py-1 rounded-lg focus:ring focus:ring-offset-2 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-700 focus:ring-purple-500 focus:outline-none focus:shadow-outline mt-4 w-full">Add User</button>
