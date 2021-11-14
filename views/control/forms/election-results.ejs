@@ -83,7 +83,7 @@
                 <div class="grid grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all gap-3 py-1 px-3">
                     <% for(let ca = 0; ca < election.candidates.length; ca++) { %> 
                         <% if(election.candidates[ca].position === election.positions[pos].id) { %> 
-                            <div style="animation-delay: <%- ca === 0 ? 1 * .300 : ca * .300%>s;" class="rpl animate__animated animate__fadeInUp ms-500 cursor-pointer dark:bg-darkBlue-secondary p-2 rounded-md">
+                            <div style="animation-delay: <%- ca === 0 ? 1 * .300 : ca * .300%>s;" class="animate__animated animate__fadeInUp ms-500 cursor-pointer dark:bg-darkBlue-secondary p-2 rounded-md">
                                 <div class="flex flex-col gap-1 justify-center items-center py-2">
                                     <img class="h-40 w-40 object-cover rounded-full" src="/profile/<%- election.candidates[ca].student_id %>/">
                                     <div class="flex flex-col justify-center items-center">
@@ -95,7 +95,7 @@
                                     <%- `${election.candidates[ca].votes.length} Votes` %>
                                 </div>
                                 <div class="flex px-2 py-2.5">
-                                    <button class="transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-700 dark:bg-purple-800 hover:bg-purple-700 dark:hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 focus:ring-purple-500">View Votes</button>
+                                    <button data="<%- election.candidates[ca].id %>" class="rpl transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-700 dark:bg-purple-800 hover:bg-purple-700 dark:hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 focus:ring-purple-500">View Votes</button>
                                 </div>
                             </div> 
                         <% } %>

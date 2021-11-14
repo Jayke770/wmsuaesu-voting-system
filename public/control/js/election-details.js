@@ -1367,6 +1367,7 @@ $(document).ready(() => {
         if(!election_deleted){
             socket.emit('election-data', {id: id}, async (res) => {
                 if(await res.status){
+                    console.log(res)
                     //update partylist count
                     $("body").find("#partylist_count").html(res.data.partylists)
                     //update positions count 
@@ -1376,7 +1377,7 @@ $(document).ready(() => {
                     //update voters count 
                     $("body").find("#accepted_voter_count").html(res.data.voters.accepted)
                     //update voters voted count 
-                    $("body").find("#voter_voter_count").html(res.data.voters.voted)
+                    $("body").find("#voter_voted_count").html(res.data.voters.voted)
                 } else {
                     election_deleted = true
                     Swal.fire({

@@ -150,6 +150,9 @@ admin_socket.on('connection', async (socket) => {
                         if(election.voters[i].status === 'Pending'){
                             new_election_data.voters.pending += 1
                         }
+                        if(election.voters[i].isvoted){
+                            new_election_data.voters.voted += 1
+                        }
                     } 
                     //accepeted candidates 
                     for(let i = 0; i < election.candidates.length; i++){
@@ -163,12 +166,6 @@ admin_socket.on('connection', async (socket) => {
                             new_election_data.candidates.deleted += 1
                         }
                     } 
-                    //voters voted 
-                    for(let i = 0; i < election.voters.length; i++){
-                        if(election.voters[i].voted){
-                            new_election_data.voters.voted += 1
-                        }
-                    }
                     new_election_data.candidates.total = election.candidates.length
                     new_election_data.voters.total = election.voters.length
                     new_election_data.partylists = election.partylist.length
