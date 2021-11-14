@@ -532,6 +532,46 @@ users_socket.on('connection', async (socket) => {
             status: device_status
         })
     })
+    //election candidate names
+    socket.on('candidate-names', async (data, res) => {
+        let ca_data = {
+            names: [], 
+            votes: []
+        }
+        try {
+            //get election 
+            await election.find({
+                _id: {$eq: xs(data.id)}
+            }, {candidates: 1}).then( async (elec) => {
+                if(elec.length > 0){
+                    //get all candidates that match in the sent position 
+                    const candidates = elec[0].candidates 
+                    for(let c = 0; c < candidates.length; c++){
+                        if(candidates[c].position === xs(data.position) && candidates[c].status === "Accepted"){
+                            ca_data.names.push(candidates[c].fullname)
+                            ca_data.votes.push(candidates[c].votes.length)
+                        }
+                    }
+                    res({
+                        status: true, 
+                        data: ca_data
+                    })
+                } else {
+                    res({
+                        status: false, 
+                        data: ca_data
+                    })
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e){
+            res({
+                status: false, 
+                data: ca_data
+            })
+        }
+    }) 
 })
 start()
 //check election every 10 seconds

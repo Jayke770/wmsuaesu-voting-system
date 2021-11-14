@@ -203,6 +203,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                         joined: false,
                         iscandidate: false,
                         isvoting: false,
+                        displayresults: false,
                         elections: electionsJoined, 
                         data: {
                             positions: await positions(), 
@@ -219,6 +220,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                         joined: false,
                         iscandidate: false,
                         isvoting: false,
+                        displayresults: false,
                         elections: electionsJoined, 
                         data: {
                             positions: await positions(), 
@@ -249,6 +251,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                     joined: false,
                     iscandidate: false,
                     isvoting: false,
+                    displayresults: false,
                     elections: electionsJoined, 
                     data: {
                         positions: await positions(), 
@@ -265,6 +268,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                     joined: false,
                     iscandidate: false,
                     isvoting: false,
+                    displayresults: false,
                     elections: electionsJoined, 
                     data: {
                         positions: await positions(), 
@@ -1181,6 +1185,7 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
                     joined: true,
                     iscandidate: false,
                     isvoting: false,
+                    displayresults: false,
                     elections: elec[0],
                     data: {
                         positions: await positions(), 
@@ -1239,6 +1244,7 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
                             joined: true,
                             iscandidate: true,
                             isvoting: false,
+                            displayresults: false,
                             elections: elec[0], 
                             data: {
                                 course: await course(), 
@@ -1255,6 +1261,7 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
                             joined: true,
                             iscandidate: true,
                             isvoting: false,
+                            displayresults: false,
                             elections: {
                                 positions: [], 
                                 candidates: []
@@ -1433,21 +1440,26 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
             if(elec.length > 0){
                 //check if election started 
                 if(elec[0].status === "Started"){
-                    return res.render('index', {
-                        elections: elec[0],
-                        joined: true,
-                        isvoting: true,
-                        iscandidate: false,
-                        data: {
-                            positions: await positions(), 
-                            partylists: await partylists(), 
-                            course: await course(), 
-                            year: await year()
-                        }, 
-                        device: device_data,
-                        userData: await user_data(myid),
-                        csrf: req.csrfToken()
-                    })
+                    if(elec[0].voters[0].isvoted){
+                        return res.status(403).send()
+                    } else {
+                        return res.render('index', {
+                            elections: elec[0],
+                            joined: true,
+                            isvoting: true,
+                            iscandidate: false,
+                            displayresults: false,
+                            data: {
+                                positions: await positions(), 
+                                partylists: await partylists(), 
+                                course: await course(), 
+                                year: await year()
+                            }, 
+                            device: device_data,
+                            userData: await user_data(myid),
+                            csrf: req.csrfToken()
+                        })
+                    }
                 } else {
                     return res.status(403).send()
                 }
@@ -1458,7 +1470,7 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
             throw new Error(e)
         })
     } catch (e) {
-
+        return res.status(500).send()
     }
 })
 //submit vote 
@@ -1484,41 +1496,49 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
                     //check if the voter already voted  
                     await election.find({
                         _id: {$eq: xs(electionID)}, 
-                        "voters.id": {$eq: xs(myid).toString()},
-                        "voters.isvoted": {$eq: true}
+                        voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}
+                    }, {voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}
                     }).then( async (elecData) => {
                         if(elecData.length > 0){
-                            return res.send({
-                                status: false,
-                                txt: "Oops..", 
-                                msg: `You already submitted a vote`
-                            })
-                        } else {
-                            for(let v = 0; v < votes.length; v++){
-                                await election.updateOne({
-                                    _id: {$eq: xs(electionID)}, 
-                                    "candidates.id": {$eq: xs(JSON.parse(votes[v]).candidateID)}
-                                }, {$push: {"candidates.$.votes": xs(myid).toString()}}).then( async () => {
-                                    //save candidate id in the voter votes
+                            //check if voted or not 
+                            if(elecData[0].voters[0].isvoted){
+                                return res.send({
+                                    status: false,
+                                    txt: "Oops..", 
+                                    msg: `You already submitted a vote`
+                                })
+                            } else {
+                                for(let v = 0; v < votes.length; v++){
                                     await election.updateOne({
-                                        _id: {$eq: xs(electionID)},
-                                        "voters.id": xs(myid).toString()
-                                    }, {
-                                        $push: {"voters.$.voted": xs(JSON.parse(votes[v]).candidateID)}, 
-                                        $set: {"voters.$.isvoted": true}
+                                        _id: {$eq: xs(electionID)}, 
+                                        "candidates.id": {$eq: xs(JSON.parse(votes[v]).candidateID)}
+                                    }, {$push: {"candidates.$.votes": xs(myid).toString()}}).then( async () => {
+                                        //save candidate id in the voter votes
+                                        await election.updateOne({
+                                            _id: {$eq: xs(electionID)},
+                                            "voters.id": xs(myid).toString()
+                                        }, {
+                                            $push: {"voters.$.voted": xs(JSON.parse(votes[v]).candidateID)}, 
+                                            $set: {"voters.$.isvoted": true}
+                                        }).catch( (e) => {
+                                            throw new Error(e)
+                                        })
                                     }).catch( (e) => {
                                         throw new Error(e)
                                     })
-                                }).catch( (e) => {
-                                    throw new Error(e)
+                                }
+                                //send response
+                                return res.send({
+                                    status: true, 
+                                    txt: 'Vote submitted successfully', 
+                                    msg: `Have a nice day ${firstname}!`
                                 })
                             }
-
-                            //send response
+                        } else {
                             return res.send({
-                                status: true, 
-                                txt: 'Vote submitted successfully', 
-                                msg: `Have a nice day ${firstname}!`
+                                status: false,
+                                txt: "Voter Not Found", 
+                                msg: "Please refresh the app"
                             })
                         }
                     }).catch( (e) => {
@@ -1543,6 +1563,56 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
         }
     } catch (e) {
         console.log(e)
+        return res.status(500).send()
+    }
+})
+//election results 
+router.get('/home/election/id/*/results/', normal_limit, isloggedin, async (req, res) => {
+    const {electionID, myid, device} = req.session 
+    const {devices} = await user_data(myid)
+
+    try {
+        let device_data
+        for(let i = 0; i < devices.length; i++){
+            if(devices[i].id === device){
+                device_data = devices[i]
+                break
+            }
+        }
+
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            voters: {$elemMatch: {id: {$eq: xs(myid)}}}
+        },{voters: {$elemMatch: {id: {$eq: xs(myid)}}}, passcode: 0}).then( async (elec_voter) => {
+            if(elec_voter.length > 0){
+                if(elec_voter[0].voters[0].isvoted){
+                    return res.render('index', {
+                        elections: elec_voter[0],
+                        joined: true,
+                        isvoting: false,
+                        iscandidate: false,
+                        displayresults: true,
+                        data: {
+                            positions: await positions(), 
+                            partylists: await partylists(), 
+                            course: await course(), 
+                            year: await year()
+                        }, 
+                        device: device_data,
+                        userData: await user_data(myid),
+                        csrf: req.csrfToken()
+                    })
+                } else {
+                    return res.redirect(`/home/election/id/${electionID}/vote/`)
+                }
+            } else {
+                return res.redirect('/home')
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })        
+    } catch (e) {
+        console.log(e) 
         return res.status(500).send()
     }
 })

@@ -100,9 +100,10 @@
         <!-- Main -->
         <% if(!isvoting) { %> 
             <div class="election__ hidden transition-all">
-                <%- !iscandidate ? include('election/main', { joined: joined, elections: elections, userData: userData }) : '' %>
+                <%- !iscandidate && !displayresults ? include('election/main', { joined: joined, elections: elections, userData: userData }) : '' %>
             </div>
             <%- iscandidate ? include('election/candidates', {election: elections, data: data}) : '' %>
+            <%- displayresults ? include('election/election-results', {election: elections}) : '' %>
         <% } else { %>
             <%- include('election/vote-form', {election: elections}) %>
         <% } %>

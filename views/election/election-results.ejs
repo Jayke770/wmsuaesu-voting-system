@@ -1,0 +1,126 @@
+<% 
+    const Data = {
+        positions: (id) => {
+            let res
+            for(let i = 0; i < data.positions.length; i++){
+                if(data.positions[i].id === id){
+                    res = data.positions[i].type
+                }
+            }
+            return res
+        }, 
+        partylist: (id) => {
+            let res
+            for(let i = 0; i < data.partylists.length; i++){
+                if(data.partylists[i].id === id){
+                    res = data.partylists[i].type
+                }
+            }
+            return res
+        }, 
+    }
+%> 
+<div class="container pt-20 px-2">
+    <div class="flex flex-col justify-center items-center">
+        <p style="animation-delay: .150s;" class="dark:text-purple-600 text-purple-700 text-xl font-semibold animate__animated animate__fadeInUp">
+            <% if(elections.status === 'Not Started') { %>
+                <%- 'Election will begin in' %>
+            <% } %>
+            <% if(elections.status === 'Started') { %>
+                <%- 'Election will end in' %>
+            <% } %>
+            <% if(elections.status === 'Ended') { %>
+                Election ended <span class="time" data="<%- elections.end %>"></span>
+            <% } %>
+            <% if(elections.status === 'Pending for deletion') { %>
+                <%- 'Election will be deleted in' %>
+            <% } %>
+        </p>
+        <% if(elections.status === 'Not Started') { %>
+            <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInDown" data="<%- elections.start %>"></div>
+        <% } %>
+        <% if(elections.status === 'Started') { %>
+            <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInDown" data="<%- elections.end %>"></div>
+        <% } %>
+        <% if(elections.status === 'Ended') { %>
+            <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInDown" data="<%- elections.end %>"></div>
+        <% } %>
+        <% if(elections.status === 'Pending for deletion') { %>
+            <div style="animation-delay: .650s;" id="e_time" class="flipdown animate__animated animate__fadeInDown" data="<%- elections.deletion_status %>"></div>
+        <% } %>
+    </div>
+    <script>
+        //get the election starting time  
+        new FlipDown((new Date($("#e_time").attr("data")).getTime() / 1000), "e_time").start().ifEnded( () => {
+
+        })
+        //set the theme of flipdown 
+        $("#e_time").removeClass(localStorage.getItem('theme') === "dark" ? 'flipdown__theme-dark' : 'flipdown__theme-light')
+        $("#e_time").addClass(localStorage.getItem('theme') === "dark"? 'flipdown__theme-light' : 'flipdown__theme-dark')
+    </script>
+    <div class="grid grid-cols-2 gap-3 md:grid-cols-none transition-all mt-20 pb-3">
+        <% for(let i = 0; i < elections.positions.length; i++) { %>
+            <div style="animation-delay: <%- i * .250%>s" id="election_positions" data="<%- `c${i}` %>" class="animate__animated animate__fadeInUp w-full dark:bg-darkBlue-secondary shadow-md bg-gray-200 rounded-md  transition-all">
+                <div class="p-2">
+                    <span class="p-2 dark:text-gray-300 text-purple-700 text-xl"><%- Data.positions(election.positions[i].id) %></span>
+                </div>
+                <div class="container p-1">
+                    <canvas id="<%- `chart-${i}` %>"></canvas>
+                </div>
+            </div>
+            <script>
+                "use strict"
+                var ctx = document.getElementById("<%- `chart-${i}` %>")
+                var <%- `c${i}` %> = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: null,
+                        datasets: [{
+                            label: '<%- Data.positions(election.positions[i].id) %>',
+                            data: null,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true, 
+                        indexAxis: 'y',
+                        elements: {
+                            bar: {
+                                borderWidth: 2,
+                            }
+                        },
+                    }
+                })
+                setInterval( () => {
+                    let data = {
+                        id: '<%- election._id %>', 
+                        position: '<%- election.positions[i].id %>'
+                    }
+                    socket.emit('candidate-names', data, (res) => {
+                        if(res.status){
+                            <%- `c${i}` %>.data.labels = res.data.names
+                            <%- `c${i}` %>.data.datasets[0].data = res.data.votes
+                            <%- `c${i}` %>.update()
+                        }
+                    })
+                }, 1000)
+            </script>
+        <% } %>
+    </div>
+</div>

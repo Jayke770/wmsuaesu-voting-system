@@ -11,7 +11,17 @@
                 }
             }
         },
-        
+        isvoted: (student_id) => {
+            for(let i = 0; i < elections.voters.length; i++){
+                if(elections.voters[i].student_id === student_id){
+                    if(elections.voters[i].isvoted){
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            }
+        },
     }
 %>
 <a href="/home" class="cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
@@ -27,7 +37,7 @@
     <span class="dark:text-gray-300 text-purple-800">My Profile</span>
 </a>
 <% if(joined) { %> 
-    <% if(elections.status === "Started") { %>
+    <% if(elections.status === "Started" && !electionData.isvoted(userData.student_id)) { %>
         <a href="/home/election/id/<%- elections._id %>/vote/" class="cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
             <i class="ic dark:text-yellow-600 w-9 text-xl text-yellow-500">
                 <i class="fad fa-person-booth"></i>
@@ -35,8 +45,8 @@
             <span class="dark:text-gray-300 text-purple-800">Vote Now</span>
         </a>
     <% } %>
-    <% if(elections.status === "Ended") { %>
-        <a class="cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
+    <% if(electionData.isvoted(userData.student_id)) { %>
+        <a href="/home/election/id/<%- elections._id %>/results/" class="cursor-pointer hover:bg-purple-200 dark:hover:bg-bluegray-800/70 transition-all py-2 px-4 flex flex-row items-center rpl">
             <i class="ic dark:text-yellow-600 w-9 text-xl text-yellow-500">
                 <i class="fad fa-poll-people"></i>
             </i>

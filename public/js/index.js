@@ -688,6 +688,7 @@ $(document).ready( () => {
                                         if(res.status){
                                             $(this).find("button[type='submit']").html(def) 
                                             $(this).find("button[type='reset']").click()
+                                            window.location.assign(`/home/election/id/election/${$('meta[name="electionID"]').attr("content")}/results/`)
                                         } else {
                                             $(this).find("button[type='submit']").html(def) 
                                         }
