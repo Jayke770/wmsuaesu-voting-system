@@ -8,4 +8,4 @@ const conversation = new mongoose.Schema({
     }, 
     created: {}
 })
-module.exports = mongoose.model('comversations', conversation)
+module.exports = mongoose.model('conversations', conversation)  

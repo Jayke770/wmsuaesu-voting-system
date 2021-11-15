@@ -3918,6 +3918,39 @@ adminrouter.get('/control/elections/:id/results/', isadmin, limit, async (req, r
         return res.status(500).send()
     }
 })
+//election result print
+adminrouter.get('/control/elections/:id/results/print/', isadmin, limit, async (req, res) => {
+    const {id} = req.params 
+    const {currentElection} = req.session 
+    
+    try {
+        if(id === currentElection.toString()){
+            await election.find({_id: {$eq: xs(id)}}, {passcode: 0}).then( async (elec) => {
+                if(elec.length > 0) {
+                    return res.render('control/forms/election-results-print', {
+                        election: elec[0],
+                        data: {
+                            courses: await course(), 
+                            year: await year(), 
+                            positions: await positions(), 
+                            partylists: await partylists()
+                        },
+                        csrf: req.csrfToken()
+                    })
+                } else {
+                    return res.status(404).render('error/404')
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            throw new Error('not =')
+        }
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
 //get user information 
 adminrouter.post('/control/users/info/', isadmin, limit, async (req, res) => {
     const {id} = req.body 

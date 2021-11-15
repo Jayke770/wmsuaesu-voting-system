@@ -30,6 +30,8 @@ const {updateAdminSocketID, user_socket_id, election_handler, user_data, users_e
 //models 
 const election = require('./models/election')
 const users = require('./models/user')
+const conversations = require('./models/conversations')
+
 mongoose.connect(process.env.db_url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -390,10 +392,9 @@ admin_socket.on('connection', async (socket) => {
 })
 //user websocket events
 users_socket.on('connection', async (socket) => {
-    let {myid, electionID, islogin, user_type, device} = socket.handshake.session 
+    let {myid, electionID, islogin, user_type, device, chat} = socket.handshake.session 
     const {student_id} = await user_data(myid)
     //update socket id every user connted to server 
-    console.log(user_type)
     if(islogin && user_type === "Voter"){
         await users.updateOne({
             _id: {$eq: xs(myid)}, 
@@ -402,7 +403,9 @@ users_socket.on('connection', async (socket) => {
             socket_id: socket.id, 
             "devices.$.status": 'Online', 
             last_seen: ''
-        }}).then( () => {
+        }}).then( async () => {
+            const kachat = await user_data(chat)
+            socket.to(kachat.socket_id).emit('kachat-reconnect')
             console.log("New User Connected with soket Id of ", socket.id,)
             admin_socket.emit('connected', {id: xs(myid)})
         })
@@ -410,6 +413,7 @@ users_socket.on('connection', async (socket) => {
         socket.disconnect()
     }
     socket.on('disconnect', async () => {
+        const kachat = await user_data(chat)
         const socket_id = socket.id
         await users.updateOne({
             _id: {$eq: xs(myid)}, 
@@ -418,7 +422,8 @@ users_socket.on('connection', async (socket) => {
             socket_id: 'Offline', 
             "devices.$.status": 'Offline',
             last_seen: moment().tz("Asia/Manila").format()
-        }}).then( (h) => {
+        }}).then( async () => {
+            socket.to(kachat.socket_id).emit('kachat-disconnect')
             console.log("New User Diconnected with soket Id of ", socket_id)
             admin_socket.emit('user-disconnected', {id: xs(myid)})
         })
@@ -569,6 +574,64 @@ users_socket.on('connection', async (socket) => {
             })
         }
     }) 
+    //send message 
+    socket.on('send-message', async (data, res) => {
+        const {message, kachatid} = data
+        const {firstname, middlename, lastname, student_id} = await user_data(myid) 
+        const new_msg = {
+            id: uuidv4(), 
+            firstname: firstname, 
+            fullname: `${firstname} ${middlename} ${lastname}`,
+            userid: xs(myid).toString(), 
+            message: xs(message), 
+            created: moment().tz("Asia/Manila").format()
+        }
+
+        try {
+            await conversations.find({
+                $and: [
+                    {"userIDs.id": {$eq: xs(chat ? chat : kachatid)}}, 
+                    {"userIDs.id": {$eq: xs(myid).toString()}}
+                ]
+            }).then( async (convo) => {
+                if(convo.length > 0){
+                    await conversations.updateOne({
+                        $and: [
+                            {"userIDs.id": {$eq: xs(chat ? chat : kachatid)}}, 
+                            {"userIDs.id": {$eq: xs(myid).toString()}}
+                        ]
+                    }, {$push: {messages: new_msg}}).then( async () => {
+                        const {socket_id} = await user_data(chat ? chat : kachatid)
+                        socket.to(socket_id).emit('new-message', new_msg)
+                        return res({
+                            status: true, 
+                            message: new_msg
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
+                } else {
+                    throw new Error('Convo not found')
+                }
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } catch (e) {
+            console.log(e)
+            return res({
+                status: false
+            })
+        }
+    }), 
+    //typing status 
+    socket.on('typing', async (data) => {
+        const {socket_id} = await user_data(chat ? chat : data.kachatid) 
+        socket.to(socket_id).emit('typing')
+    })
+    socket.on('not-typing', async (data) => {
+        const {socket_id} = await user_data(chat ? chat : data.kachatid)
+        socket.to(socket_id).emit('not-typing')
+    })
 })
 start()
 //check election every 10 seconds

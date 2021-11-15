@@ -1,51 +1,26 @@
-<div class="animate__animated animate__fadeInUp ms-500 fixed right-2 sm:right-0 bottom-0 dark:bg-darkBlue-secondary w-96 sm:w-full h-[calc(100vh-90px)] dark_border z-10 rounded-t-md">
+<div data="<%- kachat._id %>" class="conversation animate__animated animate__fadeInUp ms-500 fixed right-2 sm:right-0 bottom-0 sm:bottom-[.5px] dark:bg-darkBlue-secondary w-96 sm:w-full h-[61px] dark_border rounded-t-md">
     <div class="rpl cursor-pointer flex flex-row py-1.5 px-1.5 gap-1 dark_border_b">
-        <div class="flex-[60%] flex flex-row items-center">
-            <img class="h-12 w-12 object-cover rounded-full" src="/assets/image.jpg">
-            <div class="flex flex-col px-1.5 gap-[1px]">
-                <span class="dark:text-gray-300 text-sm">Jake Peregrino Velasco</span>
-                <span class="dark:text-gray-300 text-xs">Active Now</span>
+        <div class="conversation_header flex-[60%] flex flex-row items-center">
+            <img class="h-12 w-12 object-cover rounded-full" src="/profile/<%- kachat.student_id %>/">
+            <div class="flex flex-col px-1.5 gap-[1px] chat-status">
+                <span class="dark:text-gray-300 text-sm"><%- `${kachat.firstname} ${kachat.middlename} ${kachat.lastname}` %></span>
+                <% if(kachat.socket_id === "Offline") { %> 
+                    <span class="user-chat-status dark:text-gray-500 text-xs">Offline</span>
+                <% } else { %> 
+                    <span class="user-chat-status dark:text-teal-600 text-xs">Online</span>
+                <% } %>
             </div>
         </div>
         <div class="flex-[40%] flex justify-end items-center">
-            <a class="rpl cursor-pointer px-2.5 py-2 dark:text-gray-300 text-xl rounded-full">
+            <a class="close-kachat rpl cursor-pointer px-2.5 py-2 dark:text-gray-300 text-xl rounded-full">
                 <i class="fas fa-times-circle"></i>
             </a>
         </div>
     </div>
-    <div class="conatiner flex flex-col h-[calc(100%-61px)]">
-        <div class="flex-[90%] gap-2.5 flex flex-col dark_border_b py-1.5 px-1 overflow-y-auto">
-            <div class="sent flex w-full justify-end">
-                <div class="dark:bg-indigo-900 shadow-md text-sm max-w-[75%] rounded-md px-2 py-1.5 break-words dark:text-gray-300">
-                    fjaksf f saf fa f f sas ffsfsf sf fs 
-                </div>
-            </div>
-            <div class="sent flex w-full justify-end">
-                <div class="dark:bg-indigo-900 shadow-md text-sm max-w-[75%] rounded-md px-2 py-1.5 break-words dark:text-gray-300">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consequuntur repudiandae ut animi excepturi, officiis aut. Voluptate itaque placeat cum laboriosam beatae voluptas reiciendis quia rem corrupti, sed, mollitia voluptatibus aliquam?
-                </div>
-            </div>
-
-            <div class="received flex w-full justify-start">
-                <div class="dark:bg-darkBlue-100 shadow-md text-sm max-w-[75%] rounded-md px-2 py-1.5 break-words dark:text-gray-300">
-                    jhfjasfhjahfjf
-                </div>
-            </div>
-            <div class="received flex w-full justify-start">
-                <div class="dark:bg-darkBlue-100 shadow-md text-sm max-w-[75%] rounded-md px-2 py-1.5 break-words dark:text-gray-300">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis aliquam exercitationem fugiat omnis earum et autem fugit vitae eveniet vel corporis consequatur reprehenderit deleniti, at magni! Ad dicta similique tempore!
-                </div>
-            </div>
-
-            <div class="sent flex w-full justify-end">
-                <div class="dark:bg-indigo-900 shadow-md text-sm max-w-[75%] rounded-md px-2 py-1.5 break-words dark:text-gray-300">
-                    fjaksf f saf fa f f sas ffsfsf sf fs 
-                </div>
-            </div>
-            <div class="sent flex w-full justify-end">
-                <div class="dark:bg-indigo-900 shadow-md text-sm max-w-[75%] rounded-md px-2 py-1.5 break-words dark:text-gray-300">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consequuntur repudiandae ut animi excepturi, officiis aut. Voluptate itaque placeat cum laboriosam beatae voluptas reiciendis quia rem corrupti, sed, mollitia voluptatibus aliquam?
-                </div>
+    <div class="conversation_main conatiner hidden flex-col h-[calc(100%-61px)]">
+        <div class="conversations_main_list flex-[90%] gap-2.5 flex flex-col dark_border_b py-1.5 px-1 overflow-y-auto overflow-x-hidden">
+            <div class="conversations_main_list_skeleton hidden w-full h-full justify-center items-center dark:text-purple-800 text-5xl">
+                <i class="fad animate-spin fa-spinner-third"></i>
             </div>
         </div>
         <div class="flex-[10%] ">
@@ -58,13 +33,15 @@
                 </div>
                 <div class="flex-[90%] p-1 overflow-x-hidden">
                     <div class="relative w-full">
-                        <div contenteditable="true" class="text pr-8 dark:bg-darkBlue-secondary dark_border overflow-y-auto max-h-20 dark:text-gray-200 text-input w-full p-2 outline-none dark:focus:border-purple-700 transition-all rounded-lg"></div>
-                        <a class="right-2.5 top-2 absolute cursor-pointer dark:text-cyan-600 text-xl">
+                        <div contenteditable="true" class="message-content pr-8 dark:bg-darkBlue-secondary dark_border overflow-y-auto max-h-20 dark:text-gray-200 text-input w-full p-2 outline-none dark:focus:border-purple-700 transition-all rounded-lg"></div>
+                        <button type="button" class="send_message right-2.5 top-2 absolute cursor-pointer dark:text-cyan-600 text-xl">
                             <i class="fad fa-paper-plane"></i>
-                        </a>
+                        </>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script src="/js/conversations.js"></script>
+<script src="/js/scroll_div.js"></script>

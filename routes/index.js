@@ -172,10 +172,10 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
     delete req.session.electionID
-    const {myid, device} = req.session  
+    const {myid, device, chat} = req.session  
     const {elections, devices} = await user_data(myid)
-
     let electionsJoined = []
+    
     try {
         let device_verified
         for(let i = 0; i < devices.length; i++){
@@ -184,6 +184,19 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                 break
             }
         }
+        //check chat status 
+        await conversations.find({
+            $and: [
+                {"userIDs.id": {$eq: xs(chat)}}, 
+                {"userIDs.id": {$eq: xs(myid).toString()}}
+            ]
+        }).then( (chat_status) => {
+            if(chat_status.length === 0){
+                delete req.session.chat
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
         if(device_verified.verified){
             await user.updateOne({
                 _id: {$eq: xs(myid)}, 
@@ -213,6 +226,11 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                         }, 
                         device: device_verified,
                         userData: await user_data(myid), 
+                        conversations: {
+                            ischat: chat ? true : false, 
+                            kachat: chat ? await user_data(chat) : {}, 
+                            userid: xs(myid).toString()
+                        },
                         csrf: req.csrfToken()
                     })
                 } else {
@@ -230,6 +248,10 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                         }, 
                         device: device_verified,
                         userData: await user_data(myid), 
+                        conversations: {
+                            ischat: chat ? true : false, 
+                            kachat: chat ? await user_data(chat) : {}, 
+                        },
                         csrf: req.csrfToken()
                     })
                 }
@@ -259,6 +281,11 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                         course: await course(), 
                         year: await  year()
                     }, 
+                    conversations: {
+                        ischat: chat ? true : false, 
+                        kachat: chat ? await user_data(chat) : {}, 
+                        userid: xs(myid).toString()
+                    },
                     device: device_verified,
                     userData: await user_data(myid), 
                     csrf: req.csrfToken()
@@ -276,6 +303,11 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                         course: await course(), 
                         year: await  year()
                     }, 
+                    conversations: {
+                        ischat: chat ? true : false, 
+                        kachat: chat ? await user_data(chat) : {}, 
+                        userid: xs(myid).toString()
+                    },
                     device: device_verified,
                     userData: await user_data(myid), 
                     csrf: req.csrfToken()
@@ -2372,11 +2404,15 @@ router.post('/account/notifications/remove/', normal_limit, isloggedin, async (r
 //get messages 
 router.post('/account/messages/', normal_limit, isloggedin, async (req, res) => {
     const {myid} = req.session 
-
+    const {student_id} = await user_data(myid)
+    console.log(myid)
     try {
-        await conversations.find({userIDs: {$eq: xs(myid)}}).then( async (userConversations) => {
+        await conversations.find({"userIDs.id": {$eq: xs(myid)}}).then( async (userConversations) => {
             return res.render('message/messages-list', {
-                messages: userConversations
+                messages: userConversations, 
+                student_id: student_id, 
+                userid: myid.toString(), 
+                created: userConversations.length > 0 ? userConversations[0].created : ''
             })
         }).catch( (e) => {
             throw new Error(e)
@@ -2431,8 +2467,16 @@ router.post('/account/messages/begin-chat/', normal_limit, isloggedin, async (re
     const myData = await user_data(myid)
     const myKachatData = await user_data(id)
     const new_convo = [
-        {id: xs(myid).toString(), name: `${myData.firstname} ${myData.middlename} ${myData.lastname}`}, 
-        {id: xs(id), name: `${myKachatData.firstname} ${myKachatData.middlename} ${myKachatData.lastname}`}
+        {
+            id: xs(myid).toString(), 
+            student_id: myData.student_id,
+            name: `${myData.firstname} ${myData.middlename} ${myData.lastname}`
+        }, 
+        {
+            id: xs(id), 
+            student_id: myKachatData.student_id,
+            name: `${myKachatData.firstname} ${myKachatData.middlename} ${myKachatData.lastname}`
+        }
     ]
     try {
         await conversations.find({
@@ -2442,7 +2486,9 @@ router.post('/account/messages/begin-chat/', normal_limit, isloggedin, async (re
            ]
         }).then( async (convo) => {
             if(convo.length > 0){
+                req.session.chat = xs(id)
                 return res.render('message/conversations', {
+                    kachat: await user_data(id),
                     userID: xs(myid), 
                     messages: convo[0].messages
                 })
@@ -2452,8 +2498,9 @@ router.post('/account/messages/begin-chat/', normal_limit, isloggedin, async (re
                     messages: [],
                     created: moment().tz("Asia/Manila").format()
                 }).then( async (new_cnv) => {
-                    console.log(new_cnv)
+                    req.session.chat = xs(id)
                     return res.render('message/conversations', {
+                        kachat: await user_data(id),
                         userID: xs(myid), 
                         messages: new_cnv.messages
                     })
@@ -2468,5 +2515,32 @@ router.post('/account/messages/begin-chat/', normal_limit, isloggedin, async (re
         console.log(e) 
         return res.status(500).send()
     }
+})
+//get conversations
+router.post('/account/messages/list/', normal_limit, isloggedin, async (req, res) => {
+    const {chat, myid} = req.session
+    try {
+        await conversations.find({
+            $and: [
+                {"userIDs.id": {$eq: xs(chat)}}, 
+                {"userIDs.id": {$eq: xs(myid).toString()}}
+            ]
+        }).then( async (convo) => {
+            return res.render('message/conversations-list', {
+                kachat: xs(chat), 
+                userid: xs(myid).toString(), 
+                messages: convo[0].messages
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        return res.status(500).send()
+    }
+})
+//close messenger 
+router.post('/account/message/close/', normal_limit, isloggedin, async (req, res) => {
+    delete req.session.chat 
+    return res.send({status: true})
 })
 module.exports = router

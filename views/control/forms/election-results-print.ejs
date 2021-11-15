@@ -1,0 +1,161 @@
+<% 
+    const Data = {
+        course: (id) => {
+            for(let c = 0; c < data.courses.length; c++){
+                if(data.courses[c].id === id) {
+                    return data.courses[c].type
+                }
+            }
+        }, 
+        year: (id) => {
+            for(let y = 0; y < data.year.length; y++){
+                if(data.year[y].id === id) {
+                    return data.year[y].type
+                }
+            }
+        }, 
+        position: (id) => {
+            for(let pos = 0; pos < data.positions.length; pos++){
+                if(data.positions[pos].id === id) {
+                    return data.positions[pos].type
+                }
+            }
+        }, 
+        partylist: (id) => {
+            for(let pty = 0; pty < data.partylists.length; pty++){
+                if(data.partylists[pty].id === id) {
+                    return data.partylists[pty].type
+                }
+            }
+        }
+    }
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidates</title>
+    <link rel="stylesheet" href="/css/tailwindcss/style.css"> 
+    <%- include('../cdn/_list_users') %>
+</head>
+<body>
+    <div class="flex py-3 justify-center items-center">
+        <a class="download rpl col-span-2 cursor-pointer transition-all w-96 sm:w-full text-center px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm text-white bg-teal-700 dark:bg-teal-800 hover:bg-teal-700 dark:hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-teal-800 focus:ring-teal-500">Download Results</a>
+    </div>
+    <div id="result" class="py-3 px-10 w-full">
+        <div class="grid grid-cols-4">
+            <div class="flex justify-center items-center px-2 py-7">
+                <img src="/assets/logo.png">
+            </div>
+            <div class="col-span-2 flex flex-col gap-1 justify-center items-center">
+                <span class="font-semibold">Republic of the Philippines</span>
+                <span class="tracking-wide">Western Mindanao State University</span>
+                <span>Aurora External Studies Unit</span>
+                <span>Aurora, Zamboanga Del Sur</span>
+            </div>
+            <div class="flex justify-center items-center px-2 py-7">
+                <img src="/assets/logo.png">
+            </div>
+        </div>
+        <div class="container mt-5">
+            <% for(let pos = 0; pos < election.positions.length; pos++){ %>
+                <div <%- pos !== 0 ? `id="break-page"` : '' %>  class="container last:mb-20">
+                    <div class="grid grid-cols-8">
+                        <div class="border-teal-600 text-center border-[1px] p-2 text-bluegray-900 py-2">No</div>
+                        <div class="border-teal-600 text-center border-[1px] p-2 text-bluegray-900 py-2">Photo</div>
+                        <div class="border-teal-600 text-center border-[1px] p-2 text-bluegray-900 py-2">Student ID</div>
+                        <div class="border-teal-600 text-center border-[1px] p-2 text-bluegray-900 py-2">Name</div>
+                        <div class="border-teal-600 text-center border-[1px] p-2 text-bluegray-900 py-2">Course & Year</div>
+                        <div class="border-teal-600 text-center border-[1px] p-2 text-bluegray-900 py-2">Position</div>
+                        <div class="border-teal-600 text-center border-[1px] p-2 text-bluegray-900 py-2">Partylist</div>
+                        <div class="border-teal-600 text-center border-[1px] p-2 text-bluegray-900 py-2">Votes</div>
+                    </div>
+                    <div class="flex flex-col mb-10">
+                        <div class="grid grid-cols-8">
+                            <% for (let c = 0; c < election.candidates.length; c++) { %>
+                                <% if(election.candidates[c].position === election.positions[pos].id) { %> 
+                                    <div class="border-teal-600 border-[1px] p-2 text-bluegray-900 py-2"><%- c + 1 %></div>
+                                    <div class="text-sm border-teal-600 border-[1px] p-2 text-bluegray-900">
+                                        <div class="flex w-full justify-center items-center">
+                                            <img class="rounded-full object-cover h-16 w-16" src="/profile/<%- election.candidates[c].student_id %>">
+                                        </div>
+                                    </div>
+                                    <div class="text-sm flex justify-center items-center text-center break-words border-teal-600 border-[1px] p-2 text-bluegray-900"><%- election.candidates[c].student_id %></div>
+                                    <div class="text-sm flex justify-center items-center text-center break-words border-teal-600 border-[1px] p-2 text-bluegray-900"><%- election.candidates[c].fullname %></div>
+                                    <div class="text-sm flex justify-center items-center text-center break-words border-teal-600 border-[1px] p-2 text-bluegray-900"><%- `${Data.course(election.candidates[c].course)} ${Data.year(election.candidates[c].year)}` %></div>
+                                    <div class="text-sm flex justify-center items-center text-center break-words border-teal-600 border-[1px] p-2 text-bluegray-900"><%- Data.position(election.candidates[c].position) %></div>
+                                    <div class="text-sm flex justify-center items-center text-center break-words border-teal-600 border-[1px] p-2 text-bluegray-900"><%- Data.partylist(election.candidates[c].partylist) %></div>
+                                    <div class="text-sm flex justify-center items-center text-center break-words border-teal-600 border-[1px] p-2 text-bluegray-900"><%- election.candidates[c].votes.length %></div>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+        <div class="col-span-2 flex flex-col justify-center items-center gap-2 mt-10">
+            <p class="text-gray-600">Document is generated by WMSU-AESU Online Voting System</p>
+            <p class="text-gray-600">Made with ❤️  by Master</p>
+        </div>
+    </div>
+    <script src="/js/theme.js"></script>
+    <script>
+        $(document).ready( async () => {
+            $(".download").click( () => {
+                Swal.fire({
+                    icon: 'info', 
+                    title: 'Download Result', 
+                    html: 'This will generate a pdf file that contains the current election result', 
+                    confirmButtonText: 'Download', 
+                    showDenyButton: true,
+                    denyButtonText: 'Cancel', 
+                    backdrop: true, 
+                    allowOutsideClick: false
+                }).then( (a) => {
+                    if(a.isConfirmed){
+                        Swal.fire({
+                            icon: 'info', 
+                            title: 'Generating pdf file', 
+                            html: 'Please wait..',
+                            showConfirmButton: false,
+                            backdrop: true, 
+                            allowOutsideClick: false, 
+                            willOpen: async () => {
+                                Swal.showLoading()
+                                var element = document.getElementById('result')
+                                var opt = {
+                                    margin:       0.01,
+                                    filename:     'result.pdf',
+                                    image:        { type: 'jpeg', quality: 1 },
+                                    html2canvas:  { scale: 2 },
+                                    jsPDF:        { unit: 'mm', format: 'letter', orientation: 'l' }
+                                }
+                                await html2pdf().set(opt).from(element).save()
+                                setTimeout(() => {
+                                    Swal.fire({
+                                        icon: 'success', 
+                                        title: 'PDF Successfully generated', 
+                                        html: 'You can now close this tab',
+                                        confirmButtonText: 'Close this tab', 
+                                        showDenyButton: true,
+                                        denyButtonText: 'Cancel', 
+                                        backdrop: true, 
+                                        allowOutsideClick: false,
+                                    }).then( (a) => {
+                                        if(a.isConfirmed){
+                                            window.close()
+                                        }
+                                    })
+                                }, 500)
+                            }
+                        })
+                        
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>

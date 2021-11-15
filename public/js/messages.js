@@ -76,11 +76,11 @@ $(document).ready( () => {
     })
     //when the user click the fetch users in search results 
     let begin_chat = false
-    $(".messages_list").delegate(".message_user", "click", async function () {
+    $(".messages_list").delegate(".message_user, .message", "click", async function () {
         if(!begin_chat){
             Swal.fire({
                 icon: 'info', 
-                title: `Connecting to ${$(this).attr("name")}`, 
+                title: `Connecting to ${$(this).attr("name") ? $(this).attr("name") : 'User'}`, 
                 html: 'Please wait...', 
                 backdrop: true, 
                 allowOutsideClick: false, 
@@ -108,8 +108,10 @@ $(document).ready( () => {
                                 $(".messages_list").find(".message_skeleton").removeClass("hidden")
                                 $(".messages_list").find(".message_skeleton").addClass("flex")
                                 $(".messages_list").find(".message").remove()
+                                $("body").find(".conversation").remove()
                                 $("body").append(res)
                                 Swal.close()
+                                begin_chat = false
                             }, 300)
                         } else {
                             throw new Error(`${req.status} ${req.statusText}`)

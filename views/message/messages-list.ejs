@@ -1,17 +1,47 @@
 <% if(messages.length > 0) { %> 
-    <% for (let i = 0; i < 10; i++) { %>
-        <div style="animation-delay: <%- i * .150%>s;" class="message animate__animated animate__fadeInRight ms-500 shadow-md border-l-2 border-teal-700 rounded-md cursor-pointer dark:bg-darkBlue-100 dark:hover:bg-bluegray-800 transition-all p-1.5">
+    <% for (let i = 0; i < messages.length; i++) { %>
+        <div 
+        <% for(let u = 0; u < messages[i].userIDs.length; u++) { %> 
+            <% if(student_id !== messages[i].userIDs[u].student_id) { %>
+                <%- `data="${messages[i].userIDs[u].id}"` %>
+            <% } %>
+        <% } %>
+         style="animation-delay: <%- i * .150%>s;" class="message animate__animated animate__fadeInRight ms-500 shadow-md rounded-md cursor-pointer dark:bg-darkBlue-100 dark:hover:bg-bluegray-800 transition-all p-1.5">
             <div class="flex flex-row">
                 <div class="flex-[10%] flex justify-center items-center">
-                    <img class="object-cover h-16 w-16 rounded-full" src="/assets/static.png">
+                    <% for(let u = 0; u < messages[i].userIDs.length; u++) { %> 
+                        <% if(student_id !== messages[i].userIDs[u].student_id) { %>
+                            <img class="object-cover h-16 w-16 rounded-full" src="/profile/<%- student_id %>">
+                        <% } %>
+                    <% } %>
                 </div>
                 <div class="flex-[90%] grid grid-cols-5 items-center">
                     <div class="col-span-3 px-1.5 flex flex-col">
-                        <p class="dark:text-gray-300/90 text-sm break-words">Jake Peregrino Velasco</p>
-                        <span class="dark:text-gray-400 text-sm ml-1">You: Hi</span>
+                        <p class="dark:text-gray-300/90 text-sm break-words">
+                            <% for(let u = 0; u < messages[i].userIDs.length; u++) { %> 
+                                <% if(student_id !== messages[i].userIDs[u].student_id) { %>
+                                    <%- messages[i].userIDs[u].name %>
+                                <% } %>
+                            <% } %>
+                        </p>
+                        <span class="dark:text-gray-400 text-xs">
+                            <% if(messages[i].messages.length > 0) { %> 
+                                <% if(messages[i].messages[messages[i].messages.length - 1].userid === userid) { %> 
+                                    <%- `You : ${messages[i].messages[messages[i].messages.length - 1].message.substring(0, 10)}...` %>
+                                <% } else { %>
+                                    <%- `${messages[i].messages[messages[i].messages.length - 1].firstname} : ${messages[i].messages[messages[i].messages.length - 1].message.substring(0, 10)}...` %>
+                                <% } %>
+                            <% } else { %>
+                                <%- "Connected" %>
+                            <% } %>
+                        </span>
                     </div>
                     <div class="flex col-span-2 justify-end items-center w-full px-1">
-                        <span class="dark:text-gray-400 text-sm text-right">1 minute ago</span>
+                        <% if( messages[i].messages.length > 0) { %>
+                            <span class="dark:text-gray-400 text-sm text-right time" data="<%- messages[i].messages[messages[i].messages.length - 1].created %>">...</span>
+                        <% } else { %>
+                        <span class="dark:text-gray-400 text-sm text-right time" data="<%- created %>">...</span>
+                        <% } %>
                     </div>
                 </div>
             </div>

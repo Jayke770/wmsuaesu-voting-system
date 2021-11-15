@@ -120,6 +120,8 @@
             <%- include('account/settings') %>
         </div>
     <% } %>
+    <!-- Messaging -->
+    <%- conversations.ischat ? include('message/conversations', {kachat: conversations.kachat}) : '' %>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/io.js"></script>
     <script src="/js/index.js"></script>
