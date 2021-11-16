@@ -23,6 +23,7 @@ const requestIp = require('request-ip')
 const fs = require('fs-extra')
 const moment = require('moment-timezone')
 const {v4: uuidv4} = require('uuid')
+const nl2br = require('nl2br')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
 const uploader = require('./routes/uploader')
@@ -583,7 +584,7 @@ users_socket.on('connection', async (socket) => {
             firstname: firstname, 
             fullname: `${firstname} ${middlename} ${lastname}`,
             userid: xs(myid).toString(), 
-            message: xs(message), 
+            message: nl2br(xs(message)), 
             created: moment().tz("Asia/Manila").format()
         }
 

@@ -20,7 +20,7 @@ $(document).ready(() => {
     let send_msg = false
     $("body").delegate(".send_message", "click", async function () { 
         const def = $(this).html()
-        const msg = $(".conversation").find(".message-content").text()
+        const msg = $(".conversation").find(".message-content").val()
         if(!send_msg && msg){
             $(this).html(conversation.loader())
             socket.emit('send-message', {message: msg, kachatid: $(".conversation").attr("data")}, (res) => {
@@ -28,7 +28,7 @@ $(document).ready(() => {
                     socket.emit('not-typing', {kachatid: $(".conversation").attr("data")})
                     typing = false
                     $(this).html(def)
-                    $(".conversation").find(".message-content").html('') 
+                    $(".conversation").find(".message-content").val('') 
                     conversation.sent(res.message)
                 } else {
                     $(this).html(def)
