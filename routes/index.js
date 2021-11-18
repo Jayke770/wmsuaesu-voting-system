@@ -1194,7 +1194,7 @@ router.post('/home/election/status/side-menu/', normal_limit, isloggedin, async 
 //when user try to enter the election he/she joined
 router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (req, res) => {
     const {electionID} = req.params
-    const {myid, device} = req.session 
+    const {myid, device, chat} = req.session 
     const {student_id, devices} = await user_data(myid)
     try {
         let device_data
@@ -1225,6 +1225,11 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
                         course: await course(), 
                         year: await  year()
                     }, 
+                    conversations: {
+                        ischat: chat ? true : false, 
+                        kachat: chat ? await user_data(chat) : {}, 
+                        userid: xs(myid).toString()
+                    },
                     device: device_data,
                     userData: await user_data(myid), 
                     csrf: req.csrfToken()
@@ -1242,7 +1247,7 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
 //get all candidates 
 router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin, async (req, res) => {
     const {id} = req.body 
-    const {electionID, myid, device} = req.session 
+    const {electionID, myid, device, chat} = req.session 
     const {_id, student_id, devices} = await user_data(myid)
     let candidateAccepted = []
     try {
@@ -1284,6 +1289,11 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
                                 partylists: await partylists(), 
                                 positions: await positions(),
                             }, 
+                            conversations: {
+                                ischat: chat ? true : false, 
+                                kachat: chat ? await user_data(chat) : {}, 
+                                userid: xs(myid).toString()
+                            },
                             device: device_data,
                             userData: await user_data(myid), 
                             csrf: req.csrfToken()
@@ -1304,6 +1314,11 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
                                 partylists: await partylists(), 
                                 positions: await positions(),
                             }, 
+                            conversations: {
+                                ischat: chat ? true : false, 
+                                kachat: chat ? await user_data(chat) : {}, 
+                                userid: xs(myid).toString()
+                            },
                             device: device_data,
                             userData: await user_data(myid), 
                             csrf: req.csrfToken()
@@ -1454,7 +1469,7 @@ router.post('/home/election/id/*/candidates/view-candidate/', normal_limit, islo
 })
 //vote 
 router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, res) => {
-    const {electionID, myid, device} = req.session 
+    const {electionID, myid, device, chat} = req.session 
     const {devices} = await user_data(myid)
     try {
         let device_data
@@ -1487,6 +1502,11 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
                                 course: await course(), 
                                 year: await year()
                             }, 
+                            conversations: {
+                                ischat: chat ? true : false, 
+                                kachat: chat ? await user_data(chat) : {}, 
+                                userid: xs(myid).toString()
+                            },
                             device: device_data,
                             userData: await user_data(myid),
                             csrf: req.csrfToken()
@@ -1600,7 +1620,7 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
 })
 //election results 
 router.get('/home/election/id/*/results/', normal_limit, isloggedin, async (req, res) => {
-    const {electionID, myid, device} = req.session 
+    const {electionID, myid, device, chat} = req.session 
     const {devices} = await user_data(myid)
 
     try {
@@ -1630,6 +1650,11 @@ router.get('/home/election/id/*/results/', normal_limit, isloggedin, async (req,
                             course: await course(), 
                             year: await year()
                         }, 
+                        conversations: {
+                            ischat: chat ? true : false, 
+                            kachat: chat ? await user_data(chat) : {}, 
+                            userid: xs(myid).toString()
+                        },
                         device: device_data,
                         userData: await user_data(myid),
                         csrf: req.csrfToken()
