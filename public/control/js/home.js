@@ -60,6 +60,39 @@ $(document).ready(() => {
             }
         })
     }, 1000)
+    //open logs 
+    $(".open_logs").click( () => {
+        const parent = $(".logs")
+        const child = $(".logs_main") 
+        child.addClass(child.attr("animate-in")) 
+        parent.removeClass("hidden")
+        parent.addClass("flex")
+        setTimeout( () => {
+            child.removeClass(child.attr("animate-in"))
+            scroll_div(".logs_main_list")
+        }, 500)
+    })
+    //close logs 
+    $(".logs").click( function (e) {
+        if($(e.target).hasClass("logs")){
+            e.preventDefault() 
+            const parent = $(".logs")
+            const child = $(".logs_main") 
+            child.addClass(child.attr("animate-out"))  
+            setTimeout( () => {
+                child.removeClass(child.attr("animate-out"))
+                parent.removeClass("flex")
+                parent.addClass("hidden")
+                scroll_div(".logs_main_list")
+            }, 500)
+        }
+    })
+    //receive server logs 
+    socket.on('logs', (data) => {
+        $(".logs").find(".logs_main_list").html('')
+        $(".logs").find(".logs_main_list").append(data.logs)
+        scroll_div(".logs_main_list")
+    })
     //election functions 
     setTimeout( () => {
         election.elections()

@@ -42,11 +42,11 @@
     animation: p 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 .skeleton {
-    @apply transition-all bg-purple-400 dark:bg-purple-800 p-2 rounded-full;
+    @apply transition-all bg-purple-400 dark:bg-purple-800/50 p-2 rounded-full;
     animation: p 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 .skeleton-image{
-    @apply transition-all bg-purple-400 dark:bg-purple-800 p-2;
+    @apply transition-all bg-purple-400 dark:bg-purple-800/50 p-2;
     animation: p 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 @keyframes p {

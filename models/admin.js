@@ -3,8 +3,12 @@ const admin_acc = new mongoose.Schema({
     socket_id: {
         type: String
     },
-    notifications: {}, 
-    messages: {},
+    notifications: {
+        type: Array,
+    }, 
+    messages: {
+        type: Array,
+    },
     type: {
         type: String
     }

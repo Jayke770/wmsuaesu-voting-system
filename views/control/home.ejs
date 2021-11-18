@@ -52,7 +52,7 @@
                                             <span class="dark:text-gray-300 text-purple-800 font-normal text-base ">Home</span>
                                         </a>
                                         <a href="elections/" class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
-                                            <i class="dark:text-blue-500/50 w-9 text-xl">
+                                            <i class="dark:text-blue-500/50 text-blue-600 w-9 text-xl">
                                                 <i class="fad fa-ballot-check "></i>
                                             </i>
                                             <span class="dark:text-gray-300 text-purple-800 font-normal text-base">Manage Elections</span>
@@ -69,11 +69,11 @@
                                             </i>
                                             <span class="dark:text-gray-300 text-purple-800 font-normal text-base">Messages</span>
                                         </a>
-                                        <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
-                                            <i class="dark:text-orange-600 w-9 text-xl">
-                                                <i class="fad fa-palette"></i>
+                                        <a class="open_logs rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
+                                            <i class="dark:text-orange-500/50 w-9 text-xl">
+                                                <i class="fad fa-line-columns"></i>
                                             </i>
-                                            <span class="dark:text-gray-300 text-purple-800 font-normal text-base">Themes</span>
+                                            <span class="dark:text-gray-300 text-purple-800 font-normal text-base">Logs</span>
                                         </a>
                                         <a class="rpl flex flex-row items-center px-3 py-2 hover:bg-gray-300/80 dark:hover:bg-bluegray-800/70 text-gray-900 dark:text-gray-300 text-lg cursor-pointer">
                                             <i class="dark:text-gray-500/50 w-9 text-xl">
@@ -135,6 +135,8 @@
                 </div>
             </div>
         </div>
+        <!-- Logs -->
+        <%- include('extras/logs') %>
     </div>
 </div>
     <!-- end main -->
@@ -150,6 +152,7 @@
         <script src="/js/audio.js"></script>
         <script src="/js/fetch.js"></script>
         <script src="/js/time.js"></script>
+        <script src="/js/scroll_div.js"></script>
         <script>
             $.ripple(".rpl", {
                 debug: false,

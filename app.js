@@ -15,7 +15,7 @@ const helmet = require('helmet')
 const cors = require('cors')
 const xs = require('xss')
 const csrf = require('csurf')
-const bodyParser = require('body-parser')
+const chokidar = require('chokidar')
 const cookieParser = require('cookie-parser')
 const rfs = require('rotating-file-stream')
 const sharedsession = require('express-socket.io-session')
@@ -73,7 +73,7 @@ app.use(
         contentSecurityPolicy: false,
     })
 )
-app.use(morgan(':status :remote-addr :method :url :response-time ms', { stream: log_stream }))
+app.use(morgan(':status :remote-addr :method :url :response-time ms <br>', { stream: log_stream }))
 app.use(express.static(dir))
 app.use(requestIp.mw())
 app.use(express.urlencoded({ extended: false }))
@@ -634,6 +634,13 @@ users_socket.on('connection', async (socket) => {
         socket.to(socket_id).emit('not-typing')
     })
 })
+//detect if flog file is change
+chokidar.watch('./log/').on('all', async (event, path) => {
+    await fs.readFile('./log/logs.log', 'utf8', (err, data) => {
+        admin_socket.emit('logs', {logs: data})
+    })
+})
+
 start()
 //check election every 10 seconds
 setInterval(async () => {
