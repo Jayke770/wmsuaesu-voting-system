@@ -93,6 +93,32 @@ $(document).ready(() => {
         $(".logs").find(".logs_main_list").append(data.logs)
         scroll_div(".logs_main_list")
     })
+    //open notifications 
+    $(".open_nty").click( () => {
+        const parent = $(".notifications") 
+        const child = $(".notifications_main")
+        child.addClass(child.attr("animate-in"))
+        parent.addClass("flex")
+        parent.removeClass("hidden")
+        setTimeout( async () => {
+            child.removeClass(child.attr("animate-in"))
+            await notification.notifications()
+        }, 500)
+    })
+    //close notifications 
+    $(".notifications").click( function (e) {
+        if($(e.target).hasClass("notifications")){
+            e.preventDefault() 
+            const parent = $(".notifications") 
+            const child = $(".notifications_main") 
+            child.addClass(child.attr("animate-out"))
+            setTimeout( () => {
+                child.removeClass(child.attr("animate-out"))
+                parent.addClass("hidden")
+                parent.removeClass("flex")
+            }, 500)
+        }
+    })
     //election functions 
     setTimeout( () => {
         election.elections()
@@ -124,6 +150,43 @@ $(document).ready(() => {
                     showAction: false
                 })
             }
+        }
+    }
+    const notification = {
+        notifications: async () => {
+            try {
+                $(".notifications").find(".notifications_main_list_skeleton").addClass("flex")
+                $(".notifications").find(".notifications_main_list_skeleton").removeClass("hidden")
+                $(".notifications").find(".notification").remove()
+                const req = await fetchtimeout('/control/notifications/', {
+                    method: 'POST', 
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr("content")
+                    }
+                })
+                if(req.ok){
+                    const res = await req.text()
+                    $(".notifications").find(".notifications_main_list_skeleton").addClass("hidden")
+                    $(".notifications").find(".notifications_main_list_skeleton").removeClass("flex")
+                    $(".notifications").find(".notifications_main_list").append(res)
+                } else {
+                    throw new Error(`${req.status} ${req.statusText}`)
+                }
+            } catch (e) {
+                notification.error(e.message)
+            }
+        }, 
+        error: (msg) => {
+            Snackbar.show({ 
+                text: `
+                    <div class="flex justify-center items-center gap-2"> 
+                        <i style="font-size: 1.25rem; color: red;" class="fad fa-info-circle"></i>
+                        <span>${msg}</span>
+                    </div>
+                `, 
+                duration: 3000,
+                showAction: false
+            })
         }
     }
 })

@@ -7,6 +7,7 @@ const {isadmin} = require('./auth')
 const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
+const adminData = require('../models/admin')
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
 const {restore_account_email, change_account_cred} = require('./auth')
 const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myposition, mypartylist, myprofile, color, user_data, is_course_eligible, is_year_eligible, newNotification, user_id} = require('./functions')
@@ -4310,6 +4311,23 @@ adminrouter.get('/control/users/print/',isadmin, normal_limit, async (req, res) 
                     courses: await course(), 
                     year: await year()
                 }
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//get all notifications 
+adminrouter.post('/control/notifications/', isadmin, normal_limit, async (req, res) => {
+    const {} = req.session 
+
+    try {
+        await adminData.find({}, {notifications: 1}).then( (notifications) => {
+            return res.render('control/extras/notifications-list', {
+                notifications: notifications.length > 0 ? notifications[0].notifications : {}
             })
         }).catch( (e) => {
             throw new Error(e)

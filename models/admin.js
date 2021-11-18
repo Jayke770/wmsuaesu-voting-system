@@ -4,7 +4,15 @@ const admin_acc = new mongoose.Schema({
         type: String
     },
     notifications: {
-        type: Array,
+        election: {
+            type: Array,
+        }, 
+        account: {
+            type: Array,
+        }, 
+        system: {
+            type: Array,
+        }
     }, 
     messages: {
         type: Array,

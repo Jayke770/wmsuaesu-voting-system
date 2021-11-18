@@ -11,7 +11,7 @@ const data = require('../models/data')
 const election = require('../models/election')
 const conversations = require('../models/conversations')
 const { authenticated, isadmin, isloggedin, take_photo, get_face, send_verification_email, verify_device} = require('./auth')
-const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash, newNotification, valid_vote, count_vote} = require('./functions')
+const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash, newNotification, newAdminNotification, valid_vote, count_vote} = require('./functions')
 const { normal_limit, limit} = require('./rate-limit')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
@@ -786,7 +786,15 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
                                     //push the election id to user elections feild 
                                     await user.updateOne({
                                         _id: {$eq: xs(_id)}
-                                    }, {$push: {elections: xs(electionData.id)}}).then( () => {
+                                    }, {$push: {elections: xs(electionData.id)}}).then( async () => {
+                                        await newAdminNotification('election', {
+                                            id: uuidv4(), 
+                                            type: 'info',
+                                            link: `/control/elections/id/${electionData.id}/home/voters/`,
+                                            content: `${firstname} ${middlename} ${lastname} was joined the ${electionData.title}`, 
+                                            created: moment().tz("Asia/Manila").format()
+                                        })
+                                        //add new notification to admin 
                                         return res.send({
                                             joined: true,
                                             electionID: xs(electionData.id),
@@ -850,7 +858,7 @@ router.post('/home/leave-election/', normal_limit, isloggedin, async (req, res) 
         await election.find({
             _id: {$eq: xs(electionID)}, 
             "voters.id": {$eq: xs(data._id)}
-        }, {voters: 1}).then( async (v) => {
+        }, {voters: 1, election_title: 1}).then( async (v) => {
             if(v.length != 0){
                 // delete candidacy form if exists and voter data from election
                 await election.updateOne({
@@ -864,7 +872,14 @@ router.post('/home/leave-election/', normal_limit, isloggedin, async (req, res) 
                     //remove election in user election feild 
                     await user.updateOne({
                         _id: {$eq: xs(data._id)}
-                    }, {$pull: {elections: xs(electionID)}}).then( () => {
+                    }, {$pull: {elections: xs(electionID)}}).then( async () => {
+                        await newAdminNotification('election', {
+                            id: uuidv4(), 
+                            type: 'warning',
+                            link: `/control/elections/id/${electionID}/home/voters/`,
+                            content: `${data.firstname} ${data.middlename} ${data.lastname} was left the ${v[0].election_title}`, 
+                            created: moment().tz("Asia/Manila").format()
+                        })
                         delete req.session.electionID
                         return res.send({
                             leave: true, 
@@ -886,6 +901,7 @@ router.post('/home/leave-election/', normal_limit, isloggedin, async (req, res) 
             throw new Error(e)
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send()
     }
 })
@@ -950,7 +966,7 @@ router.post('/home/election/submit-candidacy-form/', normal_limit, isloggedin, a
                 {"voters.id": {$eq: xs(myid)}}, 
                 {"voters.status": "Accepted"}
             ]
-        }, {candidates: 1, autoAccept_candidates: 1, status: 1}).then( async (elec) => {
+        }, {candidates: 1, autoAccept_candidates: 1, status: 1, election_title: 1}).then( async (elec) => {
             if(elec.length !== 0){
                 if(elec[0].status === "Not Started"){
                     //if the auto accept candidates feature is enabled to this election accept the candidate automatically 
@@ -969,7 +985,14 @@ router.post('/home/election/submit-candidacy-form/', normal_limit, isloggedin, a
                         //push the new candidate in election
                         await election.updateOne({
                             _id: {$eq: xs(electionID)}
-                        }, {$push: {candidates: new_candidate}}).then( (new_c) => {
+                        }, {$push: {candidates: new_candidate}}).then( async () => {
+                            await newAdminNotification('election', {
+                                id: uuidv4(), 
+                                type: 'info',
+                                link: `/control/elections/id/${electionID}/home/candidates/`,
+                                content: `${data.firstname} ${data.middlename} ${data.lastname} submitted a candidacy for ${elec[0].election_title}`, 
+                                created: moment().tz("Asia/Manila").format()
+                            })
                             return res.send({
                                 status: true,
                                 txt: elec[0].autoAccept_candidates ? 'Candidacy successfully accepted' : 'Form successfully submitted', 
@@ -1071,20 +1094,27 @@ router.post('/home/election/candidacy-status/', normal_limit, isloggedin, async 
 // delete candidacy form in current user 
 router.post('/home/election/delete-candidacy/', normal_limit, isloggedin, async (req, res) => {
     const {candidateID} = req.body
-    const {electionID} = req.session
-
+    const {electionID, myid} = req.session
+    const {firstname, middlename, lastname} = await user_data(myid)
     try {
         //check if candidate & election is exists 
         await election.find({
             _id: {$eq: xs(electionID)}, 
             candidates: {$elemMatch: {id: xs(candidateID)}}
-        }, {candidates: {$elemMatch: {id: xs(candidateID)}}}).then( async (ca) => {
+        }, {candidates: {$elemMatch: {id: xs(candidateID)}}, election_title: 1}).then( async (ca) => {
             //if candidate is found 
             if(ca.length !== 0){
                 //pull the candidate in election 
                 await election.updateOne({
                     _id: {$eq: xs(electionID)}
-                }, {$pull: {candidates: {id: xs(candidateID)}}}).then( (ca_up) => {
+                }, {$pull: {candidates: {id: xs(candidateID)}}}).then( async () => {
+                    await newAdminNotification('election', {
+                        id: uuidv4(), 
+                        type: 'warning',
+                        link: `/control/elections/id/${electionID}/home/candidates/`,
+                        content: `${firstname} ${middlename} ${lastname} submitted a candidacy for ${ca[0].election_title}`, 
+                        created: moment().tz("Asia/Manila").format()
+                    })
                     return res.send({
                         status: true,
                         msg: 'Candidacy deleted successfully!'
@@ -1529,10 +1559,10 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
 router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, async (req, res) => {
     const {votes} = req.body
     const {electionID, myid} = req.session
-    const {firstname} = await user_data(myid)
+    const {firstname, middlename, lastname} = await user_data(myid)
     try {
         if(votes !== undefined) {
-            await election.find({_id: {$eq: xs(electionID)}}, {positions: 1, candidates: 1}).then( async (electionData) => {
+            await election.find({_id: {$eq: xs(electionID)}}, {positions: 1, candidates: 1, election_title: 1}).then( async (electionData) => {
                 if(electionData.length > 0){
                     //check votes if valid
                     for(let i = 0; i < electionData[0].positions.length; i++){
@@ -1580,6 +1610,13 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
                                     })
                                 }
                                 //send response
+                                await newAdminNotification('election', {
+                                    id: uuidv4(), 
+                                    type: 'info',
+                                    link: `/control/elections/id/${electionID}/home/candidates/`,
+                                    content: `${firstname} ${middlename} ${lastname} submitted a candidacy for ${electionData[0].election_title}`, 
+                                    created: moment().tz("Asia/Manila").format()
+                                })
                                 return res.send({
                                     status: true, 
                                     txt: 'Vote submitted successfully', 

@@ -511,5 +511,29 @@ module.exports = {
             res =  false
         }
         return res
+    }, 
+    newAdminNotification: async (type, data) => {
+        let res = false
+        try {
+            if(xs(type) === "account"){
+                await admin.updateOne({}, {$push: {"notifications.account": data}}).then( (h) => {
+                    console.log(h)
+                    res = true
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else if(xs(type) === "election") {
+                await admin.updateOne({}, {$push: {"notifications.election": data}}).then( (h) => {
+                    console.log(h)
+                    res =  true
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            }
+        } catch (e) {
+            console.log(e)
+            res =  false
+        }
+        return res
     }
 }
