@@ -404,7 +404,7 @@ admin_socket.on('connection', async (socket) => {
             os: `${system.os.distro} ${system.os.release} ${system.os.codename} ${system.os.arch}`, 
             cpu: `${system.cpu.manufacturer} ${system.cpu.brand} ${system.cpu.speedMax}GHz ${system.cpu.cores} Cores`, 
             memory: `Used ${hr.fromBytes(system.memory.used, { fullPrecision: true })}  / Total ${hr.fromBytes(system.memory.total, { fullPrecision: true })}`, 
-            storage: `${hr.fromBytes(system.disk[0].size, {fullPrecision: true})}`
+            storage: system.disk
         })
     })
 })
