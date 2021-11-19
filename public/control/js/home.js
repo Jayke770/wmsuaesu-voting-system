@@ -153,6 +153,153 @@ $(document).ready(() => {
             $(".settings").find(".storage").html(res.storage)
         })
     }, 1000)
+
+    //update school year
+    let update_sy = false
+    $(".update_sy").click( () => {
+        if(!update_sy){
+            Swal.fire({
+                icon: 'question', 
+                title: 'Update School Year', 
+                html: 'Are you sure you want to update the current school year', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                showDenyButton: true, 
+                denyButtonText: "No", 
+                confirmButtonText: "Yes", 
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'question', 
+                        title: 'Enter New School Year', 
+                        input: "text", 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showDenyButton: true, 
+                        denyButtonText: "Cancel", 
+                        confirmButtonText: "Update", 
+                        inputValidator: (val) => {
+                            if(val && Number.isInteger(parseInt(val)) && val.length === 4) {
+                                Swal.fire({
+                                    icon: 'info', 
+                                    title: 'Updating School Year', 
+                                    html: 'Please wait...', 
+                                    backdrop: true, 
+                                    allowOutsideClick: false, 
+                                    showConfirmButton: false, 
+                                    willOpen: async () => {
+                                        Swal.showLoading() 
+                                        try {
+                                            update_sy = true 
+                                            let data = new FormData() 
+                                            data.append("sy", val)
+                                            const req = await fetchtimeout('/control/sy/update/', {
+                                                method: 'POST', 
+                                                headers: {
+                                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr("content")
+                                                }, 
+                                                body: data
+                                            })
+                                            if(req.ok){
+                                                const res = await req.json() 
+                                                update_sy = false
+                                                Swal.fire({
+                                                    icon: res.status ? 'success' : 'info', 
+                                                    title: res.txt, 
+                                                    html: res.msg, 
+                                                    backdrop: true, 
+                                                    allowOutsideClick: false,
+                                                })
+                                            } else {
+                                                throw new Error(`${req.status} ${req.statusText}`)
+                                            }
+                                        } catch (e) {
+                                            update_sy = false
+                                            Swal.fire({
+                                                icon: 'error', 
+                                                title: 'Connection error', 
+                                                html: e.message, 
+                                                backdrop: true, 
+                                                allowOutsideClick: false,
+                                            })
+                                        }
+                                    }
+                                })
+                            } else {
+                                return 'Invalid Year'
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+
+    //wipe system data 
+    let wipe = false
+    $(".wipe_system").click( () => {
+        if(!wipe){
+            Swal.fire({
+                icon: 'warning', 
+                title: 'Wipe System Data', 
+                html: 'This will wipe all the system data including all the elections, users, and other data stored in database', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                denyButtonText: "Cancel", 
+                showDenyButton: true,
+                confirmButtonText: "Wipe", 
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Wiping System Data', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            try {
+                                wipe = true 
+                                const req = await fetchtimeout('/control/wipe/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr("content")
+                                    }
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    wipe = false
+                                    Swal.fire({
+                                        icon: res.status ? 'success' : 'info', 
+                                        title: res.txt, 
+                                        html: res.msg, 
+                                        backdrop: true, 
+                                        allowOutsideClick: false,
+                                    }).then( () => {
+                                        if(res.status){
+                                            window.location.reload()
+                                        }
+                                    })
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                wipe = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false,
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
     //election functions 
     setTimeout( () => {
         election.elections()

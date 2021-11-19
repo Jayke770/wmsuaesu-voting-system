@@ -535,5 +535,14 @@ module.exports = {
             res =  false
         }
         return res
+    }, 
+    sy: async () => {
+        let res
+        await admin.find({}, {sy: 1}).then( (sy) => {
+            res = sy.length > 0 ? sy[0].sy : false
+        }).catch( () => {
+            res = false
+        })
+        return res
     }
 }

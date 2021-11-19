@@ -17,6 +17,7 @@ const admin_acc = new mongoose.Schema({
     messages: {
         type: Array,
     },
+    sy: {},
     type: {
         type: String
     }

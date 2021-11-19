@@ -4,13 +4,15 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const adminrouter = express.Router()
 const {isadmin} = require('./auth')
+
 const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
 const adminData = require('../models/admin')
+
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
 const {restore_account_email, change_account_cred} = require('./auth')
-const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myposition, mypartylist, myprofile, color, user_data, is_course_eligible, is_year_eligible, newNotification, user_id} = require('./functions')
+const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myposition, mypartylist, myprofile, color, user_data, is_course_eligible, is_year_eligible, newNotification, user_id, sy} = require('./functions')
 const genpass = require('generate-password')
 const xs = require('xss')
 const { v4: uuid } = require('uuid')
@@ -106,6 +108,7 @@ adminrouter.get('/control',limit, isadmin, async (req, res) => {
         await election.find({}).then( async (elecs) => {
             return res.render('control/home', {
                 elections: elecs, 
+                sy: await sy(),
                 csrf: req.csrfToken()
             })
         }).catch( (e) => {
@@ -3536,6 +3539,7 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                                 course: xs(crs),
                                 year: xs(yr),
                                 socket_id: 'Offline',
+                                sy: await sy(),
                                 username: `${fname.toUpperCase()}-${xs(sid).toUpperCase()}`,
                                 password: await hash(`WMSU-${xs(sid).toUpperCase()}`, 10)
                             }).then(async () => {
@@ -3589,6 +3593,7 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                                                     lastname: xs(toUppercase(lname)).replace(/\s+/g, ' ').trim(),
                                                     course: xs(crs),
                                                     year: xs(yr),
+                                                    sy: await sy(),
                                                     socket_id: 'Offline',
                                                     username: `${fname.toUpperCase()}-${xs(sid).toUpperCase()}`,
                                                     password: await hash(`WMSU-${xs(sid).toUpperCase()}`, 10)
@@ -4332,6 +4337,58 @@ adminrouter.post('/control/notifications/', isadmin, normal_limit, async (req, r
             throw new Error(e)
         })
     } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//update school year 
+adminrouter.post('/control/sy/update/', isadmin, normal_limit, async (req, res) => {
+    const {sy} = req.body
+
+    try {
+        if(xs(sy) && Number.isInteger(parseInt(xs(sy))) && xs(sy).length === 4){
+            await adminData.updateOne({}, {$set: {sy: xs(sy)}}).then( (g) => {
+                return res.send({
+                    status: true, 
+                    txt: "School Year Successfully updated", 
+                    msg: "All users not in the current School Year will not able to login thier accounts"
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else {
+            return res.send({
+                status: false, 
+                txt: "Invalid School Year", 
+                msg: "Please submit another year"
+            })
+        }
+    } catch (e) { 
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//wipe system data //not the server
+adminrouter.post('/control/wipe/', isadmin, normal_limit, async (req, res) => { 
+    try {
+        await user.remove().then( async () => {
+            await election.remove().then( async () => {
+                await data.remove().then( async () => {
+                    return res.send({
+                        status: true, 
+                        txt: "System Successfully Wiped", 
+                        msg: ""
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e){
         console.log(e) 
         return res.status(500).send()
     }

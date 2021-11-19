@@ -11,7 +11,7 @@ const data = require('../models/data')
 const election = require('../models/election')
 const conversations = require('../models/conversations')
 const { authenticated, isadmin, isloggedin, take_photo, get_face, send_verification_email, verify_device} = require('./auth')
-const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash, newNotification, newAdminNotification, valid_vote, count_vote} = require('./functions')
+const { toUppercase, hash, course, year, partylists, positions, user_data, mycourse, myyear, myposition, compareHash, newNotification, newAdminNotification, valid_vote, count_vote, sy} = require('./functions')
 const { normal_limit, limit} = require('./rate-limit')
 const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
@@ -404,19 +404,53 @@ router.post('/login', limit, async (req, res) => {
                                     }
                                     //if device was found 
                                     if(device_data){
-                                        req.session.device = device_data.id
-                                        req.session.islogin = true // determine if logged
-                                        req.session.user_type = "Voter" // user type
-                                        req.session.myid = usp[0]._id // user id
-                                        req.session.data = await user_data(usp[0]._id)
-                                        return res.send({
-                                            islogin: true,
-                                            msg: "Welcome " + usp[0].firstname
-                                        })
-                                    } else {
-                                        await user.updateOne({_id: {$eq: xs(usp[0]._id)}}, {$push: {devices: device}}).then( async (new_d) => {
-                                            req.session.device = device.id
+                                        if(await sy() === (await user_data(usp[0]._id)).sy){
+                                            req.session.device = device_data.id
                                             req.session.islogin = true // determine if logged
+                                            req.session.user_type = "Voter" // user type
+                                            req.session.myid = usp[0]._id // user id
+                                            req.session.data = await user_data(usp[0]._id)
+                                            return res.send({
+                                                islogin: true,
+                                                msg: "Welcome " + usp[0].firstname
+                                            })
+                                        } else {
+                                            return res.send({
+                                                islogin: false,
+                                                msg: "Invalid School Year"
+                                            })
+                                        }
+                                    } else {
+                                        if(await sy() === (await user_data(usp[0]._id)).sy){
+                                            await user.updateOne({_id: {$eq: xs(usp[0]._id)}}, {$push: {devices: device}}).then( async (new_d) => {
+                                                req.session.device = device.id
+                                                req.session.islogin = true // determine if logged
+                                                req.session.user_type = "Voter" // user type
+                                                req.session.myid = usp[0]._id // user id
+                                                req.session.data = await user_data(usp[0]._id)
+                                                return res.send({
+                                                    islogin: true,
+                                                    msg: "Welcome " + usp[0].firstname
+                                                })
+                                            }).catch( (e) => {
+                                                throw new Error(e)
+                                            })
+                                        } else {
+                                            return res.send({
+                                                islogin: false,
+                                                msg: "Invalid School Year"
+                                            })
+                                        }
+                                    }
+                                } else {
+                                    if(await sy() === (await user_data(usp[0]._id)).sy){
+                                        // save new device 
+                                        await user.updateOne({_id: {$eq: xs(usp[0]._id)}}, {$push: {devices: device}}).then( async (new_d) => {
+                                            req.session.device = {
+                                                id: device.id, 
+                                                verified: device.verified
+                                            }
+                                            req.session.islogin = true // determine if lodevice.verifiedgged
                                             req.session.user_type = "Voter" // user type
                                             req.session.myid = usp[0]._id // user id
                                             req.session.data = await user_data(usp[0]._id)
@@ -427,25 +461,12 @@ router.post('/login', limit, async (req, res) => {
                                         }).catch( (e) => {
                                             throw new Error(e)
                                         })
-                                    }
-                                } else {
-                                    // save new device 
-                                    await user.updateOne({_id: {$eq: xs(usp[0]._id)}}, {$push: {devices: device}}).then( async (new_d) => {
-                                        req.session.device = {
-                                            id: device.id, 
-                                            verified: device.verified
-                                        }
-                                        req.session.islogin = true // determine if lodevice.verifiedgged
-                                        req.session.user_type = "Voter" // user type
-                                        req.session.myid = usp[0]._id // user id
-                                        req.session.data = await user_data(usp[0]._id)
+                                    } else {
                                         return res.send({
-                                            islogin: true,
-                                            msg: "Welcome " + usp[0].firstname
+                                            islogin: false,
+                                            msg: "Invalid School Year"
                                         })
-                                    }).catch( (e) => {
-                                        throw new Error(e)
-                                    })
+                                    }
                                 }
                             }).catch( (e) => {
                                 throw new Error(e)
@@ -542,7 +563,8 @@ router.post('/register', normal_limit, async (req, res) => {
                                                 socket_id: 'Offline',
                                                 username: xs(usr),
                                                 password: hash_password, 
-                                                devices: [device]
+                                                devices: [device], 
+                                                sy: await sy()
                                             }).then(async (new_user) => {
                                                 const userData = await user_data(new_user._id)
                                                 req.session.device = device.id
