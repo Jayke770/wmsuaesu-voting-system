@@ -103,14 +103,13 @@ adminrouter.get('/control',limit, isadmin, async (req, res) => {
     try {
         let elections
         //get all elections 
-        await election.find({}).then( (elecs) => {
-            elections = elecs
+        await election.find({}).then( async (elecs) => {
+            return res.render('control/home', {
+                elections: elecs, 
+                csrf: req.csrfToken()
+            })
         }).catch( (e) => {
             throw new Error(e)
-        })
-        return res.render('control/home', {
-            elections: elections, 
-            csrf: req.csrfToken()
         })
     } catch (e) {
         return res.status(500).send()

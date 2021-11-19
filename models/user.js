@@ -84,6 +84,7 @@ const user =  new mongoose.Schema({
         profile: {}
     },
     last_seen: {},
+    sy: {},
     created: {
         type: Date, 
         default: Date.now()

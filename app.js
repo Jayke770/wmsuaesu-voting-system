@@ -24,6 +24,8 @@ const fs = require('fs-extra')
 const moment = require('moment-timezone')
 const {v4: uuidv4} = require('uuid')
 const nl2br = require('nl2br')
+const sys = require('systeminformation')
+const hr = require('@tsmx/human-readable') 
 const route = require('./routes/index')
 const admin = require('./routes/admin')
 const uploader = require('./routes/uploader')
@@ -390,6 +392,21 @@ admin_socket.on('connection', async (socket) => {
             users_socket.to(status).emit('new_notification')
         }
     })  
+    //get server information 
+    socket.on('server-info', async (res) => {
+        const system = {
+            os: await sys.osInfo(), 
+            cpu: await sys.cpu(), 
+            memory: await sys.mem(), 
+            disk: await sys.diskLayout()
+        }
+        res({
+            os: `${system.os.distro} ${system.os.release} ${system.os.codename} ${system.os.arch}`, 
+            cpu: `${system.cpu.manufacturer} ${system.cpu.brand} ${system.cpu.speedMax}GHz ${system.cpu.cores} Cores`, 
+            memory: `Used ${hr.fromBytes(system.memory.used, { fullPrecision: true })}  / Total ${hr.fromBytes(system.memory.total, { fullPrecision: true })}`, 
+            storage: `${hr.fromBytes(system.disk[0].size, {fullPrecision: true})}`
+        })
+    })
 })
 //user websocket events
 users_socket.on('connection', async (socket) => {

@@ -119,6 +119,40 @@ $(document).ready(() => {
             }, 500)
         }
     })
+    //open settings 
+    $(".open_settings").click( () => {
+        const parent = $(".settings") 
+        const child = $(".settings_main")
+        child.addClass(child.attr("animate-in"))
+        parent.addClass("flex")
+        parent.removeClass("hidden")
+        setTimeout( async () => {
+            child.removeClass(child.attr("animate-in"))
+        }, 500)
+    })
+    //close settings 
+    $(".settings").click( function (e) {
+        if($(e.target).hasClass("settings")){
+            e.preventDefault() 
+            const parent = $(".settings") 
+            const child = $(".settings_main") 
+            child.addClass(child.attr("animate-out"))
+            setTimeout( () => {
+                child.removeClass(child.attr("animate-out"))
+                parent.addClass("hidden")
+                parent.removeClass("flex")
+            }, 500)
+        }
+    })
+    //get server informaton 
+    setInterval( () => {
+        socket.emit('server-info', (res) => {
+            $(".settings").find(".os").html(res.os)
+            $(".settings").find(".cpu").html(res.cpu)
+            $(".settings").find(".memory").html(res.memory)
+            $(".settings").find(".storage").html(res.storage)
+        })
+    }, 1000)
     //election functions 
     setTimeout( () => {
         election.elections()
