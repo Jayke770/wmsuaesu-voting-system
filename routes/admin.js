@@ -3660,6 +3660,7 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                                 lastname: xs(toUppercase(lname)).replace(/\s+/g, ' ').trim(),
                                 course: xs(crs),
                                 year: xs(yr),
+                                sy: await sy(),
                                 socket_id: 'Offline',
                                 username: `${fname.toUpperCase()}-${xs(sid).toUpperCase()}`,
                                 password: await hash(`WMSU-${xs(sid).toUpperCase()}`, 10)
@@ -3714,6 +3715,7 @@ adminrouter.post('/control/users/add-user/', limit, isadmin, async (req, res) =>
                                                     lastname: xs(toUppercase(lname)).replace(/\s+/g, ' ').trim(),
                                                     course: xs(crs),
                                                     year: xs(yr),
+                                                    sy: await sy(),
                                                     socket_id: 'Offline',
                                                     username: `${fname.toUpperCase()}-${xs(sid).toUpperCase()}`,
                                                     password: await hash(`WMSU-${xs(sid).toUpperCase()}`, 10)

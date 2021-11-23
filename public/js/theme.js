@@ -21,5 +21,9 @@ if (theme == "dark") {
         $(".dark_mode").html(moon)
     }
 }
+function gettheme() {
+    return localStorage.theme
+}
+
 localStorage.theme = "dark"
 $('html').addClass("dark")
