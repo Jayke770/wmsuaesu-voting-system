@@ -1,0 +1,28 @@
+<script src="/js/face-api.min.js"></script>
+<script src="/js/jslib-html5-camera-photo.min.js"></script>
+<div class="fixed w-full h-full dark:bg-darkBlue-primary sm:p-2 flex justify-center items-center">
+    <div class="h-auto w-96 sm:w-full dark:bg-darkBlue-secondary shadow-md rounded-md">
+        <div class="flex justify-start items-center pt-3 px-2.5">
+            <span class="dark:text-gray-300 text-xl">Register Your Facial Data</span>
+        </div>
+        <div class="p-2">
+            <div class="border-l-4 dark:border-teal-800 dark:bg-teal-800/40 p-2 dark:text-gray-300 text-sm break-words">
+                Please ensure that your environment is not dark and your face is clear
+            </div>
+        </div>
+        <form class="upload-fc flex flex-col gap-1 mb-0">
+            <img class="fc hidden object-cover">
+            <input type="hidden" name="facial" class="facial-captured">
+            <video width="300" height="400" class="h-80 object-cover" id="facial" autoplay="true" muted></video>
+            <div class="grid grid-cols-2 p-2 gap-2">
+                <button
+                    class="capture transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-700 dark:bg-purple-800 hover:bg-purple-700 dark:hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 focus:ring-purple-500"
+                    type="button">Capture</button>
+                <button
+                    class="transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-700 dark:bg-teal-800 hover:bg-teal-700 dark:hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-teal-800 focus:ring-teal-500"
+                    type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="/js/face-verify.js"></script>

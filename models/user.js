@@ -85,6 +85,7 @@ const user =  new mongoose.Schema({
     },
     last_seen: {},
     sy: {},
+    facial: {},
     created: {
         type: Date, 
         default: Date.now()

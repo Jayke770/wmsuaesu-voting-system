@@ -23,6 +23,9 @@ const fs = require('fs-extra')
 const moment = require('moment-timezone')
 const uaParser = require('ua-parser-js')
 const emailValidator = require('is-email')
+router.get('/face/', async (req, res) => {
+    return res.render('account/face-verify', {csrf: req.csrfToken()})
+})
 //profile 
 router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
     const {id} = req.params 
@@ -172,10 +175,10 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
     delete req.session.electionID
-    const {myid, device, chat} = req.session  
+    const {myid, device, chat, need_facial} = req.session  
     const {elections, devices} = await user_data(myid)
     let electionsJoined = []
-    
+    console.log(need_facial)
     try {
         let device_verified
         for(let i = 0; i < devices.length; i++){
@@ -217,6 +220,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                         iscandidate: false,
                         isvoting: false,
                         displayresults: false,
+                        need_facial: need_facial,
                         elections: electionsJoined, 
                         data: {
                             positions: await positions(), 
@@ -239,6 +243,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                         iscandidate: false,
                         isvoting: false,
                         displayresults: false,
+                        need_facial: need_facial,
                         elections: electionsJoined, 
                         data: {
                             positions: await positions(), 
@@ -274,6 +279,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                     iscandidate: false,
                     isvoting: false,
                     displayresults: false,
+                    need_facial: need_facial,
                     elections: electionsJoined, 
                     data: {
                         positions: await positions(), 
@@ -296,6 +302,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
                     iscandidate: false,
                     isvoting: false,
                     displayresults: false,
+                    need_facial: need_facial,
                     elections: electionsJoined, 
                     data: {
                         positions: await positions(), 
@@ -388,7 +395,7 @@ router.post('/login', limit, async (req, res) => {
                 await user.find({$or: [
                     {username: {$eq: xs(auth_usr)}}, 
                     {"email.email": {$eq: xs(auth_usr)}}
-                ]}, {password: 1, firstname: 1}).then( async (usp) => {
+                ]}, {password: 1, firstname: 1, facial: 1}).then( async (usp) => {
                     if(usp.length > 0){
                         if(await compareHash(xs(auth_pass), usp[0].password)){
                             //get all saved devices with this account 
@@ -410,6 +417,7 @@ router.post('/login', limit, async (req, res) => {
                                             req.session.user_type = "Voter" // user type
                                             req.session.myid = usp[0]._id // user id
                                             req.session.data = await user_data(usp[0]._id)
+                                            req.session.need_facial = usp[0].facial ? false : true
                                             return res.send({
                                                 islogin: true,
                                                 msg: "Welcome " + usp[0].firstname
@@ -572,6 +580,7 @@ router.post('/register', normal_limit, async (req, res) => {
                                                 req.session.islogin = true // to determine that user is now logged in
                                                 req.session.user_type = "Voter" //to determine the user type
                                                 req.session.data = userData
+                                                req.session.need_facial = true
                                                 await data.updateOne({ "voterId.student_id": { $eq: xs(student_id) } }, { $set: { "voterId.$.enabled": true } }).then( async () => {
                                                     await newNotification(userData._id, 'account', {
                                                         id: uuidv4(), 

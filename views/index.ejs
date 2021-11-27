@@ -49,76 +49,80 @@
     <% if(!device.verified || userData.email.status === "Not Verified"){ %> 
         <%- include('account/verify-device',{ userData: userData, device: device}) %>
     <% } else { %>
-        <!-- Navigation -->
-        <div class="dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0 z-10">
-            <div class="nav fixed bg-darkBlue-primary/70 h-screen hidden w-full z-20">
-                <div class="nav_main dark:bg-darkBlue-secondary bg-gray-100 w-96 h-full sm:w-[calc(100vw-50px)]" animate-in="animate__animated animate__fadeInLeft ms-300" animate-out="animate__animated animate__fadeOutLeft ms-300">
-                    <div class="px-2 py-5 dark_border_b">
-                        <a class="cls_nav float-right text-red-600 ml-4 mr-2 dark:text-gray-200 text-2xl cursor-pointer">
-                            <i class="fas fa-times-circle"></i>
-                        </a>
-                        <div class="flex h-full pl-4">
-                            <p class="text-2xl text-center dark:text-gray-300 font-medium tracking-wider">WMSU-AESU</p>
+        <% if(need_facial) { %> 
+            <%- include('account/face-verify') %>
+        <% } else { %> 
+            <!-- Navigation -->
+            <div class="dark:bg-[#161b22] bg-gray-100 shadow-xl fixed flex w-full transition-all top-0 z-10">
+                <div class="nav fixed bg-darkBlue-primary/70 h-screen hidden w-full z-20">
+                    <div class="nav_main dark:bg-darkBlue-secondary bg-gray-100 w-96 h-full sm:w-[calc(100vw-50px)]" animate-in="animate__animated animate__fadeInLeft ms-300" animate-out="animate__animated animate__fadeOutLeft ms-300">
+                        <div class="px-2 py-5 dark_border_b">
+                            <a class="cls_nav float-right text-red-600 ml-4 mr-2 dark:text-gray-200 text-2xl cursor-pointer">
+                                <i class="fas fa-times-circle"></i>
+                            </a>
+                            <div class="flex h-full pl-4">
+                                <p class="text-2xl text-center dark:text-gray-300 font-medium tracking-wider">WMSU-AESU</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2 mt-2 e_menu">
+                            <!-- election side menu -->
+                            <%- include('election/side_menu', {
+                                joined: joined,
+                                elections: elections, 
+                                userData: userData
+                            })%>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-2 mt-2 e_menu">
-                        <!-- election side menu -->
-                        <%- include('election/side_menu', {
-                            joined: joined,
-                            elections: elections, 
-                            userData: userData
-                        })%>
+                </div>
+                <div class="w-full py-2">
+                <div class="float-left">
+                    <div class="flex flex-row justify-center items-center px-3">
+                        <a class="open_nav rpl rounded-lg transition-all p-2 text-gray-900 dark:text-gray-200 text-xl cursor-pointer mr-1 last:mr-0">
+                            <i class="fas fa-bars"></i>
+                        </a>
                     </div>
                 </div>
-            </div>
-            <div class="w-full py-2">
-            <div class="float-left">
-                <div class="flex flex-row justify-center items-center px-3">
-                    <a class="open_nav rpl rounded-lg transition-all p-2 text-gray-900 dark:text-gray-200 text-xl cursor-pointer mr-1 last:mr-0">
-                        <i class="fas fa-bars"></i>
-                    </a>
+                <div class="float-right h-full">
+                    <div class="flex flex-row gap-4 mr-1 justify-center items-center px-3 h-full">
+                        <a class="rpl open_message rounded-lg transition-all relative p-2 text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
+                            <i class="far fa-comment-lines"></i>
+                            <span class="dark:bg-indigo-700 absolute rounded-full w-2 h-2"></span>
+                        </a>
+                        <a class="open_notification rpl relative rounded-lg transition-all p-2 text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
+                            <i class="far fa-bell"></i>
+                            <span class="dark:bg-indigo-700 absolute rounded-full w-2 h-2"></span>
+                        </a>
+                    </div>
+                </div>
                 </div>
             </div>
-            <div class="float-right h-full">
-                <div class="flex flex-row gap-4 mr-1 justify-center items-center px-3 h-full">
-                    <a class="rpl open_message rounded-lg transition-all relative p-2 text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
-                        <i class="far fa-comment-lines"></i>
-                        <span class="dark:bg-indigo-700 absolute rounded-full w-2 h-2"></span>
-                    </a>
-                    <a class="open_notification rpl relative rounded-lg transition-all p-2 text-gray-900 dark:text-gray-200 text-2xl cursor-pointer mr-1 last:mr-0">
-                        <i class="far fa-bell"></i>
-                        <span class="dark:bg-indigo-700 absolute rounded-full w-2 h-2"></span>
-                    </a>
+            <!-- Notifications -->
+            <%- include('notification/notification') %>
+            <!-- Messages -->
+            <%- include('message/messages') %>
+            <!-- Main -->
+            <% if(!isvoting) { %> 
+                <div class="election__ hidden transition-all">
+                    <%- !iscandidate && !displayresults ? include('election/main', { joined: joined, elections: elections, userData: userData }) : '' %>
                 </div>
+                <%- iscandidate ? include('election/candidates', {election: elections, data: data}) : '' %>
+                <%- displayresults ? include('election/election-results', {election: elections}) : '' %>
+            <% } else { %>
+                <%- include('election/vote-form', {election: elections}) %>
+            <% } %>
+            <!-- themes -->
+            <div class="themes__ hidden">
+                <%- include('theme/theme') %>
             </div>
+            <!-- file candidacy -->
+            <div class="file_candidacy hidden">
+                <%- joined ?  include('election/file-candidacy') : '' %> 
             </div>
-        </div>
-        <!-- Notifications -->
-        <%- include('notification/notification') %>
-        <!-- Messages -->
-        <%- include('message/messages') %>
-        <!-- Main -->
-        <% if(!isvoting) { %> 
-            <div class="election__ hidden transition-all">
-                <%- !iscandidate && !displayresults ? include('election/main', { joined: joined, elections: elections, userData: userData }) : '' %>
+            <!-- account settings -->
+            <div class="account_settings">
+                <%- include('account/settings') %>
             </div>
-            <%- iscandidate ? include('election/candidates', {election: elections, data: data}) : '' %>
-            <%- displayresults ? include('election/election-results', {election: elections}) : '' %>
-        <% } else { %>
-            <%- include('election/vote-form', {election: elections}) %>
-        <% } %>
-        <!-- themes -->
-        <div class="themes__ hidden">
-            <%- include('theme/theme') %>
-        </div>
-        <!-- file candidacy -->
-        <div class="file_candidacy hidden">
-            <%- joined ?  include('election/file-candidacy') : '' %> 
-        </div>
-        <!-- account settings -->
-        <div class="account_settings">
-            <%- include('account/settings') %>
-        </div>
+        <% } %> 
     <% } %>
     <!-- Messaging -->
     <%- conversations.ischat ? include('message/conversations', {kachat: conversations.kachat}) : '' %>
