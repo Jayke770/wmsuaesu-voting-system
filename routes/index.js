@@ -1256,7 +1256,9 @@ router.post('/home/election/status/side-menu/', normal_limit, isloggedin, async 
 router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (req, res) => {
     const {electionID} = req.params
     const {myid, device, chat} = req.session 
-    const {student_id, devices} = await user_data(myid)
+    const {student_id, devices, facial} = await user_data(myid)
+    !facial ? req.session.need_facial = true : req.session.need_facial = false
+    const {need_facial} = req.session
     try {
         let device_data
         for(let i = 0; i < devices.length; i++){
@@ -1278,6 +1280,7 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
                     joined: true,
                     iscandidate: false,
                     isvoting: false,
+                    need_facial: need_facial,
                     displayresults: false,
                     elections: elec[0],
                     data: {
@@ -1309,7 +1312,9 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
 router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin, async (req, res) => {
     const {id} = req.body 
     const {electionID, myid, device, chat} = req.session 
-    const {_id, student_id, devices} = await user_data(myid)
+    const {_id, student_id, devices, facial} = await user_data(myid)
+    !facial ? req.session.need_facial = true : req.session.need_facial = false
+    const {need_facial} = req.session
     let candidateAccepted = []
     try {
         await election.find({
@@ -1343,6 +1348,7 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
                             iscandidate: true,
                             isvoting: false,
                             displayresults: false,
+                            need_facial: need_facial,
                             elections: elec[0], 
                             data: {
                                 course: await course(), 
@@ -1365,6 +1371,7 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
                             iscandidate: true,
                             isvoting: false,
                             displayresults: false,
+                            need_facial: need_facial,
                             elections: {
                                 positions: [], 
                                 candidates: []
@@ -1531,7 +1538,9 @@ router.post('/home/election/id/*/candidates/view-candidate/', normal_limit, islo
 //vote 
 router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid, device, chat} = req.session 
-    const {devices} = await user_data(myid)
+    const {devices, facial} = await user_data(myid)
+    !facial ? req.session.need_facial = true : req.session.need_facial = false
+    const {need_facial} = req.session
     try {
         let device_data
         for(let i = 0; i < devices.length; i++){
@@ -1557,6 +1566,7 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
                             isvoting: true,
                             iscandidate: false,
                             displayresults: false,
+                            need_facial: need_facial,
                             data: {
                                 positions: await positions(), 
                                 partylists: await partylists(), 
@@ -1689,8 +1699,9 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
 //election results 
 router.get('/home/election/id/*/results/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid, device, chat} = req.session 
-    const {devices} = await user_data(myid)
-
+    const {devices, facial} = await user_data(myid)
+    !facial ? req.session.need_facial = true : req.session.need_facial = false
+    const {need_facial} = req.session
     try {
         let device_data
         for(let i = 0; i < devices.length; i++){
@@ -1712,6 +1723,7 @@ router.get('/home/election/id/*/results/', normal_limit, isloggedin, async (req,
                         isvoting: false,
                         iscandidate: false,
                         displayresults: true,
+                        need_facial: need_facial,
                         data: {
                             positions: await positions(), 
                             partylists: await partylists(), 
