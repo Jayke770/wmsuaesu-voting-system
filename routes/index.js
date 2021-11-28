@@ -2645,7 +2645,6 @@ router.post('/account/facial/register/', normal_limit, isloggedin, async (req, r
         if(await load()){
             const {status, descriptions} = await detectfaces(student_id, facialreg)
             if(status){
-                console.log(status, descriptions)
                 await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: descriptions}}).then( () => {
                     delete req.session.need_facial
                     return res.send({
