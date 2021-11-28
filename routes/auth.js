@@ -32,13 +32,16 @@ module.exports = {
     }
     return req.method === "GET" ? res.redirect('/home/logout') : res.status(401).send()
   },
-  send_verification_email: (fname, email, id, email_id) => {
+  send_verification_email: async (fname, email, id, email_id) => {
+    const Account = await nodemailer.createTestAccount()
     const transporter = nodemailer.createTransport({
-      service: process.env.emailservice,
+      host: "smtp.ethereal.email",
+      port: 587,
+      secure: false,
       auth: {
-        user: process.env.email,
-        pass: process.env.emailpassword
-      }
+        user: Account.user,
+        pass: Account.pass,
+      },
     })
     const mailOptions = {
       from: `WMSU-AESU Online Voting System <${process.env.email}>`,
@@ -330,6 +333,7 @@ module.exports = {
         return false
       } else {
         console.log("Sent", info)
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info))
         return true
       }
     })
