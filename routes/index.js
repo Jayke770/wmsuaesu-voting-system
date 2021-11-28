@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
+require('@tensorflow/tfjs-node')
 const xs = require('xss')
 const express = require('express')
 const router = express.Router()
@@ -23,9 +24,7 @@ const fs = require('fs-extra')
 const moment = require('moment-timezone')
 const uaParser = require('ua-parser-js')
 const emailValidator = require('is-email')
-router.get('/face/', async (req, res) => {
-    return res.render('account/face-verify', {csrf: req.csrfToken()})
-})
+const {load, detectfaces} = require('../routes/face-api/faceRecognition')
 //profile 
 router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
     const {id} = req.params 
@@ -175,10 +174,11 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 //homepage
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
     delete req.session.electionID
-    const {myid, device, chat, need_facial} = req.session  
-    const {elections, devices} = await user_data(myid)
+    const {myid, device, chat} = req.session
+    const {elections, devices, facial} = await user_data(myid) 
+    !facial ? req.session.need_facial = true : req.session.need_facial = false
+    const {need_facial} = req.session
     let electionsJoined = []
-    console.log(need_facial)
     try {
         let device_verified
         for(let i = 0; i < devices.length; i++){
@@ -2635,5 +2635,36 @@ router.post('/account/messages/list/', normal_limit, isloggedin, async (req, res
 router.post('/account/message/close/', normal_limit, isloggedin, async (req, res) => {
     delete req.session.chat 
     return res.send({status: true})
+})
+//register face 
+router.post('/account/facial/register/', normal_limit, isloggedin, async (req, res) => {
+    const {facialreg} = req.files 
+    const {myid} = req.session
+    const {student_id} = await user_data(myid)
+    try {
+        if(await load()){
+            const {status, descriptions} = await detectfaces(student_id, facialreg)
+            if(status){
+                console.log(status, descriptions)
+                await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: descriptions}}).then( () => {
+                    delete req.session.need_facial
+                    return res.send({
+                        status: true, 
+                        txt: 'Face Successfully Registered', 
+                        msg: 'Redirecting..'
+                    })
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                throw new Error('error')
+            }
+        } else {
+            throw new Error('Failed to load face recognition')
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
 })
 module.exports = router

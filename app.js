@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
+require('@tensorflow/tfjs-node')
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 8989

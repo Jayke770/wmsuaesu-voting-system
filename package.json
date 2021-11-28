@@ -5,8 +5,9 @@
   "author": "Jayke770",
   "license": "MIT",
   "dependencies": {
-    "@tensorflow/tfjs-core": "^3.11.0",
+    "@tensorflow/tfjs-node": "^3.11.0",
     "@tsmx/human-readable": "^1.0.7",
+    "@vladmandic/face-api": "^1.5.7",
     "base64-to-image": "^1.0.2",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",

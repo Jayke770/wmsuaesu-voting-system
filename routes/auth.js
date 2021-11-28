@@ -32,22 +32,6 @@ module.exports = {
     }
     return req.method === "GET" ? res.redirect('/home/logout') : res.status(401).send()
   },
-  take_photo: (req, res, next) => {
-    if (req.session.take_photo && req.session.islogin) {
-      return next()
-    }
-    if (!req.session.take_photo && req.session.islogin) {
-      return res.redirect('/')
-    }
-    req.session.destroy()
-    res.redirect('/')
-  },
-  get_face: (req, res, next) => {
-    if (req.session.take_photo) {
-      return res.redirect('/register_face')
-    }
-    return next()
-  },
   send_verification_email: (fname, email, id, email_id) => {
     const transporter = nodemailer.createTransport({
       service: process.env.emailservice,
@@ -342,7 +326,7 @@ module.exports = {
     }
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) { 
-console.log("error", error, info)
+        console.log("error", error, info)
         return false
       } else {
         console.log("Sent", info)
@@ -666,6 +650,7 @@ console.log("error", error, info)
     }
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
+        console.log("error", error, info)
         return false
       } else {
         console.log("Sent", info)
