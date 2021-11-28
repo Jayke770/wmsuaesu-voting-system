@@ -1,9 +1,10 @@
 node_modules/*
 public/package/*
-log/logs.log
+log/*
 .env
 face-api/* 
 face.js
 yarn-error.log
 public/css/tailwindcss/*
 test.js
+uploads/* 
