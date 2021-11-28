@@ -32,7 +32,7 @@ module.exports = {
     }
     return req.method === "GET" ? res.redirect('/home/logout') : res.status(401).send()
   },
-  send_verification_email: (fname, email, id, email_id) => {
+  send_verification_email: async (fname, email, id, email_id) => {
     const Account = await nodemailer.createTestAccount()
     const transporter = nodemailer.createTransport({
       host: "smtp.ethereal.email",
