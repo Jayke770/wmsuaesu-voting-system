@@ -33,7 +33,6 @@ module.exports = {
     return req.method === "GET" ? res.redirect('/home/logout') : res.status(401).send()
   },
   send_verification_email: (fname, email, id, email_id) => {
-    const Account = await nodemailer.createTestAccount()
     const transporter = nodemailer.createTransport({
       service: process.env.emailservice,
       auth: {
