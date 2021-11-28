@@ -4373,9 +4373,9 @@ adminrouter.post('/control/sy/update/', isadmin, normal_limit, async (req, res) 
 //wipe system data //not the server
 adminrouter.post('/control/wipe/', isadmin, normal_limit, async (req, res) => { 
     try {
-        await user.remove().then( async () => {
-            await election.remove().then( async () => {
-                await data.remove().then( async () => {
+        await user.deleteMany().then( async () => {
+            await election.deleteMany().then( async () => {
+                await data.deleteMany().then( async () => {
                     return res.send({
                         status: true, 
                         txt: "System Successfully Wiped", 
