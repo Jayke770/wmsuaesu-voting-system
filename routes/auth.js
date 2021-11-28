@@ -335,13 +335,10 @@ module.exports = {
     })
   },
   verify_device: (fname, email, device, user_id) => {
-    const emailAccount = await nodemailer.createTestAccount()
     const transporter = nodemailer.createTransport({
-      host: "smtp.ethereal.email",
-      port: 465,
-      secure: true,
+      service: process.env.emailservice,
       auth: {
-        user: emailAccount.us,
+        user: process.env.email,
         pass: process.env.emailpassword
       }
     })
@@ -662,7 +659,6 @@ module.exports = {
     })
   }, 
   restore_account_email: (email, fname, account) => {
-    console.log(email, fname, account)
     const transporter = nodemailer.createTransport({
       service: process.env.emailservice,
       auth: {
