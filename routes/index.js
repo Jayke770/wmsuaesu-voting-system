@@ -2666,17 +2666,21 @@ router.post('/account/message/close/', normal_limit, isloggedin, async (req, res
 router.post('/account/facial/register/', normal_limit, isloggedin, async (req, res) => {
     const {facialreg} = req.files 
     const {myid} = req.session
-    const {student_id, facial} = await user_data(myid)
+    const {facial} = await user_data(myid)
     try {
         if(!facial){
             if(await fs.pathExists(facialreg[0].path)){
                 await img2base64(facialreg[0].path).then( async (reg_file) => {
-                    await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: reg_file}}).then( () => {
-                        delete req.session.need_facial
-                        return res.send({
-                            status: true, 
-                            txt: 'Face Successfully Registered', 
-                            msg: 'Redirecting..'
+                    fs.remove(facialreg[0].path).then(() => {
+                        await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: reg_file}}).then( () => {
+                            delete req.session.need_facial
+                            return res.send({
+                                status: true, 
+                                txt: 'Face Successfully Registered', 
+                                msg: 'Redirecting..'
+                            })
+                        }).catch( (e) => {
+                            throw new Error(e)
                         })
                     }).catch( (e) => {
                         throw new Error(e)
@@ -2711,30 +2715,38 @@ router.post('/account/facial/login/', normal_limit, isloggedin, async (req, res)
                 })
                 if(await load()){
                     const {status, match} = await identifyface(student_id, `uploads/${student_id}.jpg`, faciallogin[0].path) 
-                    if(status){
-                        if(match[0]._label === student_id){
-                            req.session.voter_facial = true
-                            return res.send({
-                                status: true, 
-                                txt: 'Face Successfully Verified', 
-                                msg: 'Submitting Votes...'
-                            })
-                        } else {
-                            return res.send({
-                                status: false, 
-                                redirect: false,
-                                txt: "Can't Identify Your Face", 
-                                msg: 'Please ensure that your environment is not dark and your face is clear'
-                            })
-                        }
-                    } else {
-                        return res.send({
-                            status: false, 
-                            redirect: false,
-                            txt: "Can't Identify Your Face", 
-                            msg: 'Please ensure that your environment is not dark and your face is clear'
+                    fs.remove(`uploads/${student_id}.jpg`).then( () => {
+                        fs.remove(faciallogin[0].path).then( () => {
+                            if(status){
+                                if(match[0]._label === student_id){
+                                    req.session.voter_facial = true
+                                    return res.send({
+                                        status: true, 
+                                        txt: 'Face Successfully Verified', 
+                                        msg: 'Submitting Votes...'
+                                    })
+                                } else {
+                                    return res.send({
+                                        status: false, 
+                                        redirect: false,
+                                        txt: "Can't Identify Your Face", 
+                                        msg: 'Please ensure that your environment is not dark and your face is clear'
+                                    })
+                                }
+                            } else {
+                                return res.send({
+                                    status: false, 
+                                    redirect: false,
+                                    txt: "Can't Identify Your Face", 
+                                    msg: 'Please ensure that your environment is not dark and your face is clear'
+                                })
+                            }
+                        }).catch( (e) => {
+                            throw new Error(e)
                         })
-                    }
+                    }).catch( (e) => {
+                        throw new Error(e)
+                    })
                 } else {
                     throw new Error('failed to load face api')
                 }
