@@ -18,13 +18,14 @@ const { v4: uuidv4 } = require('uuid')
 const objectid = require('mongodb').ObjectID
 const nl2br = require("nl2br")
 const img2base64 = require('image-to-base64')
-const base64_2_img = require('base64-to-image')
+const base642img = require('base64-to-image')
 const path = require('path')
 const fs = require('fs-extra')
 const moment = require('moment-timezone')
 const uaParser = require('ua-parser-js')
 const emailValidator = require('is-email')
-const {load, detectfaces} = require('../routes/face-api/faceRecognition')
+const jimp = require('jimp')
+const {load, identifyface} = require('../routes/face-api/faceRecognition')
 //profile 
 router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
     const {id} = req.params 
@@ -751,6 +752,7 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
         status: '?',
         voted: [],
         isvoted: false,
+        facial: false,
         created: moment().tz("Asia/Manila").format()
     },  
     electionData = {
@@ -1599,97 +1601,109 @@ router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, re
 //submit vote 
 router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, async (req, res) => {
     const {votes} = req.body
-    const {electionID, myid} = req.session
+    const {electionID, myid, voter_facial} = req.session
     const {firstname, middlename, lastname} = await user_data(myid)
     try {
-        if(votes !== undefined) {
-            await election.find({_id: {$eq: xs(electionID)}}, {positions: 1, candidates: 1, election_title: 1}).then( async (electionData) => {
-                if(electionData.length > 0){
-                    //check votes if valid
-                    for(let i = 0; i < electionData[0].positions.length; i++){
-                        //count votes using the current position
-                        if(!count_vote(electionData[0].positions[i], votes)){
-                            return res.send({
-                                status: false, 
-                                txt: "Invalid Vote", 
-                                msg: `Please select up to ${parseInt(electionData[0].positions[i].maxvote)} candidate for ${await myposition(electionData[0].positions[i].id)}`
-                            }) 
-                        }
-                    }
-                    //check if the voter already voted  
-                    await election.find({
-                        _id: {$eq: xs(electionID)}, 
-                        voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}
-                    }, {voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}
-                    }).then( async (elecData) => {
-                        if(elecData.length > 0){
-                            //check if voted or not 
-                            if(elecData[0].voters[0].isvoted){
+        if(voter_facial){
+            if(votes !== undefined) {
+                await election.find({_id: {$eq: xs(electionID)}}, {positions: 1, candidates: 1, election_title: 1}).then( async (electionData) => {
+                    if(electionData.length > 0){
+                        //check votes if valid
+                        for(let i = 0; i < electionData[0].positions.length; i++){
+                            //count votes using the current position
+                            if(!count_vote(electionData[0].positions[i], votes)){
                                 return res.send({
-                                    status: false,
-                                    txt: "Oops..", 
-                                    msg: `You already submitted a vote`
-                                })
-                            } else {
-                                for(let v = 0; v < votes.length; v++){
-                                    await election.updateOne({
-                                        _id: {$eq: xs(electionID)}, 
-                                        "candidates.id": {$eq: xs(JSON.parse(votes[v]).candidateID)}
-                                    }, {$push: {"candidates.$.votes": xs(myid).toString()}}).then( async () => {
-                                        //save candidate id in the voter votes
+                                    status: false, 
+                                    txt: "Invalid Vote", 
+                                    msg: `Please select up to ${parseInt(electionData[0].positions[i].maxvote)} candidate for ${await myposition(electionData[0].positions[i].id)}`
+                                }) 
+                            }
+                        }
+                        //check if the voter already voted  
+                        await election.find({
+                            _id: {$eq: xs(electionID)}, 
+                            voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}
+                        }, {voters: {$elemMatch: {id: {$eq: xs(myid).toString()}}}
+                        }).then( async (elecData) => {
+                            if(elecData.length > 0){
+                                //check if voted or not 
+                                if(elecData[0].voters[0].isvoted){
+                                    return res.send({
+                                        status: false,
+                                        txt: "Oops..", 
+                                        msg: `You already submitted a vote`
+                                    })
+                                } else {
+                                    for(let v = 0; v < votes.length; v++){
                                         await election.updateOne({
-                                            _id: {$eq: xs(electionID)},
-                                            "voters.id": xs(myid).toString()
-                                        }, {
-                                            $push: {"voters.$.voted": xs(JSON.parse(votes[v]).candidateID)}, 
-                                            $set: {"voters.$.isvoted": true}
+                                            _id: {$eq: xs(electionID)}, 
+                                            "candidates.id": {$eq: xs(JSON.parse(votes[v]).candidateID)}
+                                        }, {$push: {"candidates.$.votes": xs(myid).toString()}}).then( async () => {
+                                            //save candidate id in the voter votes
+                                            await election.updateOne({
+                                                _id: {$eq: xs(electionID)},
+                                                "voters.id": xs(myid).toString()
+                                            }, {
+                                                $push: {"voters.$.voted": xs(JSON.parse(votes[v]).candidateID)}, 
+                                                $set: {"voters.$.isvoted": true}
+                                            }).catch( (e) => {
+                                                throw new Error(e)
+                                            })
                                         }).catch( (e) => {
                                             throw new Error(e)
+                                        })
+                                    }
+                                    //send response
+                                    await newAdminNotification('election', {
+                                        id: uuidv4(), 
+                                        type: 'info',
+                                        link: `/control/elections/id/${electionID}/home/candidates/`,
+                                        content: `${firstname} ${middlename} ${lastname} submitted a candidacy for ${electionData[0].election_title}`, 
+                                        created: moment().tz("Asia/Manila").format()
+                                    })
+                                    //update voter facial
+                                    await election.updateOne({
+                                        _id: {$eq: xs(electionID)}, 
+                                        "voters.id": {$eq: xs(myid.toString())}
+                                    }, {$set: {"voters.$.facial": true}}).then( () => {
+                                        return res.send({
+                                            status: true, 
+                                            txt: 'Vote submitted successfully', 
+                                            msg: `Have a nice day ${firstname}!`
                                         })
                                     }).catch( (e) => {
                                         throw new Error(e)
                                     })
                                 }
-                                //send response
-                                await newAdminNotification('election', {
-                                    id: uuidv4(), 
-                                    type: 'info',
-                                    link: `/control/elections/id/${electionID}/home/candidates/`,
-                                    content: `${firstname} ${middlename} ${lastname} submitted a candidacy for ${electionData[0].election_title}`, 
-                                    created: moment().tz("Asia/Manila").format()
-                                })
+                            } else {
                                 return res.send({
-                                    status: true, 
-                                    txt: 'Vote submitted successfully', 
-                                    msg: `Have a nice day ${firstname}!`
+                                    status: false,
+                                    txt: "Voter Not Found", 
+                                    msg: "Please refresh the app"
                                 })
                             }
-                        } else {
-                            return res.send({
-                                status: false,
-                                txt: "Voter Not Found", 
-                                msg: "Please refresh the app"
-                            })
-                        }
-                    }).catch( (e) => {
-                        throw new Error(e)
-                    })
-                } else {
-                    return res.send({
-                        status: false, 
-                        txt: "Election Not Found", 
-                        msg: "Please refresh the app"
-                    })
-                }
-            }).catch( (e) => {
-                throw new Error(e)
-            })
+                        }).catch( (e) => {
+                            throw new Error(e)
+                        })
+                    } else {
+                        return res.send({
+                            status: false, 
+                            txt: "Election Not Found", 
+                            msg: "Please refresh the app"
+                        })
+                    }
+                }).catch( (e) => {
+                    throw new Error(e)
+                })
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: "Invalid Vote", 
+                    msg: "Please select a candidate in each position"
+                })
+            }
         } else {
-            return res.send({
-                status: false, 
-                txt: "Invalid Vote", 
-                msg: "Please select a candidate in each position"
-            })
+            return res.status(403).send()
         }
     } catch (e) {
         console.log(e)
@@ -2652,27 +2666,133 @@ router.post('/account/message/close/', normal_limit, isloggedin, async (req, res
 router.post('/account/facial/register/', normal_limit, isloggedin, async (req, res) => {
     const {facialreg} = req.files 
     const {myid} = req.session
-    const {student_id} = await user_data(myid)
+    const {student_id, facial} = await user_data(myid)
     try {
-        if(await load()){
-            const {status, descriptions} = await detectfaces(student_id, facialreg)
-            if(status){
-                await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: descriptions}}).then( () => {
-                    delete req.session.need_facial
-                    return res.send({
-                        status: true, 
-                        txt: 'Face Successfully Registered', 
-                        msg: 'Redirecting..'
+        if(!facial){
+            if(await fs.pathExists(facialreg[0].path)){
+                await img2base64(facialreg[0].path).then( async (reg_file) => {
+                    await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: reg_file}}).then( () => {
+                        delete req.session.need_facial
+                        return res.send({
+                            status: true, 
+                            txt: 'Face Successfully Registered', 
+                            msg: 'Redirecting..'
+                        })
+                    }).catch( (e) => {
+                        throw new Error(e)
                     })
-                }).catch( (e) => {
-                    throw new Error(e)
                 })
-            } else {
-                throw new Error('error')
             }
         } else {
-            throw new Error('Failed to load face recognition')
+            delete req.session.need_facial
+            return res.send({
+                status: true, 
+                txt: 'You Already Register Your Face', 
+                msg: 'Redirecting..'
+            })
         }
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//verify face
+router.post('/account/facial/login/', normal_limit, isloggedin, async (req, res) => { 
+    const {faciallogin} = req.files 
+    const {myid, electionID} = req.session
+    const {student_id, facial} = await user_data(myid)
+    try {
+        if(faciallogin){
+            if(facial){
+                const buffer = Buffer.from(facial, "base64")
+                jimp.read(buffer, (err, res) => {
+                    if (err) throw new Error(err)
+                    res.quality(100).write(`uploads/${student_id}.jpg`)
+                })
+                if(await load()){
+                    const {status, match} = await identifyface(student_id, `uploads/${student_id}.jpg`, faciallogin[0].path) 
+                    if(status){
+                        if(match[0]._label === student_id){
+                            req.session.voter_facial = true
+                            return res.send({
+                                status: true, 
+                                txt: 'Face Successfully Verified', 
+                                msg: 'Submitting Votes...'
+                            })
+                        } else {
+                            return res.send({
+                                status: false, 
+                                redirect: false,
+                                txt: "Can't Identify Your Face", 
+                                msg: 'Please ensure that your environment is not dark and your face is clear'
+                            })
+                        }
+                    } else {
+                        return res.send({
+                            status: false, 
+                            redirect: false,
+                            txt: "Can't Identify Your Face", 
+                            msg: 'Please ensure that your environment is not dark and your face is clear'
+                        })
+                    }
+                } else {
+                    throw new Error('failed to load face api')
+                }
+            } else {
+                req.session.need_facial = true
+                return res.send({
+                    status: false, 
+                    txt: 'Please Register Your Face', 
+                    redirect: true,
+                    msg: 'Redirecting..'
+                })
+            }
+        } else {
+            return res.send({
+                status: false, 
+                txt: 'Invalid Image', 
+                redirect: false,
+                msg: 'Please reload your browser'
+            })
+        }
+    } catch(e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//get facial data 
+router.post('/account/voter/facial/', normal_limit, isloggedin, async (req, res) => {
+    const {myid, electionID} = req.session
+    const {facial} = await user_data(myid)
+    try {
+        await election.find({
+            _id: {$eq: xs(electionID)}, 
+            voters: {$elemMatch: {id: {$eq: xs(myid.toString())}}}
+        }, {voters: {$elemMatch: {id: {$eq: xs(myid.toString())}}}}).then( (elec) => {
+            if(elec.length > 0){ 
+                if(elec[0].voters[0].status === "Accepted"){
+                    if(facial){
+                        return res.send({
+                            status: true,
+                            txt: '', 
+                            msg: ''
+                        })
+                    } else {
+                        return res.status(403).send()
+                    }
+                } else {
+                    return res.status(403).send()
+                }
+            } else {
+                return res.send({
+                    status: false, 
+                    txt: 'Voter Not Found', 
+                    msg: 'Please refresh your browser'
+                })
+            }
+        }).catch( (e) => {
+            throw new Error(e)
+        })
     } catch (e) {
         console.log(e)
         return res.status(500).send()

@@ -36,7 +36,7 @@
                              <% for (let c = 0; c < elections.candidates.length; c++) { %>
                                  <% if(elections.positions[p].id === elections.candidates[c].position){ %> 
                                      <div style="animation-delay: <%- c * .150%>s;" class="rpl relative cursor-pointer p-1.5">
-                                         <input name="votes[]" value='<%- JSON.stringify({positionID: elections.candidates[c].position , candidateID: elections.candidates[c].id}) %>' class="peer absolute w-full h-full opacity-0 cursor-pointer" type="<%- parseInt(elections.positions[p].maxvote) > 1 ? 'checkbox' : 'radio' %>">
+                                         <input id="vote" name="votes[]" value='<%- JSON.stringify({positionID: elections.candidates[c].position , candidateID: elections.candidates[c].id}) %>' class="peer absolute w-full h-full opacity-0 cursor-pointer" type="<%- parseInt(elections.positions[p].maxvote) > 1 ? 'checkbox' : 'radio' %>">
                                          <div class="rpl peer-checked:border-teal-600 border-[.1px] border-transparent transition-all dark:bg-darkBlue-100 flex flex-row gap-1 rounded-xl shadow-lg">
                                              <div class="flex-[10%] flex justify-center items-center p-1.5">
                                                  <img class="object-cover w-16 h-16 rounded-full" alt="candidate_profile" src="/profile/<%- elections.candidates[c].student_id %>/">
@@ -69,3 +69,4 @@
     $("#e_time").removeClass(localStorage.getItem('theme') === "dark" ? 'flipdown__theme-dark' : 'flipdown__theme-light')
     $("#e_time").addClass(localStorage.getItem('theme') === "dark"? 'flipdown__theme-light' : 'flipdown__theme-dark')
 </script>
+<%- include('vote-face-verify.ejs') %>

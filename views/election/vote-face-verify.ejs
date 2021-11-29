@@ -1,0 +1,26 @@
+<div class="facial_vote fixed top-0 z-50 w-full h-full dark:bg-darkBlue-primary/80 p-2 sm:p-0 hidden justify-center items-center sm:items-end">
+    <div animate-in="animate__animated animate__fadeInUp ms-500" animate-out="animate__animated animate__fadeOutDown ms-500" class="facial_vote_main h-auto w-96 sm:w-full dark:bg-darkBlue-secondary shadow-md rounded-md sm:rounded-b-none">
+        <div class="flex justify-start items-center pt-3 px-2.5">
+            <span class="dark:text-gray-300 text-xl">Verify Facial Data</span>
+        </div>
+        <div class="p-2">
+            <div class="border-l-4 dark:border-teal-800 dark:bg-teal-800/40 p-2 dark:text-gray-300 text-sm break-words">
+                Please ensure that your environment is not dark and your face is clear
+            </div>
+        </div>
+        <form class="upload-fc flex flex-col gap-1 mb-0">
+            <canvas class="hidden" id="fc" width="300" height="320"></canvas>
+            <input type="hidden" name="facial" class="facial-captured">
+            <video class="h-96 bg-teal-300/10 w-full object-cover" id="facial"></video>
+            <div class="grid grid-cols-2 p-2 gap-2">
+                <button
+                    class="capture transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-700 dark:bg-purple-800 hover:bg-purple-700 dark:hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-purple-800 focus:ring-purple-500"
+                    type="button">Capture</button>
+                <button
+                    class="transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-700 dark:bg-teal-800 hover:bg-teal-700 dark:hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-teal-800 focus:ring-teal-500"
+                    type="submit">Verify</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="/js/vote-face-verify.js"></script>

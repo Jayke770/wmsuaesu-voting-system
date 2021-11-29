@@ -4,12 +4,10 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const adminrouter = express.Router()
 const {isadmin} = require('./auth')
-
 const user = require('../models/user')
 const election = require('../models/election')
 const data = require('../models/data')
 const adminData = require('../models/admin')
-
 const { search_limit, limit, normal_limit, delete_limit } = require('./rate-limit')
 const {restore_account_email, change_account_cred} = require('./auth')
 const {hash, compareHash, course, year, partylists, positions, toUppercase, mycourse, myyear, myposition, mypartylist, myprofile, color, user_data, is_course_eligible, is_year_eligible, newNotification, user_id, sy} = require('./functions')
@@ -1044,6 +1042,7 @@ adminrouter.post('/control/elections/voters/add-user-add-voter/', limit, isadmin
         status: "Accepted",
         voted: [],
         isvoted: false,
+        facial: false,
         created: moment().tz("Asia/Manila").format()
     }
     try {

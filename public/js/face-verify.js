@@ -66,17 +66,15 @@ $(document).ready( async () => {
                         if (result.dismiss === Swal.DismissReason.timer) {
                             setTimeout( async () => {
                                 if (null != cameraStream) {
-                                    for(let i = 0; i < 2; i++){
-                                        var ctx = capture.getContext('2d')
-                                        var img = new Image() 
-                                        ctx.drawImage(video, 0, 0, capture.width, capture.height) 
-                                        img.src = capture.toDataURL("image/jpeg")
-                                        img.width = 250
-                                        const res = await fetch(img.src)
-                                        const blob = await res.blob()
-                                        const file = new File([blob], `${i + 1}.jpg`, blob)
-                                        regdata.append("facialreg", file)
-                                    }
+                                    var ctx = capture.getContext('2d')
+                                    var img = new Image() 
+                                    ctx.drawImage(video, 0, 0, capture.width, capture.height) 
+                                    img.src = capture.toDataURL("image/jpeg")
+                                    img.width = 250
+                                    const res = await fetch(img.src)
+                                    const blob = await res.blob()
+                                    const file = new File([blob], `1.jpg`, blob)
+                                    regdata.append("facialreg", file)
                                     video.classList.add("hidden")
                                     capture.classList.remove("hidden")
                                     $(this).text("Re-capture")
