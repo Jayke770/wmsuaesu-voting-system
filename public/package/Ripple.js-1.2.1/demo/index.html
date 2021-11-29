@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<title>Ripple.js</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:800,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../dist/ripple.min.css">
+
+		<style type="text/css">
+
+			/* 100% of the styles below are simply for the demo */
+			body {
+				background: #fefefe;
+				color: #2a2a2a;
+				font-family: 'Open Sans', sans-serif;
+				cursor: default;
+			}
+			*::selection {
+				background: transparent !important;
+			}
+			header h1 {
+				opacity: 0.7;
+				font-weight: 800;
+				margin-top: 100px;
+			}
+			.btn {
+				border: none;
+				box-shadow: none !important;
+			}
+
+			.white.btn {
+				background: #fff;
+			}
+			.white.btn-primary { color: #428bca; }
+			.white.btn-success { color: #5cb85c; }
+			.white.btn-warning { color: #f0ad4e; }
+			.white.btn-danger { color: #d9534f; }
+
+
+			.btn-block { max-width: 500px; margin: 0 auto; }
+
+			.area {
+				color: #ccc;
+				text-align: center;
+				background: #fafafa;
+				overflow: hidden;
+			}
+			.area h3 {
+				line-height: 300px;
+			}
+			a{
+				transition: all 0.3s ease;
+				text-decoration: none !important;
+			}
+			.text-muted {
+				color: #777 !important;
+			}
+		</style>
+	</head>
+	<body class="text-center">
+
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<header>
+						<h1>Ripple.js</h1>
+					</header>
+					<hr />
+					<a href="#" class="btn btn-default btn-lg">Default</a>
+					<a href="#" class="btn btn-primary btn-lg">Primary</a>
+					<a href="#" class="btn btn-success btn-lg">Success</a>
+					<a href="#" class="btn btn-warning btn-lg">Warnings</a>
+					<a href="#" class="btn btn-danger btn-lg">Danger</a>
+					<hr />
+					<a href="#" class="btn btn-success btn-lg white">Success</a>
+					<a href="#" class="btn btn-warning btn-lg white">Warning</a>
+					<a href="#" class="btn btn-danger btn-lg white">Danger</a>
+					<hr />
+					<div class="area">
+						<h3>Area</h3>
+					</div>
+					<hr />
+					<a href="#" class="btn btn-primary btn-block">Default</a>
+					<a href="#" class="btn btn-primary btn-block" data-easing="ease-in-out" data-duration="1.5">Easing</a>
+					<a href="#" class="btn btn-primary btn-block" data-duration="3">Duration</a>
+					<a href="#" class="btn btn-primary btn-block" data-opacity="1">Opacity</a>
+					<a href="#" class="btn btn-primary btn-block white" data-color="auto">Auto Color</a>
+					<a href="#" class="btn btn-primary btn-block" data-color="limegreen" data-opacity="1">Color + Opacity</a>
+					<a href="#" class="btn btn-primary btn-block no-bind demo">Bind to Events (mouseleave)</a>
+					<a href="#" class="btn btn-primary btn-block" data-multi="false">Multi = false</a>
+				</div>
+			</div>
+		</div>
+
+		<hr />
+		<a href="http://jakiestfu.com/" target="_blank" class="btn btn-small btn-primary white text-muted no-bind jakiestfu" data-delay="200">
+			<small>by jakiestfu</small>
+		</a>
+		<hr />
+
+		<a href="https://github.com/jakiestfu/Ripple.js"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
+
+		<script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+		<script type="text/javascript" src="../dist/ripple.min.js"></script>
+		<script type="text/javascript">
+
+			$(function() {
+
+				$(document).on('click', '[href="#"]', function(e) { e.preventDefault(); })
+
+				window.rippler = $.ripple('.btn:not(.no-bind), .area', {
+					debug: true,
+					multi: true
+				});
+
+				$.ripple('.no-bind.demo', {
+					on: 'mouseleave',
+					multi: true
+				});
+
+				$.ripple('.no-bind.jakiestfu', {
+					on: 'mouseenter',
+					multi: true
+				});
+			});
+
+		</script>
+	</body>
+</html>

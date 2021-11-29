@@ -1,5 +1,5 @@
 node_modules/*
-public/package/*
+public/package/node_modules/*
 log/*
 .env
 face-api/* 
