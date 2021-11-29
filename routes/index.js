@@ -1,7 +1,6 @@
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
-require('@tensorflow/tfjs-node')
 const xs = require('xss')
 const express = require('express')
 const router = express.Router()
@@ -2671,7 +2670,7 @@ router.post('/account/facial/register/', normal_limit, isloggedin, async (req, r
         if(!facial){
             if(await fs.pathExists(facialreg[0].path)){
                 await img2base64(facialreg[0].path).then( async (reg_file) => {
-                    fs.remove(facialreg[0].path).then(() => {
+                    fs.remove(facialreg[0].path).then( async () => {
                         await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: reg_file}}).then( () => {
                             delete req.session.need_facial
                             return res.send({
