@@ -1,5 +1,4 @@
 const tf = require('@tensorflow/tfjs-node')
-const canvas = require('canvas')
 const faceapi = require('@vladmandic/face-api')
 const {monkeyPatchFaceApiEnv} = require('./monkeyPatch')
 const path = require('path')
