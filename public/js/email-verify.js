@@ -30,16 +30,22 @@ $(document).ready( function () {
                     Swal.fire({
                         icon: res.status ? 'success' : 'info', 
                         title: res.txt, 
-                        html: res.msg,
-                    }).then( () => {
-                        submit_ = false 
-                        $(this).find("button[type='submit']").html(def)
-                        if(res.status){
-                            $(this).remove()
-                            $(".txt").remove()
-                            $(".em").removeClass("hidden")
-                            $(".em").addClass("flex")
-                            $(".em").find(".em_status").text(res.txt)
+                        html: 'Redirecting...',
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: () => {
+                            submit_ = false 
+                            $(this).find("button[type='submit']").html(def)
+                            if(res.status){
+                                Swal.showLoading()
+                                window.location.assign('/')
+                                $(this).remove()
+                                $(".txt").remove()
+                                $(".em").removeClass("hidden")
+                                $(".em").addClass("flex")
+                                $(".em").find(".em_status").text(res.txt)
+                            }
                         }
                     })
                 } else {

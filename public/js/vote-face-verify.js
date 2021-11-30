@@ -5,30 +5,41 @@ let logindata = new FormData(), facialverified = false, voteData, image = false
 let cameraStream = null, vidPlaying = false
 function startcamera() {
     const mediaSupport = 'mediaDevices' in navigator
-    if (mediaSupport && null == cameraStream) {
-        navigator.mediaDevices.getUserMedia({ video: true }).then(function (mediaStream) {
-            cameraStream = mediaStream
-            video.srcObject = mediaStream
-            video.play()
-        }).catch(function (err) {
-            console.log(err)
-            Swal.fire({
-                icon: 'info',
-                title: 'Unable to acess the camera',
-                html: 'Please restart your browser',
-                backdrop: true,
-                allowOutsideClick: false,
-            })
-        })
-    } else {
-        Swal.fire({
-            icon: 'info',
-            title: 'Unsupported Browser',
-            html: 'We Suggest to use Chrome or Mozilla Browser',
-            backdrop: true,
-            allowOutsideClick: false,
-        })
-    }
+    Swal.fire({
+        icon: 'warning', 
+        title: 'Camera Permission', 
+        html: 'Please allow camera permission to verify your face', 
+        backdrop: true, 
+        allowOutsideClick: false, 
+        showConfirmButton: false, 
+        willOpen: () => {
+            Swal.showLoading()
+            if (mediaSupport && null == cameraStream) {
+                navigator.mediaDevices.getUserMedia({ video: true }).then(function (mediaStream) {
+                    cameraStream = mediaStream
+                    video.srcObject = mediaStream
+                    video.play()
+                }).catch(function (err) {
+                    console.log(err)
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Unable to acess the camera',
+                        html: 'Please restart your browser',
+                        backdrop: true,
+                        allowOutsideClick: false,
+                    })
+                })
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Unsupported Browser',
+                    html: 'We Suggest to use Chrome or Mozilla Browser',
+                    backdrop: true,
+                    allowOutsideClick: false,
+                })
+            }
+        }
+    })
 }
 video.addEventListener('playing', () => {
     vidPlaying = true

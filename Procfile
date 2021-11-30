@@ -1,1 +1,1 @@
-web: yarn run start && rm -rf public/package
+web: yarn run start
