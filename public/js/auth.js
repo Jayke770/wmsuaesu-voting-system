@@ -40,7 +40,7 @@ $(document).ready(function () {
                             })
                         } else {
                             Swal.fire({
-                                icon: 'question', 
+                                icon: 'info', 
                                 backdrop: true, 
                                 allowOutsideClick: false,
                                 title: res_log.msg,
