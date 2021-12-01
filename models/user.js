@@ -48,7 +48,9 @@ const user =  new mongoose.Schema({
     visitors:{
         type: Array,
     },
-    sy: {},
+    sy: {
+        type: String,
+    },
     notifications:{
         account: {
             type: Array,
