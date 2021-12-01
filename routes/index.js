@@ -2667,43 +2667,51 @@ router.post('/account/facial/register/', normal_limit, isloggedin, async (req, r
     const {myid} = req.session
     const {facial} = await user_data(myid)
     try {
-        if(!facial){
-            if(await load()){
-                if(await checkface(facialreg[0].path)){
-                    if(await fs.pathExists(facialreg[0].path)){
-                        await img2base64(facialreg[0].path).then( async (reg_file) => {
-                            fs.remove(facialreg[0].path).then( async () => {
-                                await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: reg_file}}).then( () => {
-                                    delete req.session.need_facial
-                                    return res.send({
-                                        status: true, 
-                                        txt: 'Face Successfully Registered', 
-                                        msg: 'Redirecting..'
+        if(facialreg instanceof Array){
+            if(!facial){
+                if(await load()){
+                    if(await checkface(facialreg[0].path)){
+                        if(await fs.pathExists(facialreg[0].path)){
+                            await img2base64(facialreg[0].path).then( async (reg_file) => {
+                                fs.remove(facialreg[0].path).then( async () => {
+                                    await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: reg_file}}).then( () => {
+                                        delete req.session.need_facial
+                                        return res.send({
+                                            status: true, 
+                                            txt: 'Face Successfully Registered', 
+                                            msg: 'Redirecting..'
+                                        })
+                                    }).catch( (e) => {
+                                        throw new Error(e)
                                     })
                                 }).catch( (e) => {
                                     throw new Error(e)
                                 })
-                            }).catch( (e) => {
-                                throw new Error(e)
                             })
+                        }
+                    } else {
+                        return res.send({
+                            status: false, 
+                            txt: 'Invalid Face Detected', 
+                            msg: 'Please check your environment and make sure that your face is clear. \n Multiple Faces is not allowed'
                         })
                     }
                 } else {
-                    return res.send({
-                        status: false, 
-                        txt: 'No Face Detected', 
-                        msg: 'Please check your environment and make sure that your face is clear'
-                    })
+                    throw new Error('Failed to load face models')
                 }
             } else {
-                throw new Error('Failed to load face models')
+                delete req.session.need_facial
+                return res.send({
+                    status: true, 
+                    txt: 'You Already Register Your Face', 
+                    msg: 'Redirecting..'
+                })
             }
         } else {
-            delete req.session.need_facial
             return res.send({
-                status: true, 
-                txt: 'You Already Register Your Face', 
-                msg: 'Redirecting..'
+                status: false, 
+                txt: 'Invalid Face Detected', 
+                msg: 'Please check your environment and make sure that your face is clear. \n Multiple Faces is not allowed'
             })
         }
     } catch (e) {

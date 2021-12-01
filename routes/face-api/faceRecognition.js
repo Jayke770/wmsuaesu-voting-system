@@ -31,8 +31,6 @@ module.exports = {
             await faceapi.nets.faceRecognitionNet.loadFromDisk(MODELS_URL)
             await faceapi.nets.faceLandmark68Net.loadFromDisk(MODELS_URL)
             await faceapi.nets.ssdMobilenetv1.loadFromDisk(MODELS_URL)
-            await faceapi.nets.ageGenderNet.loadFromDisk(MODELS_URL)
-            await faceapi.nets.faceExpressionNet.loadFromDisk(MODELS_URL)
             optionsSSDMobileNet = new faceapi.SsdMobilenetv1Options({ minConfidence, maxResults: 10 })
             res = true
         } catch (e) {
@@ -67,15 +65,17 @@ module.exports = {
         return res
     }, 
     checkface: async (facial) => {
-        let res = {
-            status: null
+        let res = null
+        try {
+            const buffer = fs.readFileSync(facial)
+            const tensor = tf.node.decodeImage(buffer, 3)
+            const faces = await faceapi.detectAllFaces(tensor, optionsSSDMobileNet).withFaceLandmarks().withFaceDescriptors()
+            tf.dispose(tensor) 
+            faces.length === 1 ? res = true : res = false
+        } catch (e) {
+            console.log(e) 
+            res = false
         }
-        console.log('fafhjasfhsf')
-        const buffer = fs.readFileSync(facial)
-        const tensor = tf.node.decodeImage(buffer, 3)
-        const faces = await faceapi.detectAllFaces(tensor, optionsSSDMobileNet).withFaceLandmarks().withFaceDescriptors()
-        tf.dispose(tensor) 
-        faces.length === 1 ? res.status = true : res.status = false
         return res
     }
 }
