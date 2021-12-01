@@ -6,13 +6,13 @@ const fs = require('fs-extra')
 const MODELS_URL = path.join(__dirname, '/face-models/')
 let optionsSSDMobileNet, labeledFaceDescriptors = []
 const distanceThreshold = 0.5
-const minConfidence = 0.1
+const minConfidence = 0.5
 monkeyPatchFaceApiEnv()
 
 async function getDescriptors(file) {
     const buffer = fs.readFileSync(file)
     const tensor = tf.node.decodeImage(buffer, 3)
-    const faces = await faceapi.detectAllFaces(tensor, optionsSSDMobileNet).withFaceLandmarks().withFaceDescriptors()
+    const faces = await faceapi.detectSingleFace(tensor, optionsSSDMobileNet).withFaceLandmarks().withFaceDescriptors()
     tf.dispose(tensor)
     return faces.map((face) => face.descriptor)
 }
@@ -73,7 +73,7 @@ module.exports = {
         try {
             const buffer = fs.readFileSync(facial)
             const tensor = tf.node.decodeImage(buffer, 3)
-            const faces = await faceapi.detectAllFaces(tensor, optionsSSDMobileNet)
+            const faces = await faceapi.detectSingleFace(tensor, optionsSSDMobileNet)
             tf.dispose(tensor) 
             faces.length > 0 ? res.status = true : res.status = false
         } catch (e) {
