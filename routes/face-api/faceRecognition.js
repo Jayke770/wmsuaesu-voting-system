@@ -6,7 +6,7 @@ const fs = require('fs-extra')
 const MODELS_URL = path.join(__dirname, '/face-models/')
 let optionsSSDMobileNet, labeledFaceDescriptors = []
 const distanceThreshold = 0.5
-const minConfidence = 0.5
+const minConfidence = 0.1
 monkeyPatchFaceApiEnv()
 
 async function getDescriptors(file) {
