@@ -1,19 +1,16 @@
-const tf = require('@tensorflow/tfjs-node')
+require('@tensorflow/tfjs-node')
 const faceapi = require('@vladmandic/face-api')
 const {monkeyPatchFaceApiEnv} = require('./monkeyPatch')
 const path = require('path')
-const fs = require('fs-extra')
+const canvas = require('canvas')
 const MODELS_URL = path.join(__dirname, '/face-models/')
 let optionsSSDMobileNet, labeledFaceDescriptors = []
-const distanceThreshold = 0.5
+const distanceThreshold = 0.10
 const minConfidence = 0.15
 monkeyPatchFaceApiEnv()
-
 async function getDescriptors(file) {
-    const buffer = fs.readFileSync(file)
-    const tensor = tf.node.decodeImage(buffer, 3)
-    const faces = await faceapi.detectAllFaces(tensor, optionsSSDMobileNet).withFaceLandmarks().withFaceDescriptors()
-    tf.dispose(tensor)
+    const image = await canvas.loadImage(file)
+    const faces = await faceapi.detectAllFaces(image, optionsSSDMobileNet).withFaceLandmarks().withFaceDescriptors()
     return faces.map((face) => face.descriptor)
 }
 
@@ -24,6 +21,7 @@ async function registerface(student_id, file) {
         labeledFaceDescriptors.push(labeledFaceDescriptor)
     }
 }
+
 module.exports = {
     load: async () => {
         let res = false
@@ -48,7 +46,7 @@ module.exports = {
             const matcher = new faceapi.FaceMatcher(labeledFaceDescriptors, distanceThreshold)
             const descriptors = await getDescriptors(faciallogin)
             for (const descriptor of descriptors) {
-                const match = await matcher.findBestMatch(descriptor)
+                const match = matcher.findBestMatch(descriptor)
                 matches.push(match)
             }
             if(matches.length > 0 ) {
@@ -62,18 +60,16 @@ module.exports = {
             res.status = false
             res.match = matches
         }
+        console.log(res)
         return res
     }, 
     checkface: async (facial) => {
         let res = null
         try {
-            const buffer = fs.readFileSync(facial)
-            const tensor = tf.node.decodeImage(buffer, 3)
-            const faces = await faceapi.detectAllFaces(tensor, optionsSSDMobileNet).withFaceLandmarks().withFaceDescriptors()
-            tf.dispose(tensor) 
+            const image = await canvas.loadImage(facial)
+            const faces = await faceapi.detectAllFaces(image, optionsSSDMobileNet).withFaceLandmarks().withFaceDescriptors()
             faces.length === 1 ? res = true : res = false
         } catch (e) {
-            console.log(e) 
             res = false
         }
         return res
