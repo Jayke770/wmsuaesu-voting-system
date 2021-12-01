@@ -181,16 +181,20 @@ module.exports = {
     count_vote: (position, votes) => {
         let position_count = 0 
 
-        for(let i = 0; i < votes.length; i++){
-            if(JSON.parse(votes[i]).positionID === position.id){
-                position_count += 1
+        if(votes instanceof Array){
+            for(let i = 0; i < votes.length; i++){
+                if(JSON.parse(votes[i]).positionID === position.id){
+                    position_count += 1
+                }
             }
-        }
-        if(position_count === 0){
-            return false
+            if(position_count === 0){
+                return false
+            } else {
+                return position_count <= parseInt(position.maxvote)
+            }  
         } else {
-            return position_count <= parseInt(position.maxvote)
-        }  
+            return false
+        }
     },
     is_course_eligible: async (electionID, voter_course) => {
         let res = false
