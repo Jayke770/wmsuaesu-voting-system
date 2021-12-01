@@ -48,6 +48,7 @@ const user =  new mongoose.Schema({
     visitors:{
         type: Array,
     },
+    sy: {},
     notifications:{
         account: {
             type: Array,
@@ -83,8 +84,6 @@ const user =  new mongoose.Schema({
         cover: {}, 
         profile: {}
     },
-    last_seen: {},
-    sy: {},
     facial: {},
     created: {
         type: Date, 
