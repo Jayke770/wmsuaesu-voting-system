@@ -5,7 +5,7 @@ const path = require('path')
 const canvas = require('canvas')
 const MODELS_URL = path.join(__dirname, '/face-models/')
 let optionsSSDMobileNet, labeledFaceDescriptors = []
-const distanceThreshold = 0.10
+const distanceThreshold = 0.6
 const minConfidence = 0.15
 monkeyPatchFaceApiEnv()
 async function getDescriptors(file) {
