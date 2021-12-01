@@ -3,43 +3,50 @@ $(document).ready( async () => {
     const capture = document.getElementById('fc')
     let regdata = new FormData()
     //camera capture
+    startcamera()
     let cameraStream = null, vidPlaying = false
     const mediaSupport = 'mediaDevices' in navigator 
-    Swal.fire({
-        icon: 'warning', 
-        title: 'Camera Permission', 
-        html: 'Please allow camera permission to register your face', 
-        backdrop: true, 
-        allowOutsideClick: false, 
-        showConfirmButton: false, 
-        willOpen: () => {
-            Swal.showLoading()
-            if (mediaSupport && null == cameraStream) {
-                navigator.mediaDevices.getUserMedia({ video: true }).then(function (mediaStream) {
-                    cameraStream = mediaStream
-                    video.srcObject = mediaStream
-                    video.play()
-                }).catch(function (err) {
-                    console.log(err)
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Unable to acess the camera',
-                        html: 'Please restart your browser',
-                        backdrop: true,
-                        allowOutsideClick: false,
-                    })
-                })
-            } else {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Unsupported Browser',
-                    html: 'We Suggest to use Chrome or Mozilla Browser',
-                    backdrop: true,
-                    allowOutsideClick: false,
-                })
+    function startcamera() {
+        Swal.fire({
+            icon: 'warning', 
+            title: 'Requesting Camera Permission', 
+            html: 'Please allow camera permission to register your face', 
+            backdrop: true, 
+            allowOutsideClick: false, 
+            showConfirmButton: false, 
+            willOpen: () => {
+                Swal.showLoading()
+                setTimeout( () => {
+                    if (mediaSupport && null == cameraStream) {
+                        navigator.mediaDevices.getUserMedia({ video: true }).then(function (mediaStream) {
+                            cameraStream = mediaStream
+                            video.srcObject = mediaStream
+                            video.play()
+                        }).then( () => {
+                            Swal.close()
+                        }).catch(function (err) {
+                            console.log(err)
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Unable to acess the camera',
+                                html: 'Please restart your browser',
+                                backdrop: true,
+                                allowOutsideClick: false,
+                            })
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Unsupported Browser',
+                            html: 'We Suggest to use Chrome or Mozilla Browser',
+                            backdrop: true,
+                            allowOutsideClick: false,
+                        })
+                    }
+                }, 1000)
             }
-        }
-    })
+        })
+    }
     video.addEventListener('playing', () => {
         vidPlaying = true
     })
@@ -90,6 +97,7 @@ $(document).ready( async () => {
                                     capture.classList.remove("hidden")
                                     $(this).text("Re-capture")
                                     $(this).attr("captured", "true")
+                                    stopcamera()
                                 }
                             }, 1000)
                         }
@@ -102,6 +110,7 @@ $(document).ready( async () => {
             $(this).text("Capture")
             $(this).attr("captured", "false")
             regdata.delete("facialreg")
+            startcamera()
         }
     })
     let upload = false
@@ -139,7 +148,7 @@ $(document).ready( async () => {
                                 if(req.ok){
                                     const res = await req.json()
                                     regdata.delete("facialreg")
-                                    console.log(res)
+                                    upload = false
                                     Swal.fire({
                                         icon: res.status ? 'success' : 'info', 
                                         title: res.txt, 
@@ -151,6 +160,11 @@ $(document).ready( async () => {
                                             if(res.status){
                                                 Swal.showLoading()
                                                 window.location.assign('/home')
+                                            } else {
+                                                video.classList.remove("hidden")
+                                                capture.classList.add("hidden")
+                                                $(".capture").text("Re-Capture")
+                                                $(".capture").attr("captured", "true")
                                             }
                                         }
                                     })
@@ -158,6 +172,10 @@ $(document).ready( async () => {
                                     throw new Error(`${req.status} ${req.statusText}`)
                                 }
                             } catch (e) {
+                                video.classList.remove("hidden")
+                                capture.classList.add("hidden")
+                                $(".capture").text("Re-Capture")
+                                $(".capture").attr("captured", "true")
                                 regdata.delete("facialreg")
                                 upload = false
                                 Swal.fire({
@@ -178,7 +196,6 @@ $(document).ready( async () => {
         if (null != cameraStream) {
             var track = cameraStream.getTracks()[0]
             track.stop()
-            stream.load()
             cameraStream = null
         }
     }

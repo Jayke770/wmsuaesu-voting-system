@@ -24,7 +24,7 @@ const moment = require('moment-timezone')
 const uaParser = require('ua-parser-js')
 const emailValidator = require('is-email')
 const jimp = require('jimp')
-const {load, identifyface} = require('../routes/face-api/faceRecognition')
+const {load, identifyface, checkface} = require('../routes/face-api/faceRecognition')
 //profile 
 router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
     const {id} = req.params 
@@ -2668,23 +2668,35 @@ router.post('/account/facial/register/', normal_limit, isloggedin, async (req, r
     const {facial} = await user_data(myid)
     try {
         if(!facial){
-            if(await fs.pathExists(facialreg[0].path)){
-                await img2base64(facialreg[0].path).then( async (reg_file) => {
-                    fs.remove(facialreg[0].path).then( async () => {
-                        await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: reg_file}}).then( () => {
-                            delete req.session.need_facial
-                            return res.send({
-                                status: true, 
-                                txt: 'Face Successfully Registered', 
-                                msg: 'Redirecting..'
+            if(await load()){
+                if(await checkface(facialreg[0].path)){
+                    if(await fs.pathExists(facialreg[0].path)){
+                        await img2base64(facialreg[0].path).then( async (reg_file) => {
+                            fs.remove(facialreg[0].path).then( async () => {
+                                await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: reg_file}}).then( () => {
+                                    delete req.session.need_facial
+                                    return res.send({
+                                        status: true, 
+                                        txt: 'Face Successfully Registered', 
+                                        msg: 'Redirecting..'
+                                    })
+                                }).catch( (e) => {
+                                    throw new Error(e)
+                                })
+                            }).catch( (e) => {
+                                throw new Error(e)
                             })
-                        }).catch( (e) => {
-                            throw new Error(e)
                         })
-                    }).catch( (e) => {
-                        throw new Error(e)
+                    }
+                } else {
+                    return res.send({
+                        status: false, 
+                        txt: 'No Face Detected', 
+                        msg: 'Please check your environment and make sure that your face is clear'
                     })
-                })
+                }
+            } else {
+                throw new Error('Failed to load face models')
             }
         } else {
             delete req.session.need_facial

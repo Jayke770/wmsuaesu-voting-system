@@ -36,7 +36,6 @@ module.exports = {
             optionsSSDMobileNet = new faceapi.SsdMobilenetv1Options({ minConfidence, maxResults: 1 })
             res = true
         } catch (e) {
-            console.log(e)
             res = false
         }
         return res
@@ -64,6 +63,21 @@ module.exports = {
         } catch (e) {
             res.status = false
             res.match = matches
+        }
+        return res
+    }, 
+    checkface: async (facial) => {
+        let res = {
+            status: null
+        }
+        try {
+            const buffer = fs.readFileSync(facial)
+            const tensor = tf.node.decodeImage(buffer, 3)
+            const faces = await faceapi.detectAllFaces(tensor, optionsSSDMobileNet)
+            tf.dispose(tensor) 
+            faces.length > 0 ? res.status = true : res.status = false
+        } catch (e) {
+            res.status = false
         }
         return res
     }

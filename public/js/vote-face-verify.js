@@ -7,37 +7,41 @@ function startcamera() {
     const mediaSupport = 'mediaDevices' in navigator
     Swal.fire({
         icon: 'warning', 
-        title: 'Camera Permission', 
+        title: 'Requesting Camera Permission', 
         html: 'Please allow camera permission to verify your face', 
         backdrop: true, 
         allowOutsideClick: false, 
         showConfirmButton: false, 
         willOpen: () => {
             Swal.showLoading()
-            if (mediaSupport && null == cameraStream) {
-                navigator.mediaDevices.getUserMedia({ video: true }).then(function (mediaStream) {
-                    cameraStream = mediaStream
-                    video.srcObject = mediaStream
-                    video.play()
-                }).catch(function (err) {
-                    console.log(err)
+            setTimeout( () => {
+                if (mediaSupport && null == cameraStream) {
+                    navigator.mediaDevices.getUserMedia({ video: true }).then(function (mediaStream) {
+                        cameraStream = mediaStream
+                        video.srcObject = mediaStream
+                        video.play()
+                    }).then( () => {
+                        Swal.close()
+                    }).catch(function (err) {
+                        console.log(err)
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Unable to access the camera',
+                            html: 'Please restart your browser',
+                            backdrop: true,
+                            allowOutsideClick: false,
+                        })
+                    })
+                } else {
                     Swal.fire({
                         icon: 'info',
-                        title: 'Unable to acess the camera',
-                        html: 'Please restart your browser',
+                        title: 'Unsupported Browser',
+                        html: 'We Suggest to use Chrome or Mozilla Browser',
                         backdrop: true,
                         allowOutsideClick: false,
                     })
-                })
-            } else {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Unsupported Browser',
-                    html: 'We Suggest to use Chrome or Mozilla Browser',
-                    backdrop: true,
-                    allowOutsideClick: false,
-                })
-            }
+                }
+            }, 1000)
         }
     })
 }
@@ -45,7 +49,6 @@ video.addEventListener('playing', () => {
     vidPlaying = true
 })
 $(".capture").click(function () {
-    startcamera()
     const captured = $(this).attr("captured") === "true" ? true : false
     if (!captured && vidPlaying) {
         let timerInterval
@@ -93,6 +96,7 @@ $(".capture").click(function () {
                                 capture.classList.remove("hidden")
                                 $(this).text("Re-capture")
                                 $(this).attr("captured", "true")
+                                stopcamera()
                             }
                         }, 1000)
                     }
@@ -105,6 +109,7 @@ $(".capture").click(function () {
         $(this).text("Capture")
         $(this).attr("captured", "false")
         logindata.delete("faciallogin")
+        startcamera()
     }
 })
 let upload = false
@@ -185,8 +190,7 @@ $(".upload-fc").submit(function (e) {
                                                         }).then( () => {
                                                             if(res.status){
                                                                 window.location.assign(`/home/election/id/election/${$('meta[name="electionID"]').attr("content")}/results/`)
-                                                                $(".submit-vote").find("button[type='reset']").click()
-                                                                
+                                                                $(".submit-vote").find("button[type='reset']").click() 
                                                             } 
                                                         })
                                                     } else {
@@ -216,7 +220,6 @@ $(".upload-fc").submit(function (e) {
                                             $(this).text("Capture")
                                             $(this).attr("captured", "false")
                                             logindata.delete("faciallogin")
-                                            stopcamera()
                                         })
                                     }
                                 }
@@ -228,7 +231,6 @@ $(".upload-fc").submit(function (e) {
                             $(this).text("Capture")
                             $(this).attr("captured", "false")
                             logindata.delete("faciallogin")
-                            stopcamera()
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Connection error',
