@@ -48,6 +48,9 @@ const user =  new mongoose.Schema({
     visitors:{
         type: Array,
     },
+    last_seen: {
+        type: String,
+    },
     sy: {
         type: String,
     },

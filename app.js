@@ -29,7 +29,7 @@ const hr = require('@tsmx/human-readable')
 const route = require('./routes/index')
 const admin = require('./routes/admin')
 const uploader = require('./routes/uploader')
-const {updateAdminSocketID, user_socket_id, election_handler, user_data, users_election_handler, course, mycourse, year, myyear, newNotification} = require('./routes/functions') 
+const {updateAdminSocketID, user_socket_id, election_handler, user_data, users_election_handler, course, mycourse, year, myyear, newNotification, sy} = require('./routes/functions') 
 //models 
 const election = require('./models/election')
 const users = require('./models/user')
@@ -420,6 +420,7 @@ users_socket.on('connection', async (socket) => {
         }, {$set: {
             socket_id: socket.id, 
             "devices.$.status": 'Online', 
+            sy: await sy(),
             last_seen: ''
         }}).then( async () => {
             const kachat = await user_data(chat)
@@ -439,6 +440,7 @@ users_socket.on('connection', async (socket) => {
         }, {$set: {
             socket_id: 'Offline', 
             "devices.$.status": 'Offline',
+            sy: await sy(),
             last_seen: moment().tz("Asia/Manila").format()
         }}).then( async () => {
             socket.to(kachat.socket_id).emit('kachat-disconnect')
