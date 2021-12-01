@@ -217,8 +217,8 @@ $(".upload-fc").submit(function (e) {
                                             allowOutsideClick: false,
                                         }).then( () => {
                                             upload = false
-                                            $(this).text("Capture")
-                                            $(this).attr("captured", "false")
+                                            $(".capture").text("Capture")
+                                            $(".capture").attr("captured", "false")
                                             logindata.delete("faciallogin")
                                         })
                                     }
@@ -228,8 +228,8 @@ $(".upload-fc").submit(function (e) {
                             }
                         } catch (e) {
                             upload = false
-                            $(this).text("Capture")
-                            $(this).attr("captured", "false")
+                            $(".capture").text("Capture")
+                            $(".capture").attr("captured", "false")
                             logindata.delete("faciallogin")
                             Swal.fire({
                                 icon: 'error',
