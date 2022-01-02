@@ -4079,7 +4079,7 @@ adminrouter.post('/control/users/accept-facial/', isadmin, limit, async (req, re
                 console.log(f)
                 await newNotification(id, 'account', {
                     id: uuid(), 
-                    content: "Your face successfully verified",
+                    content: "Your facial data successfully verified",
                     created: moment().tz("Asia/Manila").format()
                 })
                 return res.send({

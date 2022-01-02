@@ -44,9 +44,7 @@ router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
             const userData = await user_data(id)
             if(userData){
                 await user.updateOne({_id: {$eq: xs(id)}}, {$pull: {visitors: {$eq: xs(myid.toString())}}}).then( async (pl) => {
-                    console.log(pl)
                     await user.updateOne({_id: {$eq: xs(id)}}, {$push: {visitors: {$eq: xs(myid.toString())}}}).then( async (ps) => {
-                        console.log(ps)
                         return res.render('profile/profile', {
                             profile: false,
                             userData: userData, 
@@ -68,7 +66,6 @@ router.get('/home/profile/:id/', normal_limit, isloggedin, async (req, res) => {
         }
 
     } catch (e) {
-        console.log(e) 
         return res.status(500).render('error/500')
     }
 }) 
@@ -151,7 +148,6 @@ router.post('/home/profile/:id/change-profile-photo/', limit, isloggedin, async 
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -178,7 +174,6 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
     const {elections, devices, facial} = await user_data(myid)
     !facial.image ? req.session.need_facial = true : req.session.need_facial = false
     const {need_facial} = req.session
-    console.log(need_facial)
     let electionsJoined = []
     try {
         let device_verified
@@ -323,7 +318,6 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
             }
         }
     } catch (e) {
-        console.log(e)
         req.session.destroy()
         return res.redirect('/')
     }
@@ -503,7 +497,6 @@ router.post('/login', limit, async (req, res) => {
             })
         }
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -734,7 +727,6 @@ router.post('/register', normal_limit, async (req, res) => {
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -879,7 +871,6 @@ router.post('/home/join-election/', normal_limit, isloggedin, async (req, res) =
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -934,7 +925,6 @@ router.post('/home/leave-election/', normal_limit, isloggedin, async (req, res) 
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -1094,7 +1084,6 @@ router.post('/home/election/re-submit-candidacy-form/', normal_limit, isloggedin
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -1404,7 +1393,6 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.redirect('/home')
     }
 })
@@ -1706,7 +1694,6 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
             return res.status(403).send()
         }
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -1763,7 +1750,6 @@ router.get('/home/election/id/*/results/', normal_limit, isloggedin, async (req,
             throw new Error(e)
         })        
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -1909,7 +1895,6 @@ router.post('/account/settings/menu/change-e-mail', normal_limit, isloggedin, as
             })
         }
     } catch (e){ 
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -1936,7 +1921,6 @@ router.get('/account/settings/verify-email/:email/:emailID/:id/', normal_limit, 
             }
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -1994,7 +1978,6 @@ router.post('/account/settings/verify-email/:email/:emailID/:id/', normal_limit,
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -2030,7 +2013,6 @@ router.post('/account/settings/email/remove-email/', normal_limit, isloggedin, a
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -2042,7 +2024,6 @@ router.post('/account/settings/email/change-email/', normal_limit, isloggedin, a
         await user.updateOne({
             _id: {$eq: xs(myid)}
         }, {$set: {email: {}}}).then( (k) => {
-            console.log(k)
             return res.send({
                 status: true, 
                 txt: "You can now change your email",
@@ -2052,7 +2033,6 @@ router.post('/account/settings/email/change-email/', normal_limit, isloggedin, a
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -2111,7 +2091,6 @@ router.post('/account/settings/username/change-username/', normal_limit, islogge
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -2167,7 +2146,6 @@ router.post('/account/settings/password/change-password/', normal_limit, islogge
             })
         }
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -2267,7 +2245,6 @@ router.post('/account/settings/secure/add-email/', normal_limit, isloggedin, asy
            })
        }
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -2346,7 +2323,6 @@ router.post('/account/settings/secure/verify-device/', normal_limit, isloggedin,
             })
         }
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -2428,7 +2404,6 @@ router.post('/account/notifications/', normal_limit, isloggedin, async (req, res
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -2516,7 +2491,6 @@ router.post('/account/notifications/remove/', normal_limit, isloggedin, async (r
             })
         }
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -2524,7 +2498,6 @@ router.post('/account/notifications/remove/', normal_limit, isloggedin, async (r
 router.post('/account/messages/', normal_limit, isloggedin, async (req, res) => {
     const {myid} = req.session 
     const {student_id} = await user_data(myid)
-    console.log(myid)
     try {
         await conversations.find({"userIDs.id": {$eq: xs(myid)}}).then( async (userConversations) => {
             return res.render('message/messages-list', {
@@ -2537,7 +2510,6 @@ router.post('/account/messages/', normal_limit, isloggedin, async (req, res) => 
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -2575,7 +2547,6 @@ router.post('/account/messages/search-users/', normal_limit, isloggedin, async (
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -2631,7 +2602,6 @@ router.post('/account/messages/begin-chat/', normal_limit, isloggedin, async (re
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -2719,7 +2689,6 @@ router.post('/account/facial/register/', normal_limit, isloggedin, async (req, r
             })
         }
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
@@ -2791,7 +2760,6 @@ router.post('/account/facial/login/', normal_limit, isloggedin, async (req, res)
             })
         }
     } catch(e) {
-        console.log(e) 
         return res.status(500).send()
     }
 })
@@ -2829,7 +2797,6 @@ router.post('/account/voter/facial/', normal_limit, isloggedin, async (req, res)
             throw new Error(e)
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send()
     }
 })
