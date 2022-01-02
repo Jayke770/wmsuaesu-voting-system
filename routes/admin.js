@@ -19,6 +19,7 @@ const moment = require('moment-timezone')
 const nl2br = require('nl2br')
 const path = require('path')
 const fs = require('fs-extra')
+const jimp = require('jimp')
 /* request user profile image */
 adminrouter.get('/profile/:id/', normal_limit, async (req, res) => {
     const {id} = req.params 
@@ -4057,8 +4058,70 @@ adminrouter.post('/control/users/email/', isadmin, limit, async (req, res) => {
 //get user facial
 adminrouter.post('/control/users/facial/', isadmin, limit, async (req, res) => {
     const {id} = req.body 
-    const {_id} = await user_data(id)
-    console.log(id, _id)
+    const {_id, facial} = await user_data(id)
+    try {
+        return res.render('control/forms/user-settings-facial', {
+            id: _id, 
+            facial: facial
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+})
+//accept facial data 
+adminrouter.post('/control/users/accept-facial/', isadmin, limit, async (req, res) => {
+    const {id} = req.body
+
+    try {
+        if(!facial.status){
+            await user.updateOne({_id: {$eq: xs(id)}}, {$set: {"facial.status": true}}).then( async (f) => {
+                console.log(f)
+                await newNotification(id, 'account', {
+                    id: uuid(), 
+                    content: "Your face successfully verified",
+                    created: moment().tz("Asia/Manila").format()
+                })
+                return res.send({
+                    status: true, 
+                    txt: 'Face Successfully Accepted'
+                })
+            }).catch( (e) => {
+                throw new Error(e)
+            })
+        } else  {
+            return res.send({
+                status: false, 
+                txt: 'Face is Already Accepted'
+            })
+        }
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
+})
+//delete facial data 
+adminrouter.post('/control/users/delete-facial/', isadmin, limit, async (req, res) => {
+    const {id} = req.body
+    try {
+        await user.updateOne({_id: {$eq: xs(id)}}, {$set: {facial: {}}}).then( async (f) => {
+            console.log(f)
+            await newNotification(id, 'account', {
+                id: uuid(), 
+                content: "Your facial data was rejected",
+                created: moment().tz("Asia/Manila").format()
+            })
+            return res.send({
+                status: true, 
+                txt: 'Facial Data Successfully Deleted'
+            })
+        }).catch( (e) => {
+            throw new Error(e)
+        })
+    } catch (e) {
+        console.log(e) 
+        return res.status(500).send()
+    }
 })
 //update fullname 
 adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res) => {

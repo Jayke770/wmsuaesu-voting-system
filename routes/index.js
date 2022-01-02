@@ -175,9 +175,10 @@ router.get('/', authenticated, normal_limit, async (req, res) => {
 router.get('/home', normal_limit, isloggedin, async (req, res) => {
     delete req.session.electionID
     const {myid, device, chat} = req.session
-    const {elections, devices, facial} = await user_data(myid) 
-    !facial ? req.session.need_facial = true : req.session.need_facial = false
+    const {elections, devices, facial} = await user_data(myid)
+    !facial.image ? req.session.need_facial = true : req.session.need_facial = false
     const {need_facial} = req.session
+    console.log(need_facial)
     let electionsJoined = []
     try {
         let device_verified
@@ -417,7 +418,7 @@ router.post('/login', limit, async (req, res) => {
                                             req.session.user_type = "Voter" // user type
                                             req.session.myid = usp[0]._id // user id
                                             req.session.data = await user_data(usp[0]._id)
-                                            req.session.need_facial = usp[0].facial ? false : true
+                                            req.session.need_facial = usp[0].facial.image ? false : true
                                             return res.send({
                                                 islogin: true,
                                                 msg: "Welcome " + usp[0].firstname
@@ -1258,7 +1259,7 @@ router.get('/home/election/id/:electionID/', normal_limit, isloggedin, async (re
     const {electionID} = req.params
     const {myid, device, chat} = req.session 
     const {student_id, devices, facial} = await user_data(myid)
-    !facial ? req.session.need_facial = true : req.session.need_facial = false
+    !facial.image ? req.session.need_facial = true : req.session.need_facial = false
     const {need_facial} = req.session
     try {
         let device_data
@@ -1314,7 +1315,7 @@ router.get('/home/election/id/:electionID/candidates/', normal_limit, isloggedin
     const {id} = req.body 
     const {electionID, myid, device, chat} = req.session 
     const {_id, student_id, devices, facial} = await user_data(myid)
-    !facial ? req.session.need_facial = true : req.session.need_facial = false
+    !facial.image ? req.session.need_facial = true : req.session.need_facial = false
     const {need_facial} = req.session
     let candidateAccepted = []
     try {
@@ -1540,7 +1541,7 @@ router.post('/home/election/id/*/candidates/view-candidate/', normal_limit, islo
 router.get('/home/election/id/*/vote/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid, device, chat} = req.session 
     const {devices, facial} = await user_data(myid)
-    !facial ? req.session.need_facial = true : req.session.need_facial = false
+    !facial.image ? req.session.need_facial = true : req.session.need_facial = false
     const {need_facial} = req.session
     try {
         let device_data
@@ -1713,7 +1714,7 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
 router.get('/home/election/id/*/results/', normal_limit, isloggedin, async (req, res) => {
     const {electionID, myid, device, chat} = req.session 
     const {devices, facial} = await user_data(myid)
-    !facial ? req.session.need_facial = true : req.session.need_facial = false
+    !facial.image ? req.session.need_facial = true : req.session.need_facial = false
     const {need_facial} = req.session
     try {
         let device_data
@@ -2668,7 +2669,7 @@ router.post('/account/facial/register/', normal_limit, isloggedin, async (req, r
     const {facial} = await user_data(myid)
     try {
         if(facialreg instanceof Array){
-            if(!facial){
+            if(!facial.image){
                 if(await load()){
                     if(await checkface(facialreg[0].path)){
                         if(await fs.pathExists(facialreg[0].path)){
@@ -2682,7 +2683,7 @@ router.post('/account/facial/register/', normal_limit, isloggedin, async (req, r
                                         return res.send({
                                             status: true, 
                                             txt: 'Face Successfully Registered', 
-                                            msg: 'We will send you a notification once you are validated as a voter <br> Redirecting...'
+                                            msg: 'We will send you a notification once you are validated as a voter <br><br> Redirecting...'
                                         })
                                     }).catch( (e) => {
                                         throw new Error(e)
@@ -2730,7 +2731,7 @@ router.post('/account/facial/login/', normal_limit, isloggedin, async (req, res)
     try {
         if(faciallogin){
             if(facial){
-                const buffer = Buffer.from(facial, "base64")
+                const buffer = Buffer.from(facial.image, "base64")
                 jimp.read(buffer, (err, res) => {
                     if (err) throw new Error(err)
                     res.quality(100).write(`uploads/${student_id}.jpg`)

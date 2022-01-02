@@ -256,6 +256,141 @@ $(document).ready( function (){
             child.removeClass(child.attr("animate-out"))
         }, 500)
     })
+    //accept, reject, & delete facial 
+    let acceptFacial = false
+    $(".user_info").delegate("#accept-facial", "click", function (e) {
+        e.preventDefault()
+        if(!acceptFacial){
+            Swal.fire({
+                icon: 'question',
+                title: 'Accept Facial Data', 
+                html: 'This will accept the facial data of the currect voter.', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                confirmButtonText: 'Accept', 
+                showDenyButton: true, 
+                denyButtonText: 'Cancel'
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Accepting Facial Data', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            try {
+                                acceptFacial = true
+                                let data = new FormData() 
+                                data.append("id", $(this).attr("data"))
+                                const req = await fetchtimeout('/control/users/accept-facial/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    acceptFacial = false 
+                                    Swal.fire({
+                                        icon: res.status ? 'success' : 'info', 
+                                        title: res.txt,
+                                        backdrop: true, 
+                                        allowOutsideClick: false
+                                    }).then( () => {
+                                        if(res.status) {
+                                            Data.info_menu($(this).attr("data"), "facial")
+                                        }
+                                    })
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                acceptFacial = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false, 
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+    let deleteFacial = false
+    $(".user_info").delegate("#delete-facial", "click", function (e) {
+        e.preventDefault()
+        if(!acceptFacial){
+            Swal.fire({
+                icon: 'question',
+                title: 'Delete Facial Data', 
+                html: 'This will delete the facial data of the currect voter.', 
+                backdrop: true, 
+                allowOutsideClick: false, 
+                confirmButtonText: 'Delete', 
+                showDenyButton: true, 
+                denyButtonText: 'Cancel'
+            }).then( (a) => {
+                if(a.isConfirmed){
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Deleting Facial Data', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false, 
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            try {
+                                deleteFacial = true
+                                let data = new FormData() 
+                                data.append("id", $(this).attr("data"))
+                                const req = await fetchtimeout('/control/users/delete-facial/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }, 
+                                    body: data
+                                })
+                                if(req.ok){
+                                    const res = await req.json() 
+                                    deleteFacial = false 
+                                    Swal.fire({
+                                        icon: res.status ? 'success' : 'info', 
+                                        title: res.txt,
+                                        backdrop: true, 
+                                        allowOutsideClick: false
+                                    }).then( () => {
+                                        if(res.status) {
+                                            Data.info_menu($(this).attr("data"), "facial")
+                                        }
+                                    })
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                deleteFacial = false
+                                Swal.fire({
+                                    icon: 'error', 
+                                    title: 'Connection error', 
+                                    html: e.message, 
+                                    backdrop: true, 
+                                    allowOutsideClick: false, 
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
     $(".side_nav").click( function (e) {
         if($(e.target).hasClass("side_nav")) {
             e.preventDefault() 
