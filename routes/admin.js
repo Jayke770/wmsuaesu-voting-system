@@ -4054,6 +4054,12 @@ adminrouter.post('/control/users/email/', isadmin, limit, async (req, res) => {
         return res.status(500).send()
     }
 })
+//get user facial
+adminrouter.post('/control/users/facial/', isadmin, limit, async (req, res) => {
+    const {id} = req.body 
+    const {_id} = await user_data(id)
+    console.log(id, _id)
+})
 //update fullname 
 adminrouter.post('/control/users/update/:cmd/', isadmin, limit, async (req, res) => {
     const {cmd} = req.params 

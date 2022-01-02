@@ -2674,12 +2674,15 @@ router.post('/account/facial/register/', normal_limit, isloggedin, async (req, r
                         if(await fs.pathExists(facialreg[0].path)){
                             await img2base64(facialreg[0].path).then( async (reg_file) => {
                                 fs.remove(facialreg[0].path).then( async () => {
-                                    await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {facial: reg_file}}).then( () => {
+                                    await user.updateOne({_id: {$eq: xs(myid)}}, {$set: {
+                                        "facial.status": false,
+                                        "facial.image": reg_file
+                                    }}).then( () => {
                                         delete req.session.need_facial
                                         return res.send({
                                             status: true, 
                                             txt: 'Face Successfully Registered', 
-                                            msg: 'Redirecting..'
+                                            msg: 'We will send you a notification once you are validated as a voter <br> Redirecting...'
                                         })
                                     }).catch( (e) => {
                                         throw new Error(e)
