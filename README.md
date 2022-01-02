@@ -44,6 +44,6 @@
 </p>
 
 ## Production Links  
-| Server | Link Status |
+| Server | Link Status |b
 | -------- | ---------- |
 | Heroku | <a href="https://wmsuaesu-voting-system.herokuapp.com"> <img src="https://img.shields.io/website?down_message=Offline&label=Production%20Status&style=for-the-badge&up_message=Online&url=https%3A%2F%2Fwmsuaesu-voting-system.herokuapp.com"> </a> |
