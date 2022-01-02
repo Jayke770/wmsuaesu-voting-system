@@ -4072,7 +4072,7 @@ adminrouter.post('/control/users/facial/', isadmin, limit, async (req, res) => {
 //accept facial data 
 adminrouter.post('/control/users/accept-facial/', isadmin, limit, async (req, res) => {
     const {id} = req.body
-
+    const {facial} = await user_data(id) 
     try {
         if(!facial.status){
             await user.updateOne({_id: {$eq: xs(id)}}, {$set: {"facial.status": true}}).then( async (f) => {

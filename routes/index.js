@@ -2683,7 +2683,7 @@ router.post('/account/facial/register/', normal_limit, isloggedin, async (req, r
                                         return res.send({
                                             status: true, 
                                             txt: 'Face Successfully Registered', 
-                                            msg: 'We will send you a notification once you are validated as a voter <br><br> Redirecting...'
+                                            msg: 'We will send you a notification once we validate your Facial Data <br><br> Redirecting...'
                                         })
                                     }).catch( (e) => {
                                         throw new Error(e)
