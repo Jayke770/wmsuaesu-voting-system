@@ -89,7 +89,14 @@ const user =  new mongoose.Schema({
         cover: {}, 
         profile: {}
     },
-    facial: {},
+    facial: {
+        status: {
+            type: Boolean
+        }, 
+        image: {
+            type: String
+        }
+    },
     created: {
         type: Date, 
         default: Date.now()

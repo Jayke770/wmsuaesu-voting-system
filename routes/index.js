@@ -172,6 +172,7 @@ router.get('/home', normal_limit, isloggedin, async (req, res) => {
     delete req.session.electionID
     const {myid, device, chat} = req.session
     const {elections, devices, facial} = await user_data(myid)
+    console.log(facial)
     !facial.image ? req.session.need_facial = true : req.session.need_facial = false
     const {need_facial} = req.session
     let electionsJoined = []
@@ -566,7 +567,11 @@ router.post('/register', normal_limit, async (req, res) => {
                                                 username: xs(usr),
                                                 password: hash_password, 
                                                 devices: [device], 
-                                                sy: await sy()
+                                                sy: await sy(), 
+                                                facial: {
+                                                    status: null, 
+                                                    image: ''
+                                                },
                                             }).then(async (new_user) => {
                                                 const userData = await user_data(new_user._id)
                                                 req.session.device = device.id
