@@ -1,16 +1,16 @@
-require('@tensorflow/tfjs-node')
+const tf = require('@tensorflow/tfjs-node')
+const fs = require('fs-extra')
 const faceapi = require('@vladmandic/face-api')
-const {monkeyPatchFaceApiEnv} = require('./monkeyPatch')
 const path = require('path')
-const canvas = require('canvas')
 const MODELS_URL = path.join(__dirname, '/face-models/')
 let optionsSSDMobileNet, labeledFaceDescriptors = []
 const distanceThreshold = 0.6
-const minConfidence = 0.15
-monkeyPatchFaceApiEnv()
+const minConfidence = 0.1
 async function getDescriptors(file) {
-    const image = await canvas.loadImage(file)
-    const faces = await faceapi.detectAllFaces(image, optionsSSDMobileNet).withFaceLandmarks().withFaceDescriptors()
+    const buffer = fs.readFileSync(file)
+    const tensor = tf.node.decodeImage(buffer, 3)
+    const faces = await faceapi.detectAllFaces(tensor, optionsSSDMobileNet).withFaceLandmarks().withFaceExpressions().withFaceDescriptors()
+    tf.dispose(tensor)
     return faces.map((face) => face.descriptor)
 }
 
@@ -29,7 +29,8 @@ module.exports = {
             await faceapi.nets.faceRecognitionNet.loadFromDisk(MODELS_URL)
             await faceapi.nets.faceLandmark68Net.loadFromDisk(MODELS_URL)
             await faceapi.nets.ssdMobilenetv1.loadFromDisk(MODELS_URL)
-            optionsSSDMobileNet = new faceapi.SsdMobilenetv1Options({ minConfidence, maxResults: 10 })
+            await faceapi.nets.faceExpressionNet.loadFromDisk(MODELS_URL)
+            optionsSSDMobileNet = new faceapi.SsdMobilenetv1Options({ minConfidence, maxResults: 1 })
             res = true
         } catch (e) {
             res = false
@@ -49,6 +50,7 @@ module.exports = {
                 const match = matcher.findBestMatch(descriptor)
                 matches.push(match)
             }
+            console.log(matches)
             if(matches.length > 0 ) {
                 res.status = true
                 res.match = matches
