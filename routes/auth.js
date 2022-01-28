@@ -324,6 +324,7 @@ module.exports = {
             </html>
             `
     }
+    console.log("Sending")
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) { 
         console.log("error", error, info)
