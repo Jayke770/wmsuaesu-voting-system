@@ -88,6 +88,8 @@
                 <select class="sort_voters dark:bg-darkBlue-primary dark_border dark:text-gray-200 w-auto sm:w-full px-3 py-1.5 outline-none dark:focus:border-purple-700 transition-all rounded-lg">
                     <option value="" selected disabled> - Sort Voters</option>
                     <option value='<%- JSON.stringify({type: 'status', value: 'default'}) %>'>Default</option>
+                    <option value='<%- JSON.stringify({type: 'votedstatus', value: false}) %>'>Voters Not Voted</option>
+                    <option value='<%- JSON.stringify({type: 'votedstatus', value: true}) %>'>Voters Voted</option>
                     <optgroup label="Status">
                         <option value='<%- JSON.stringify({type: 'status', value: 'Accepted'}) %>'>Accepted Voters</option>
                         <option value='<%- JSON.stringify({type: 'status', value: 'Pending'}) %>'>Pending Voters</option>

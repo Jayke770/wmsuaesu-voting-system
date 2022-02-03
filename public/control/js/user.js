@@ -264,7 +264,7 @@ $(document).ready( function (){
             Swal.fire({
                 icon: 'question',
                 title: 'Accept Facial Data', 
-                html: 'This will accept the facial data of the currect voter.', 
+                html: 'This will accept the facial data of the current voter.', 
                 backdrop: true, 
                 allowOutsideClick: false, 
                 confirmButtonText: 'Accept', 
