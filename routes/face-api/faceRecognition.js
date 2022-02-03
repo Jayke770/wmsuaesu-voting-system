@@ -68,8 +68,10 @@ module.exports = {
     checkface: async (facial) => {
         let res = null
         try {
-            const image = await canvas.loadImage(facial)
-            const faces = await faceapi.detectAllFaces(image, optionsSSDMobileNet).withFaceLandmarks().withFaceDescriptors()
+            const buffer = fs.readFileSync(facial)
+            const tensor = tf.node.decodeImage(buffer, 3)
+            const faces = await faceapi.detectAllFaces(tensor, optionsSSDMobileNet).withFaceLandmarks().withFaceExpressions().withFaceDescriptors()
+            tf.dispose(tensor)
             faces.length === 1 ? res = true : res = false
         } catch (e) {
             res = false

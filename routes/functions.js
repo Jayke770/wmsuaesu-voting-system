@@ -423,7 +423,7 @@ module.exports = {
                 throw new Error(e)
             })
         } catch (e) {
-            res = {electionID: elec[i]._id, status: false, type: "Error"}
+            res = {electionID: '', status: false, type: "Error"}
         }
         return res
     },
