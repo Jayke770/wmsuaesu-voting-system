@@ -30,7 +30,7 @@ module.exports = {
             await faceapi.nets.faceLandmark68Net.loadFromDisk(MODELS_URL)
             await faceapi.nets.ssdMobilenetv1.loadFromDisk(MODELS_URL)
             await faceapi.nets.faceExpressionNet.loadFromDisk(MODELS_URL)
-            optionsSSDMobileNet = new faceapi.SsdMobilenetv1Options({ minConfidence, maxResults: 1 })
+            optionsSSDMobileNet = new faceapi.SsdMobilenetv1Options({ minConfidence, maxResults: 2 })
             res = true
         } catch (e) {
             res = false
