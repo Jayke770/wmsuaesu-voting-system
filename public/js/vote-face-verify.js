@@ -63,13 +63,15 @@ $(".capture").click(function () {
         }).then((a) => {
             if (a.isConfirmed) {
                 Swal.fire({
-                    icon: 'info',
                     toast: true,
                     title: 'Capturing Please Wait',
                     timer: 1000,
                     timerProgressBar: true,
                     showConfirmButton: false, 
                     position: 'top',
+                    willOpen: () => {
+                        Swal.showLoading()
+                    },
                     willClose: () => {
                         clearInterval(timerInterval)
                     }
@@ -200,7 +202,7 @@ $(".upload-fc").submit(function (e) {
                                                         allowOutsideClick: false
                                                     }).then( () => {
                                                         upload = false
-                                                        $(".capture").text("Capture")
+                                                        $(".capture").text("Re-Capture")
                                                         $(".capture").attr("captured", "false")
                                                         logindata.delete("faciallogin")
                                                     })

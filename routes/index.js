@@ -1603,7 +1603,7 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
     const { firstname, middlename, lastname } = await user_data(myid)
     try {
         if (voter_facial) {
-            if (votes !== undefined && votes instanceof Array) {
+            if (votes instanceof Array) {
                 await election.find({ _id: { $eq: xs(electionID) } }, { positions: 1, candidates: 1, election_title: 1 }).then(async (electionData) => {
                     if (electionData.length > 0) {
                         //check votes if valid
@@ -1613,8 +1613,7 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
                                 return res.send({
                                     status: false,
                                     txt: "Invalid Vote",
-                                    msg: 'Please select candidate first before you submit your votes'
-                                    //`Please select up to ${parseInt(electionData[0].positions[i].maxvote)} candidate for ${await myposition(electionData[0].positions[i].id)}`
+                                    msg: `Please select up to ${parseInt(electionData[0].positions[i].maxvote)} candidate for ${await myposition(electionData[0].positions[i].id)}`
                                 })
                             }
                         }
