@@ -1169,7 +1169,16 @@ adminrouter.post('/control/elections/voters/sort-voters/', limit, isadmin, async
                     return res.render('control/forms/election-voter-list', {
                         voters: result
                     })
-                } else {
+                } else if (srt.type === 'votedstatus') {
+                    for(let i = 0; i < elec_voters[0].voters.length; i++){
+                        if(elec_voters[0].voters[i].isvoted === srt.value){
+                            result.push(elec_voters[0].voters[i])
+                        }
+                    }
+                    return res.render('control/forms/election-voter-list', {
+                        voters: result
+                    })
+                }else {
                     throw new Error('unknown')
                 }
             } else {

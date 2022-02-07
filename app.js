@@ -726,8 +726,10 @@ setInterval(async () => {
 async function start() {
     await election_handler()
     await users_election_handler()
-    await fs.remove(`${process.cwd()}/uploads/`)
-    await fs.remove(`${process.cwd()}/log/`)
+    if(process.env.NODE_ENV === 'production'){
+        await fs.remove(`${process.cwd()}/uploads/`)
+        await fs.remove(`${process.cwd()}/log/`)
+    }
     http.listen(port, () => {
         console.log(`Server Started on port ${port}`)
     })
