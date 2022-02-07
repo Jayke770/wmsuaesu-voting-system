@@ -188,7 +188,7 @@ module.exports = {
                 }
             }
             if(position_count === 0){
-                return false
+                return true
             } else {
                 return position_count <= parseInt(position.maxvote)
             }  

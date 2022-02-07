@@ -1,4 +1,5 @@
 <% 
+    let positions = []
     const Data = {
         position: (id) => {
             for(let i = 0; i < data.positions.length; i++){
@@ -24,6 +25,7 @@
     <div class="flex flex-col gap-4 mt-5 rounded-md p-2">
         <form class="submit-vote grid gap-3 grid-cols-3 md:grid-cols-2 sm:grid-cols-none transition-all">
             <% for(let p = 0; p < elections.positions.length; p++) { %> 
+                <% positions.push(Data.position(elections.positions[p].id))%>
                 <div style="animation-delay: <%- p * .250 %>s;" class="submit-vote animate__animated animate__fadeInUp ms-500 ">
                     <div class="dark:bg-darkBlue-200 rounded-t-md">
                         <div class="dark_border_b px-4 py-3 flex items-center justify-start">
@@ -36,7 +38,14 @@
                              <% for (let c = 0; c < elections.candidates.length; c++) { %>
                                  <% if(elections.positions[p].id === elections.candidates[c].position){ %> 
                                      <div style="animation-delay: <%- c * .150%>s;" class="rpl relative cursor-pointer p-1.5">
-                                         <input id="vote" name="votes[]" value='<%- JSON.stringify({positionID: elections.candidates[c].position , candidateID: elections.candidates[c].id}) %>' class="peer absolute w-full h-full opacity-0 cursor-pointer" type="<%- parseInt(elections.positions[p].maxvote) > 1 ? 'checkbox' : 'radio' %>">
+                                         <input 
+                                            candidate-name="<%- elections.candidates[c].fullname %>"
+                                            position="<%- Data.position(elections.candidates[c].position) %>"
+                                            id="vote" 
+                                            name="votes[]" 
+                                            value='<%- JSON.stringify({positionID: elections.candidates[c].position , candidateID: elections.candidates[c].id}) %>' 
+                                            class="peer absolute w-full h-full opacity-0 cursor-pointer"
+                                             type="checkbox">
                                          <div class="rpl peer-checked:border-teal-600 border-[.1px] border-transparent transition-all dark:bg-darkBlue-100 flex flex-row gap-1 rounded-xl shadow-lg">
                                              <div class="flex-[10%] flex justify-center items-center p-1.5">
                                                  <img class="object-cover w-16 h-16 rounded-full" alt="candidate_profile" src="/profile/<%- elections.candidates[c].student_id %>/">
@@ -53,6 +62,7 @@
                     </div>
                 </div>
              <% } %>
+             <input type="hidden" value="<%- positions %>" id="positions"/>
              <div style="animation-delay: .500s;" class="animate__animated animate__fadeInUp ms-500 col-span-full flex justify-end sm:justify-center rounded-md items-center gap-2 p-3 py-2 dark:bg-darkBlue-200">
                 <div class="grid grid-cols-2 gap-2 sm:w-full">
                     <button type="reset" class="transition-all w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm text-white dark:text-gray-300 bg-rose-700 dark:bg-rose-800 hover:bg-rose-700 dark:hover:bg-rose-800/90 focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-darkBlue-secondary dark:focus:ring-rose-800 focus:ring-rose-500">Clear Selection</button>

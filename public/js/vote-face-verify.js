@@ -64,10 +64,12 @@ $(".capture").click(function () {
             if (a.isConfirmed) {
                 Swal.fire({
                     icon: 'info',
-                    title: 'Please Wait',
-                    html: 'Capturing in <b></b> milliseconds.',
+                    toast: true,
+                    title: 'Capturing in <b></b> milliseconds.',
                     timer: 1000,
                     timerProgressBar: true,
+                    showConfirmButton: false, 
+                    position: 'top',
                     didOpen: () => {
                         Swal.showLoading()
                         const b = Swal.getHtmlContainer().querySelector('b')

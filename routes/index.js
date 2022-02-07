@@ -1602,7 +1602,7 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
     const { electionID, myid, voter_facial } = req.session
     const { firstname, middlename, lastname } = await user_data(myid)
     try {
-        if (voter_facial) {
+        if (voter_facial && votes.length > 0) {
             if (votes !== undefined && votes instanceof Array) {
                 await election.find({ _id: { $eq: xs(electionID) } }, { positions: 1, candidates: 1, election_title: 1 }).then(async (electionData) => {
                     if (electionData.length > 0) {
@@ -1698,7 +1698,7 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
                 return res.send({
                     status: false,
                     txt: "Invalid Vote",
-                    msg: "Please select a candidate in each position"
+                    msg: "Please select a candidate first before you submit"
                 })
             }
         } else {

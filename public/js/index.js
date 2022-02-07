@@ -644,59 +644,89 @@ $(document).ready( () => {
         e.preventDefault()
         if(!vote){
             voteData = new FormData(this)
+            const postions = $('#positions').val().split(",")
+            console.log(postions)
             Swal.fire({
-                icon: 'info', 
-                title: 'Checking Voter', 
-                html: 'Please wait...', 
+                title: 'Review Your Votes', 
                 backdrop: true, 
-                allowOutsideClick: false,
-                showConfirmButton: false, 
-                willOpen: async () => {
-                    Swal.showLoading()
-                    try {
-                        vote = true
-                        const req = await fetchtimeout('/account/voter/facial/', {
-                            method: 'POST', 
-                            headers: {
-                                'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
-                            }
-                        })
-                        if(req.ok){
-                            const res = await req.json()
-                            vote = false 
-                            Swal.close()
-                            if(res.status){
-                                startcamera()
-                                const parent = $(".facial_vote")
-                                const child = $(".facial_vote_main") 
-                                child.addClass(child.attr("animate-in"))
-                                parent.removeClass("hidden")
-                                parent.addClass('flex') 
-                                setTimeout( () => {
-                                    child.removeClass(child.attr("animate-in"))
-                                }, 500)
-                            } else {
+                allowOutsideClick: false, 
+                confirmButtonText: 'Submit Votes', 
+                showDenyButton: true,
+                denyButtonText: 'Cancel',
+                footer: 'Please review your votes before you submit it', 
+                html: '<div class="v container overflow-y-auto"></div>', 
+                didOpen: () => {
+                    for(let i = 0; i < postions.length; i++){
+                        $('.v').append(`
+                            <div style="border: 0.5px solid #bdbdbd;" position='${postions[i]}' class="container text-lg flex flex-col gap-2 mb-3 p-2">
+                                <span class="text-left">${postions[i]}</span>
+                                <hr/>
+                            </div>
+                        `)
+                    }
+                    $('input#vote').each( function () {
+                        if($(this).prop("checked") === true){
+                            $(`div[position='${$(this).attr("position")}']`).append(`<span class="text-center">${$(this).attr("candidate-name")}</span>`)
+                        }
+                    })
+                },
+            }).then( (action) => {
+                if(action.isConfirmed) {
+                    Swal.fire({
+                        icon: 'info', 
+                        title: 'Checking Voter', 
+                        html: 'Please wait...', 
+                        backdrop: true, 
+                        allowOutsideClick: false,
+                        showConfirmButton: false, 
+                        willOpen: async () => {
+                            Swal.showLoading()
+                            try {
+                                vote = true
+                                const req = await fetchtimeout('/account/voter/facial/', {
+                                    method: 'POST', 
+                                    headers: {
+                                        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content")
+                                    }
+                                })
+                                if(req.ok){
+                                    const res = await req.json()
+                                    vote = false 
+                                    Swal.close()
+                                    if(res.status){
+                                        startcamera()
+                                        const parent = $(".facial_vote")
+                                        const child = $(".facial_vote_main") 
+                                        child.addClass(child.attr("animate-in"))
+                                        parent.removeClass("hidden")
+                                        parent.addClass('flex') 
+                                        setTimeout( () => {
+                                            child.removeClass(child.attr("animate-in"))
+                                        }, 500)
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info', 
+                                            title: res.txt, 
+                                            html: res.msg, 
+                                            backdrop: true, 
+                                            allowOutsideClick: false
+                                        })
+                                    }
+                                } else {
+                                    throw new Error(`${req.status} ${req.statusText}`)
+                                }
+                            } catch (e) {
+                                vote = false
                                 Swal.fire({
-                                    icon: 'info', 
-                                    title: res.txt, 
-                                    html: res.msg, 
+                                    icon: 'error', 
+                                    title: "Connection Error", 
+                                    html: e.message, 
                                     backdrop: true, 
                                     allowOutsideClick: false
                                 })
                             }
-                        } else {
-                            throw new Error(`${req.status} ${req.statusText}`)
                         }
-                    } catch (e) {
-                        vote = false
-                        Swal.fire({
-                            icon: 'error', 
-                            title: "Connection Error", 
-                            html: e.message, 
-                            backdrop: true, 
-                            allowOutsideClick: false
-                        })
-                    }
+                    })
                 }
             })
         }
