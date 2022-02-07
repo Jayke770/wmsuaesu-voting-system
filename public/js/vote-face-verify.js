@@ -65,18 +65,11 @@ $(".capture").click(function () {
                 Swal.fire({
                     icon: 'info',
                     toast: true,
-                    title: 'Capturing in <b></b> milliseconds.',
+                    title: 'Capturing Please Wait',
                     timer: 1000,
                     timerProgressBar: true,
                     showConfirmButton: false, 
                     position: 'top',
-                    didOpen: () => {
-                        Swal.showLoading()
-                        const b = Swal.getHtmlContainer().querySelector('b')
-                        timerInterval = setInterval(() => {
-                            b.textContent = Swal.getTimerLeft()
-                        }, 100)
-                    },
                     willClose: () => {
                         clearInterval(timerInterval)
                     }
@@ -163,7 +156,7 @@ $(".upload-fc").submit(function (e) {
                                 } else {
                                     if(res.status){
                                         Swal.fire({
-                                            icon: 'info',
+                                            icon: 'success',
                                             title: res.txt,
                                             html: res.msg,
                                             backdrop: false,
@@ -219,7 +212,7 @@ $(".upload-fc").submit(function (e) {
                                             allowOutsideClick: false,
                                         }).then( () => {
                                             upload = false
-                                            $(".capture").text("Capture")
+                                            $(".capture").text("Re-Capture")
                                             $(".capture").attr("captured", "false")
                                             logindata.delete("faciallogin")
                                         })

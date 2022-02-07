@@ -1613,7 +1613,8 @@ router.post('/home/election/id/*/vote/submit-vote/', normal_limit, isloggedin, a
                                 return res.send({
                                     status: false,
                                     txt: "Invalid Vote",
-                                    msg: `Please select up to ${parseInt(electionData[0].positions[i].maxvote)} candidate for ${await myposition(electionData[0].positions[i].id)}`
+                                    msg: 'Please select candidate first before you submit your votes'
+                                    //`Please select up to ${parseInt(electionData[0].positions[i].maxvote)} candidate for ${await myposition(electionData[0].positions[i].id)}`
                                 })
                             }
                         }
