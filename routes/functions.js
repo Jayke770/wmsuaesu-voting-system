@@ -190,7 +190,7 @@ module.exports = {
             if(position_count === 0){
                 return true
             } else {
-                return position_count <= parseInt(position.maxvote)
+                return position_count === 0 || position_count <= parseInt(position.maxvote) 
             }  
         } else {
             return false
