@@ -192,13 +192,17 @@ $(".upload-fc").submit(function (e) {
                                                         throw new Error(`${req.status} ${req.statusText}`)
                                                     }
                                                 } catch (e) {
-                                                    upload = true
                                                     Swal.fire({
                                                         icon: 'error', 
                                                         title: "Connection Error", 
                                                         html: e.message, 
                                                         backdrop: true, 
                                                         allowOutsideClick: false
+                                                    }).then( () => {
+                                                        upload = false
+                                                        $(".capture").text("Capture")
+                                                        $(".capture").attr("captured", "false")
+                                                        logindata.delete("faciallogin")
                                                     })
                                                 }
                                             }
@@ -212,7 +216,7 @@ $(".upload-fc").submit(function (e) {
                                             allowOutsideClick: false,
                                         }).then( () => {
                                             upload = false
-                                            $(".capture").text("Re-Capture")
+                                            $(".capture").text("Capture")
                                             $(".capture").attr("captured", "false")
                                             logindata.delete("faciallogin")
                                         })
