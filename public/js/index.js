@@ -645,7 +645,6 @@ $(document).ready( () => {
         if(!vote){
             voteData = new FormData(this)
             const postions = $('#positions').val().split(",")
-            console.log(postions)
             Swal.fire({
                 title: 'Review Your Votes', 
                 backdrop: true, 
