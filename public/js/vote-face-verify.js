@@ -218,7 +218,7 @@ $(".upload-fc").submit(function (e) {
                                             allowOutsideClick: false,
                                         }).then( () => {
                                             upload = false
-                                            $(".capture").text("Capture")
+                                            $(".capture").text("Re-Capture")
                                             $(".capture").attr("captured", "false")
                                             logindata.delete("faciallogin")
                                         })
@@ -229,7 +229,7 @@ $(".upload-fc").submit(function (e) {
                             }
                         } catch (e) {
                             upload = false
-                            $(".capture").text("Capture")
+                            $(".capture").text("Re-Capture")
                             $(".capture").attr("captured", "false")
                             logindata.delete("faciallogin")
                             Swal.fire({
