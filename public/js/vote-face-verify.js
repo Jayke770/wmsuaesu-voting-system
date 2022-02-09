@@ -50,7 +50,7 @@ video.addEventListener('playing', () => {
 })
 $(".capture").click(function () {
     const captured = $(this).attr("captured") === "true" ? true : false
-    if (!captured && vidPlaying) {
+    if (!captured) {
         let timerInterval
         Swal.fire({
             icon: 'question',
@@ -91,7 +91,7 @@ $(".capture").click(function () {
                                 image = true
                                 video.classList.add("hidden")
                                 capture.classList.remove("hidden")
-                                $(this).text("Re-capture")
+                                $(this).text("Re-Capture")
                                 $(this).attr("captured", "true")
                                 stopcamera()
                             }
@@ -203,7 +203,7 @@ $(".upload-fc").submit(function (e) {
                                                     }).then( () => {
                                                         upload = false
                                                         $(".capture").text("Re-Capture")
-                                                        $(".capture").attr("captured", "false")
+                                                        $(".capture").attr("captured", "true")
                                                         logindata.delete("faciallogin")
                                                     })
                                                 }
@@ -219,7 +219,7 @@ $(".upload-fc").submit(function (e) {
                                         }).then( () => {
                                             upload = false
                                             $(".capture").text("Re-Capture")
-                                            $(".capture").attr("captured", "false")
+                                            $(".capture").attr("captured", "true")
                                             logindata.delete("faciallogin")
                                         })
                                     }
@@ -230,7 +230,7 @@ $(".upload-fc").submit(function (e) {
                         } catch (e) {
                             upload = false
                             $(".capture").text("Re-Capture")
-                            $(".capture").attr("captured", "false")
+                            $(".capture").attr("captured", "true")
                             logindata.delete("faciallogin")
                             Swal.fire({
                                 icon: 'error',
