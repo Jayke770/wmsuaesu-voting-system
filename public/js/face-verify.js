@@ -65,17 +65,14 @@ $(document).ready( async () => {
             }).then( (a) => {
                 if(a.isConfirmed){
                     Swal.fire({
-                        icon: 'info',
-                        title: 'Please Wait',
-                        html: 'Capturing in <b></b> milliseconds.',
+                        title: 'Capturing Please Wait',
                         timer: 1000,
+                        toast: true,
                         timerProgressBar: true,
+                        showConfirmButton: false,
+                        position: 'top',
                         didOpen: () => {
                             Swal.showLoading()
-                            const b = Swal.getHtmlContainer().querySelector('b')
-                            timerInterval = setInterval(() => {
-                                b.textContent = Swal.getTimerLeft()
-                            }, 100)
                         },
                         willClose: () => {
                             clearInterval(timerInterval)
