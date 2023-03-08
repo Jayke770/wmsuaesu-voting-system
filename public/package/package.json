@@ -18,7 +18,7 @@
     "jslib-html5-camera-photo": "^3.1.8",
     "materialize-css": "^1.0.0-rc.2",
     "moment": "^2.29.4",
-    "moment-timezone": "^0.5.33",
+    "moment-timezone": "^0.5.35",
     "node-snackbar": "^0.1.16",
     "particles.js": "^2.0.0",
     "ripplejs": "^0.5.3",
